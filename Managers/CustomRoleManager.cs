@@ -1,4 +1,5 @@
 ﻿
+using AmongUs.GameOptions;
 using Cpp2IL.Core.Extensions;
 using System.Reflection;
 
@@ -33,6 +34,10 @@ public static class CustomRoleManager
     public static void SetCustomRole(this PlayerControl player, CustomRoles role)
     {
         if (player == null || player.isDummy) return;
+
+        // Reset vanilla role
+        player.roleAssigned = false;
+        player.StartCoroutine(player.CoSetRole(RoleTypes.Crewmate, true));
 
         if (player.BetterData()?.RoleInfo?.Role != null)
             player.BetterData().RoleInfo.Role.RemoveRole();
