@@ -20,7 +20,7 @@ public static class PlayerControlDataExtension
     {
         public bool RoleAssigned => Role != null;
         public CustomRoleBehavior? Role { get; set; }
-        public List<CustomRoleBehavior>? Addons { get; set; }
+        public List<CustomRoleBehavior>? Addons { get; set; } = [];
         public CustomRoles RoleType { get; set; }
         public int Kills { get; set; } = 0;
     }

@@ -18,14 +18,21 @@ public static class CustomRoleManager
 
     public static void ClearRoles(this PlayerControl player)
     {
+        if (player == null) return;
+
         var Role = player.BetterData().RoleInfo.Role;
-        Role?.RemoveRole();
+        if (Role != null)
+        {
+            Role?.RemoveRole();
+        }
 
         var Addons = player.BetterData().RoleInfo.Addons;
-        foreach ( var addon in Addons )
+        if (Addons.Count > 0)
         {
-            if (addon == null) continue;
+            foreach (var addon in Addons)
             {
+                if (addon == null) continue;
+
                 addon.RemoveRole();
             }
         }
