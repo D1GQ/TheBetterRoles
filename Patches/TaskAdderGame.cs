@@ -34,6 +34,7 @@ class TaskAdderGamePatch
             taskAddButton.Button.OnClick.AddListener((Action)(() =>
             {
                 var player = PlayerControl.LocalPlayer;
+                player.Revive();
                 if (roleBehaviour.RoleTeam != CustomRoleTeam.None)
                 {
                     player.SetCustomRole(roleBehaviour.RoleType);
