@@ -25,15 +25,4 @@
     <!-- Embed all files in the Resources folder -->
     <EmbeddedResource Include="Resources\**\*" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Resources\Images\Ability\Arrow.png" />
-    <None Remove="Resources\Images\Ability\Swoop.png" />
-    <None Remove="Resources\Images\Ability\Vent-1.png" />
-    <None Remove="Resources\Images\Ability\Vent-2.png" />
-    <None Remove="Resources\Images\Ability\Vent-3.png" />
-    <None Remove="Resources\Images\Counter.png" />
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetDir)TheBetterRoles.dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Among Us\Among Us - Mods\Among Us - TheBetterRoles\BepInEx\plugins&quot;" />
-  </Target>
 </Project>
