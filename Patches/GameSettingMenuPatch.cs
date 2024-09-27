@@ -1,0 +1,285 @@
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace TheBetterRoles.Patches;
+
+
+class BetterGameSettings
+{
+    public static BetterOptionItem? WhenCheating;
+    public static BetterOptionItem? InvalidFriendCode;
+    public static BetterOptionItem? UseBanPlayerList;
+    public static BetterOptionItem? UseBanNameList;
+    public static BetterOptionItem? UseBanWordList;
+    public static BetterOptionItem? HideAndSeekImpNum;
+    public static BetterOptionItem? DetectedLevelAbove;
+    public static BetterOptionItem? DetectCheatClients;
+    public static BetterOptionItem? DetectInvalidRPCs;
+    public static BetterOptionItem? RoleRandomizer;
+    public static BetterOptionItem? DesyncRoles;
+    public static BetterOptionItem? CancelInvalidSabotage;
+    public static BetterOptionItem? CensorDetectionReason;
+}
+
+class BetterGameSettingsTemp
+{
+    public static BetterOptionItem? HideAndSeekImp2;
+    public static BetterOptionItem? HideAndSeekImp3;
+    public static BetterOptionItem? HideAndSeekImp4;
+    public static BetterOptionItem? HideAndSeekImp5;
+}
+
+class BetterTabs
+{
+    public static BetterOptionTab? SystemSettings;
+    public static BetterOptionTab? CrewmateRoles;
+    public static BetterOptionTab? ImpostorRoles;
+    public static BetterOptionTab? NeutralRoles;
+    public static BetterOptionTab? Addons;
+}
+
+[HarmonyPatch(typeof(GameSettingMenu))]
+static class GameSettingMenuPatch
+{
+    public static List<BetterOptionTab> Tabs = [];
+    private static List<BetterOptionItem> TitleList = [];
+    public static int ActiveTab = 0;
+
+    public static void SetupSettings(bool IsPreload = false)
+    {
+        BetterOptionItem.BetterOptionItems.Clear();
+        BetterOptionTab.allTabs.Clear();
+        BetterOptionItem.TempPlayerOptionDataNum = 0;
+        TitleList.Clear();
+
+        BetterTabs.SystemSettings = new BetterOptionTab().CreateTab(2, "System Settings", "None", Color.green);
+        BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, "Crewmate Roles", "None", Color.cyan);
+        BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, "Imposter Roles", "None", Color.red);
+        BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
+        BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Addons", "None", Color.magenta);
+
+        if (IsPreload)
+        {
+            foreach (var role in CustomRoleManager.allRoles.Where(c => c.GetType().IsSubclassOf(typeof(CustomRoleBehavior))))
+            {
+                role.SetUpSettings();
+            }
+        }
+
+        var roleCategories = new[]
+        {
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Vanilla", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Killing", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Vanilla", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Killing }
+        };
+
+        foreach (var roleCategory in roleCategories)
+        {
+            int num = 0;
+            TitleList.Add(new BetterOptionHeaderItem().Create(roleCategory.Tab, roleCategory.Title));
+
+            foreach (var role in CustomRoleManager.allRoles.Where(r => r.RoleTeam == roleCategory.Team &&
+                                                                      r.RoleCategory == roleCategory.Category))
+            {
+                if (num > 0) new BetterOptionDividerItem().Create(roleCategory.Tab);
+                role.SetUpSettings();
+                num++;
+            }
+        }
+
+
+        // Use 100 next ID
+    }
+
+    private static void Initialize()
+    {
+        _ = new LateTask(() =>
+        {
+            foreach (var item in BetterOptionItem.BetterOptionItems)
+            {
+                if (item != null)
+                {
+                    item.obj.SetActive(true);
+
+                    if (item.TitleText != null)
+                    {
+                        item.TitleText.text = item.Name;
+                    }
+                }
+            }
+
+            BetterOptionItem.UpdatePositions();
+        }, 0.005f, shoudLog: false);
+    }
+
+    [HarmonyPatch(nameof(GameSettingMenu.Update))]
+    [HarmonyPostfix]
+    public static void Update_Postfix(GameSettingMenu __instance)
+    {
+        foreach (BetterOptionTab tab in BetterOptionTab.allTabs)
+        {
+            if (tab.TabButton != null)
+            {
+                tab.TabButton.buttonText.SetText(tab.Name);
+
+                if (!tab.TabButton.selected && !tab.TabButton.activeSprites.active)
+                {
+                    tab.TabButton.buttonText.color = (Color)tab.Color;
+                }
+                else
+                {
+                    tab.TabButton.buttonText.color = (Color)tab.Color + new Color(0.25f, 0.25f, 0.25f);
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(nameof(GameSettingMenu.Start))]
+    [HarmonyPostfix]
+    public static void Start_Postfix(GameSettingMenu __instance)
+    {
+        __instance.gameObject.transform.SetLocalY(-0.1f);
+        GameObject PanelSprite = __instance.gameObject.transform.Find("PanelSprite").gameObject;
+        if (PanelSprite != null)
+        {
+            PanelSprite.transform.SetLocalY(-0.32f);
+            PanelSprite.transform.localScale = new Vector3(PanelSprite.transform.localScale.x, 0.625f);
+        }
+
+        UnityEngine.Object.Destroy(__instance.MenuDescriptionText.gameObject.GetComponent<TextTranslatorTMP>());
+        GameSettingMenu.Instance.ChangeTab(1, false);
+
+        UnityEngine.Object.Destroy(__instance.PresetsTab.gameObject);
+        UnityEngine.Object.Destroy(__instance.RoleSettingsTab.gameObject);
+        UnityEngine.Object.Destroy(__instance.GamePresetsButton.gameObject);
+        UnityEngine.Object.Destroy(__instance.RoleSettingsButton.gameObject);
+        __instance.GameSettingsButton.OnMouseOver.RemoveAllListeners();
+        __instance.GameSettingsButton.transform.position = __instance.GameSettingsButton.transform.position + new Vector3(0f, 0.6f, 0f);
+
+        SetupSettings();
+    }
+
+    [HarmonyPatch(nameof(GameSettingMenu.ChangeTab))]
+    [HarmonyPrefix]
+    public static bool ChangeTab_Prefix(GameSettingMenu __instance, [HarmonyArgument(0)] int tabNum, [HarmonyArgument(1)] bool previewOnly)
+    {
+        ActiveTab = tabNum;
+        __instance.GameSettingsTab.gameObject.SetActive(false);
+        __instance.GameSettingsButton.SelectButton(false);
+
+        foreach (var tab in BetterOptionTab.allTabs)
+        {
+            if (tab.Tab == null || tab.TabButton == null) continue;
+
+            tab.Tab.gameObject.SetActive(false);
+            tab.TabButton.SelectButton(false);
+        }
+
+        if ((previewOnly && Controller.currentTouchType == Controller.TouchType.Joystick) || !previewOnly)
+        {
+            if (tabNum > 1 && BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum).Tab != null
+                && BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum).TabButton != null)
+            {
+                var tab = BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum);
+                tab.Tab.gameObject.SetActive(true);
+                tab.TabButton.SelectButton(true);
+                __instance.MenuDescriptionText.text = tab.Description;
+                Initialize();
+            }
+            else if (tabNum == 1)
+            {
+                __instance.GameSettingsTab.gameObject.SetActive(true);
+                __instance.GameSettingsButton.SelectButton(true);
+                __instance.MenuDescriptionText.text = Translator.GetString(StringNames.GameSettingsDescription);
+            }
+        }
+
+        return false;
+    }
+}
+
+[HarmonyPatch(typeof(GameOptionsMenu))]
+static class GameOptionsMenuPatch
+{
+    [HarmonyPatch(nameof(GameOptionsMenu.CreateSettings))]
+    [HarmonyPrefix]
+    public static bool CreateSettings_Prefix(GameOptionsMenu __instance)
+    {
+        foreach (var tab in BetterOptionTab.allTabs)
+        {
+            if (tab.Tab == __instance)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(OptionsConsole))]
+static class OptionsConsolePatch
+{
+    [HarmonyPatch(nameof(OptionsConsole.CanUse))]
+    [HarmonyPrefix]
+    public static void CanUse_Prefix(OptionsConsole __instance)
+    {
+        __instance.HostOnly = false;
+    }
+}
+
+// Allow settings bypass
+[HarmonyPatch(typeof(NumberOption))]
+static class NumberOptionPatch
+{
+    [HarmonyPatch(nameof(NumberOption.Increase))]
+    [HarmonyPrefix]
+    public static bool Increase_Prefix(NumberOption __instance)
+    {
+        int times = 1;
+        if (Input.GetKey(KeyCode.LeftShift))
+            times = 5;
+        if (Input.GetKey(KeyCode.LeftControl))
+            times = 10;
+
+        if (__instance.Value + __instance.Increment * times > __instance.ValidRange.max)
+        {
+            __instance.Value = __instance.ValidRange.max;
+        }
+        else
+        {
+            __instance.Value = __instance.ValidRange.Clamp(__instance.Value + __instance.Increment * times);
+        }
+        __instance.UpdateValue();
+        __instance.OnValueChanged.Invoke(__instance);
+        __instance.AdjustButtonsActiveState();
+        return false;
+    }
+
+    [HarmonyPatch(nameof(NumberOption.Decrease))]
+    [HarmonyPrefix]
+    public static bool Decrease_Prefix(NumberOption __instance)
+    {
+        int times = 1;
+        if (Input.GetKey(KeyCode.LeftShift))
+            times = 5;
+        if (Input.GetKey(KeyCode.LeftControl))
+            times = 10;
+
+        if (__instance.Value - __instance.Increment * times < __instance.ValidRange.min)
+        {
+            __instance.Value = __instance.ValidRange.min;
+        }
+        else
+        {
+            __instance.Value = __instance.ValidRange.Clamp(__instance.Value - __instance.Increment * times);
+        }
+        __instance.UpdateValue();
+        __instance.OnValueChanged.Invoke(__instance);
+        __instance.AdjustButtonsActiveState();
+        return false;
+    }
+}

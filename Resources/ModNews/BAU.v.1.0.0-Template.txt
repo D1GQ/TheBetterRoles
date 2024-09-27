@@ -1,0 +1,9 @@
+#Skip
+#Type:BAU
+#Number:110000
+#Title:Main Header
+#SubTitle:Main Header SubText
+#ShortTitle:List Name
+#Date:2024-7-28T00:00:00Z
+#-----------------------------
+Announcement Template

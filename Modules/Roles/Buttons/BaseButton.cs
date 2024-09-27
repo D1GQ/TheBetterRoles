@@ -1,0 +1,89 @@
+﻿
+using TheBetterRoles.Patches;
+using TMPro;
+using UnityEngine;
+
+namespace TheBetterRoles;
+
+public class BaseButton
+{
+    public CustomRoleBehavior? Role { get; set; }
+
+    public static List<BaseButton> AllButtons = [];
+    public static void ClearAllButtons()
+    {
+        foreach (var button in AllButtons)
+        {
+            if (button?.Button?.gameObject != null)
+            {
+                UnityEngine.Object.Destroy(button.Button.gameObject);
+            }
+        }
+
+        AllButtons.Clear();
+    }
+    public ActionButton? ActionButton { get; set; }
+    public PassiveButton? Button { get; set; }
+    public TextMeshPro? Text { get; set; }
+    public PlayerControl? _player => Role._player;
+    public Func<bool> VisibleCondition = () => true;
+    public int Id { get; set; }
+    public bool UseAsDead { get; set; }
+    public bool Visible { get; set; } = false;
+
+    public string? Name { get; set; } = "Ability";
+    public IntRange Range = new(0, 100);
+    public int State = 0;
+
+    public float Cooldown = 25;
+    public float TempCooldown = 0f;
+    public bool InfiniteUses = true;
+    public int Uses = 0;
+
+    public virtual bool BaseShow() =>
+        !(GameStates.IsMeeting || GameStates.IsExilling) &&
+        (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
+
+    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder();
+    public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder();
+
+    public virtual void Update() { }
+
+    public virtual void SetCooldown(int amount = -1, int state = 0)
+    {
+        if (State > 0) return;
+
+        if (amount <= -1)
+        {
+            TempCooldown = Cooldown;
+        }
+        else
+        {
+            TempCooldown = amount;
+        }
+    }
+
+    public void AddUse(int Amount = 1)
+    {
+        if (!InfiniteUses)
+        {
+            if (Uses + Amount <= Range.max)
+            {
+                Uses += Amount;
+                ActionButton.SetUsesRemaining(Uses);
+            }
+        }
+    }
+
+    public void RemoveUse(int Amount = 1)
+    {
+        if (!InfiniteUses)
+        {
+            if (Uses - Amount >= Range.min)
+            {
+                Uses -= Amount;
+                ActionButton.SetUsesRemaining(Uses);
+            }
+        }
+    }
+}
