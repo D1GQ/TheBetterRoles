@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using InnerNet;
+using Microsoft.Extensions.Logging;
 
 namespace TheBetterRoles;
 
@@ -28,6 +29,18 @@ static class ActionPatch
 
 static class ActionRPCs
 {
+    public static PlayerControl? SenderPlayer;
+
+    private static bool ValidateSenderCheck(PlayerControl? player = null) =>
+        // If there is no SenderPlayer, validation passes
+        SenderPlayer == null
+        // If SenderPlayer is the host's character and the game is not in host state, validation passes
+        || AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost
+        // If the player is provided, is the same as SenderPlayer, and the game is in host state, validation passes
+        || player != null && player == SenderPlayer && GameStates.IsHost;
+
+
+    // Make a player go in or out a vent
     public static void VentAction(this PlayerControl player, int ventId, bool Exit, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
@@ -94,7 +107,7 @@ static class ActionRPCs
             }
         }
 
-        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanVent))
+        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanVent || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Vent Action: Invalid");
             return false;
@@ -108,6 +121,7 @@ static class ActionRPCs
         return true;
     }
 
+    // Make a player kill a target
     public static void MurderAction(this PlayerControl player, PlayerControl target, bool isAbility = false, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
@@ -166,7 +180,7 @@ static class ActionRPCs
             }
         }
 
-        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill || target.IsInVent() || !target.IsAlive()))
+        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;
@@ -175,6 +189,29 @@ static class ActionRPCs
         return true;
     }
 
+    // Revive player
+    public static void ReviveAction(this PlayerControl player, bool bypass = false)
+    {
+        if (GameStates.IsHost || bypass)
+        {
+            if (CheckReviveAction(player) == true || bypass)
+            {
+                player.Revive();
+                if (bypass) return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Revive, player);
+        AmongUsClient.Instance.EndActionRpc(writer);
+    }
+
+    private static bool CheckReviveAction(PlayerControl player) => player != null && ValidateSenderCheck(player);
+
+    // Make a player start meeting
     public static void ReportBodyAction(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool bypass = false)
     {
         var isButton = bodyInfo == null;
@@ -236,7 +273,7 @@ static class ActionRPCs
             }
         }
 
-        if (playerRoleInfo.RoleAssigned && (!GameStates.IsInGamePlay))
+        if (playerRoleInfo.RoleAssigned && (!GameStates.IsInGamePlay || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;
@@ -245,7 +282,7 @@ static class ActionRPCs
         return true;
     }
 
-
+    // Resync after ability duration
     public static void ResetAbilityStateAction(this PlayerControl player, int id, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
@@ -266,8 +303,5 @@ static class ActionRPCs
         AmongUsClient.Instance.EndActionRpc(writer);
     }
 
-    private static bool CheckResetAbilityStateAction(PlayerControl player, int id)
-    {
-        return true;
-    }
+    private static bool CheckResetAbilityStateAction(PlayerControl player, int id) => true;
 }

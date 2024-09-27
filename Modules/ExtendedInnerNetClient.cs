@@ -11,14 +11,14 @@ static class ExtendedInnerNetClient
         MessageWriter writer;
         if (GameStates.IsHost)
         {
-            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.None, -1);
+            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable, -1);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(sender ?? LocalPlayer);
         }
         else
         {
-            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.None, AmongUsClient.Instance.GetHost().Id);
+            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable, AmongUsClient.Instance.GetHost().Id);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(LocalPlayer);

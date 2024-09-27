@@ -6,12 +6,13 @@ namespace TheBetterRoles;
 
 public enum RpcAction
 {
+    ResetAbilityState,
+    EndGame,
     ReportBody,
     Vent,
-    VentBoot,
-    EndGame,
-    ResetAbilityState,
-    Murder,
+    BootVent,
+    Revive,
+    Murder
 }
 
 public enum CustomRPC : int
@@ -22,10 +23,8 @@ public enum CustomRPC : int
     AUMChat = 101,
 
     // The Better Roles RPC's
-    BetterRoleCheck = 105,
-    SetCustomRole,
+    VersionCheck = 105,
     SyncSettings,
-    SyncAction,
     CheckRoleAction,
     RoleAction,
     CheckAction,
@@ -73,7 +72,7 @@ internal static class RPC
 {
     public static void SendBetterRoleCheck()
     {
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BetterRoleCheck, SendOption.None, -1);
+        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionCheck, SendOption.None, -1);
         messageWriter.Write(true);
         messageWriter.Write(Main.modSignature);
         messageWriter.Write(Main.GetVersionText().Replace(" ", ""));
@@ -90,7 +89,7 @@ internal static class RPC
 
             switch ((CustomRPC)callId)
             {
-                case CustomRPC.BetterRoleCheck:
+                case CustomRPC.VersionCheck:
                     {
                     }
                     break;
@@ -137,6 +136,8 @@ internal static class RPC
 
         if (Main.modSignature != signature) return;
 
+        ActionRPCs.SenderPlayer = sender;
+
         var hostFlag = sender.IsHost();
 
         switch (action)
@@ -168,6 +169,11 @@ internal static class RPC
                     {
                         player.MurderAction(target, isAbility, hostFlag);
                     }
+                }
+                break;
+            case RpcAction.Revive:
+                {
+                    player.ReviveAction(true);
                 }
                 break;
         }
