@@ -111,6 +111,7 @@ public enum CustomRoles
     Sheriff,
     Morphling,
     Swooper,
+    Janitor
 }
 
 public enum CustomRoleTeam

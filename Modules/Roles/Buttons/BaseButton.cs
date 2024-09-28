@@ -35,7 +35,7 @@ public class BaseButton
 
     public virtual void Update() { }
 
-    public virtual void SetCooldown(int amount = -1, int state = 0)
+    public virtual void SetCooldown(float amount = -1, int state = 0)
     {
         if (State > 0) return;
 

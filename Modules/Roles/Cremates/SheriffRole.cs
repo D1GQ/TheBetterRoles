@@ -60,7 +60,7 @@ public class SheriffRole : CustomRoleBehavior
         base.OnAbilityUse(id, target, vent, body);
     }
 
-    public void ShootTarget(PlayerControl target)
+    private void ShootTarget(PlayerControl target)
     {
         if (target.Is(CustomRoleTeam.Impostor) && CanShootImposters.GetBool() ||
             target.Is(CustomRoleTeam.Neutral) && CanShootNeutrals.GetBool() ||

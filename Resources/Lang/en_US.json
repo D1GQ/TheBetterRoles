@@ -64,6 +64,14 @@
   "Role.Swooper.Option.InvisibilityCooldow": "Invisibility Cooldow",
   "Role.Swooper.Option.InvisibilityDuration": "Invisibility Duration",
 
+  "Role.Janitor": "Janitor",
+  "Role.Janitor.Info": "Info",
+  "Role.Janitor.LongInfo": "Long Info",
+  "Role.Janitor.Ability.1": "Clean Body",
+  "Role.Janitor.Option.CleanCooldown": "Clean Cooldown",
+  "Role.Janitor.Option.SetKillCooldownOnClean": "Set KillCooldown On Clean",
+  "Role.Janitor.Option.SetKillCooldown": "Set KillCooldown",
+
   "Role.None": "None",
   "Role.None.Info": "None",
   "Role.None.LongInfo": "None",

@@ -71,22 +71,41 @@ static class GameSettingMenuPatch
         var roleCategories = new[]
         {
             new { Tab = BetterTabs.ImpostorRoles, Title = "Vanilla", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Benign", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Benign },
             new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Killing", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Support", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Chaos", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Ghost", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Ghost },
+
             new { Tab = BetterTabs.CrewmateRoles, Title = "Vanilla", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Vanilla },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Killing }
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Benign", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Support", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Chaos", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Ghost", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Ghost },
+
+            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Benign", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Killing", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Support", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Chaos", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Ghost", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Ghost },
         };
 
         foreach (var roleCategory in roleCategories)
         {
             int num = 0;
-            TitleList.Add(new BetterOptionHeaderItem().Create(roleCategory.Tab, roleCategory.Title));
+            var Roles = CustomRoleManager.allRoles.Where(r => r.RoleTeam == roleCategory.Team && r.RoleCategory == roleCategory.Category);
 
-            foreach (var role in CustomRoleManager.allRoles.Where(r => r.RoleTeam == roleCategory.Team &&
-                                                                      r.RoleCategory == roleCategory.Category))
+            if (Roles.Any())
             {
-                if (num > 0) new BetterOptionDividerItem().Create(roleCategory.Tab);
-                role.SetUpSettings();
-                num++;
+                TitleList.Add(new BetterOptionHeaderItem().Create(roleCategory.Tab, roleCategory.Title));
+
+                foreach (var role in Roles)
+                {
+                    if (num > 0) new BetterOptionDividerItem().Create(roleCategory.Tab);
+                    role.SetUpSettings();
+                    num++;
+                }
             }
         }
 

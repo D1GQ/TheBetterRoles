@@ -36,8 +36,8 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    public NetworkedPlayerInfo.PlayerOutfit? OriginalData { get; set; }
-    public NetworkedPlayerInfo.PlayerOutfit? SampleData { get; set; }
+    private NetworkedPlayerInfo.PlayerOutfit? OriginalData { get; set; }
+    private NetworkedPlayerInfo.PlayerOutfit? SampleData { get; set; }
     public TargetButton? SampleButton;
     public AbilityButton? TransformButton;
     public override void SetUpRole()
@@ -98,7 +98,7 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    public NetworkedPlayerInfo.PlayerOutfit CopyOutfit(NetworkedPlayerInfo data)
+    private NetworkedPlayerInfo.PlayerOutfit CopyOutfit(NetworkedPlayerInfo data)
     {
         var outfit = data.DefaultOutfit;
         return new NetworkedPlayerInfo.PlayerOutfit()
@@ -113,7 +113,7 @@ public class MorphlingRole : CustomRoleBehavior
         };
     }
 
-    public void SetOutfit(NetworkedPlayerInfo.PlayerOutfit outfit)
+    private void SetOutfit(NetworkedPlayerInfo.PlayerOutfit outfit)
     {
         _player.SetOutfit(outfit, PlayerOutfitType.Default);
     }

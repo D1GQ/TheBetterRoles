@@ -98,13 +98,17 @@ public static class Utils
     public static void SetOutline(this DeadBody body, bool show, Color color)
     {
         if (body == null) return;
+
         foreach (var sprite in body.bodyRenderers)
         {
-            sprite.material.SetFloat("_Outline", (show ? 1 : 0));
-            sprite.material.SetColor("_OutlineColor", color);
-            sprite.material.SetColor("_AddColor", show ? color : Color.clear);
+            float spriteAlpha = sprite.color.a;
+            sprite.material.SetFloat("_Outline", show ? 1 : 0);
+            Color outlineColor = new Color(color.r, color.g, color.b, spriteAlpha);
+            sprite.material.SetColor("_OutlineColor", outlineColor);
+            sprite.material.SetColor("_AddColor", show ? outlineColor : Color.clear);
         }
     }
+
     // Get players HashPuid
     public static string GetHashPuid(PlayerControl player)
     {

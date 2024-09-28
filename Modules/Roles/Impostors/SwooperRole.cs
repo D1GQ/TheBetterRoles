@@ -36,7 +36,7 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    bool IsVisible { get; set; } = true;
+    private bool IsVisible { get; set; } = true;
     public AbilityButton? InvisibilityButton = new();
     public override void SetUpRole()
     {

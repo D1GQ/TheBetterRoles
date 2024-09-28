@@ -80,7 +80,7 @@ public class AbilityButton : BaseButton
         return this;
     }
 
-    public void SetDuration(int amount = -1)
+    public void SetDuration(float amount = -1)
     {
         if (!_player.IsLocalPlayer()) return;
 
