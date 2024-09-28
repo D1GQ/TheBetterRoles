@@ -19,7 +19,7 @@ public class AbilityButton : BaseButton
         Visible = true;
         Duration = duration;
 
-        if (!_player.AmOwner) return this;
+        if (!_player.IsLocalPlayer()) return this;
 
         var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomAbility({name})";
@@ -77,13 +77,12 @@ public class AbilityButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
-        AllButtons.Add(this);
         return this;
     }
 
     public void SetDuration(int amount = -1)
     {
-        if (!_player.AmOwner) return;
+        if (!_player.IsLocalPlayer()) return;
 
         if (amount <= -1)
         {
@@ -102,12 +101,12 @@ public class AbilityButton : BaseButton
     {
         if (State == 1)
         {
-            if (!_player.AmOwner) return;
+            if (!_player.IsLocalPlayer()) return;
 
             State = 0;
             SetCooldown();
             Text.SetText(Name);
-            _player.ResetAbilityStateAction(Id);
+            _player.ResetAbilityStateSync(Id);
         }
     }
 

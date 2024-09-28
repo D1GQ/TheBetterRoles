@@ -12,7 +12,7 @@ public class SabotageButton : BaseButton
         Name = name;
         Visible = true;
 
-        if (!_player.AmOwner) return this;
+        if (!_player.IsLocalPlayer()) return this;
 
         var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomAbility({name})";
@@ -55,7 +55,6 @@ public class SabotageButton : BaseButton
 
         ActionButton.SetInfiniteUses();
 
-        AllButtons.Add(this);
         return this;
     }
 

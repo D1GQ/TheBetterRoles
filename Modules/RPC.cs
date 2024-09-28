@@ -4,9 +4,10 @@ using InnerNet;
 
 namespace TheBetterRoles;
 
-public enum RpcAction
+public enum RpcAction : int
 {
     ResetAbilityState,
+    SetRole,
     EndGame,
     ReportBody,
     Vent,
@@ -131,7 +132,7 @@ internal static class RPC
         MessageReader reader = MessageReader.Get(oldReader);
 
         var signature = reader.ReadString();
-        var action = (RpcAction)reader.ReadInt32();
+        var action = reader.ReadInt32();
         var player = reader.ReadNetObject<PlayerControl>();
 
         if (Main.modSignature != signature) return;
@@ -140,25 +141,36 @@ internal static class RPC
 
         var hostFlag = sender.IsHost();
 
-        switch (action)
+        switch ((RpcAction)action)
         {
+            case RpcAction.ResetAbilityState:
+                {
+                    var id = reader.ReadInt32();
+                    player.ResetAbilityStateSync(id, hostFlag);
+                }
+                break;
+            case RpcAction.SetRole:
+                {
+                    var role = reader.ReadInt32();
+                    player.SetRoleSync((CustomRoles)role, hostFlag);
+                }
+                break;
             case RpcAction.ReportBody:
                 {
                     var bodyInfo = reader.ReadNetObject<NetworkedPlayerInfo>();
-                    player.ReportBodyAction(bodyInfo, hostFlag);
+                    player.ReportBodySync(bodyInfo, hostFlag);
                 }
                 break;
             case RpcAction.Vent:
                 {
                     var ventId = reader.ReadInt32();
                     var exit = reader.ReadBoolean();
-                    player.VentAction(ventId, exit);
+                    player.VentSync(ventId, exit, hostFlag);
                 }
                 break;
-            case RpcAction.ResetAbilityState:
+            case RpcAction.Revive:
                 {
-                    var id = reader.ReadInt32();
-                    player.ResetAbilityStateAction(id, hostFlag);
+                    player.ReviveSync(hostFlag);
                 }
                 break;
             case RpcAction.Murder:
@@ -167,13 +179,8 @@ internal static class RPC
                     var isAbility = reader.ReadBoolean();
                     if (target != null)
                     {
-                        player.MurderAction(target, isAbility, hostFlag);
+                        player.MurderSync(target, isAbility, hostFlag);
                     }
-                }
-                break;
-            case RpcAction.Revive:
-                {
-                    player.ReviveAction(true);
                 }
                 break;
         }

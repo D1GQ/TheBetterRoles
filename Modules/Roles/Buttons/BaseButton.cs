@@ -8,20 +8,6 @@ namespace TheBetterRoles;
 public class BaseButton
 {
     public CustomRoleBehavior? Role { get; set; }
-
-    public static List<BaseButton> AllButtons = [];
-    public static void ClearAllButtons()
-    {
-        foreach (var button in AllButtons)
-        {
-            if (button?.Button?.gameObject != null)
-            {
-                UnityEngine.Object.Destroy(button.Button.gameObject);
-            }
-        }
-
-        AllButtons.Clear();
-    }
     public ActionButton? ActionButton { get; set; }
     public PassiveButton? Button { get; set; }
     public TextMeshPro? Text { get; set; }

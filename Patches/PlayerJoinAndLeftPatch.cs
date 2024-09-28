@@ -46,6 +46,7 @@ public static class OnPlayerJoinedPatch
                     player.BetterData().ClearData();
                 }
 
+                /*
                 // Auto ban player on ban list
                 if (BetterGameSettings.UseBanPlayerList.GetBool())
                 {
@@ -102,6 +103,7 @@ public static class OnPlayerJoinedPatch
                     }
                     catch { }
                 }
+                */
             }
         }, 2.5f, "OnPlayerJoinedPatch", false);
     }

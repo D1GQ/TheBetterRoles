@@ -21,7 +21,7 @@ public class TargetButton : BaseButton
         Uses = abilityUses;
         Visible = true;
 
-        if (!_player.AmOwner) return this;
+        if (!_player.IsLocalPlayer()) return this;
 
         var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomAbility({name})";
@@ -72,7 +72,6 @@ public class TargetButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
-        AllButtons.Add(this);
         return this;
     }
 

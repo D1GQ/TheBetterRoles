@@ -20,14 +20,14 @@ public static class PlayerControlDataExtension
     {
         public bool RoleAssigned => Role != null;
         public CustomRoleBehavior? Role { get; set; }
-        public List<CustomRoleBehavior>? Addons { get; set; } = [];
         public CustomRoles RoleType { get; set; }
+        public List<CustomRoleBehavior>? Addons { get; set; } = [];
         public int Kills { get; set; } = 0;
     }
 
-    public static readonly Dictionary<string, ExtendedPlayerInfo> playerInfo = [];
+    public static readonly Dictionary<NetworkedPlayerInfo, ExtendedPlayerInfo> playerInfo = [];
 
-    public static void ClearData(this ExtendedPlayerInfo BetterData) => playerInfo[BetterData._Data.Puid] = new ExtendedPlayerInfo
+    public static void ClearData(this ExtendedPlayerInfo BetterData) => playerInfo[BetterData._Data] = new ExtendedPlayerInfo
     {
         _Data = BetterData._Data,
         RoleInfo = new ExtendedRoleInfo(),
@@ -40,36 +40,38 @@ public static class PlayerControlDataExtension
     }
 
     // Helper method to initialize and return BetterData
-    private static ExtendedPlayerInfo GetOrCreateBetterData(string puid, NetworkedPlayerInfo data, string? realName = null)
+    private static ExtendedPlayerInfo GetOrCreateBetterData(NetworkedPlayerInfo data)
     {
-        if (!playerInfo.ContainsKey(puid))
+        if (!playerInfo.ContainsKey(data))
         {
-            playerInfo[puid] = new ExtendedPlayerInfo
+            playerInfo[data] = new ExtendedPlayerInfo
             {
                 _Data = data,
                 RoleInfo = new ExtendedRoleInfo(),
             };
+            playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR() { _player = Utils.PlayerFromPlayerId(data.PlayerId), _data = data };
+            playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
         }
-        return playerInfo[puid];
+        return playerInfo[data];
     }
 
     // Get BetterData from PlayerControl
     public static ExtendedPlayerInfo? BetterData(this PlayerControl player)
     {
-        return player == null ? null : GetOrCreateBetterData(player.Data.Puid, player.Data);
+        return player == null ? null : GetOrCreateBetterData(player.Data);
     }
 
     // Get BetterData from NetworkedPlayerInfo
     public static ExtendedPlayerInfo? BetterData(this NetworkedPlayerInfo info)
     {
-        return GetOrCreateBetterData(info.Puid, info);
+        return GetOrCreateBetterData(info);
     }
 
     // Get BetterData from ClientData
     public static ExtendedPlayerInfo? BetterData(this ClientData data)
     {
         var player = Utils.PlayerFromClientId(data.Id);
-        return player == null ? null : GetOrCreateBetterData(player.Data.Puid, player.Data, player.Data.PlayerName);
+        return player == null ? null : GetOrCreateBetterData(player.Data);
     }
 
 }

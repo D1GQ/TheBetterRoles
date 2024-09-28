@@ -7,7 +7,7 @@ namespace TheBetterRoles;
 
 public static class CustomRoleManager
 {
-    public static CustomRoleBehavior[] allRoles = GetAllCustomRoleInstances();
+    public static readonly CustomRoleBehavior[] allRoles = GetAllCustomRoleInstances();
 
     public static CustomRoleBehavior[] GetAllCustomRoleInstances() => Assembly.GetExecutingAssembly()
         .GetTypes()
@@ -16,6 +16,25 @@ public static class CustomRoleManager
         .OrderBy(role => role.RoleId)
         .ToArray();
 
+    public static CustomRoleBehavior? CreateNewRoleInstance(Func<CustomRoleBehavior, bool> selector)
+    {
+        Type selectedType = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => t.IsSubclassOf(typeof(CustomRoleBehavior)) && !t.IsAbstract)
+            .FirstOrDefault(t =>
+            {
+                var instance = (CustomRoleBehavior)Activator.CreateInstance(t);
+                return selector(instance);
+            });
+
+        if (selectedType != null)
+        {
+            return (CustomRoleBehavior)Activator.CreateInstance(selectedType);
+        }
+
+        return null;
+    }
+
     public static void ClearRoles(this PlayerControl player)
     {
         if (player == null) return;
@@ -23,7 +42,7 @@ public static class CustomRoleManager
         var Role = player.BetterData().RoleInfo.Role;
         if (Role != null)
         {
-            Role?.RemoveRole();
+            Role?.Deinitialize();
         }
 
         var Addons = player.BetterData().RoleInfo.Addons;
@@ -33,33 +52,22 @@ public static class CustomRoleManager
             {
                 if (addon == null) continue;
 
-                addon.RemoveRole();
+                addon.Deinitialize();
             }
         }
     }
 
-    public static void SetCustomRole(this PlayerControl player, CustomRoles role)
+    public static void SetCustomRole(PlayerControl player, CustomRoles role)
     {
-        if (player == null || player.isDummy) return;
+        if (player == null) return;
 
-        // Reset vanilla role
-        player.roleAssigned = false;
-        player.StartCoroutine(player.CoSetRole(RoleTypes.Crewmate, true));
+        player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
 
-        if (player.BetterData()?.RoleInfo?.Role != null)
-            player.BetterData().RoleInfo.Role.RemoveRole();
-
-        CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
-        if (roleClass != null)
-        {
-            player.BetterData().RoleInfo.Role = (CustomRoleBehavior)Activator.CreateInstance(roleClass.GetType());
-            player.BetterData().RoleInfo.RoleType = player.BetterData().RoleInfo.Role.RoleType;
-            player.BetterData().RoleInfo.Role._player = player;
-            player.BetterData().RoleInfo.Role._data = player.Data;
-            player.BetterData().RoleInfo.Role.SetUpRole();
-        }
+        CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
+        newRole?.Initialize(player);
     }
-    public static void AddAddon(this PlayerControl player, CustomRoles role)
+
+    public static void AddAddon(PlayerControl player, CustomRoles role)
     {
         if (player == null || player.isDummy) return;
 
@@ -80,7 +88,7 @@ public static class CustomRoleManager
             }
         }
     }
-    public static void RemoveAddon(this PlayerControl player, CustomRoles role)
+    public static void RemoveAddon(PlayerControl player, CustomRoles role)
     {
         if (player == null || player.isDummy) return;
 
@@ -90,7 +98,7 @@ public static class CustomRoleManager
             var addon = player.BetterData().RoleInfo.Addons.FirstOrDefault(addon => addon.GetType() == roleClass.GetType());
             if (addon != null)
             {
-                addon.RemoveRole();
+                addon.Deinitialize();
             }
         }
     }

@@ -37,7 +37,7 @@ public class SwooperRole : CustomRoleBehavior
     }
 
     bool IsVisible { get; set; } = true;
-    public AbilityButton? InvisibilityButton;
+    public AbilityButton? InvisibilityButton = new();
     public override void SetUpRole()
     {
         base.SetUpRole();
@@ -48,7 +48,7 @@ public class SwooperRole : CustomRoleBehavior
             return !target.IsImpostorTeammate();
         };
 
-        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Swoop.png", 135), Role, true)) as AbilityButton;
+        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Swoop.png", 135), this, true)) as AbilityButton;
         InvisibilityButton.CanCancelDuration = true;
     }
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent)
@@ -78,9 +78,11 @@ public class SwooperRole : CustomRoleBehavior
     {
         float alpha = 1f;
 
+        var flag = _player.IsLocalPlayer() || _player.IsImpostorTeammate();
+
         if (!IsVisible)
         {
-            if (_player.IsLocalPlayer())
+            if (flag)
             {
                 alpha = 0.5f;
             }
@@ -90,11 +92,27 @@ public class SwooperRole : CustomRoleBehavior
             }
         }
 
-        if (!_player.IsLocalPlayer())
+        if (!flag)
         {
             _player.cosmetics.hat.gameObject.SetActive(IsVisible);
             _player.cosmetics.visor.gameObject.SetActive(IsVisible);
         }
+
+        _player.cosmetics.SetPhantomRoleAlpha(alpha);
+
+        foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
+        {
+            text.color = new Color(1f, 1f, 1f, alpha);
+        }
+    }
+
+    public override void OnDeinitialize()
+    {
+        IsVisible = true;
+        float alpha = 1f;
+
+        _player.cosmetics.hat.gameObject.SetActive(true);
+        _player.cosmetics.visor.gameObject.SetActive(true);
 
         _player.cosmetics.SetPhantomRoleAlpha(alpha);
 

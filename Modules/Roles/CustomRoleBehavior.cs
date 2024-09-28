@@ -1,4 +1,5 @@
 ﻿
+using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
 using UnityEngine;
@@ -17,7 +18,6 @@ public abstract class CustomRoleBehavior
 {
     public PlayerControl? _player;
     public NetworkedPlayerInfo? _data;
-
     public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
     public abstract string RoleColor { get; }
     public abstract int RoleId { get; }
@@ -42,18 +42,48 @@ public abstract class CustomRoleBehavior
     public bool Protected { get; set; }
     public NetworkedPlayerInfo? ProtectedBy { get; set; }
 
+    public void Initialize(PlayerControl player)
+    {
+        if (player != null)
+        {
+            _player = player;
+            _data = player.Data;
+            player.BetterData().RoleInfo.Role = this;
+            player.BetterData().RoleInfo.RoleType = RoleType;
+            SetUpRole();
+        }
+    }
+    
+    public void Deinitialize()
+    {
+        OnDeinitialize();
+        _player.roleAssigned = false;
+        _player.StartCoroutine(_player.CoSetRole(RoleTypes.Crewmate, false));
+
+        // Remove Buttons
+        foreach (var button in Buttons)
+        {
+            if (button?.Button?.gameObject != null)
+            {
+                UnityEngine.Object.Destroy(button.Button.gameObject);
+            }
+        }
+    }
+
+    public virtual void OnDeinitialize() { }
+
     public virtual void Update() { }
 
     // Run base if override
     public virtual void SetUpRole()
     {
-        SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), Role, true)) as SabotageButton;
+        SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
         SabotageButton.VisibleCondition = () => { return VentButton.Role.CanSabotage; };
 
-        KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, Role, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1 / 1.75f)) as TargetButton;
+        KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1 / 1.75f)) as TargetButton;
         KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
 
-        VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, Role, null, false, true)) as VentButton;
+        VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
         VentButton.VisibleCondition = () => { return VentButton.Role.CanVent; };
 
         // Hide task for non crew
@@ -70,22 +100,6 @@ public abstract class CustomRoleBehavior
                 }
             }
         }
-    }
-    public void RemoveRole()
-    {
-        // Remove Buttons
-        var buttonsToRemove = BaseButton.AllButtons.Where(Buttons.Contains).ToList();
-        foreach (var button in buttonsToRemove)
-        {
-            if (button?.Button?.gameObject != null)
-            {
-                BaseButton.AllButtons.Remove(button);
-                UnityEngine.Object.Destroy(button.Button.gameObject);
-            }
-        }
-
-        _player.BetterData().RoleInfo.RoleType = CustomRoles.Crewmate;
-        _player.BetterData().RoleInfo.Role = null;
     }
 
     public void SetUpSettings()
@@ -201,9 +215,9 @@ public abstract class CustomRoleBehavior
                 {
                     if (target != null)
                     {
-                        if (_player.AmOwner)
+                        if (_player.IsLocalPlayer())
                         {
-                            _player.MurderAction(target);
+                            _player.MurderSync(target);
                         }
                     }
                 }

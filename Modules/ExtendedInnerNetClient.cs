@@ -4,7 +4,7 @@ namespace TheBetterRoles;
 
 static class ExtendedInnerNetClient
 {
-    public static MessageWriter StartActionRpc(this InnerNetClient client, RpcAction action, PlayerControl? sender = null)
+    public static MessageWriter StartActionRpc(this InnerNetClient client, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
 
@@ -14,7 +14,7 @@ static class ExtendedInnerNetClient
             writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable, -1);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
-            writer.WriteNetObject(sender ?? LocalPlayer);
+            writer.WriteNetObject(asPlayer ?? LocalPlayer);
         }
         else
         {

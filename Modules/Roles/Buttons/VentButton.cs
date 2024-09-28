@@ -24,7 +24,7 @@ public class VentButton : BaseButton
         Visible = true;
         IsAbility = isAbility;
 
-        if (!_player.AmOwner) return this;
+        if (!_player.IsLocalPlayer()) return this;
 
         var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomVent({name})";
@@ -71,11 +71,11 @@ public class VentButton : BaseButton
                     {
                         if (!_player.IsInVent())
                         {
-                            _player.VentAction(lastTargetVent.Id, false);
+                            _player.VentSync(lastTargetVent.Id, false);
                         }
                         else
                         {
-                            _player.VentAction(lastTargetVent.Id, true);
+                            _player.VentSync(lastTargetVent.Id, true);
                         }
                     }
                     else
@@ -104,7 +104,6 @@ public class VentButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
-        AllButtons.Add(this);
         return this;
     }
 

@@ -42,7 +42,7 @@ public class SheriffRole : CustomRoleBehavior
     {
         base.SetUpRole();
         OptionItems.Initialize();
-        AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, Role, true, ShootDistance.GetValue() + 1 / 1.5f));
+        AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, this, true, ShootDistance.GetValue() + 1 / 1.5f));
     }
 
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent)
@@ -65,7 +65,7 @@ public class SheriffRole : CustomRoleBehavior
             target.Is(CustomRoleTeam.Neutral) && CanShootNeutrals.GetBool() ||
             Misfire.GetValue() == 1)
         {
-            _player.MurderAction(target);
+            _player.MurderSync(target);
         }
         else if (Misfire.GetValue() == 0)
         {

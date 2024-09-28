@@ -13,7 +13,7 @@ static class ActionPatch
         [HarmonyPrefix]
         public static bool CmdReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            __instance.ReportBodyAction(target);
+            __instance.ReportBodySync(target);
             return false;
         }
 
@@ -21,7 +21,7 @@ static class ActionPatch
         [HarmonyPrefix]
         public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            __instance.ReportBodyAction(target);
+            __instance.ReportBodySync(target);
             return false;
         }
     }
@@ -39,9 +39,33 @@ static class ActionRPCs
         // If the player is provided, is the same as SenderPlayer, and the game is in host state, validation passes
         || player != null && player == SenderPlayer && GameStates.IsHost;
 
+    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost;
+
+    // Set player role
+    public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool bypass = false)
+    {
+        if (GameStates.IsHost || bypass)
+        {
+            if (CheckSetRoleAction(player, role) == true || bypass)
+            {
+                CustomRoleManager.SetCustomRole(player, role);
+                if (bypass) return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.SetRole, player);
+        writer.Write((int)role);
+        AmongUsClient.Instance.EndActionRpc(writer);
+    }
+
+    private static bool CheckSetRoleAction(PlayerControl player, CustomRoles role) => true;
 
     // Make a player go in or out a vent
-    public static void VentAction(this PlayerControl player, int ventId, bool Exit, bool bypass = false)
+    public static void VentSync(this PlayerControl player, int ventId, bool Exit, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
         {
@@ -50,7 +74,7 @@ static class ActionRPCs
                 if (!Exit)
                 {
                     player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
-                    if (player.AmOwner)
+                    if (player.IsLocalPlayer())
                     {
                         ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(player.CanMoveInVent());
                     }
@@ -58,7 +82,7 @@ static class ActionRPCs
                 else
                 {
                     player.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
-                    if (player.AmOwner)
+                    if (player.IsLocalPlayer())
                     {
                         ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
                     }
@@ -122,7 +146,7 @@ static class ActionRPCs
     }
 
     // Make a player kill a target
-    public static void MurderAction(this PlayerControl player, PlayerControl target, bool isAbility = false, bool bypass = false)
+    public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
         {
@@ -180,7 +204,7 @@ static class ActionRPCs
             }
         }
 
-        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
+        if (playerRoleInfo.RoleAssigned && (target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;
@@ -190,7 +214,7 @@ static class ActionRPCs
     }
 
     // Revive player
-    public static void ReviveAction(this PlayerControl player, bool bypass = false)
+    public static void ReviveSync(this PlayerControl player, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
         {
@@ -212,7 +236,7 @@ static class ActionRPCs
     private static bool CheckReviveAction(PlayerControl player) => player != null && ValidateSenderCheck(player);
 
     // Make a player start meeting
-    public static void ReportBodyAction(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool bypass = false)
+    public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool bypass = false)
     {
         var isButton = bodyInfo == null;
 
@@ -283,7 +307,7 @@ static class ActionRPCs
     }
 
     // Resync after ability duration
-    public static void ResetAbilityStateAction(this PlayerControl player, int id, bool bypass = false)
+    public static void ResetAbilityStateSync(this PlayerControl player, int id, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
         {

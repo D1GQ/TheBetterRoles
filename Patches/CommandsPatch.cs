@@ -85,7 +85,7 @@ class CommandsPatch
             case "test":
                 foreach (var item in Main.AllPlayerControls)
                 {
-                    item.SetCustomRole(CustomRoles.Swooper);
+                    item.SetRoleSync(CustomRoles.Swooper);
                 }
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):

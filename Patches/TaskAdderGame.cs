@@ -34,20 +34,21 @@ class TaskAdderGamePatch
             taskAddButton.Button.OnClick.AddListener((Action)(() =>
             {
                 var player = PlayerControl.LocalPlayer;
+
                 player.Revive();
                 if (roleBehaviour.RoleTeam != CustomRoleTeam.None)
                 {
-                    player.SetCustomRole(roleBehaviour.RoleType);
+                    CustomRoleManager.SetCustomRole(player, roleBehaviour.RoleType);
                 }
                 else
                 {
                     if (!player.BetterData().RoleInfo.Addons.Contains(roleBehaviour))
                     {
-                        player.AddAddon(roleBehaviour.RoleType);
+                        CustomRoleManager.AddAddon(player, roleBehaviour.RoleType);
                     }
                     else
                     {
-                        player.RemoveAddon(roleBehaviour.RoleType);
+                        CustomRoleManager.RemoveAddon(player, roleBehaviour.RoleType);
                     }
                 }
 

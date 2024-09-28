@@ -23,7 +23,6 @@ public class HudManagerPatch
     public static void Start_Postfix(HudManager __instance)
     {
         // Set up buttons
-        AbilityButton.AllButtons.Clear();
         GameObject leftButton = UnityEngine.Object.Instantiate(__instance.UseButton.gameObject.transform.parent.gameObject, __instance.UseButton.gameObject.transform.parent.transform.parent);
         ButtonsRight = __instance.UseButton.gameObject.transform.parent.gameObject;
         ButtonsLeft = leftButton;
