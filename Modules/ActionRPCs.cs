@@ -205,7 +205,7 @@ static class ActionRPCs
             }
         }
 
-        if (playerRoleInfo.RoleAssigned && (target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
+        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;

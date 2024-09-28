@@ -1,6 +1,7 @@
 ﻿
 using TheBetterRoles.Patches;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -65,7 +66,7 @@ public class SheriffRole : CustomRoleBehavior
             target.Is(CustomRoleTeam.Neutral) && CanShootNeutrals.GetBool() ||
             Misfire.GetValue() == 1)
         {
-            _player.MurderSync(target);
+            _player.MurderPlayer(target, MurderResultFlags.Succeeded);
         }
         else if (Misfire.GetValue() == 0)
         {
