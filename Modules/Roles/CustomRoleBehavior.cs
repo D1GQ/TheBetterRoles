@@ -11,6 +11,7 @@ public enum TargetType
 {
     None,
     Player,
+    Body,
     Vent
 }
 
@@ -33,6 +34,7 @@ public abstract class CustomRoleBehavior
     public TargetButton? KillButton { get; set; }
     public SabotageButton? SabotageButton { get; set; }
     public VentButton? VentButton { get; set; }
+    public virtual bool HasTask => RoleTeam == CustomRoleTeam.Cremate;
     public virtual bool CanKill => false;
     public virtual bool CanVent => false;
     public virtual bool CanMoveInVent => true;
@@ -96,7 +98,7 @@ public abstract class CustomRoleBehavior
                 var con1 = console.gameObject.GetComponent<Collider2D>();
                 if (con1 != null)
                 {
-                    con1.enabled = RoleTeam == CustomRoleTeam.Cremate;
+                    con1.enabled = HasTask;
                 }
             }
         }
@@ -120,7 +122,8 @@ public abstract class CustomRoleBehavior
         if (GameStates.IsHost)
         {
             if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null) == true)
+                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
             {
                 UseAbility(id, targetId, type);
             }
@@ -142,7 +145,8 @@ public abstract class CustomRoleBehavior
         if (GameStates.IsHost)
         {
             OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null);
+                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null);
             SetCooldownAndUse(id);
 
             var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
@@ -178,7 +182,8 @@ public abstract class CustomRoleBehavior
                         var type = (TargetType)reader.ReadInt32();
 
                         if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null) == true)
+                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
                         {
                             UseAbility(id, targetId, type);
                         }
@@ -195,7 +200,8 @@ public abstract class CustomRoleBehavior
                         var type = (TargetType)reader.ReadInt32();
 
                         OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null);
+                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null);
                         SetCooldownAndUse(id);
                     }
                 }
@@ -203,7 +209,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public virtual void OnAbilityUse(int id, PlayerControl? target, Vent? vent)
+    public virtual void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -236,7 +242,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public virtual bool CheckRoleAction(int id, PlayerControl? target, Vent? vent)
+    public virtual bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {

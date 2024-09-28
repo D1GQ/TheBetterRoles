@@ -185,9 +185,9 @@ public class VentButton : BaseButton
 
         if (lastTargetVent != null)
         {
-            lastTargetVent.SetVentOutline(Color.white, false, false);
+            lastTargetVent.SetOutline(Color.white, false, false);
         }
-        targetVent.SetVentOutline(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)), ventFlag1, ventFlag2);
+        targetVent.SetOutline(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)), ventFlag1, ventFlag2);
 
         if (Visible)
         {

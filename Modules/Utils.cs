@@ -87,12 +87,23 @@ public static class Utils
                 or SystemTypes.Electrical;
 
     // Set Out line on vent
-    public static void SetVentOutline(this Vent vent, Color color, bool showOutline, bool showMain)
+    public static void SetOutline(this Vent vent, Color color, bool showOutline, bool showMain)
     {
         if (vent == null) return;
         vent.myRend.material.SetFloat("_Outline", (showOutline ? 1 : 0));
         vent.myRend.material.SetColor("_OutlineColor", color);
         vent.myRend.material.SetColor("_AddColor", showMain ? color : Color.clear);
+    }
+
+    public static void SetOutline(this DeadBody body, bool show, Color color)
+    {
+        if (body == null) return;
+        foreach (var sprite in body.bodyRenderers)
+        {
+            sprite.material.SetFloat("_Outline", (show ? 1 : 0));
+            sprite.material.SetColor("_OutlineColor", color);
+            sprite.material.SetColor("_AddColor", show ? color : Color.clear);
+        }
     }
     // Get players HashPuid
     public static string GetHashPuid(PlayerControl player)

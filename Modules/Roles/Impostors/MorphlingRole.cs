@@ -58,7 +58,7 @@ public class MorphlingRole : CustomRoleBehavior
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent)
+    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -79,7 +79,7 @@ public class MorphlingRole : CustomRoleBehavior
                 break;
         }
 
-        base.OnAbilityUse(id, target, vent);
+        base.OnAbilityUse(id, target, vent, body);
     }
 
     public override void OnAbilityDurationEnd(int id)

@@ -45,7 +45,7 @@ public class SheriffRole : CustomRoleBehavior
         AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, this, true, ShootDistance.GetValue() + 1 / 1.5f));
     }
 
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent)
+    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -56,7 +56,7 @@ public class SheriffRole : CustomRoleBehavior
                 break;
         }
 
-        base.OnAbilityUse(id, target, vent);
+        base.OnAbilityUse(id, target, vent, body);
     }
 
     public void ShotTarget(PlayerControl target)
