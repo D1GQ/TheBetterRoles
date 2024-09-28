@@ -34,7 +34,8 @@ public abstract class CustomRoleBehavior
     public TargetButton? KillButton { get; set; }
     public SabotageButton? SabotageButton { get; set; }
     public VentButton? VentButton { get; set; }
-    public virtual bool HasTask => RoleTeam == CustomRoleTeam.Cremate;
+    public List<PlayerControl> RecruitedPlayers { get; set; } = [];
+    public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
     public virtual bool CanKill => false;
     public virtual bool CanVent => false;
     public virtual bool CanMoveInVent => true;
@@ -71,6 +72,8 @@ public abstract class CustomRoleBehavior
             }
         }
     }
+
+    public virtual bool WinCondition() => false;
 
     public virtual void OnDeinitialize() { }
 

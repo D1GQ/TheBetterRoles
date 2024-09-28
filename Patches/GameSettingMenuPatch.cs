@@ -77,12 +77,12 @@ static class GameSettingMenuPatch
             new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Chaos", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Chaos },
             new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Ghost", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Ghost },
 
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Vanilla", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Vanilla },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Benign", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Benign },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Killing },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Support", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Support },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Chaos", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Chaos },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Ghost", Team = CustomRoleTeam.Cremate, Category = CustomRoleCategory.Ghost },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Vanilla", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Benign", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Support", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Chaos", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Ghost", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Ghost },
 
             new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Benign", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Benign },
             new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Killing", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Killing },

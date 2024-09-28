@@ -40,7 +40,25 @@ static class ActionRPCs
         // If the player is provided, is the same as SenderPlayer, and the game is in host state, validation passes
         || player != null && player == SenderPlayer && GameStates.IsHost;
 
-    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost;
+    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost || GameStates.IsHost;
+
+    public static void EndGameSync(List<NetworkedPlayerInfo> winners)
+    {
+        if (ValidateHostCheck())
+        {
+            CustomGameManager.EndGame(winners);
+
+            if (!GameStates.IsHost) return;
+
+            var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.EndGame);
+            writer.Write((byte)winners.Count);
+            foreach (NetworkedPlayerInfo other in winners)
+            {
+                writer.WriteNetObject(other);
+            }
+            AmongUsClient.Instance.EndActionRpc(writer);
+        }
+    }
 
     // Set player role
     public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool bypass = false)

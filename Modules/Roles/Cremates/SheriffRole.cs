@@ -12,7 +12,7 @@ public class SheriffRole : CustomRoleBehavior
     public override string RoleColor => "#feab00";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Sheriff;
-    public override CustomRoleTeam RoleTeam => CustomRoleTeam.Cremate;
+    public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 

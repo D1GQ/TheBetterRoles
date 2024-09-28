@@ -116,7 +116,7 @@ public enum CustomRoles
 
 public enum CustomRoleTeam
 {
-    Cremate,
+    Crewmate,
     Impostor,
     Neutral,
     None

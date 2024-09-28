@@ -48,7 +48,7 @@ public class VentButton : BaseButton
                     case CustomRoleTeam.Impostor:
                         ActionButton.graphic.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Vent-1.png", 100f);
                         break;
-                    case CustomRoleTeam.Cremate:
+                    case CustomRoleTeam.Crewmate:
                         ActionButton.graphic.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Vent-2.png", 100f);
                         break;
                     case CustomRoleTeam.Neutral:

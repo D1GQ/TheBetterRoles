@@ -147,7 +147,7 @@ public static class Utils
     {
         switch (roleTeam)
         {
-            case CustomRoleTeam.Cremate:
+            case CustomRoleTeam.Crewmate:
                 return "#8cffff";
             case CustomRoleTeam.Impostor:
                 return "#f00202";

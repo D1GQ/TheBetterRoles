@@ -144,6 +144,18 @@ internal static class RPC
 
         switch ((RpcAction)action)
         {
+            case RpcAction.EndGame:
+                {
+                    List<NetworkedPlayerInfo> winners = [];
+                    byte winnersAmount = reader.ReadByte();
+                    for (int i = 0; i < winnersAmount; i++)
+                    {
+                        winners.Add(reader.ReadNetObject<NetworkedPlayerInfo>());
+                    }
+
+                    ActionRPCs.EndGameSync(winners);
+                }
+                break;
             case RpcAction.ResetAbilityState:
                 {
                     var id = reader.ReadInt32();
