@@ -62,13 +62,28 @@ static class ActionRPCs
     }
 
     // Set player role
-    public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool bypass = false)
+    public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool IsAddon = false, bool RemoveAddon = false, bool bypass = false)
     {
         if (GameStates.IsHost || bypass)
         {
             if (CheckSetRoleAction(player, role) == true || bypass)
             {
-                CustomRoleManager.SetCustomRole(player, role);
+                if (!IsAddon)
+                {
+                    CustomRoleManager.SetCustomRole(player, role);
+                }
+                else
+                {
+                    if (!RemoveAddon)
+                    {
+                        CustomRoleManager.AddAddon(player, role);
+                    }
+                    else
+                    {
+                        CustomRoleManager.RemoveAddon(player, role);
+                    }
+                }
+
                 if (bypass) return;
             }
             else
@@ -79,6 +94,8 @@ static class ActionRPCs
 
         var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.SetRole, player);
         writer.Write((int)role);
+        writer.Write(IsAddon);
+        writer.Write(RemoveAddon);
         AmongUsClient.Instance.EndActionRpc(writer);
     }
 

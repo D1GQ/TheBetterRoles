@@ -24,7 +24,8 @@ class TaskAdderGamePatch
 
             TaskAddButton taskAddButton = UnityEngine.Object.Instantiate<TaskAddButton>(__instance.RoleButton);
             taskAddButton.SafePositionWorld = __instance.SafePositionWorld;
-            taskAddButton.Text.text = "Be_" + roleBehaviour.RoleName + ".exe";
+            if (!roleBehaviour.IsAddon) taskAddButton.Text.text = "Be_" + roleBehaviour.RoleName + ".exe";
+            else taskAddButton.Text.text = "Add/Remove_" + roleBehaviour.RoleName + "_Addon.exe";
             __instance.AddFileAsChild(__instance.Root, taskAddButton, ref num, ref num2, ref num3);
 
             taskAddButton.FileImage.color =Utils.GetCustomRoleColor(roleBehaviour.RoleType);
@@ -36,7 +37,7 @@ class TaskAdderGamePatch
                 var player = PlayerControl.LocalPlayer;
 
                 player.Revive();
-                if (roleBehaviour.RoleTeam != CustomRoleTeam.None)
+                if (!roleBehaviour.IsAddon)
                 {
                     CustomRoleManager.SetCustomRole(player, roleBehaviour.RoleType);
                 }

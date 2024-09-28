@@ -21,7 +21,7 @@ public abstract class CustomRoleBehavior
     public NetworkedPlayerInfo? _data;
     public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
     public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
-    public int RoleId => Utils.GetRoleId(RoleType);
+    public int RoleId => 100000 + 200 * (int)RoleType;
     public abstract bool IsAddon { get; }
     public abstract CustomRoleBehavior Role { get; }
     public abstract CustomRoles RoleType { get; }

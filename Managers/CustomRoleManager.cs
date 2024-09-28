@@ -75,19 +75,20 @@ public static class CustomRoleManager
 
         if (roleClass != null)
         {
-            if (roleClass.RoleTeam == CustomRoleTeam.None && !player.BetterData().RoleInfo.Addons.Contains(roleClass))
+            if (roleClass.IsAddon && !player.BetterData().RoleInfo.Addons.Contains(roleClass))
             {
                 CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
                 newRole?.Initialize(player);
             }
         }
     }
+
     public static void RemoveAddon(PlayerControl player, CustomRoles role)
     {
         if (player == null || player.isDummy) return;
 
         CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
-        if (roleClass.RoleTeam == CustomRoleTeam.None)
+        if (roleClass.IsAddon)
         {
             CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
             newRole?.Initialize(player);
