@@ -52,7 +52,7 @@ public class SheriffRole : CustomRoleBehavior
         {
             case 5:
                 {
-                    ShotTarget(target);
+                    ShootTarget(target);
                 }
                 break;
         }
@@ -60,17 +60,23 @@ public class SheriffRole : CustomRoleBehavior
         base.OnAbilityUse(id, target, vent, body);
     }
 
-    public void ShotTarget(PlayerControl target)
+    public void ShootTarget(PlayerControl target)
     {
         if (target.Is(CustomRoleTeam.Impostor) && CanShootImposters.GetBool() ||
             target.Is(CustomRoleTeam.Neutral) && CanShootNeutrals.GetBool() ||
             Misfire.GetValue() == 1)
         {
-            _player.MurderPlayer(target, MurderResultFlags.Succeeded);
+            if (_player.IsLocalPlayer())
+            {
+                _player.MurderSync(target, true);
+            }
         }
         else if (Misfire.GetValue() == 0)
         {
-            _player.MurderPlayer(_player, MurderResultFlags.Succeeded);
+            if (_player.IsLocalPlayer())
+            {
+                _player.MurderSync(target, true);
+            }
         }
     }
 }
