@@ -95,12 +95,12 @@ class GamePlayManager
         [HarmonyPrefix]
         private static void Update_Prefix(GameStartManager __instance)
         {
+            __instance.MinPlayers = 0;
+
             lobbyTimer = Mathf.Max(0f, lobbyTimer -= Time.deltaTime);
             int minutes = (int)lobbyTimer / 60;
             int seconds = (int)lobbyTimer % 60;
             lobbyTimerDisplay = $"{minutes:00}:{seconds:00}";
-
-            __instance.MinPlayers = 1;
         }
         [HarmonyPatch(nameof(GameStartManager.Update))]
         [HarmonyPostfix]
@@ -311,11 +311,6 @@ class GamePlayManager
         {
             __instance.FrontMost.gameObject.SetActive(false);
             __instance.Navigation.ShowDefaultNavigation();
-            if (!GameStates.IsLocalGame)
-            {
-                __instance.Navigation.ShowNavigationToProgressionScreen();
-                __instance.Navigation.ContinueButton.transform.Find("ContinueButton").position -= new Vector3(0.5f, 0.2f, 0f);
-            }
 
             return false;
         }

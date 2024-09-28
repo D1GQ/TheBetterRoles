@@ -83,10 +83,7 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
-                foreach (var item in Main.AllPlayerControls)
-                {
-                    item.SetRoleSync(CustomRoles.Swooper);
-                }
+                PlayerControl.LocalPlayer.SetRoleSync(CustomRoles.Janitor);
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(
@@ -152,7 +149,7 @@ class CommandsPatch
                 }
 
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                string logFolderPath = Path.Combine(desktopPath, "BetterAmongUsLog");
+                string logFolderPath = Path.Combine(desktopPath, "TheBetterRolesLog");
                 if (!Directory.Exists(logFolderPath))
                 {
                     Directory.CreateDirectory(logFolderPath);

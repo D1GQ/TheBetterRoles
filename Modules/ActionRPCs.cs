@@ -42,15 +42,16 @@ static class ActionRPCs
 
     private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost || GameStates.IsHost;
 
-    public static void EndGameSync(List<NetworkedPlayerInfo> winners)
+    public static void EndGameSync(List<NetworkedPlayerInfo> winners, EndGameReason reason)
     {
         if (ValidateHostCheck())
         {
-            CustomGameManager.EndGame(winners);
+            CustomGameManager.EndGame(winners, reason);
 
             if (!GameStates.IsHost) return;
 
             var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.EndGame);
+            writer.Write((byte)reason);
             writer.Write((byte)winners.Count);
             foreach (NetworkedPlayerInfo other in winners)
             {
