@@ -42,6 +42,7 @@ static class ActionRPCs
 
     private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost || GameStates.IsHost;
 
+    // Needs to be fixed, clients do not receive the RPC
     public static void EndGameSync(List<NetworkedPlayerInfo> winners, EndGameReason reason)
     {
         if (ValidateHostCheck())

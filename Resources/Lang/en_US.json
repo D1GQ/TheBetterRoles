@@ -14,6 +14,11 @@
   "Timer": "Timer",
   "SystemMessage": "System Message",
 
+  "Role.Team.Impostor": "Impostor",
+  "Role.Team.Crewmate": "Crewmate",
+  "Role.Team.Neutral": "Neutral",
+  "Role.Team.None": "None",
+
   "Role.Ability.Kill": "Kill",
   "Role.Ability.Sabotage": "Sabotage",
   "Role.Ability.Vent": "Vent",

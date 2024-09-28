@@ -34,35 +34,6 @@ class GamePlayManager
         }
     }
 
-    [HarmonyPatch(typeof(IntroCutscene))]
-    public class IntroCutscenePatch
-    {
-        [HarmonyPatch(nameof(IntroCutscene.ShowRole))]
-        [HarmonyPostfix]
-        private static void ShowRole_Postfix(IntroCutscene __instance)
-        {
-            try
-            {
-                _ = new LateTask(() =>
-                {
-                    Color RoleColor = PlayerControl.LocalPlayer.GetRoleColor();
-
-                    __instance.RoleText.text = PlayerControl.LocalPlayer.GetRoleName();
-                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
-                    __instance.ImpostorText.gameObject.SetActive(false);
-                    __instance.TeamTitle.gameObject.SetActive(false);
-                    __instance.BackgroundBar.material.color = RoleColor;
-                    __instance.BackgroundBar.transform.SetLocalZ(-15);
-                    __instance.transform.Find("BackgroundLayer").transform.SetLocalZ(-16);
-                    __instance.YouAreText.color = RoleColor;
-                    __instance.RoleText.color = RoleColor;
-                    __instance.RoleBlurbText.color = RoleColor;
-                }, 0.0025f, shoudLog: false);
-            }
-            catch { }
-        }
-    }
-
     [HarmonyPatch(typeof(GameManager))]
     public class GameManagerPatch
     {

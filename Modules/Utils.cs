@@ -158,6 +158,18 @@ public static class Utils
                 return "#ffffff";
         }
     }
+    public static string GetCustomRoleTeamName(CustomRoleTeam roleTeam) => Translator.GetString($"Role.Team.{Enum.GetName(roleTeam)}");
+    public static string GetCustomRoleInfo(CustomRoles role, bool longInfo = false)
+    {
+        if (!longInfo)
+        {
+            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), role)}.Info");
+        }
+        else
+        {
+            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), role)}.LongInfo");
+        }
+    }
     // Remove Html Tags Template
     public static string RemoveHtmlTagsTemplate(string str) => Regex.Replace(str, "", "");
     // Get raw text

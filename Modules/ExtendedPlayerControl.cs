@@ -41,24 +41,9 @@ static class ExtendedPlayerControl
     public static string GetRoleName(this PlayerControl player) => Utils.GetCustomRoleName(player.BetterData().RoleInfo.RoleType);
     public static Color GetRoleColor(this PlayerControl player) => Utils.GetCustomRoleColor(player.BetterData().RoleInfo.RoleType);
     public static string GetRoleColorHex(this PlayerControl player) => Utils.GetCustomRoleColorHex(player.BetterData().RoleInfo.RoleType);
-    public static string GetRoleInfo(this PlayerControl player, bool longInfo = false)
-    {
-        if (player?.BetterData()?.RoleInfo?.Role?.RoleType != null)
-        {
-            if (!longInfo)
-            {
-                return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), player.BetterData().RoleInfo.Role.RoleType)}.Info");
-            }
-            else
-            {
-                return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), player.BetterData().RoleInfo.Role.RoleType)}.LongInfo");
-            }
-        }
-        else
-        {
-            return Translator.GetString($"Role.None.Info");
-        }
-    }
+    public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.BetterData().RoleInfo.RoleType, longInfo);
+    public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.BetterData().RoleInfo.Role.RoleTeam);
+
     // Set players over head text
     public static void SetPlayerTextInfo(this PlayerControl player, string text, bool isBottom = false, bool isInfo = false)
     {
@@ -232,6 +217,7 @@ static class ExtendedPlayerControl
     public static bool RoleAssigned(this PlayerControl player) => player?.BetterData()?.RoleInfo?.RoleAssigned == true;
     // Get hex color for team
     public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam);
+    public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam));
 
     // Check if player is role type
     public static bool Is(this PlayerControl player, RoleTypes role) => player?.Data?.RoleType == role;
@@ -249,7 +235,7 @@ static class ExtendedPlayerControl
     // Check if player is same team
     public static bool IsTeammate(this PlayerControl player) =>
         player != null && PlayerControl.LocalPlayer != null &&
-        (player.IsLocalPlayer() || player.Is(PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.RoleTeam));
+        (player.IsLocalPlayer() || player.Is(PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.RoleTeam) && !PlayerControl.LocalPlayer.Is(CustomRoleTeam.Neutral));
     // Check if player is the host
     public static bool IsHost(this PlayerControl player) => player?.Data != null && GameData.Instance?.GetHost() == player.Data;
 

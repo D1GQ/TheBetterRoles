@@ -1,12 +1,16 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
 using HarmonyLib;
+using Hazel;
+using InnerNet;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Sentry.MeasurementUnit;
 
 namespace TheBetterRoles;
 
@@ -33,6 +37,103 @@ public class CustomGameManager
         }
     }
 
+    [HarmonyPatch(typeof(IntroCutscene))]
+    public class IntroCutscenePatch
+    {
+        [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate))]
+        [HarmonyPrefix]
+        private static bool BeginCrewmate_Prefix(IntroCutscene __instance)
+        {
+            List<PlayerControl> teamToShow = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) ? Main.AllPlayerControls.ToList() : Main.AllPlayerControls.Where(p => p.IsTeammate()).ToList();
+
+            Begin(__instance, teamToShow);
+
+            return false;
+        }
+
+        [HarmonyPatch(nameof(IntroCutscene.BeginImpostor))]
+        [HarmonyPrefix]
+        private static bool BeginImpostor_Prefix(IntroCutscene __instance)
+        {
+            List<PlayerControl> teamToShow = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) ? Main.AllPlayerControls.ToList() : Main.AllPlayerControls.Where(p => p.IsTeammate()).ToList();
+
+            Begin(__instance, teamToShow);
+
+            return false;
+        }
+
+        public static void Begin(IntroCutscene introCutscene, List<PlayerControl> teamToDisplay)
+        {
+            HudManager.Instance?.GameLoadAnimation?.gameObject?.SetActive(false);
+
+            Vector3 position = introCutscene.BackgroundBar.transform.position;
+            position.y -= 0.25f;
+            introCutscene.BackgroundBar.transform.position = position;
+            introCutscene.BackgroundBar.material.SetColor("_Color", PlayerControl.LocalPlayer.GetTeamColor());
+            UnityEngine.Object.Destroy(introCutscene.TeamTitle.gameObject.GetComponent<TextTranslatorTMP>());
+            introCutscene.TeamTitle.text = PlayerControl.LocalPlayer.GetRoleTeamName();
+            introCutscene.TeamTitle.color = PlayerControl.LocalPlayer.GetRoleColor();
+            var flag = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate);
+            introCutscene.ImpostorText.gameObject.SetActive(flag);
+            if (flag)
+            {
+                int Imps = Main.AllPlayerControls.Where(p => p.Is(CustomRoleTeam.Impostor)).Count();
+                UnityEngine.Object.Destroy(introCutscene.ImpostorText.gameObject.GetComponent<TextTranslatorTMP>());
+                if (Imps == 1)
+                {
+                    introCutscene.ImpostorText.text = Translator.GetString(StringNames.NumImpostorsS);
+                }
+                else
+                {
+                    introCutscene.ImpostorText.text = string.Format(Translator.GetString(StringNames.NumImpostorsP), Imps);
+                }
+            }
+            int maxDepth = Mathf.CeilToInt(7.5f);
+            for (int i = 0; i < teamToDisplay.Count; i++)
+            {
+                PlayerControl playerControl = teamToDisplay[i];
+                if (playerControl)
+                {
+                    NetworkedPlayerInfo data = playerControl.Data;
+                    if (!(data == null))
+                    {
+                        PoolablePlayer poolablePlayer = introCutscene.CreatePlayer(i, maxDepth, data, false);
+                        if (i == 0 && data.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                        {
+                            introCutscene.ourCrewmate = poolablePlayer;
+                        }
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(nameof(IntroCutscene.ShowRole))]
+        [HarmonyPostfix]
+        private static void ShowRole_Postfix(IntroCutscene __instance)
+        {
+            try
+            {
+                _ = new LateTask(() =>
+                {
+                    SoundManager.Instance.StopAllSound();
+                    Color RoleColor = PlayerControl.LocalPlayer.GetRoleColor();
+
+                    __instance.RoleText.text = PlayerControl.LocalPlayer.GetRoleName();
+                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+                    __instance.ImpostorText.gameObject.SetActive(false);
+                    __instance.TeamTitle.gameObject.SetActive(false);
+                    __instance.BackgroundBar.material.color = RoleColor;
+                    __instance.BackgroundBar.transform.SetLocalZ(-15);
+                    __instance.transform.Find("BackgroundLayer").transform.SetLocalZ(-16);
+                    __instance.YouAreText.color = RoleColor;
+                    __instance.RoleText.color = RoleColor;
+                    __instance.RoleBlurbText.color = RoleColor;
+                }, 0.0025f, shoudLog: false);
+            }
+            catch { }
+        }
+    }
+
     [HarmonyPatch(typeof(EndGameManager))]
     public class EndGameManagerPatch
     {
@@ -41,13 +142,19 @@ public class CustomGameManager
         public static bool SetEverythingUp_Prefix(EndGameManager __instance)
         {
             List<NetworkedPlayerInfo> players = winners;
-            var first = winners.First();
-            var role = first.BetterData().RoleInfo.RoleType;
-            var team = first.BetterData().RoleInfo.Role.RoleTeam;
-            var teamColor = Utils.GetCustomRoleColor(first.BetterData().RoleInfo.RoleType);
+            var anyFlag = players.Any();
+            NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
+            var role = first?.BetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
+            var team = first?.BetterData()?.RoleInfo?.Role?.RoleTeam ?? CustomRoleTeam.None;
+            var teamColor = anyFlag ? Utils.GetCustomRoleColor(first.BetterData().RoleInfo.RoleType) : Color.red;
+
             bool flag = winners.Any(data => data.Object == PlayerControl.LocalPlayer);
 
-            if (flag)
+            if (!anyFlag)
+            {
+                SoundManager.Instance.PlaySound(__instance.DisconnectStinger, false);
+            }
+            else if (flag)
             {
                 SoundManager.Instance.PlaySound(__instance.CrewStinger, false);
             }
@@ -55,6 +162,10 @@ public class CustomGameManager
             {
                 SoundManager.Instance.PlaySound(__instance.ImpostorStinger, false);
             }
+
+            __instance.WinText.alignment = TMPro.TextAlignmentOptions.Right;
+            __instance.WinText.color = teamColor;
+            __instance.BackgroundBar.material.SetColor("_Color", teamColor);
 
             switch (team)
             {
@@ -74,11 +185,11 @@ public class CustomGameManager
 
                     }
                     break;
+                default:
+                    __instance.WinText.text = $"Error Occurred";
+                    __instance.WinText.color = Color.red;
+                    break;
             }
-
-            __instance.WinText.alignment = TMPro.TextAlignmentOptions.Right;
-            __instance.WinText.color = teamColor;
-            __instance.BackgroundBar.material.SetColor("_Color", teamColor);
 
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
@@ -115,7 +226,22 @@ public class CustomGameManager
                 }
             }
 
+            winners.Clear();
+
             return false;
+        }
+    }
+
+    // Ignore original endgame RPC
+    [HarmonyPatch(typeof(InnerNetClient))]
+    public class InnerNetClientPatch
+    {
+        [HarmonyPatch(nameof(InnerNetClient.HandleMessage))]
+        [HarmonyPrefix]
+        public static bool HandleMessage_Prefix(InnerNetClient __instance, [HarmonyArgument(0)] MessageReader reader)
+        {
+            byte tag = reader.Tag;
+            return tag != 8;
         }
     }
 
@@ -128,8 +254,29 @@ public class CustomGameManager
     {
         winners = Winners;
         winReason = reason;
+
         PlayerControl.LocalPlayer.StartCoroutine(AmongUsClient.Instance.CoEndGame());
         AmongUsClient.Instance.GameState = InnerNet.InnerNetClient.GameStates.Ended;
+
+        AmongUsClient.Instance.GameState = InnerNetClient.GameStates.Ended;
+        List<ClientData> obj2 = AmongUsClient.Instance.allClients.ToArray().ToList();
+        lock (obj2)
+        {
+            AmongUsClient.Instance.allClients.Clear();
+        }
+
+        /*
+        EndGameResult endGameResult = new EndGameResult(GameOverReason.HumansDisconnect, false);
+        var obj = AmongUsClient.Instance.Dispatcher;
+        lock (obj)
+        {
+            AmongUsClient.Instance.Dispatcher.Add((Action)(() =>
+            {
+                AmongUsClient.Instance.OnGameEnd(endGameResult);
+            }));
+        }
+        */
+
         if (GameStates.IsHost)
         {
             GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
