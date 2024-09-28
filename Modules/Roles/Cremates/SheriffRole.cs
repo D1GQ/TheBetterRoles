@@ -75,7 +75,7 @@ public class SheriffRole : CustomRoleBehavior
         {
             if (_player.IsLocalPlayer())
             {
-                _player.MurderSync(target, true);
+                _player.MurderSync(_player, true);
             }
         }
     }
