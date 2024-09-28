@@ -140,6 +140,7 @@ public static class Utils
             return $"<size=150%>★ <color={GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
         }
     }
+    public static int GetRoleId(CustomRoles role) => 100000 + 100 * (int)role;
     public static string GetCustomRoleName(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleName;
     public static string GetCustomRoleColorHex(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor;
     public static Color GetCustomRoleColor(CustomRoles role) => HexToColor32(CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor);

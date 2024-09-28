@@ -21,7 +21,8 @@ public abstract class CustomRoleBehavior
     public NetworkedPlayerInfo? _data;
     public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
     public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
-    public abstract int RoleId { get; }
+    public int RoleId => Utils.GetRoleId(RoleType);
+    public abstract bool IsAddon { get; }
     public abstract CustomRoleBehavior Role { get; }
     public abstract CustomRoles RoleType { get; }
     public abstract CustomRoleTeam RoleTeam { get; }
@@ -51,9 +52,20 @@ public abstract class CustomRoleBehavior
         {
             _player = player;
             _data = player.Data;
-            player.BetterData().RoleInfo.Role = this;
-            player.BetterData().RoleInfo.RoleType = RoleType;
-            SetUpRole();
+            if (!IsAddon)
+            {
+                player.BetterData().RoleInfo.Role = this;
+                player.BetterData().RoleInfo.RoleType = RoleType;
+                SetUpRole();
+            }
+            else
+            {
+                if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == RoleType))
+                {
+                    player.BetterData().RoleInfo.Addons.Add(this);
+                    SetUpRole();
+                }
+            }
         }
     }
     
@@ -82,6 +94,8 @@ public abstract class CustomRoleBehavior
     // Run base if override
     public virtual void SetUpRole()
     {
+        if (IsAddon) return;
+
         SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
         SabotageButton.VisibleCondition = () => { return VentButton.Role.CanSabotage; };
 

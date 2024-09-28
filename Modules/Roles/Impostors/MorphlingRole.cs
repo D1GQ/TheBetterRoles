@@ -6,7 +6,7 @@ namespace TheBetterRoles;
 public class MorphlingRole : CustomRoleBehavior
 {
     // Role Info
-    public override int RoleId => 400;
+    public override bool IsAddon => false;
     public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Morphling;

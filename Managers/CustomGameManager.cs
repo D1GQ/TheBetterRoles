@@ -59,13 +59,20 @@ public class CustomGameManager
             switch (team)
             {
                 case CustomRoleTeam.Impostor:
-                    __instance.WinText.text = "Impostors\nWin";
+                    __instance.WinText.text = "Impostors\n<size=75%>Win";
                     break;
                 case CustomRoleTeam.Crewmate:
-                    __instance.WinText.text = "Crewmates\nWin";
+                    __instance.WinText.text = "Crewmates\n<size=75%>Win";
                     break;
                 case CustomRoleTeam.Neutral:
-                    __instance.WinText.text = $"{Utils.GetCustomRoleName(role)}\nWin";
+                    if (players.Count <= 1)
+                    {
+                        __instance.WinText.text = $"{Utils.GetCustomRoleName(role)}\n<size=75%>Win";
+                    }
+                    else
+                    {
+
+                    }
                     break;
             }
 

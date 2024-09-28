@@ -77,14 +77,8 @@ public static class CustomRoleManager
         {
             if (roleClass.RoleTeam == CustomRoleTeam.None && !player.BetterData().RoleInfo.Addons.Contains(roleClass))
             {
-                CustomRoleBehavior newRoleInstance = (CustomRoleBehavior)Activator.CreateInstance(roleClass.GetType());
-                newRoleInstance._player = player;
-                newRoleInstance._data = player.Data;
-                if (player.IsLocalPlayer())
-                {
-                    newRoleInstance.SetUpRole();
-                }
-                player.BetterData().RoleInfo.Addons.Add(newRoleInstance);
+                CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
+                newRole?.Initialize(player);
             }
         }
     }
@@ -95,11 +89,8 @@ public static class CustomRoleManager
         CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
         if (roleClass.RoleTeam == CustomRoleTeam.None)
         {
-            var addon = player.BetterData().RoleInfo.Addons.FirstOrDefault(addon => addon.GetType() == roleClass.GetType());
-            if (addon != null)
-            {
-                addon.Deinitialize();
-            }
+            CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
+            newRole?.Initialize(player);
         }
     }
 }
