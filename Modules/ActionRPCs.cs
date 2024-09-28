@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Epic.OnlineServices.Mods;
+using HarmonyLib;
 using InnerNet;
 using Microsoft.Extensions.Logging;
 
@@ -328,4 +329,32 @@ static class ActionRPCs
     }
 
     private static bool CheckResetAbilityStateAction(PlayerControl player, int id) => true;
+
+    // Sync when player is pressed, for certain roles
+    public static void PlayerPressSync(this PlayerControl player, PlayerControl target, bool bypass = false)
+    {
+        if (GameStates.IsHost || bypass)
+        {
+            if (CheckPlayerPressAction(player, target) == true || bypass)
+            {
+                // Run after checks for roles
+                Main.AllPlayerControls.FirstOrDefault(pc => pc == target && pc.RoleAssigned()).BetterData().RoleInfo.Role.OnPlayerPress(player, target);
+
+                Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
+                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnPlayerPressOther(player, target));
+
+                if (bypass) return;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.PlayerPress, player);
+        writer.WriteNetObject(target);
+        AmongUsClient.Instance.EndActionRpc(writer);
+    }
+
+    private static bool CheckPlayerPressAction(PlayerControl player, PlayerControl target) => true;
 }

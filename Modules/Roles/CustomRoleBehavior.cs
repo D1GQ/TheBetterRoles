@@ -308,6 +308,6 @@ public abstract class CustomRoleBehavior
     public virtual void OnVentOther(PlayerControl venter, int ventId, bool Exit) { }
     public virtual void OnVent(PlayerControl venter, int ventId, bool Exit) { }
 
-    public virtual void OnPlayerPressOther(PlayerControl player) { }
-    public virtual void OnPlayerPress(PlayerControl player) { }
+    public virtual void OnPlayerPressOther(PlayerControl player, PlayerControl target) { }
+    public virtual void OnPlayerPress(PlayerControl player, PlayerControl target) { }
 }

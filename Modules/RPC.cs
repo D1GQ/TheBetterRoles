@@ -13,7 +13,8 @@ public enum RpcAction : int
     Vent,
     BootVent,
     Revive,
-    Murder
+    Murder,
+    PlayerPress
 }
 
 public enum CustomRPC : int
@@ -180,6 +181,15 @@ internal static class RPC
                     if (target != null)
                     {
                         player.MurderSync(target, isAbility, hostFlag);
+                    }
+                }
+                break;
+            case RpcAction.PlayerPress:
+                {
+                    var target = reader.ReadNetObject<PlayerControl>();
+                    if (target != null)
+                    {
+                        player.PlayerPressSync(target, hostFlag);
                     }
                 }
                 break;
