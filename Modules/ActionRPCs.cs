@@ -40,25 +40,26 @@ static class ActionRPCs
         // If the player is provided, is the same as SenderPlayer, and the game is in host state, validation passes
         || player != null && player == SenderPlayer && GameStates.IsHost;
 
-    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost || GameStates.IsHost;
+    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer || GameStates.IsHost;
 
     // Needs to be fixed, clients do not receive the RPC
-    public static void EndGameSync(List<NetworkedPlayerInfo> winners, EndGameReason reason)
+    public static void EndGameSync(List<byte> winners, EndGameReason reason)
     {
         if (ValidateHostCheck())
         {
-            CustomGameManager.EndGame(winners, reason);
-
-            if (!GameStates.IsHost) return;
-
-            var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.EndGame);
-            writer.Write((byte)reason);
-            writer.Write((byte)winners.Count);
-            foreach (NetworkedPlayerInfo other in winners)
+            if (GameStates.IsHost)
             {
-                writer.WriteNetObject(other);
+                var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.EndGame, PlayerControl.LocalPlayer);
+                writer.Write((byte)reason);
+                writer.Write(winners.Count);
+                foreach (byte ids in winners)
+                {
+                    writer.Write(ids);
+                }
+                AmongUsClient.Instance.EndActionRpc(writer);
             }
-            AmongUsClient.Instance.EndActionRpc(writer);
+
+            CustomGameManager.EndGame(winners, reason);
         }
     }
 

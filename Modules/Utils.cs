@@ -129,7 +129,7 @@ public static class Utils
         string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
         return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
     }
-    public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText)
+    public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText = false)
     {
         if (!bigText)
         {

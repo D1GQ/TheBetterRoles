@@ -61,6 +61,9 @@ public static class CustomRoleManager
     {
         if (player == null) return;
 
+        if (player.Data.Role == null)
+            player.StartCoroutine(player.CoSetRole(RoleTypes.Crewmate, false));
+
         player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
 
         CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);

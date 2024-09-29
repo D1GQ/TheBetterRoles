@@ -32,7 +32,7 @@ public class JanitorRole : CustomRoleBehavior
             [
                 CleanCooldown = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Janitor.Option.CleanCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
                 KillCooldownClean = new BetterOptionCheckboxItem().Create(RoleId + 15, SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldownOnClean"), true, RoleOptionItem),
-                SetKillCooldown = new BetterOptionFloatItem().Create(RoleId + 20, SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldown"), [0f, 180f, 2.5f], 15f, "", "s", KillCooldownClean),
+                SetKillCooldown = new BetterOptionFloatItem().Create(RoleId + 20, SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldown"), [0f, 180f, 2.5f], 35f, "", "s", KillCooldownClean),
                 AllowVenting = new BetterOptionCheckboxItem().Create(RoleId + 25, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem),
             ];
         }

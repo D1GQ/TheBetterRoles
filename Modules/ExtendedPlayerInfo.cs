@@ -9,6 +9,7 @@ public static class PlayerControlDataExtension
     // Base
     public class ExtendedPlayerInfo
     {
+        public byte _PlayerId { get; set; }
         public NetworkedPlayerInfo? _Data { get; set; }
         public string? RealName => _Data.PlayerName;
         public bool HasShowDcMsg { get; set; } = false;
@@ -46,6 +47,7 @@ public static class PlayerControlDataExtension
         {
             playerInfo[data] = new ExtendedPlayerInfo
             {
+                _PlayerId = data.PlayerId,
                 _Data = data,
                 RoleInfo = new ExtendedRoleInfo(),
             };
@@ -74,4 +76,6 @@ public static class PlayerControlDataExtension
         return player == null ? null : GetOrCreateBetterData(player.Data);
     }
 
+    // Get BetterData from NetworkedPlayerInfo
+    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => playerInfo.Values.FirstOrDefault(data => data._PlayerId == info.PlayerId);
 }

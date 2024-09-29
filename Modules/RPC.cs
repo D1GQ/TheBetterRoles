@@ -146,15 +146,15 @@ internal static class RPC
         {
             case RpcAction.EndGame:
                 {
-                    List<NetworkedPlayerInfo> winners = [];
+                    List<byte> winnersIds = [];
                     var reason = (EndGameReason)reader.ReadByte();
-                    byte winnersAmount = reader.ReadByte();
+                    int winnersAmount = reader.ReadInt32();
                     for (int i = 0; i < winnersAmount; i++)
                     {
-                        winners.Add(reader.ReadNetObject<NetworkedPlayerInfo>());
+                        winnersIds.Add(reader.ReadByte());
                     }
 
-                    ActionRPCs.EndGameSync(winners, reason);
+                    ActionRPCs.EndGameSync(winnersIds, reason);
                 }
                 break;
             case RpcAction.ResetAbilityState:

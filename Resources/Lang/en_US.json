@@ -14,6 +14,9 @@
   "Timer": "Timer",
   "SystemMessage": "System Message",
 
+  "Neutral": "Neutral",
+  "Neutrals": "Neutrals",
+
   "Role.Team.Impostor": "Impostor",
   "Role.Team.Crewmate": "Crewmate",
   "Role.Team.Neutral": "Neutral",
@@ -138,18 +141,12 @@
   "BetterSetting.TempSetting.HideAndSeekImpNum": "Seeker",
 
   "GameSummary": "Game Summary",
-  "Game.Summary.Hiders": "Hiders",
-  "Game.Summary.Seekers": "Seekers",
   "Game.Summary.Won": "Won",
   "Game.Summary.By": "By",
   "Game.Summary.Result.TasksCompletion": "Tasks Completion",
-  "Game.Summary.Result.ImpostersVotedOut": "Imposters Voted Out",
-  "Game.Summary.Result.ImpostorsDisconnected": "Impostors Disconnected",
-  "Game.Summary.Result.CrewOutnumbered": "Crew Outnumbered",
+  "Game.Summary.Result.Outnumbered": "Outnumbered",
   "Game.Summary.Result.Sabotage": "Sabotage",
-  "Game.Summary.Result.CrematesDisconnected": "Cremates Disconnected",
-  "Game.Summary.Result.TimeOut": "Time Out",
-  "Game.Summary.Result.NoSurvivors": "No Survivors",
+  "Game.Summary.Result.RoleCondition": "Role Condition",
 
   "Command.HostOnly": "<color=red>Host Only</color>",
   "Command.PermOnly": "<color=red>Host Only/Host Permission</color>",
