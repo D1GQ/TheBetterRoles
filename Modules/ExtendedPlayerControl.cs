@@ -166,6 +166,7 @@ static class ExtendedPlayerControl
             }
         }
     }
+    public static void RawSetRole(this PlayerControl player, RoleTypes role) => DestroyableSingleton<RoleManager>.Instance.SetRole(player, role);
     // Check if player is selecting room to spawn in, for Airship
     public static bool IsInRoomSelect(this PlayerControl player)
     {

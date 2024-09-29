@@ -1,9 +1,20 @@
 ﻿
 using AmongUs.GameOptions;
-using Cpp2IL.Core.Extensions;
 using System.Reflection;
 
 namespace TheBetterRoles;
+
+public class RoleAssignmentData
+{
+    public void SetRoleToPlayer() => _player.SetRoleSync(_role.RoleType);
+    public PlayerControl? _player;
+    public CustomRoleBehavior? _role;
+
+    public CustomRoleTeam RoleTeam => _role.RoleTeam;
+    public bool IsAddon => _role.IsAddon;
+    public float Chance => _role.GetChance();
+    public float Amount => _role.GetAmount();
+}
 
 public static class CustomRoleManager
 {
@@ -29,10 +40,15 @@ public static class CustomRoleManager
 
         if (selectedType != null)
         {
-            return (CustomRoleBehavior)Activator.CreateInstance(selectedType);
+            return Activator.CreateInstance(selectedType) as CustomRoleBehavior;
         }
 
         return null;
+    }
+
+    public static void AssignRoles()
+    {
+
     }
 
     public static void ClearRoles(this PlayerControl player)
@@ -62,7 +78,13 @@ public static class CustomRoleManager
         if (player == null) return;
 
         if (player.Data.Role == null)
+        {
             player.StartCoroutine(player.CoSetRole(RoleTypes.Crewmate, false));
+        }
+        else
+        {
+            player.RawSetRole(RoleTypes.Crewmate);
+        }
 
         player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
 

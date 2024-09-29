@@ -14,8 +14,11 @@
   "Timer": "Timer",
   "SystemMessage": "System Message",
 
+  "Team": "Team",
   "Neutral": "Neutral",
   "Neutrals": "Neutrals",
+
+  "Haunt.NoPlayers": "No Players Found!",
 
   "Role.Team.Impostor": "Impostor",
   "Role.Team.Crewmate": "Crewmate",

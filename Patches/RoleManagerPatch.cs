@@ -42,7 +42,8 @@ public class RoleManagerPatch
     [HarmonyPrefix]
     public static bool AssignRoleOnDeath_Prefix(/*RoleManager __instance*/ [HarmonyArgument(0)] PlayerControl player)
     {
-        return true;
+        player.RawSetRole(RoleTypes.CrewmateGhost);
+
         return false;
     }
 

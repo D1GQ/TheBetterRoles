@@ -1,4 +1,5 @@
-﻿using Epic.OnlineServices.Mods;
+﻿using AmongUs.GameOptions;
+using Epic.OnlineServices.Mods;
 using HarmonyLib;
 using InnerNet;
 using Microsoft.Extensions.Logging;
@@ -260,6 +261,7 @@ static class ActionRPCs
             if (CheckReviveAction(player) == true || bypass)
             {
                 player.Revive();
+                player.RawSetRole(RoleTypes.Crewmate);
                 if (bypass) return;
             }
             else

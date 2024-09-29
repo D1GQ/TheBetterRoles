@@ -49,6 +49,9 @@ public abstract class CustomRoleBehavior
     public bool Protected { get; set; }
     public NetworkedPlayerInfo? ProtectedBy { get; set; }
 
+    public float GetChance() => GameStates.IsHost ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
+    public int GetAmount() => GameStates.IsHost ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0;
+
     public void Initialize(PlayerControl player)
     {
         if (player != null)

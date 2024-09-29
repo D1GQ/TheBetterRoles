@@ -10,10 +10,7 @@ public class ModManagerPatch
     [HarmonyPostfix]
     public static void LateUpdate_Postfix(ModManager __instance)
     {
-        if (SplashIntroPatch.IsReallyDoneLoading)
-        {
-            __instance.ShowModStamp();
-        }
+        __instance.ShowModStamp();
 
         FileChecker.UpdateUnauthorizedFiles();
         LateTask.Update(Time.deltaTime);

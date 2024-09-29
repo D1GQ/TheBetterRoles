@@ -18,14 +18,31 @@ class TaskAdderGamePatch
         float num = 0f;
         float num2 = 0f;
         float num3 = 0f;
+
+        TaskAddButton ghostAddButton = UnityEngine.Object.Instantiate<TaskAddButton>(__instance.RoleButton);
+        ghostAddButton.SafePositionWorld = __instance.SafePositionWorld;
+        ghostAddButton.Text.text = "Set_Dead\n.exe";
+        __instance.AddFileAsChild(__instance.Root, ghostAddButton, ref num, ref num2, ref num3);
+        ghostAddButton.FileImage.color = new Color(1f, 1f, 1f, 0.5f);
+        ghostAddButton.RolloverHandler.OverColor = new Color(1f, 1f, 1f, 0.5f);
+        ghostAddButton.RolloverHandler.OutColor = new Color(1f, 1f, 1f, 0.5f);
+        ghostAddButton.Overlay.enabled = false;
+        ghostAddButton.Button.OnClick = new();
+        ghostAddButton.Button.OnClick.AddListener((Action)(() =>
+        {
+            var player = PlayerControl.LocalPlayer;
+            player.Exiled();
+        }));
+
         for (int m = 0; m < CustomRoleManager.allRoles.Length; m++)
         {
             CustomRoleBehavior roleBehaviour = CustomRoleManager.allRoles[m];
 
             TaskAddButton taskAddButton = UnityEngine.Object.Instantiate<TaskAddButton>(__instance.RoleButton);
             taskAddButton.SafePositionWorld = __instance.SafePositionWorld;
-            if (!roleBehaviour.IsAddon) taskAddButton.Text.text = "Be_" + roleBehaviour.RoleName + ".exe";
-            else taskAddButton.Text.text = "Add/Remove_" + roleBehaviour.RoleName + "_Addon.exe";
+            taskAddButton.Text.enableWordWrapping = false;
+            if (!roleBehaviour.IsAddon) taskAddButton.Text.text = "Be_" + roleBehaviour.RoleName + "\n.exe";
+            else taskAddButton.Text.text = "Add/Remove_" + roleBehaviour.RoleName + "_Addon\n.exe";
             __instance.AddFileAsChild(__instance.Root, taskAddButton, ref num, ref num2, ref num3);
 
             taskAddButton.FileImage.color =Utils.GetCustomRoleColor(roleBehaviour.RoleType);
