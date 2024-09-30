@@ -29,9 +29,5 @@ public class ImpostorRoleTBR : CustomRoleBehavior
     public override void SetUpRole()
     {
         base.SetUpRole();
-        KillButton.TargetCondition = (PlayerControl target) =>
-        {
-            return !target.IsImpostorTeammate();
-        };
     }
 }

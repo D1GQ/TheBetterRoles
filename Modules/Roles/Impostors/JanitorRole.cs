@@ -46,13 +46,9 @@ public class JanitorRole : CustomRoleBehavior
         base.SetUpRole();
         OptionItems.Initialize();
 
-        KillButton.TargetCondition = (PlayerControl target) =>
-        {
-            return !target.IsImpostorTeammate();
-        };
-
         CleanButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, null, this, true, 1f)) as AbilityButton;
     }
+
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)

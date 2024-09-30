@@ -7,7 +7,6 @@ public class MorphlingRole : CustomRoleBehavior
 {
     // Role Info
     public override bool IsAddon => false;
-    public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Morphling;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
@@ -40,15 +39,11 @@ public class MorphlingRole : CustomRoleBehavior
     private NetworkedPlayerInfo.PlayerOutfit? SampleData { get; set; }
     public TargetButton? SampleButton;
     public AbilityButton? TransformButton;
+
     public override void SetUpRole()
     {
         base.SetUpRole();
         OptionItems.Initialize();
-
-        KillButton.TargetCondition = (PlayerControl target) =>
-        {
-            return !target.IsImpostorTeammate();
-        };
 
         SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f)) as TargetButton;
         SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData == null; };
@@ -58,6 +53,7 @@ public class MorphlingRole : CustomRoleBehavior
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
+
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)

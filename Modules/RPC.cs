@@ -166,9 +166,8 @@ internal static class RPC
             case RpcAction.SetRole:
                 {
                     var role = reader.ReadInt32();
-                    var IsAddon = reader.ReadBoolean();
                     var RemoveAddon = reader.ReadBoolean();
-                    player.SetRoleSync((CustomRoles)role, IsAddon, RemoveAddon, hostFlag);
+                    player.SetRoleSync((CustomRoles)role, RemoveAddon, hostFlag);
                 }
                 break;
             case RpcAction.ReportBody:

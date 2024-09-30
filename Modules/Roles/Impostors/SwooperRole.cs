@@ -43,11 +43,6 @@ public class SwooperRole : CustomRoleBehavior
         base.SetUpRole();
         OptionItems.Initialize();
 
-        KillButton.TargetCondition = (PlayerControl target) =>
-        {
-            return !target.IsImpostorTeammate();
-        };
-
         InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Swoop.png", 135), this, true)) as AbilityButton;
         InvisibilityButton.CanCancelDuration = true;
     }

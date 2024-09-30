@@ -13,7 +13,7 @@ public class RoleAssignmentData
     public CustomRoleTeam RoleTeam => _role.RoleTeam;
     public bool IsAddon => _role.IsAddon;
     public float Chance => _role.GetChance();
-    public float Amount => _role.GetAmount();
+    public float Amount;
 }
 
 public static class CustomRoleManager

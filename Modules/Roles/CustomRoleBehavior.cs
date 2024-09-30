@@ -110,6 +110,10 @@ public abstract class CustomRoleBehavior
 
         KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1 / 1.75f)) as TargetButton;
         KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
+        KillButton.TargetCondition = (PlayerControl target) =>
+        {
+            return !target.IsImpostorTeammate();
+        };
 
         VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
         VentButton.VisibleCondition = () => { return VentButton.Role.CanVent; };
