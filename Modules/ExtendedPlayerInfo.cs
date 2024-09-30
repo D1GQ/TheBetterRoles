@@ -27,7 +27,13 @@ public static class PlayerControlDataExtension
     }
 
     public static List<ExtendedPlayerInfo> cachedplayerInfo = [];
-    public static readonly Dictionary<NetworkedPlayerInfo, ExtendedPlayerInfo> playerInfo = [];
+    public static Dictionary<NetworkedPlayerInfo, ExtendedPlayerInfo> playerInfo = [];
+
+    public static void ClearAllData()
+    {
+        playerInfo.Clear();
+        cachedplayerInfo.Clear();
+    }
 
     public static void ClearData(this ExtendedPlayerInfo BetterData) => playerInfo[BetterData._Data] = new ExtendedPlayerInfo
     {

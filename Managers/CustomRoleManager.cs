@@ -53,20 +53,21 @@ public static class CustomRoleManager
 
         try
         {
-
             IRandom.SetInstanceById(0);
 
+            // Define role amounts
             int ImposterAmount = 1;  // BetterGameSettings.ImposterAmount.GetInt();
             int BenignNeutralAmount = 1; // BetterGameSettings.BenignNeutralAmount.GetInt();
             int KillingNeutralAmount = 1; // BetterGameSettings.KillingNeutralAmount.GetInt();
 
             var impostorLimits = new Dictionary<int, int>
-            {
-                { 3, 1 },
-                { 5, 2 },
-                { 7, 3 }
-            };
+        {
+            { 3, 1 },
+            { 5, 2 },
+            { 7, 3 }
+        };
 
+            // Adjust ImposterAmount based on player count
             foreach (var limit in impostorLimits)
             {
                 if (Main.AllPlayerControls.Length <= limit.Key)
@@ -76,81 +77,85 @@ public static class CustomRoleManager
                 }
             }
 
-            List<RoleAssignmentData> Roles = [];
-
+            // Gather all available roles dynamically
+            List<RoleAssignmentData> availableRoles = [];
             foreach (var role in allRoles)
             {
-                if (role.GetChance() <= 0) continue;
-                RoleAssignmentData roleData = new() { _role = role, Amount = role.GetAmount() };
-                Roles.Add(roleData);
+                if (role.GetChance() > 0 && role.GetAmount() > 0 && !role.IsAddon)
+                {
+                    availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
+                }
             }
 
-            List<PlayerControl> players = [.. Main.AllPlayerControls];
+            // Shuffle the available roles to randomize selection
+            availableRoles = availableRoles.OrderBy(x => IRandom.Instance.Next(availableRoles.Count)).ToList();
 
-            for (int i = players.Count - 1; i > 0; i--)
-            {
-                int j = IRandom.Instance.Next(i + 1);
-                (players[i], players[j]) = (players[j], players[i]);
-            }
+            // Shuffle players
+            List<PlayerControl> players = new(Main.AllPlayerControls);
+            players = players.OrderBy(x => IRandom.Instance.Next(players.Count)).ToList();
 
-            Dictionary<PlayerControl, RoleAssignmentData?> SetRole = [];
+            // Prepare a dictionary to store player-to-role assignments
+            Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];
 
             foreach (var player in players)
             {
                 if (player == null) continue;
 
-                Dictionary<RoleAssignmentData, int> RoleAndRng = [];
+                // Filter valid roles based on current game needs
+                var validRoles = availableRoles
+                    .Where(r => r.Amount > 0 && (ImposterAmount > 0 ? r._role.RoleTeam == CustomRoleTeam.Impostor : r._role.RoleTeam != CustomRoleTeam.Impostor))
+                    .ToList();
 
-                foreach (var role in Roles)
+                RoleAssignmentData? selectedRole = null;
+
+                // If there are valid roles, randomly select one based on chance
+                if (validRoles.Count > 0)
                 {
-                    RoleAndRng[role] = RNG(1000);
-                }
-
-                RoleAssignmentData? Role = null;
-                int attempt = 100;
-                int Value = int.MaxValue;
-
-                while (Role == null && attempt > 0)
-                {
-                    foreach (var kvp in RoleAndRng.Where(r => ImposterAmount > 0 ? r.Key.RoleTeam == CustomRoleTeam.Impostor : r.Key.RoleTeam != CustomRoleTeam.Impostor
-                    && r.Key.Amount > 0 && ImposterAmount > 0))
+                    foreach (var roleData in validRoles)
                     {
-                        var chance = kvp.Key.Chance * 10;
-                        var rng = kvp.Value;
-
-                        if (rng <= chance && rng < Value && kvp.Key.Amount > 0)
+                        int rng = IRandom.Instance.Next(100);
+                        if (rng <= roleData._role.GetChance())
                         {
-                            Value = chance - rng > 0 ? chance - rng : 0;
-                            Role = kvp.Key;
+                            selectedRole = roleData;
+                            break;
                         }
                     }
-
-                    attempt--;
                 }
 
-                if (Role == null)
+                // If no role could be selected, fallback to default roles (Impostor or Crewmate)
+                if (selectedRole == null)
                 {
-                    if (ImposterAmount > 0) Role = new RoleAssignmentData() { _role = GetRoleInstance(CustomRoles.Impostor), Amount = 100 };
-                    else Role = new RoleAssignmentData() { _role = GetRoleInstance(CustomRoles.Crewmate), Amount = 100 };
-                    if (Role._role.IsImpostor) ImposterAmount--;
-
-                    SetRole[player] = Role;
+                    if (ImposterAmount > 0)
+                    {
+                        selectedRole = new RoleAssignmentData
+                        {
+                            _role = GetRoleInstance(CustomRoles.Impostor),
+                            Amount = 1
+                        };
+                        ImposterAmount--;
+                    }
+                    else
+                    {
+                        selectedRole = new RoleAssignmentData
+                        {
+                            _role = GetRoleInstance(CustomRoles.Crewmate),
+                            Amount = 1
+                        };
+                    }
                 }
-                else
-                {
-                    Roles.FirstOrDefault(Role).Amount--;
-                    if (Role._role.IsImpostor) ImposterAmount--;
-                    if (Role._role.IsNeutral && Role._role.CanKill) KillingNeutralAmount--;
-                    if (Role._role.IsNeutral && !Role._role.CanKill) BenignNeutralAmount--;
 
-                    SetRole[player] = Role;
-                }
+                playerRoleAssignments[player] = selectedRole;
+                selectedRole.Amount--;
+
+                if (selectedRole._role.IsImpostor) ImposterAmount--;
+                if (selectedRole._role.IsNeutral && selectedRole._role.CanKill) KillingNeutralAmount--;
+                if (selectedRole._role.IsNeutral && !selectedRole._role.CanKill) BenignNeutralAmount--;
             }
 
-            foreach (var data in SetRole)
+            foreach (var assignment in playerRoleAssignments)
             {
-                Logger.Log($"{data.Key.Data.PlayerName} -> {data.Value._role.RoleName}");
-                data.Key.SetRoleSync(data.Value._role.RoleType);
+                Logger.Log($"{assignment.Key.Data.PlayerName} -> {assignment.Value._role.RoleName}");
+                assignment.Key.SetRoleSync(assignment.Value._role.RoleType);
             }
         }
         catch (Exception ex)

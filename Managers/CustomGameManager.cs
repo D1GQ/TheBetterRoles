@@ -92,7 +92,7 @@ public class CustomGameManager
             introCutscene.BackgroundBar.material.SetColor("_Color", PlayerControl.LocalPlayer.GetTeamColor());
             UnityEngine.Object.Destroy(introCutscene.TeamTitle.gameObject.GetComponent<TextTranslatorTMP>());
             introCutscene.TeamTitle.text = PlayerControl.LocalPlayer.GetRoleTeamName();
-            introCutscene.TeamTitle.color = PlayerControl.LocalPlayer.GetRoleColor();
+            introCutscene.TeamTitle.color = PlayerControl.LocalPlayer.GetTeamColor();
             var flag = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate);
             introCutscene.ImpostorText.gameObject.SetActive(flag);
             if (flag)
@@ -169,7 +169,15 @@ public class CustomGameManager
             BetterCachedPlayerData? first = anyFlag ? players.First() : null;
             var role = first?.GetOldBetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
             var team = first?.GetOldBetterData()?.RoleInfo?.Role?.RoleTeam ?? CustomRoleTeam.None;
-            var teamColor = anyFlag ? Utils.GetCustomRoleColor(first.GetOldBetterData().RoleInfo.RoleType) : Color.red;
+            var teamColor = Color.white;
+            if (winReason != EndGameReason.CustomFromRole)
+            {
+                teamColor = anyFlag ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(first.GetOldBetterData().RoleInfo.Role.RoleTeam)) : Color.red;
+            }
+            else
+            {
+                teamColor = anyFlag ? Utils.GetCustomRoleColor(first.GetOldBetterData().RoleInfo.RoleType) : Color.red;
+            }
 
             bool flag = players.Any(data => data.AmOwner);
 
@@ -194,11 +202,11 @@ public class CustomGameManager
             {
                 case CustomRoleTeam.Impostor:
                     __instance.WinText.text = $"{Translator.GetString(StringNames.ImpostorsCategory)}\n<size=75%>Win";
-                    Logger.InGame($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    Logger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Crewmate:
                     __instance.WinText.text = $"{Translator.GetString(StringNames.Crewmates)}\n<size=75%>Win";
-                    Logger.InGame($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    Logger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Neutral:
                     if (players.Count <= 1)
@@ -257,6 +265,8 @@ public class CustomGameManager
 
     public static void SetupGameSummary(EndGameManager endGameManager)
     {
+        return;
+
         try
         {
             List<BetterCachedPlayerData> players = CachedPlayerData.ToArray().Where(CheckWinner).ToList();
@@ -410,11 +420,12 @@ public class CustomGameManager
     public static List<BetterCachedPlayerData> CachedPlayerData = [];
     public static List<byte> winners = [];
     public static EndGameReason winReason;
+    public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
     public static bool ShouldCheckConditions => !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
 
-    public static void EndGame(List<byte> Winners, EndGameReason reason)
+    public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)
     {
         // Set player data for endgame
         CachedPlayerData.Clear();
@@ -437,8 +448,8 @@ public class CustomGameManager
                 PlayerName = data.PlayerName,
                 Tasks = newTasks,
                 PlayerId = data.PlayerId,
-                Role = data.BetterData().RoleInfo.Role.RoleType,
-                RoleTeam = data.BetterData().RoleInfo.Role.RoleTeam,
+                Role = data.GetOldBetterData().RoleInfo.Role.RoleType,
+                RoleTeam = data.GetOldBetterData().RoleInfo.Role.RoleTeam,
                 IsDead = data.IsDead,
                 Disconnected = data.Disconnected,
                 Outfit = new NetworkedPlayerInfo.PlayerOutfit()
@@ -458,6 +469,7 @@ public class CustomGameManager
         winners.Clear();
         winners = Winners;
         winReason = reason;
+        winTeam = team;
 
         PlayerControl.LocalPlayer.StartCoroutine(AmongUsClient.Instance.CoEndGame());
         AmongUsClient.Instance.GameState = InnerNetClient.GameStates.Ended;
