@@ -101,31 +101,9 @@ static class ExtendedPlayerControl
         return true;
     }
     // Kick player
-    public static void Kick(this PlayerControl player, bool ban = false, string setReasonInfo = "", bool AntiCheatBan = false, bool bypassDataCheck = false)
+    public static void Kick(this PlayerControl player, bool ban = false)
     {
-        var Ban = ban;
-
-        if (!GameStates.IsHost || player.IsLocalPlayer() || !player.DataIsCollected() && !bypassDataCheck || player.IsHost() || player.isDummy)
-        {
-            return;
-        }
-
-        if (AntiCheatBan)
-        {
-            if (BetterGameSettings.WhenCheating.GetValue() == 0)
-            {
-                return;
-            }
-
-            Ban = Ban && BetterGameSettings.WhenCheating.GetValue() == 2;
-        }
-
-        if (setReasonInfo != "")
-        {
-            GameDataShowNotificationPatch.BetterShowNotification(player.Data, forceReasonText: string.Format(setReasonInfo, Ban ? Translator.GetString("AntiCheat.Ban").ToLower() : Translator.GetString("AntiCheat.Kick").ToLower()));
-        }
-
-        AmongUsClient.Instance.KickPlayer(player.GetClientId(), Ban);
+        AmongUsClient.Instance.KickPlayer(player.GetClientId(), ban);
     }
     // Set color outline on player
     public static void SetOutline(this PlayerControl player, bool active, Color? color = null)

@@ -8,27 +8,10 @@ namespace TheBetterRoles.Patches;
 
 class BetterGameSettings
 {
-    public static BetterOptionItem? WhenCheating;
-    public static BetterOptionItem? InvalidFriendCode;
-    public static BetterOptionItem? UseBanPlayerList;
-    public static BetterOptionItem? UseBanNameList;
-    public static BetterOptionItem? UseBanWordList;
-    public static BetterOptionItem? HideAndSeekImpNum;
-    public static BetterOptionItem? DetectedLevelAbove;
-    public static BetterOptionItem? DetectCheatClients;
-    public static BetterOptionItem? DetectInvalidRPCs;
-    public static BetterOptionItem? RoleRandomizer;
-    public static BetterOptionItem? DesyncRoles;
-    public static BetterOptionItem? CancelInvalidSabotage;
-    public static BetterOptionItem? CensorDetectionReason;
 }
 
 class BetterGameSettingsTemp
 {
-    public static BetterOptionItem? HideAndSeekImp2;
-    public static BetterOptionItem? HideAndSeekImp3;
-    public static BetterOptionItem? HideAndSeekImp4;
-    public static BetterOptionItem? HideAndSeekImp5;
 }
 
 class BetterTabs
@@ -58,7 +41,7 @@ static class GameSettingMenuPatch
         BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, "Crewmate Roles", "None", Color.cyan);
         BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, "Imposter Roles", "None", Color.red);
         BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
-        BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Addons", "None", Color.magenta);
+        BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Add-ons", "None", Color.magenta);
 
         if (IsPreload)
         {
@@ -70,25 +53,32 @@ static class GameSettingMenuPatch
 
         var roleCategories = new[]
         {
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Vanilla", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Vanilla },
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Benign", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Benign },
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Killing", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Killing },
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Support", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Support },
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Chaos", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Chaos },
-            new { Tab = BetterTabs.ImpostorRoles, Title = "Impostor Ghost", Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Ghost },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.Vanilla"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorBenign"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorKilling"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorSupport"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorChaos"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorGhost"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Ghost },
 
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Vanilla", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Vanilla },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Benign", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Benign },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Killing", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Killing },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Support", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Support },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Chaos", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Chaos },
-            new { Tab = BetterTabs.CrewmateRoles, Title = "Crewmate Ghost", Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Ghost },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.Vanilla"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Vanilla },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateBenign"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateKilling"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateSupport"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateChaos"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateGhost"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Ghost },
 
-            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Benign", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Benign },
-            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Killing", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Killing },
-            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Support", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Support },
-            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Chaos", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Chaos },
-            new { Tab = BetterTabs.NeutralRoles, Title = "Neutral Ghost", Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Ghost },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralBenign"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralKilling"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Killing },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralSupport"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Support },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralChaos"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Chaos },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralGhost"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Ghost },
+
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.GeneralAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.GeneralAddon },
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.AbilityAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.AbilityAddon },
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.GoodAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.GoodAddon },
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.EvilAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.EvilAddon },
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.HelpfulAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.HelpfulAddon },
+            new { Tab = BetterTabs.Addons, Title = Translator.GetString("BetterSetting.RoleCategory.HarmfulAddon"), Team = CustomRoleTeam.None, Category = CustomRoleCategory.HarmfulAddon },
         };
 
         foreach (var roleCategory in roleCategories)

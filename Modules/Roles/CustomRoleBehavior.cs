@@ -78,8 +78,6 @@ public abstract class CustomRoleBehavior
     public void Deinitialize()
     {
         OnDeinitialize();
-        _player.roleAssigned = false;
-        _player.StartCoroutine(_player.CoSetRole(RoleTypes.Crewmate, false));
 
         // Remove Buttons
         foreach (var button in Buttons)
@@ -88,6 +86,11 @@ public abstract class CustomRoleBehavior
             {
                 UnityEngine.Object.Destroy(button.Button.gameObject);
             }
+        }
+
+        if (IsAddon)
+        {
+            _player.BetterData().RoleInfo.Addons.Remove(this);
         }
     }
 
@@ -140,6 +143,12 @@ public abstract class CustomRoleBehavior
         return button;
     }
 
+    public void RemoveButton(BaseButton button)
+    {
+        button.RemoveButton();
+        Buttons.Remove(button);
+    }
+
     public void CheckAndUseAbility(int id, int targetId, TargetType type) 
     {
         if (GameStates.IsHost)
@@ -184,8 +193,8 @@ public abstract class CustomRoleBehavior
 
     public void SetCooldownAndUse(int id)
     {
-        Buttons.FirstOrDefault(b => b.Id == id).SetCooldown();
-        Buttons.FirstOrDefault(b => b.Id == id).RemoveUse();
+        Buttons.FirstOrDefault(b => b.Id == id)?.SetCooldown();
+        Buttons.FirstOrDefault(b => b.Id == id)?.RemoveUse();
     }
 
     public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender) 

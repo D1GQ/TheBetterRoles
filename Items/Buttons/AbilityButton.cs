@@ -49,7 +49,7 @@ public class AbilityButton : BaseButton
                 {
                     if (State == 0)
                     {
-                        PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.CheckAndUseAbility(Id, 0, TargetType.None);
+                        Role.CheckAndUseAbility(Id, 0, TargetType.None);
                     }
                     else if (State == 1)
                     {

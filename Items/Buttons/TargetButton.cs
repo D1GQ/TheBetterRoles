@@ -5,17 +5,17 @@ using UnityEngine;
 
 namespace TheBetterRoles;
 
-public class DeadBodyButton : BaseButton
+public class TargetButton : BaseButton
 {
-    public float DeadBodyRange {  get; set; }
-    public DeadBody? lastDeadBody {  get; set; }
-    public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (DeadBody body) => true;
+    public float TargetRange {  get; set; }
+    public PlayerControl? lastTarget {  get; set; }
+    public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
 
-    public DeadBodyButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
+    public TargetButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
         Id = id;
-        DeadBodyRange = range;
+        TargetRange = range;
         Name = name;
         Cooldown = cooldown;
         Uses = abilityUses;
@@ -49,7 +49,7 @@ public class DeadBodyButton : BaseButton
             {
                 if (ActionButton.canInteract)
                 {
-                    _player.BetterData().RoleInfo.Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
+                    Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
                 }
             }));
         }
@@ -75,44 +75,51 @@ public class DeadBodyButton : BaseButton
         return this;
     }
 
-    public List<DeadBody> GetBodysInAbilityRangeSorted(List<DeadBody> outputList, bool ignoreColliders)
+    public List<PlayerControl> GetPlayersInAbilityRangeSorted(List<PlayerControl> outputList, bool ignoreColliders)
     {
-        if (!_player.CanMove && !_player.IsInVent())
+        if (!_player.CanMove)
         {
             return [];
         }
 
         outputList.Clear();
-        float closeDistanceThreshold = DeadBodyRange;
+        float abilityDistance = TargetRange;
+        float closeDistanceThreshold = 0.15f;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<DeadBody> allBodys = Main.AllDeadBodys.ToList();
+        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.Where(pc => !pc.IsLocalPlayer() && TargetCondition(pc)).ToList();
 
-        for (int i = 0; i < allBodys.Count; i++)
+        for (int i = 0; i < allPlayers.Count; i++)
         {
-            DeadBody body = allBodys[i];
-            if (body != null)
-            {
-                Vector2 vectorToVent = (Vector2)body.transform.position - myPos;
-                float magnitude = vectorToVent.magnitude;
+            PlayerControl PlayerInfo = allPlayers[i];
+            PlayerControl targetPlayer = PlayerInfo;
 
-                if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToVent.normalized, magnitude, Constants.ShipAndObjectsMask))
+            if (targetPlayer && targetPlayer.Collider.enabled)
+            {
+                Vector2 vectorToPlayer = targetPlayer.GetCustomPosition() - myPos;
+                float magnitude = vectorToPlayer.magnitude;
+
+                if (magnitude <= abilityDistance)
                 {
-                    outputList.Add(body);
+                    if (magnitude <= closeDistanceThreshold || ignoreColliders ||
+                        !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToPlayer.normalized, magnitude, Constants.ShipAndObjectsMask))
+                    {
+                        outputList.Add(targetPlayer);
+                    }
                 }
             }
         }
 
-        outputList.Sort((DeadBody a, DeadBody b) =>
+        outputList.Sort((PlayerControl a, PlayerControl b) =>
         {
-            float distA = ((Vector2)a.transform.position - myPos).magnitude;
-            float distB = ((Vector2)b.transform.position - myPos).magnitude;
+            float distA = (a.GetTruePosition() - myPos).magnitude;
+            float distB = (b.GetTruePosition() - myPos).magnitude;
             return distA.CompareTo(distB);
         });
 
         return outputList;
     }
+
 
     public override void Update()
     {
@@ -130,33 +137,33 @@ public class DeadBodyButton : BaseButton
 
         bool flag1 = true;
 
-        DeadBody? target = null;
+        PlayerControl? target = null;
         float closestDistance = float.MaxValue;
 
         if (Visible)
         {
-            foreach (var deadBody in GetBodysInAbilityRangeSorted([], false))
+            foreach (var player in GetPlayersInAbilityRangeSorted([], false))
             {
-                float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), deadBody.transform.position);
-                if (distance < closestDistance && distance <= DeadBodyRange)
+                float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), player.GetCustomPosition());
+                if (distance < closestDistance && distance <= TargetRange)
                 {
                     closestDistance = distance;
-                    target = deadBody;
+                    target = player;
                 }
             }
         }
 
         flag1 = target != null;
 
-        if (lastDeadBody != null)
+        if (lastTarget != null)
         {
-            lastDeadBody.SetOutline(false, Color.clear);
+            lastTarget.SetOutline(false);
         }
 
         if (target != null && Visible)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
-            lastDeadBody = target;
+            lastTarget = target;
         }
 
         bool flag2 = Uses != 0 || InfiniteUses;

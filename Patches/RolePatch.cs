@@ -26,6 +26,14 @@ class RolePatch
                 {
                     button.Update();
                 }
+
+                foreach (var addon in __instance.BetterData().RoleInfo.Addons)
+                {
+                    foreach (var button in addon.Buttons)
+                    {
+                        button.Update();
+                    }
+                }
             }
         }
 

@@ -72,16 +72,5 @@ public class RoleManagerPatch
         return shuffledDictionary;
     }
 
-    public static int RNG()
-    {
-        switch (BetterGameSettings.RoleRandomizer.GetValue())
-        {
-            case 1:
-                return UnityEngine.Random.Range(0, 100);
-
-            default:
-                Random Random = new Random();
-                return Random.Next(0, 100);
-        }
-    }
+    public static int RNG() => UnityEngine.Random.Range(0, 100);
 }

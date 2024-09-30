@@ -80,7 +80,7 @@ public class VentButton : BaseButton
                     }
                     else
                     {
-                        _player.BetterData().RoleInfo.Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
+                        Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
                     }
                 }
             }));

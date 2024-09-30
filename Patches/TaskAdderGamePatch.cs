@@ -1,7 +1,5 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Patches;
 
@@ -41,8 +39,8 @@ class TaskAdderGamePatch
             TaskAddButton taskAddButton = UnityEngine.Object.Instantiate<TaskAddButton>(__instance.RoleButton);
             taskAddButton.SafePositionWorld = __instance.SafePositionWorld;
             taskAddButton.Text.enableWordWrapping = false;
-            if (!roleBehaviour.IsAddon) taskAddButton.Text.text = "Be_" + roleBehaviour.RoleName + "\n.exe";
-            else taskAddButton.Text.text = "Add/Remove_" + roleBehaviour.RoleName + "_Addon\n.exe";
+            if (!roleBehaviour.IsAddon) taskAddButton.Text.text = roleBehaviour.RoleName + "\n.Role";
+            else taskAddButton.Text.text = roleBehaviour.RoleName + "\n.Addon";
             __instance.AddFileAsChild(__instance.Root, taskAddButton, ref num, ref num2, ref num3);
 
             taskAddButton.FileImage.color =Utils.GetCustomRoleColor(roleBehaviour.RoleType);
@@ -60,28 +58,32 @@ class TaskAdderGamePatch
                 }
                 else
                 {
-                    if (!player.BetterData().RoleInfo.Addons.Contains(roleBehaviour))
+                    if (!player.BetterData().RoleInfo.Addons.Any(r => r.RoleType == roleBehaviour.RoleType))
                     {
+                        taskAddButton.Overlay.enabled = true;
                         CustomRoleManager.AddAddon(player, roleBehaviour.RoleType);
                     }
                     else
                     {
+                        taskAddButton.Overlay.enabled = false;
                         CustomRoleManager.RemoveAddon(player, roleBehaviour.RoleType);
                     }
                 }
 
-                foreach (var item in rolesForButtons.Keys)
+                foreach (var items in rolesForButtons)
                 {
-                    item.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[item].RoleType;
+                    if (items.Value.IsAddon) return;
+                    items.Key.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType;
                 }
             }));
             UnityEngine.Object.Destroy(taskAddButton);
             rolesForButtons[taskAddButton] = roleBehaviour;
         }
 
-        foreach (var item in rolesForButtons.Keys)
+        foreach (var items in rolesForButtons)
         {
-            item.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[item].RoleType;
+            items.Key.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType
+                || PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons.Any(r => r.RoleType == rolesForButtons[items.Key].RoleType);
         }
 
         return false;

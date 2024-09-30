@@ -94,7 +94,7 @@ public static class CustomRoleManager
 
     public static void AddAddon(PlayerControl player, CustomRoles role)
     {
-        if (player == null || player.isDummy) return;
+        if (player == null) return;
 
         CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
 
@@ -110,25 +110,31 @@ public static class CustomRoleManager
 
     public static void RemoveAddon(PlayerControl player, CustomRoles role)
     {
-        if (player == null || player.isDummy) return;
+        if (player == null) return;
 
-        CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
-        if (roleClass.IsAddon)
+        if (player.BetterData().RoleInfo.Addons.Any(ad => ad.RoleType == role))
         {
-            CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
-            newRole?.Initialize(player);
+            var Role = player.BetterData().RoleInfo.Addons.FirstOrDefault(ad => ad.RoleType == role);
+            if (Role != null)
+            {
+                Role.Deinitialize();
+            }
         }
     }
 }
 
 public enum CustomRoles
 {
+    // Roles
     Crewmate,
     Impostor,
     Sheriff,
     Morphling,
     Swooper,
-    Janitor
+    Janitor,
+
+    // Addons
+    ButtonBerry,
 }
 
 public enum CustomRoleTeam
@@ -151,7 +157,9 @@ public enum CustomRoleCategory
     Ghost,
 
     // Addons
-    KillingAddon,
+    GeneralAddon,
+    GoodAddon,
+    EvilAddon,
     AbilityAddon,
     HelpfulAddon,
     HarmfulAddon,

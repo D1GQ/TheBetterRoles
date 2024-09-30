@@ -80,16 +80,6 @@ public class ClientPatch
             __result = GameStates.IsHost || (GameStates.IsInGamePlay && (GameStates.IsMeeting || GameStates.IsExilling));
             return false;
         }
-        [HarmonyPatch(nameof(InnerNetClient.KickPlayer))]
-        [HarmonyPrefix]
-        public static void KickPlayer_Prefix(ref int clientId, ref bool ban)
-        {
-            if (ban && BetterGameSettings.UseBanPlayerList.GetBool())
-            {
-                NetworkedPlayerInfo info = Utils.PlayerFromClientId(clientId).Data;
-                BetterDataManager.SaveBanList(info.FriendCode, info.Puid);
-            }
-        }
     }
     // Set text color
     [HarmonyPatch(typeof(CosmeticsLayer))]

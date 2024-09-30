@@ -35,6 +35,14 @@ public class BaseButton
 
     public virtual void Update() { }
 
+    public void RemoveButton()
+    {
+        if (_player.IsLocalPlayer())
+        {
+            UnityEngine.Object.Destroy(Button.gameObject);
+        }
+    }
+
     public virtual void SetCooldown(float amount = -1, int state = 0)
     {
         if (State > 0) return;
