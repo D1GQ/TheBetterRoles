@@ -26,6 +26,7 @@ public static class PlayerControlDataExtension
         public int Kills { get; set; } = 0;
     }
 
+    public static List<ExtendedPlayerInfo> cachedplayerInfo = [];
     public static readonly Dictionary<NetworkedPlayerInfo, ExtendedPlayerInfo> playerInfo = [];
 
     public static void ClearData(this ExtendedPlayerInfo BetterData) => playerInfo[BetterData._Data] = new ExtendedPlayerInfo
@@ -45,12 +46,14 @@ public static class PlayerControlDataExtension
     {
         if (!playerInfo.ContainsKey(data))
         {
-            playerInfo[data] = new ExtendedPlayerInfo
+            ExtendedPlayerInfo newData = new ExtendedPlayerInfo
             {
                 _PlayerId = data.PlayerId,
                 _Data = data,
                 RoleInfo = new ExtendedRoleInfo(),
             };
+            cachedplayerInfo.Add(newData);
+            playerInfo[data] = newData;
             playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR() { _player = Utils.PlayerFromPlayerId(data.PlayerId), _data = data };
             playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
         }
@@ -77,5 +80,6 @@ public static class PlayerControlDataExtension
     }
 
     // Get BetterData from NetworkedPlayerInfo
-    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => playerInfo.Values.FirstOrDefault(data => data._PlayerId == info.PlayerId);
+    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => cachedplayerInfo.FirstOrDefault(data => data._PlayerId == info.PlayerId);
+    public static ExtendedPlayerInfo? GetOldBetterData(this BetterCachedPlayerData info) => cachedplayerInfo.FirstOrDefault(data => data._PlayerId == info.PlayerId);
 }

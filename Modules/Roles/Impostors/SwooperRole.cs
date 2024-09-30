@@ -73,7 +73,7 @@ public class SwooperRole : CustomRoleBehavior
     {
         float alpha = 1f;
 
-        var flag = _player.IsLocalPlayer() || _player.IsImpostorTeammate();
+        var flag = _player.IsLocalPlayer() || _player.IsImpostorTeammate() || !localPlayer.IsAlive();
 
         if (!IsVisible)
         {

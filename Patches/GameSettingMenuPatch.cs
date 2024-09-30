@@ -8,6 +8,9 @@ namespace TheBetterRoles.Patches;
 
 class BetterGameSettings
 {
+    public static BetterOptionItem? ImposterAmount;
+    public static BetterOptionItem? BenignNeutralAmount;
+    public static BetterOptionItem? KillingNeutralAmount;
 }
 
 class BetterGameSettingsTemp

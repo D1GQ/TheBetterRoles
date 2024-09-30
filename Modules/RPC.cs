@@ -110,8 +110,10 @@ internal static class RPC
                     }
                     break;
                 case CustomRPC.CheckAction:
+                    HandleActionRPC(player, oldReader, true);
+                    break;
                 case CustomRPC.Action:
-                    HandleActionRPC(player, oldReader);
+                    HandleActionRPC(player, oldReader, false);
                     break;
             }
         }
@@ -128,8 +130,10 @@ internal static class RPC
         }
     }
 
-    public static void HandleActionRPC(PlayerControl sender, MessageReader oldReader)
+    public static void HandleActionRPC(PlayerControl sender, MessageReader oldReader, bool IsCheck)
     {
+        if (!IsCheck && GameStates.IsHost || IsCheck && !GameStates.IsHost) return;
+
         MessageReader reader = MessageReader.Get(oldReader);
 
         var signature = reader.ReadString();

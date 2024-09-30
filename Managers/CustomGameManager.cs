@@ -23,6 +23,19 @@ public enum EndGameReason
     CustomFromRole
 }
 
+public class BetterCachedPlayerData
+{
+    public byte PlayerId;
+    public string? PlayerName;
+    public CustomRoles Role;
+    public CustomRoleTeam RoleTeam;
+    public List<NetworkedPlayerInfo.TaskInfo>? Tasks;
+    public NetworkedPlayerInfo.PlayerOutfit? Outfit;
+    public bool AmOwner;
+    public bool Disconnected;
+    public bool IsDead;
+}
+
 public class CustomGameManager
 {
     [HarmonyPatch(typeof(GameManager))]
@@ -104,7 +117,7 @@ public class CustomGameManager
                     NetworkedPlayerInfo data = playerControl.Data;
                     if (!(data == null))
                     {
-                        PoolablePlayer poolablePlayer = introCutscene.CreatePlayer(i, maxDepth, data, data.BetterData().RoleInfo.Role.RoleTeam != CustomRoleTeam.Crewmate);
+                        PoolablePlayer poolablePlayer = introCutscene.CreatePlayer(i, maxDepth, data, !PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate));
                         if (i == 0 && data.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                         {
                             introCutscene.ourCrewmate = poolablePlayer;
@@ -151,14 +164,14 @@ public class CustomGameManager
         {
             SetupGameSummary(__instance);
 
-            List<NetworkedPlayerInfo> players = catchedPlayerData.Where(CheckWinner).ToList();
+            List<BetterCachedPlayerData> players = CachedPlayerData.ToArray().Where(CheckWinner).ToList();
             var anyFlag = players.Any();
-            NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
+            BetterCachedPlayerData? first = anyFlag ? players.First() : null;
             var role = first?.GetOldBetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
             var team = first?.GetOldBetterData()?.RoleInfo?.Role?.RoleTeam ?? CustomRoleTeam.None;
             var teamColor = anyFlag ? Utils.GetCustomRoleColor(first.GetOldBetterData().RoleInfo.RoleType) : Color.red;
 
-            bool flag = players.Any(data => data.Object == PlayerControl.LocalPlayer);
+            bool flag = players.Any(data => data.AmOwner);
 
             if (!anyFlag)
             {
@@ -206,7 +219,7 @@ public class CustomGameManager
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
             {
-                NetworkedPlayerInfo cachedPlayerData = players[i];
+                BetterCachedPlayerData cachedPlayerData = players[i];
                 int num2 = (i % 2 == 0) ? -1 : 1;
                 int num3 = (i + 1) / 2;
                 float num4 = num3 / num;
@@ -226,7 +239,7 @@ public class CustomGameManager
                 {
                     poolablePlayer.SetFlipX(i % 2 == 0);
                 }
-                poolablePlayer.UpdateFromPlayerOutfit(cachedPlayerData.DefaultOutfit, PlayerMaterial.MaskType.None, cachedPlayerData.IsDead, true, null, false);
+                poolablePlayer.UpdateFromPlayerOutfit(cachedPlayerData.Outfit, PlayerMaterial.MaskType.None, cachedPlayerData.IsDead, true, null, false);
 
                 poolablePlayer.SetName(cachedPlayerData.PlayerName, vector.Inv(), Color.white, -15f);
                 Vector3 namePosition = new Vector3(0f, -1.31f, -0.5f);
@@ -244,13 +257,11 @@ public class CustomGameManager
 
     public static void SetupGameSummary(EndGameManager endGameManager)
     {
-        return;
-
         try
         {
-            List<NetworkedPlayerInfo> players = catchedPlayerData.Where(CheckWinner).ToList();
+            List<BetterCachedPlayerData> players = CachedPlayerData.ToArray().Where(CheckWinner).ToList();
             var anyFlag = players.Any();
-            NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
+            BetterCachedPlayerData? first = anyFlag ? players.First() : null;
             var role = first?.GetOldBetterData()?.RoleInfo?.Role;
             if (role == null) return;
 
@@ -282,14 +293,14 @@ public class CustomGameManager
                 SummaryText.alignment = TextAlignmentOptions.TopLeft;
                 SummaryText.color = Color.white;
 
-                NetworkedPlayerInfo[] playersData = catchedPlayerData
+                BetterCachedPlayerData[] playersData = CachedPlayerData
                     .ToArray()
                     .OrderBy(pd => pd.Disconnected)  // Disconnected players last
                     .ThenBy(pd => pd.IsDead)          // Dead players after live players
                     .ThenBy(pd => CheckWinner(pd) ? 0 : 1) // Winners first
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.IsCrewmate) // Crewmates first
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.IsImpostor) // Impostors next
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.IsNeutral) // Neutral last
+                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
+                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
+                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
                     .ToArray();
 
 
@@ -320,7 +331,6 @@ public class CustomGameManager
                     case EndGameReason.CustomFromRole:
                         winTag = Translator.GetString("Game.Summary.Result.RoleCondition");
                         break;
-
                     default:
                         winTag = "Unknown";
                         break;
@@ -336,7 +346,7 @@ public class CustomGameManager
 
                 foreach (var data in playersData)
                 {
-                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.GetOldBetterData().RealName}</color>";
+                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.Outfit.ColorId])}>{data.GetOldBetterData().RealName}</color>";
                     string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.GetOldBetterData().RoleInfo.Role.RoleTeam)}>{text}</color>";
 
                     var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.GetOldBetterData().RoleInfo.Role.RoleType)})";
@@ -382,7 +392,7 @@ public class CustomGameManager
         }
     }
 
-    private static bool CheckWinner(NetworkedPlayerInfo data) => winners.Contains(data.PlayerId);
+    private static bool CheckWinner(BetterCachedPlayerData data) => data != null && winners.Contains(data.PlayerId);
 
     // Ignore original endgame RPC
     [HarmonyPatch(typeof(InnerNetClient))]
@@ -397,7 +407,7 @@ public class CustomGameManager
         }
     }
 
-    public static List<NetworkedPlayerInfo> catchedPlayerData;
+    public static List<BetterCachedPlayerData> CachedPlayerData = [];
     public static List<byte> winners = [];
     public static EndGameReason winReason;
 
@@ -406,8 +416,46 @@ public class CustomGameManager
 
     public static void EndGame(List<byte> Winners, EndGameReason reason)
     {
+        // Set player data for endgame
+        CachedPlayerData.Clear();
+        foreach (var data in GameData.Instance.AllPlayers)
+        {
+            List<NetworkedPlayerInfo.TaskInfo> newTasks = [];
+            foreach (var task in data.Tasks)
+            {
+                var newTask = new NetworkedPlayerInfo.TaskInfo()
+                { 
+                    Id = task.Id,
+                    TypeId = task.TypeId,
+                    Complete = task.Complete,
+                };
+                newTasks.Add(newTask);
+            }
+            var newData = new BetterCachedPlayerData()
+            {
+                AmOwner = data.Object == PlayerControl.LocalPlayer,
+                PlayerName = data.PlayerName,
+                Tasks = newTasks,
+                PlayerId = data.PlayerId,
+                Role = data.BetterData().RoleInfo.Role.RoleType,
+                RoleTeam = data.BetterData().RoleInfo.Role.RoleTeam,
+                IsDead = data.IsDead,
+                Disconnected = data.Disconnected,
+                Outfit = new NetworkedPlayerInfo.PlayerOutfit()
+                {
+                    PlayerName = data.PlayerName,
+                    ColorId = data.DefaultOutfit.ColorId,
+                    SkinId = data.DefaultOutfit.SkinId,
+                    HatId = data.DefaultOutfit.HatId,
+                    VisorId = data.DefaultOutfit.VisorId,
+                    PetId = data.DefaultOutfit.PetId,
+                    NamePlateId = data.DefaultOutfit.NamePlateId,
+                },
+            };
+            CachedPlayerData.Add(newData);
+        }
+
         winners.Clear();
-        catchedPlayerData = GameData.Instance.AllPlayers.ToArray().ToList();
         winners = Winners;
         winReason = reason;
 

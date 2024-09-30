@@ -71,7 +71,7 @@ static class ActionRPCs
         {
             if (CheckSetRoleAction(player, role) == true || bypass)
             {
-                if (!CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).IsAddon)
+                if (!CustomRoleManager.GetRoleInstance(role).IsAddon)
                 {
                     CustomRoleManager.SetCustomRole(player, role);
                 }
@@ -246,6 +246,7 @@ static class ActionRPCs
         if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
+            Logger.Log($"{playerRoleInfo.RoleAssigned} && ({!playerRoleInfo.Role.CanKill} && {isAbility} || {target.IsInVent()} || {!target} || {!ValidateSenderCheck(player)})");
             return false;
         }
 

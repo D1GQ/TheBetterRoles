@@ -17,6 +17,7 @@ public enum TargetType
 
 public abstract class CustomRoleBehavior
 {
+    public PlayerControl? localPlayer => PlayerControl.LocalPlayer;
     public PlayerControl? _player;
     public NetworkedPlayerInfo? _data;
     public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");

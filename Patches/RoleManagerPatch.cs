@@ -16,16 +16,7 @@ public class RoleManagerPatch
     [HarmonyPrefix]
     public static bool RoleManager_Prefix(/*RoleManager __instance*/)
     {
-        return true;
-
-        if (!GameStates.IsHideNSeek)
-        {
-            RegularBetterRoleAssignment();
-        }
-        else
-        {
-            HideAndSeekBetterRoleAssignment();
-        }
+        CustomRoleManager.AssignRoles();
 
         return false;
     }
@@ -46,31 +37,4 @@ public class RoleManagerPatch
 
         return false;
     }
-
-    private static bool IsImpostorRole(RoleTypes role) => role is RoleTypes.Impostor or RoleTypes.Shapeshifter or RoleTypes.Phantom;
-
-    private static Dictionary<TKey, TValue> Shuffle<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
-    {
-        List<TKey> keys = dictionary.Keys.ToList();
-
-        // Fisher-Yates shuffle algorithm
-        for (int i = keys.Count - 1; i > 0; i--)
-        {
-            int j = random.Next(0, i + 1);
-            TKey temp = keys[i];
-            keys[i] = keys[j];
-            keys[j] = temp;
-        }
-
-        // Rebuild dictionary with shuffled keys
-        Dictionary<TKey, TValue> shuffledDictionary = new Dictionary<TKey, TValue>();
-        foreach (var key in keys)
-        {
-            shuffledDictionary[key] = dictionary[key];
-        }
-
-        return shuffledDictionary;
-    }
-
-    public static int RNG() => UnityEngine.Random.Range(0, 100);
 }
