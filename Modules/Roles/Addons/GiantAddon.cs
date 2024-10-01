@@ -8,6 +8,10 @@ namespace TheBetterRoles;
 public class GiantAddon : CustomAddonBehavior
 {
     // Role Info
+    public override Func<CustomRoles, bool> AssignmentCondition => (CustomRoles role) => 
+    {
+        return true;
+    };
     public override string RoleColor => "#745354";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Giant;
@@ -34,7 +38,26 @@ public class GiantAddon : CustomAddonBehavior
     public override void SetUpRole()
     {
         OptionItems.Initialize();
+        SetSize();
+    }
 
+    public override void OnDeinitialize()
+    {
+        ResetSize();
+    }
+
+    public override void OnDisguise(PlayerControl player)
+    {
+        ResetSize();
+    }
+
+    public override void OnUndisguise(PlayerControl player)
+    {
+        SetSize();
+    }
+
+    private void SetSize()
+    {
         Size = _player.transform.localScale;
         CircleCollider = _player.GetComponent<CircleCollider2D>();
         Offset = CircleCollider.offset;
@@ -46,7 +69,7 @@ public class GiantAddon : CustomAddonBehavior
         _player.MyPhysics.Speed = PlayerSpeed * 0.6f;
     }
 
-    public override void OnDeinitialize()
+    private void ResetSize()
     {
         _player.transform.localScale = Size;
         CircleCollider.offset = Offset;

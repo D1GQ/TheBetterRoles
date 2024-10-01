@@ -132,6 +132,7 @@ public class CustomGameManager
                 _ = new LateTask(() =>
                 {
                     SoundManager.Instance.StopAllSound();
+                    SoundManager.Instance.PlaySound(DestroyableSingleton<RoleBehaviour>.Instance.IntroSound, false, 1f, null);
                     Color RoleColor = PlayerControl.LocalPlayer.GetRoleColor();
 
                     __instance.ourCrewmate.ToggleName(false);

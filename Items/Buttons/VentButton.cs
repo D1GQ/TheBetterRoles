@@ -151,8 +151,7 @@ public class VentButton : BaseButton
 
     public override void Update()
     {
-        var check = Role.CanVent && !Addons.Any(a => !a.CanVent) && !IsAbility || IsAbility;
-        Visible = check && UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         if (TempCooldown > 0)
         {

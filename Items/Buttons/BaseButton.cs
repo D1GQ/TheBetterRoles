@@ -33,7 +33,7 @@ public class BaseButton
 
     public virtual bool CanInteractOnPress() => ActionButton.canInteract;
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder();
-    public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder();
+    public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public virtual void Update() { }
 

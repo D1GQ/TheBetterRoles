@@ -48,7 +48,7 @@ public class JanitorRole : CustomRoleBehavior
         CleanButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, null, this, true, 1f)) as AbilityButton;
     }
 
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -60,11 +60,9 @@ public class JanitorRole : CustomRoleBehavior
                 }
                 break;
         }
-
-        base.OnAbilityUse(id, target, vent, body);
     }
 
-    public override bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override bool CheckAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -77,8 +75,8 @@ public class JanitorRole : CustomRoleBehavior
                 }
                 break;
         }
-        
-        return base.CheckRoleAction(id, target, vent, body);
+
+        return true;
     }
 
     private IEnumerator FadeBodyOut(DeadBody body)

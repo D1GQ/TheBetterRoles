@@ -45,7 +45,8 @@ public class SwooperRole : CustomRoleBehavior
         InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true)) as AbilityButton;
         InvisibilityButton.CanCancelDuration = true;
     }
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+
+    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -54,8 +55,6 @@ public class SwooperRole : CustomRoleBehavior
                 InvisibilityButton.SetDuration();
                 break;
         }
-
-        base.OnAbilityUse(id, target, vent, body);
     }
 
     public override void OnAbilityDurationEnd(int id)
@@ -68,6 +67,7 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
+    // FIX VENT BUG WITH _player.Visible
     public override void Update()
     {
         InteractableTarget = IsVisible;
@@ -105,16 +105,12 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    public override void OnDeinitialize()
+    public override void ResetAbilityState()
     {
         IsVisible = true;
         float alpha = 1f;
-
-        _player.cosmetics.hat.gameObject.SetActive(true);
-        _player.cosmetics.visor.gameObject.SetActive(true);
-
+        _player.Visible = true;
         _player.cosmetics.SetPhantomRoleAlpha(alpha);
-
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);

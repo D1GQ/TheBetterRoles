@@ -1,4 +1,5 @@
 ﻿
+using System;
 using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
@@ -9,5 +10,10 @@ namespace TheBetterRoles;
 
 public abstract class CustomAddonBehavior : CustomRoleBehavior
 {
+    public virtual Func<CustomRoles, bool> AssignmentCondition => (CustomRoles role) => true;
     public override bool IsAddon => true;
+    public override bool CanKill => true;
+    public override bool CanSabotage => true;
+    public override bool CanVent => true;
+    public override bool CanMoveInVent => true;
 }

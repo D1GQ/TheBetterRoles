@@ -55,7 +55,7 @@ public class MorphlingRole : CustomRoleBehavior
         TransformButton.CanCancelDuration = true;
     }
 
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -69,14 +69,13 @@ public class MorphlingRole : CustomRoleBehavior
             case 6:
                 if (SampleData != null)
                 {
+                    CustomRoleManager.RoleListener(_player, role => role.OnDisguise(_player));
                     OriginalData = CopyOutfit(_data);
                     SetOutfit(SampleData);
                     TransformButton.SetDuration();
                 }
                 break;
         }
-
-        base.OnAbilityUse(id, target, vent, body);
     }
 
     public override void OnAbilityDurationEnd(int id)
@@ -86,9 +85,7 @@ public class MorphlingRole : CustomRoleBehavior
             case 6:
                 if (OriginalData != null)
                 {
-                    SetOutfit(OriginalData);
-                    SampleData = null;
-                    OriginalData = null;
+                    ResetAbilityState();
                     SampleButton.SetCooldown();
                 }
                 break;
@@ -125,11 +122,15 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    public override void OnDeinitialize()
+    public override void ResetAbilityState()
     {
         if (SampleData != null)
         {
-            SetOutfit(OriginalData);
+            if (OriginalData != null)
+            {
+                CustomRoleManager.RoleListener(_player, role => role.OnUndisguise(_player));
+                SetOutfit(OriginalData);
+            }
             SampleData = null;
             OriginalData = null;
         }

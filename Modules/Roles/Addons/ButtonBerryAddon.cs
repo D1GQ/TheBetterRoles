@@ -28,19 +28,17 @@ public class ButtonBerryAddon : CustomAddonBehavior
     {
         OptionItems.Initialize();
 
-        MeetingButton = AddButton(new AbilityButton().Create(105, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 0, null, this, false)) as AbilityButton;
+        MeetingButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false)) as AbilityButton;
     }
 
-    public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
-            case 105:
+            case 5:
                 _player.ReportBodySync(null);
                 RemoveButton(MeetingButton);
                 break;
         }
-
-        base.OnAbilityUse(id, target, vent, body);
     }
 }

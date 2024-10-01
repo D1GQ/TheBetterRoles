@@ -111,12 +111,18 @@ static class ActionRPCs
         {
             if (CheckVentAction(player, ventId, Exit) == true || bypass)
             {
+                // Run after checks for roles
+                CustomRoleManager.RoleListener(player, role => role.OnVent(player, ventId, Exit));
+
+                CustomRoleManager.RoleListenerOther(role => role.OnVentOther(player, ventId, Exit));
+
                 if (!Exit)
                 {
                     player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
                     if (player.IsLocalPlayer())
                     {
-                        ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(player.CanMoveInVent());
+                        ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
+                            player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVent, false));
                     }
                 }
                 else
@@ -127,13 +133,6 @@ static class ActionRPCs
                         ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
                     }
                 }
-
-                // Run after checks for roles
-                Main.AllPlayerControls.First(pc => pc == player && pc.RoleAssigned())
-                    .BetterData().RoleInfo.Role.OnVent(player, ventId, Exit);
-
-                Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnVentOther(player, ventId, Exit));
 
                 if (bypass) return;
             }
@@ -151,27 +150,17 @@ static class ActionRPCs
 
     private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)
     {
-        var playerRoleInfo = player.BetterData().RoleInfo;
-
-        if (playerRoleInfo.RoleAssigned && playerRoleInfo.Role.CheckVent(player, ventId, Exit) == false)
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckVent(player, ventId, Exit)))
         {
-            Logger.Log($"{player.Data.PlayerName} {playerRoleInfo.Role.GetType().Name}.cs Canceled Vent Action");
             return false;
         }
 
-        foreach (var pc in Main.AllPlayerControls)
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckVentOther(player, ventId, Exit)))
         {
-            var otherRoleInfo = pc.BetterData().RoleInfo;
-            if (!otherRoleInfo.RoleAssigned) continue;
-
-            if (otherRoleInfo.Role.CheckVentOther(player, ventId, Exit) == false)
-            {
-                Logger.Log($"{pc.Data.PlayerName} {otherRoleInfo.Role.GetType().Name}.cs Canceled Vent Action");
-                return false;
-            }
+            return false;
         }
 
-        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanVent || !ValidateSenderCheck(player)))
+        if (CustomRoleManager.RoleChecks(player, role => !role.CanVent) || !ValidateSenderCheck(player))
         {
             Logger.Log($"Host Canceled Vent Action: Invalid");
             return false;
@@ -193,11 +182,10 @@ static class ActionRPCs
             if (CheckMurderAction(player, target, isAbility) == true || bypass)
             {
                 // Run after checks for roles
-                Main.AllPlayerControls.Where(pc => pc == player || pc == target && pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnMurder(player, target, isAbility));
+                CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, isAbility));
+                CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, isAbility));
 
-                Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnMurderOther(player, target, isAbility));
+                CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, isAbility));
 
                 player.MurderPlayer(target, MurderResultFlags.Succeeded);
 
@@ -217,37 +205,24 @@ static class ActionRPCs
 
     private static bool CheckMurderAction(PlayerControl player, PlayerControl target, bool isAbility)
     {
-        var playerRoleInfo = player.BetterData().RoleInfo;
-        var targetRoleInfo = target.BetterData().RoleInfo;
-
-        if (playerRoleInfo.RoleAssigned && playerRoleInfo.Role.CheckMurder(player, target, isAbility) == false)
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckMurder(player, target, isAbility)))
         {
-            Logger.Log($"{player.Data.PlayerName} {playerRoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
             return false;
         }
 
-        if (targetRoleInfo.RoleAssigned && targetRoleInfo.Role.CheckMurder(player, target, isAbility) == false)
+        if (!CustomRoleManager.RoleChecks(target, role => role.CheckMurder(player, target, isAbility)))
         {
-            Logger.Log($"{target.Data.PlayerName} {targetRoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
             return false;
         }
 
-        foreach (var pc in Main.AllPlayerControls)
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckMurderOther(player, target, isAbility)))
         {
-            var otherRoleInfo = pc.BetterData().RoleInfo;
-            if (!otherRoleInfo.RoleAssigned) continue;
-
-            if (otherRoleInfo.Role.CheckMurderOther(player, target, isAbility) == false)
-            {
-                Logger.Log($"{pc.Data.PlayerName} {otherRoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
-                return false;
-            }
+            return false;
         }
 
-        if (playerRoleInfo.RoleAssigned && (!playerRoleInfo.Role.CanKill && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player)))
+        if (!CustomRoleManager.RoleChecks(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
-            Logger.Log($"{playerRoleInfo.RoleAssigned} && ({!playerRoleInfo.Role.CanKill} && {isAbility} || {target.IsInVent()} || {!target} || {!ValidateSenderCheck(player)})");
             return false;
         }
 
@@ -286,16 +261,14 @@ static class ActionRPCs
         {
             if (CheckReportBodyAction(player, bodyInfo, isButton) == true || bypass)
             {
+                // Run after checks for roles
+                CustomRoleManager.RoleListenerOther(role => role.ResetAbilityState());
+                CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, isButton));
+                CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, isButton));
+
                 // Start Meeting
                 DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
                 player.StartMeeting(bodyInfo);
-
-                // Run after checks for roles
-                Main.AllPlayerControls.Where(pc => pc == player || pc.Data == bodyInfo && pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnBodyReport(player, bodyInfo, isButton));
-
-                Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnBodyReportOther(player, bodyInfo, isButton));
 
                 if (bypass) return;
             }
@@ -312,34 +285,18 @@ static class ActionRPCs
 
     private static bool CheckReportBodyAction(PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool isButton)
     {
-        var playerRoleInfo = player.BetterData().RoleInfo;
-        var targetRoleInfo = bodyInfo?.BetterData();
 
-        if (playerRoleInfo.RoleAssigned && playerRoleInfo.Role.CheckBodyReport(player, bodyInfo, isButton) == false)
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckBodyReport(player, bodyInfo, isButton)))
         {
-            Logger.Log($"{player.Data.PlayerName} {playerRoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
             return false;
         }
 
-        if (targetRoleInfo?.RoleInfo?.RoleAssigned == true && targetRoleInfo.RoleInfo.Role.CheckBodyReport(player, bodyInfo, isButton) == false)
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckBodyReportOther(player, bodyInfo, isButton)))
         {
-            Logger.Log($"{targetRoleInfo.RealName} {targetRoleInfo.RoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
             return false;
         }
 
-        foreach (var pc in Main.AllPlayerControls)
-        {
-            var otherRoleInfo = pc.BetterData().RoleInfo;
-            if (!otherRoleInfo.RoleAssigned) continue;
-
-            if (otherRoleInfo.Role.CheckBodyReportOther(player, bodyInfo, isButton) == false)
-            {
-                Logger.Log($"{pc.Data.PlayerName} {otherRoleInfo.Role.GetType().Name}.cs Canceled Murder Action");
-                return false;
-            }
-        }
-
-        if (playerRoleInfo.RoleAssigned && (!GameStates.IsInGamePlay || !ValidateSenderCheck(player)))
+        if (!GameStates.IsInGamePlay || !ValidateSenderCheck(player))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;
@@ -379,10 +336,9 @@ static class ActionRPCs
             if (CheckPlayerPressAction(player, target) == true || bypass)
             {
                 // Run after checks for roles
-                Main.AllPlayerControls.FirstOrDefault(pc => pc == target && pc.RoleAssigned()).BetterData().RoleInfo.Role.OnPlayerPress(player, target);
-
-                Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
-                    .ForEach(pc => pc.BetterData().RoleInfo.Role.OnPlayerPressOther(player, target));
+                CustomRoleManager.RoleListener(player, role => role.OnPlayerPress(player, target));
+                CustomRoleManager.RoleListener(target, role => role.OnPlayerPress(player, target));
+                CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(player, target));
 
                 if (bypass) return;
             }

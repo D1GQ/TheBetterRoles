@@ -183,6 +183,69 @@ public static class CustomRoleManager
         }
     }
 
+    public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, CustomRoleBehavior? targetRole = null)
+    {
+        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        {
+            if (role == null || targetRole != null && targetRole != role) continue;
+
+            action(role);
+        }
+    }
+
+    public static void RoleListenerOther(Action<CustomRoleBehavior> action)
+    {
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (player == null) continue;
+
+            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            {
+                if (role == null) continue;
+
+                action(role);
+            }
+        }
+    }
+
+    public static bool RoleChecks(this PlayerControl player, Func<CustomRoleBehavior, bool> predicate, bool log = true, CustomRoleBehavior? targetRole = null)
+    {
+        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        {
+            if (role == null || targetRole != null && targetRole != role) continue;
+
+            if (!predicate(role))
+            {
+                if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static bool RoleChecksOther(Func<CustomRoleBehavior, bool> predicate, bool log = true)
+    {
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (player == null) continue;
+
+            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            {
+                if (role == null) continue;
+
+                if (!predicate(role))
+                {
+                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
     public static void ClearRoles(this PlayerControl player)
     {
         if (player == null) return;

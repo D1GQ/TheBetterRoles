@@ -56,7 +56,7 @@ public abstract class CustomRoleBehavior
     public float GetChance() => GameStates.IsHost ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
     public int GetAmount() => GameStates.IsHost ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0;
 
-    public void Initialize(PlayerControl player)
+    public CustomRoleBehavior Initialize(PlayerControl player)
     {
         if (player != null)
         {
@@ -76,19 +76,27 @@ public abstract class CustomRoleBehavior
                     SetUpRole();
                 }
             }
+
+            if (!GameStates.IsFreePlay)
+            {
+                SetAllCooldowns();
+            }
         }
+
+        return this;
     }
     
     public void Deinitialize()
     {
         OnDeinitialize();
+        ResetAbilityState();
 
         // Remove Buttons
         foreach (var button in Buttons)
         {
             if (button?.Button?.gameObject != null)
             {
-                UnityEngine.Object.Destroy(button.Button.gameObject);
+                button.RemoveButton();
             }
         }
 
@@ -98,31 +106,23 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public virtual bool WinCondition() => false;
-
-    public virtual void OnDeinitialize() { }
-
-    public virtual void Update() 
-    {
-    }
-
     // Run base if override
     public virtual void SetUpRole()
     {
         if (IsAddon) return;
 
         SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
-        SabotageButton.VisibleCondition = () => { return VentButton.Role.CanSabotage; };
+        SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
         KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
-        KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
+        KillButton.VisibleCondition = () => { return CustomRoleManager.RoleChecks(KillButton._player, role => role.CanKill, false); };
         KillButton.TargetCondition = (PlayerControl target) =>
         {
             return !target.IsImpostorTeammate();
         };
 
         VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
-        VentButton.VisibleCondition = () => { return VentButton.Role.CanVent; };
+        VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecks(VentButton._player, role => role.CanVent, false); };
     }
 
     public void SetUpSettings()
@@ -236,7 +236,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public virtual void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -259,17 +259,14 @@ public abstract class CustomRoleBehavior
                 break;
             default:
                 {
-                    Main.AllPlayerControls.Where(pc => pc == _player || pc == target && pc.BetterData().RoleInfo.RoleAssigned).ToList()
-                        .ForEach(pc => pc.BetterData().RoleInfo.Role.OnAbility(id, _player, target, vent));
-
-                    Main.AllPlayerControls.Where(pc => pc.BetterData().RoleInfo.RoleAssigned).ToList()
-                        .ForEach(pc => pc.BetterData().RoleInfo.Role.OnAbilityOther(id, _player, target, vent));
+                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, this, target, vent, body), this);
+                    CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, this, target, vent, body));
                 }
                  break;
         }
     }
 
-    public virtual bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -287,23 +284,13 @@ public abstract class CustomRoleBehavior
                 break;
                 default:
                 {
-                    foreach (var player in Main.AllPlayerControls.Where(pc => pc == _player || pc == target))
+                    if (!CustomRoleManager.RoleChecks(_player, role => role.CheckAbility(id, this, target, vent, body), targetRole: this))
                     {
-                        if (!player.BetterData().RoleInfo.RoleAssigned) continue;
-
-                        if (player.BetterData().RoleInfo.Role.CheckAbility(id, _player, target, vent) == false)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-                    foreach (var player in Main.AllPlayerControls)
+                    if (!CustomRoleManager.RoleChecksOther(role => role.CheckAbilityOther(id, this, target, vent, body)))
                     {
-                        if (!player.BetterData().RoleInfo.RoleAssigned) continue;
-
-                        if (player.BetterData().RoleInfo.Role.CheckAbilityOther(id, _player, target, vent) == false)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
                 break;
@@ -312,30 +299,53 @@ public abstract class CustomRoleBehavior
         return true;
     }
 
+    public void SetAllCooldowns()
+    {
+        foreach (var button in Buttons)
+        {
+            button.SetCooldown();
+        }
+    }
+
     public Sprite? LoadAbilitySprite(string name, float size = 115) => Utils.LoadSprite($"TheBetterRoles.Resources.Images.Ability.{name}.png", size);
+
+    public virtual bool WinCondition() => false;
+
+    public virtual void OnDeinitialize() { }
+
+    public virtual void Update() { }
+
     public virtual bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
     public virtual bool CheckMurder(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
 
     public virtual void OnMurderOther(PlayerControl killer, PlayerControl target, bool IsAbility) { }
     public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool IsAbility) { }
 
-    public virtual bool CheckAbilityOther(int Id, PlayerControl player, PlayerControl? target, Vent? vent) => true;
-    public virtual bool CheckAbility(int Id, PlayerControl player, PlayerControl? target, Vent? vent) => true;
+    public virtual bool CheckAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
+    public virtual bool CheckAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
 
-    public virtual void OnAbilityOther(int Id, PlayerControl player, PlayerControl? target, Vent? vent) { }
-    public virtual void OnAbility(int Id, PlayerControl player, PlayerControl? target, Vent? vent) { }
-    public virtual void OnAbilityDurationEnd(int Id) { }
+    public virtual void OnAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+    public virtual void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+    public virtual void OnAbilityDurationEnd(int id) { }
 
     public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
     public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
     public virtual void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
     public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
 
+    public virtual void OnMeetingEnd(PlayerControl? exiled, bool tie) { }
+    public virtual void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData) { }
+
     public virtual bool CheckVentOther(PlayerControl venter, int ventId, bool Exit) => true;
     public virtual bool CheckVent(PlayerControl venter, int ventId, bool Exit) => true;
     public virtual void OnVentOther(PlayerControl venter, int ventId, bool Exit) { }
     public virtual void OnVent(PlayerControl venter, int ventId, bool Exit) { }
 
+    public virtual void OnDisguise(PlayerControl player) { }
+    public virtual void OnUndisguise(PlayerControl player) { }
+
     public virtual void OnPlayerPressOther(PlayerControl player, PlayerControl target) { }
     public virtual void OnPlayerPress(PlayerControl player, PlayerControl target) { }
+
+    public virtual void ResetAbilityState() { }
 }

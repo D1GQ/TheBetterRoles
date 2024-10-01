@@ -25,6 +25,10 @@ public static class PlayerControlDataExtension
         public CustomRoles RoleType { get; set; }
         public List<CustomAddonBehavior>? Addons { get; set; } = [];
         public int Kills { get; set; } = 0;
+        public List<CustomRoleBehavior> AllRoles =>
+            (Addons?.Cast<CustomRoleBehavior>() ?? Enumerable.Empty<CustomRoleBehavior>())
+            .Concat(Role != null ? new[] { Role } : Enumerable.Empty<CustomRoleBehavior>())
+            .ToList();
     }
 
     public static List<ExtendedPlayerInfo> cachedplayerInfo = [];
@@ -62,7 +66,7 @@ public static class PlayerControlDataExtension
             };
             cachedplayerInfo.Add(newData);
             playerInfo[data] = cachedplayerInfo.First(data2 => data2 == newData);
-            playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR() { _player = Utils.PlayerFromPlayerId(data.PlayerId), _data = data };
+            playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR().Initialize(Utils.PlayerFromPlayerId(data.PlayerId));
             playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
         }
         return playerInfo[data];

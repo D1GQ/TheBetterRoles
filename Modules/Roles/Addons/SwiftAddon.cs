@@ -29,12 +29,24 @@ public class SwiftAddon : CustomAddonBehavior
     public override void SetUpRole()
     {
         OptionItems.Initialize();
-
-        _player.MyPhysics.Speed = PlayerSpeed * SpeedX.GetFloat();
+        SetSpeed();
     }
 
     public override void OnDeinitialize()
     {
-        _player.MyPhysics.Speed = PlayerSpeed / SpeedX.GetFloat();
+        ResetSpeed();
     }
+
+    public override void OnDisguise(PlayerControl player)
+    {
+        ResetSpeed();
+    }
+
+    public override void OnUndisguise(PlayerControl player)
+    {
+        SetSpeed();
+    }
+
+    private void SetSpeed() => _player.MyPhysics.Speed = PlayerSpeed * SpeedX.GetFloat();
+    private void ResetSpeed() => _player.MyPhysics.Speed = PlayerSpeed / SpeedX.GetFloat();
 }
