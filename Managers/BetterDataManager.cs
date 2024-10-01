@@ -100,46 +100,6 @@ class BetterDataManager
         }
     }
 
-    public static void Save(string name, string dataToSave, string category = "Data")
-    {
-        string filePath = GetFilePath("BetterData");
-
-        string json = File.ReadAllText(filePath);
-        var jsonData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json) ?? new Dictionary<string, Dictionary<string, string>>();
-
-        if (!jsonData.ContainsKey(category))
-        {
-            jsonData[category] = new Dictionary<string, string>();
-        }
-
-        jsonData[category][name] = dataToSave;
-
-        json = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(filePath, json);
-    }
-
-    public static string Load(string name, string category = "Data")
-    {
-        try
-        {
-            string filePath = GetFilePath("BetterData");
-
-            string json = File.ReadAllText(filePath);
-            var jsonData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
-
-            if (jsonData != null && jsonData.ContainsKey(category) && jsonData[category].ContainsKey(name))
-            {
-                return jsonData[category][name];
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
-
-        return string.Empty;
-    }
-
     public static void SaveSetting(int id, string input)
     {
         string filePath = SettingsFile;

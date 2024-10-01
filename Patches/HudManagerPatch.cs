@@ -34,7 +34,7 @@ public class HudManagerPatch
         if (Grid != null)
         {
             Grid.Alignment = GridArrange.StartAlign.Right;
-            Grid.MaxColumns = 1;
+            Grid.MaxColumns = 2;
         }
 
         if (BetterNotificationManager.BAUNotificationManagerObj == null)

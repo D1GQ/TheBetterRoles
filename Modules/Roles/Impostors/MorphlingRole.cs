@@ -1,5 +1,7 @@
 ﻿
 using TheBetterRoles.Patches;
+using TMPro;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -94,16 +96,6 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    public override void OnMurder(PlayerControl killer, PlayerControl target, bool IsAbility)
-    {
-        if (target == _player && SampleData != null)
-        {
-            SetOutfit(OriginalData);
-            SampleData = null;
-            OriginalData = null;
-        }
-    }
-
     private NetworkedPlayerInfo.PlayerOutfit CopyOutfit(NetworkedPlayerInfo data)
     {
         var outfit = data.DefaultOutfit;
@@ -122,5 +114,25 @@ public class MorphlingRole : CustomRoleBehavior
     private void SetOutfit(NetworkedPlayerInfo.PlayerOutfit outfit)
     {
         _player.SetOutfit(outfit, PlayerOutfitType.Default);
+    }
+
+    public override void OnMurder(PlayerControl killer, PlayerControl target, bool IsAbility)
+    {
+        if (target == _player && SampleData != null)
+        {
+            SetOutfit(OriginalData);
+            SampleData = null;
+            OriginalData = null;
+        }
+    }
+
+    public override void OnDeinitialize()
+    {
+        if (SampleData != null)
+        {
+            SetOutfit(OriginalData);
+            SampleData = null;
+            OriginalData = null;
+        }
     }
 }

@@ -30,12 +30,14 @@ internal static class TaskPatches
     [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
     private class Console_CanUse
     {
-        private static bool Prefix(Console __instance, [HarmonyArgument(0)] NetworkedPlayerInfo playerInfo, ref float __result)
+        private static bool Prefix(Console __instance, [HarmonyArgument(0)] NetworkedPlayerInfo playerInfo, ref float __result, ref bool canUse, ref bool couldUse)
         {
-            var playerControl = playerInfo.Object;
-            var flag = playerControl.BetterData().RoleInfo.Role.HasTask;
+            var pc = playerInfo.Object;
+            var flag = pc.BetterData().RoleInfo.Role.HasTask;
             if (!flag && !__instance.AllowImpostor)
             {
+                couldUse = false;
+                canUse = false;
                 __result = float.MaxValue;
                 return false;
             }
