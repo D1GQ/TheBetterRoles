@@ -23,19 +23,6 @@ public enum EndGameReason
     CustomFromRole
 }
 
-public class BetterCachedPlayerData
-{
-    public byte PlayerId;
-    public string? PlayerName;
-    public CustomRoles Role;
-    public CustomRoleTeam RoleTeam;
-    public List<NetworkedPlayerInfo.TaskInfo>? Tasks;
-    public NetworkedPlayerInfo.PlayerOutfit? Outfit;
-    public bool AmOwner;
-    public bool Disconnected;
-    public bool IsDead;
-}
-
 public class CustomGameManager
 {
     [HarmonyPatch(typeof(GameManager))]
@@ -49,6 +36,10 @@ public class CustomGameManager
 
             CheckWinConditions();
         }
+
+        [HarmonyPatch(nameof(GameManager.EndGame))]
+        [HarmonyPrefix]
+        public static bool EndGame_Prefix(GameManager __instance) => false;
     }
 
     [HarmonyPatch(typeof(HudManager))]
@@ -78,6 +69,11 @@ public class CustomGameManager
         private static bool BeginImpostor_Prefix(IntroCutscene __instance)
         {
             List<PlayerControl> teamToShow = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) ? Main.AllPlayerControls.ToList() : Main.AllPlayerControls.Where(p => p.IsTeammate()).ToList();
+
+            foreach (var other in PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.RecruitedPlayers) 
+            {
+                teamToShow.Add(Utils.PlayerFromPlayerId(other.PlayerId));
+            }
 
             Begin(__instance, teamToShow);
 
@@ -164,22 +160,15 @@ public class CustomGameManager
         {
             SetupGameSummary(__instance);
 
-            List<BetterCachedPlayerData> players = CachedPlayerData.ToArray().Where(CheckWinner).ToList();
+            List<NetworkedPlayerInfo> players = playerData.Where(CheckWinner).ToList();
             var anyFlag = players.Any();
-            BetterCachedPlayerData? first = anyFlag ? players.First() : null;
+            NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
             var role = first?.GetOldBetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
-            var team = first?.GetOldBetterData()?.RoleInfo?.Role?.RoleTeam ?? CustomRoleTeam.None;
-            var teamColor = Color.white;
-            if (winReason != EndGameReason.CustomFromRole)
-            {
-                teamColor = anyFlag ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(first.GetOldBetterData().RoleInfo.Role.RoleTeam)) : Color.red;
-            }
-            else
-            {
-                teamColor = anyFlag ? Utils.GetCustomRoleColor(first.GetOldBetterData().RoleInfo.RoleType) : Color.red;
-            }
+            var team = winTeam;
+            Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
+                : Utils.HexToColor32(first.GetOldBetterData().RoleInfo.Role.RoleColor);
 
-            bool flag = players.Any(data => data.AmOwner);
+            bool flag = players.Any(data => data.GetOldBetterData().IsSelf);
 
             if (!anyFlag)
             {
@@ -227,7 +216,7 @@ public class CustomGameManager
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
             {
-                BetterCachedPlayerData cachedPlayerData = players[i];
+                NetworkedPlayerInfo cachedPlayerData = players[i];
                 int num2 = (i % 2 == 0) ? -1 : 1;
                 int num3 = (i + 1) / 2;
                 float num4 = num3 / num;
@@ -247,7 +236,7 @@ public class CustomGameManager
                 {
                     poolablePlayer.SetFlipX(i % 2 == 0);
                 }
-                poolablePlayer.UpdateFromPlayerOutfit(cachedPlayerData.Outfit, PlayerMaterial.MaskType.None, cachedPlayerData.IsDead, true, null, false);
+                poolablePlayer.UpdateFromPlayerOutfit(cachedPlayerData.DefaultOutfit, PlayerMaterial.MaskType.None, cachedPlayerData.IsDead, true, null, false);
 
                 poolablePlayer.SetName(cachedPlayerData.PlayerName, vector.Inv(), Color.white, -15f);
                 Vector3 namePosition = new Vector3(0f, -1.31f, -0.5f);
@@ -269,9 +258,9 @@ public class CustomGameManager
 
         try
         {
-            List<BetterCachedPlayerData> players = CachedPlayerData.ToArray().Where(CheckWinner).ToList();
+            List<NetworkedPlayerInfo> players = playerData;
             var anyFlag = players.Any();
-            BetterCachedPlayerData? first = anyFlag ? players.First() : null;
+            NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
             var role = first?.GetOldBetterData()?.RoleInfo?.Role;
             if (role == null) return;
 
@@ -303,14 +292,14 @@ public class CustomGameManager
                 SummaryText.alignment = TextAlignmentOptions.TopLeft;
                 SummaryText.color = Color.white;
 
-                BetterCachedPlayerData[] playersData = CachedPlayerData
+                NetworkedPlayerInfo[] playersData = GameData.Instance.AllPlayers
                     .ToArray()
                     .OrderBy(pd => pd.Disconnected)  // Disconnected players last
                     .ThenBy(pd => pd.IsDead)          // Dead players after live players
                     .ThenBy(pd => CheckWinner(pd) ? 0 : 1) // Winners first
-                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
-                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
-                    .ThenBy(pd => pd.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
+                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
+                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
+                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
                     .ToArray();
 
 
@@ -356,7 +345,7 @@ public class CustomGameManager
 
                 foreach (var data in playersData)
                 {
-                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.Outfit.ColorId])}>{data.GetOldBetterData().RealName}</color>";
+                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.GetOldBetterData().RealName}</color>";
                     string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.GetOldBetterData().RoleInfo.Role.RoleTeam)}>{text}</color>";
 
                     var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.GetOldBetterData().RoleInfo.Role.RoleType)})";
@@ -402,7 +391,7 @@ public class CustomGameManager
         }
     }
 
-    private static bool CheckWinner(BetterCachedPlayerData data) => data != null && winners.Contains(data.PlayerId);
+    private static bool CheckWinner(NetworkedPlayerInfo data) => winners.Contains(data.PlayerId);
 
     // Ignore original endgame RPC
     [HarmonyPatch(typeof(InnerNetClient))]
@@ -417,7 +406,7 @@ public class CustomGameManager
         }
     }
 
-    public static List<BetterCachedPlayerData> CachedPlayerData = [];
+    public static List<NetworkedPlayerInfo> playerData => GameData.Instance.AllPlayers.Count > 0 ? GameData.Instance.AllPlayers.ToArray().ToList() : playerData;
     public static List<byte> winners = [];
     public static EndGameReason winReason;
     public static CustomRoleTeam winTeam;
@@ -428,44 +417,6 @@ public class CustomGameManager
     public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)
     {
         // Set player data for endgame
-        CachedPlayerData.Clear();
-        foreach (var data in GameData.Instance.AllPlayers)
-        {
-            List<NetworkedPlayerInfo.TaskInfo> newTasks = [];
-            foreach (var task in data.Tasks)
-            {
-                var newTask = new NetworkedPlayerInfo.TaskInfo()
-                { 
-                    Id = task.Id,
-                    TypeId = task.TypeId,
-                    Complete = task.Complete,
-                };
-                newTasks.Add(newTask);
-            }
-            var newData = new BetterCachedPlayerData()
-            {
-                AmOwner = data.Object == PlayerControl.LocalPlayer,
-                PlayerName = data.PlayerName,
-                Tasks = newTasks,
-                PlayerId = data.PlayerId,
-                Role = data.GetOldBetterData().RoleInfo.Role.RoleType,
-                RoleTeam = data.GetOldBetterData().RoleInfo.Role.RoleTeam,
-                IsDead = data.IsDead,
-                Disconnected = data.Disconnected,
-                Outfit = new NetworkedPlayerInfo.PlayerOutfit()
-                {
-                    PlayerName = data.PlayerName,
-                    ColorId = data.DefaultOutfit.ColorId,
-                    SkinId = data.DefaultOutfit.SkinId,
-                    HatId = data.DefaultOutfit.HatId,
-                    VisorId = data.DefaultOutfit.VisorId,
-                    PetId = data.DefaultOutfit.PetId,
-                    NamePlateId = data.DefaultOutfit.NamePlateId,
-                },
-            };
-            CachedPlayerData.Add(newData);
-        }
-
         winners.Clear();
         winners = Winners;
         winReason = reason;
@@ -508,35 +459,7 @@ public class CustomGameManager
     {
         if (!GameStates.IsHost || !ShouldCheckConditions || GameHasEnded) return;
 
-        if (CheckCrewAndImpAmount())
-        {
-            var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
-            Logger.Log("Ending Game As Host: Crew Outnumbered");
-            ActionRPCs.EndGameSync(Impostors, EndGameReason.Outnumbered);
-            GameHasEnded = true;
-        }
-        else if (CheckSabotageWin())
-        {
-            var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
-            Logger.Log("Ending Game As Host: Critical Sabotage");
-            ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage);
-            GameHasEnded = true;
-        }
-        else if (CheckCrewmateWin())
-        {
-            var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
-            Logger.Log("Ending Game As Host: All Tasks");
-            ActionRPCs.EndGameSync(Crewmates, EndGameReason.Tasks);
-            GameHasEnded = true;
-        }
-        else if (CheckImposterAmount())
-        {
-            var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
-            Logger.Log("Ending Game As Host: No Imps");
-            ActionRPCs.EndGameSync(Crewmates, EndGameReason.Outnumbered);
-            GameHasEnded = true;
-        }
-        else if (CheckCustomWin() is PlayerControl player && player != null)
+        if (CheckCustomWin() is PlayerControl player && player != null)
         {
             Logger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
             List<byte> players = [player.Data.PlayerId];
@@ -544,7 +467,35 @@ public class CustomGameManager
             {
                 players.Add(other.PlayerId);
             }
-            ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole);
+            ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole, CustomRoleTeam.Neutral);
+            GameHasEnded = true;
+        }
+        else if (CheckCrewAndImpAmount())
+        {
+            var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
+            Logger.Log("Ending Game As Host: Crew Outnumbered");
+            ActionRPCs.EndGameSync(Impostors, EndGameReason.Outnumbered, CustomRoleTeam.Impostor);
+            GameHasEnded = true;
+        }
+        else if (CheckSabotageWin())
+        {
+            var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
+            Logger.Log("Ending Game As Host: Critical Sabotage");
+            ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage, CustomRoleTeam.Impostor);
+            GameHasEnded = true;
+        }
+        else if (CheckCrewmateWin())
+        {
+            var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
+            Logger.Log("Ending Game As Host: All Tasks");
+            ActionRPCs.EndGameSync(Crewmates, EndGameReason.Tasks, CustomRoleTeam.Crewmate);
+            GameHasEnded = true;
+        }
+        else if (CheckImposterAmount())
+        {
+            var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
+            Logger.Log("Ending Game As Host: No Imps");
+            ActionRPCs.EndGameSync(Crewmates, EndGameReason.Outnumbered, CustomRoleTeam.Crewmate);
             GameHasEnded = true;
         }
     }

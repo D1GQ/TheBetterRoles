@@ -87,7 +87,7 @@ public class TargetButton : BaseButton
         float closeDistanceThreshold = 0.15f;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.Where(pc => !pc.IsLocalPlayer() && TargetCondition(pc)).ToList();
+        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.Where(pc => !pc.IsLocalPlayer() && TargetCondition(pc) && pc.BetterData().RoleInfo.Role.InteractableTarget).ToList();
 
         for (int i = 0; i < allPlayers.Count; i++)
         {

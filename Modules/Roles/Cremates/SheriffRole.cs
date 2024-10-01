@@ -22,6 +22,7 @@ public class SheriffRole : CustomRoleBehavior
     public BetterOptionItem? Misfire;
     public BetterOptionItem? CanShootImposters;
     public BetterOptionItem? CanShootNeutrals;
+    public TargetButton? ShootButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -43,7 +44,7 @@ public class SheriffRole : CustomRoleBehavior
     {
         base.SetUpRole();
         OptionItems.Initialize();
-        AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, this, true, ShootDistance.GetValue() + 1 / 1.5f));
+        ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, this, true, ShootDistance.GetValue() + 1 / 1.5f)) as TargetButton;
     }
 
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)

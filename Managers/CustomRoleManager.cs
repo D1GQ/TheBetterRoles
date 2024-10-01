@@ -61,11 +61,11 @@ public static class CustomRoleManager
             int KillingNeutralAmount = 1; // BetterGameSettings.KillingNeutralAmount.GetInt();
 
             var impostorLimits = new Dictionary<int, int>
-        {
-            { 3, 1 },
-            { 5, 2 },
-            { 7, 3 }
-        };
+            {
+                { 3, 1 },
+                { 5, 2 },
+                { 7, 3 }
+            };
 
             // Adjust ImposterAmount based on player count
             foreach (var limit in impostorLimits)
@@ -87,12 +87,33 @@ public static class CustomRoleManager
                 }
             }
 
-            // Shuffle the available roles to randomize selection
-            availableRoles = availableRoles.OrderBy(x => IRandom.Instance.Next(availableRoles.Count)).ToList();
 
-            // Shuffle players
+            // Shuffle the available roles to randomize selection multiple times
+            int shuffleCount = 25;
+
+            for (int s = 0; s < shuffleCount; s++)
+            {
+                for (int i = availableRoles.Count - 1; i > 0; i--)
+                {
+                    int j = IRandom.Instance.Next(i + 1); // Get a random index
+                                                          // Swap the elements at indices i and j
+                    var temp = availableRoles[i];
+                    availableRoles[i] = availableRoles[j];
+                    availableRoles[j] = temp;
+                }
+            }
+
+
+            // Shuffle players multiple times
             List<PlayerControl> players = new(Main.AllPlayerControls);
-            players = players.OrderBy(x => IRandom.Instance.Next(players.Count)).ToList();
+            for (int s = 0; s < shuffleCount; s++)
+            {
+                for (int i = players.Count - 1; i > 0; i--)
+                {
+                    int j = IRandom.Instance.Next(i + 1);
+                    (players[i], players[j]) = (players[j], players[i]);
+                }
+            }
 
             // Prepare a dictionary to store player-to-role assignments
             Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];

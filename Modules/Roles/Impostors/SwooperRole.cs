@@ -71,6 +71,8 @@ public class SwooperRole : CustomRoleBehavior
 
     public override void Update()
     {
+        InteractableTarget = IsVisible;
+
         float alpha = 1f;
 
         var flag = _player.IsLocalPlayer() || _player.IsImpostorTeammate() || !localPlayer.IsAlive();

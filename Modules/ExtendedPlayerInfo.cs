@@ -9,6 +9,7 @@ public static class PlayerControlDataExtension
     // Base
     public class ExtendedPlayerInfo
     {
+        public bool IsSelf { get; set; }
         public byte _PlayerId { get; set; }
         public NetworkedPlayerInfo? _Data { get; set; }
         public string? RealName => _Data.PlayerName;
@@ -54,12 +55,13 @@ public static class PlayerControlDataExtension
         {
             ExtendedPlayerInfo newData = new ExtendedPlayerInfo
             {
+                IsSelf = data == PlayerControl.LocalPlayer.Data,
                 _PlayerId = data.PlayerId,
                 _Data = data,
                 RoleInfo = new ExtendedRoleInfo(),
             };
             cachedplayerInfo.Add(newData);
-            playerInfo[data] = newData;
+            playerInfo[data] = cachedplayerInfo.First(data2 => data2 == newData);
             playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR() { _player = Utils.PlayerFromPlayerId(data.PlayerId), _data = data };
             playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
         }
@@ -87,5 +89,4 @@ public static class PlayerControlDataExtension
 
     // Get BetterData from NetworkedPlayerInfo
     public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => cachedplayerInfo.FirstOrDefault(data => data._PlayerId == info.PlayerId);
-    public static ExtendedPlayerInfo? GetOldBetterData(this BetterCachedPlayerData info) => cachedplayerInfo.FirstOrDefault(data => data._PlayerId == info.PlayerId);
 }

@@ -40,6 +40,7 @@ public abstract class CustomRoleBehavior
     public SabotageButton? SabotageButton { get; set; }
     public VentButton? VentButton { get; set; }
     public List<NetworkedPlayerInfo> RecruitedPlayers { get; set; } = [];
+    public bool InteractableTarget { get; set; } = true;
     public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
     public virtual bool CanKill => false;
     public virtual bool CanVent => false;
@@ -99,7 +100,9 @@ public abstract class CustomRoleBehavior
 
     public virtual void OnDeinitialize() { }
 
-    public virtual void Update() { }
+    public virtual void Update() 
+    {
+    }
 
     // Run base if override
     public virtual void SetUpRole()
@@ -109,7 +112,7 @@ public abstract class CustomRoleBehavior
         SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
         SabotageButton.VisibleCondition = () => { return VentButton.Role.CanSabotage; };
 
-        KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1 / 1.75f)) as TargetButton;
+        KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
         KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
         KillButton.TargetCondition = (PlayerControl target) =>
         {
@@ -118,21 +121,6 @@ public abstract class CustomRoleBehavior
 
         VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
         VentButton.VisibleCondition = () => { return VentButton.Role.CanVent; };
-
-        // Hide task for non crew
-        foreach (var task in _player.myTasks.ToArray())
-        {
-            if (task.TaskType is TaskTypes.FixLights or TaskTypes.FixComms) continue;
-
-            foreach (var console in task.FindConsoles())
-            {
-                var con1 = console.gameObject.GetComponent<Collider2D>();
-                if (con1 != null)
-                {
-                    con1.enabled = HasTask;
-                }
-            }
-        }
     }
 
     public void SetUpSettings()

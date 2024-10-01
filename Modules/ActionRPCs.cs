@@ -192,14 +192,14 @@ static class ActionRPCs
         {
             if (CheckMurderAction(player, target, isAbility) == true || bypass)
             {
-                player.MurderPlayer(target, MurderResultFlags.Succeeded);
-
                 // Run after checks for roles
                 Main.AllPlayerControls.Where(pc => pc == player || pc == target && pc.RoleAssigned()).ToList()
                     .ForEach(pc => pc.BetterData().RoleInfo.Role.OnMurder(player, target, isAbility));
 
                 Main.AllPlayerControls.Where(pc => pc.RoleAssigned()).ToList()
                     .ForEach(pc => pc.BetterData().RoleInfo.Role.OnMurderOther(player, target, isAbility));
+
+                player.MurderPlayer(target, MurderResultFlags.Succeeded);
 
                 if (bypass) return;
             }
