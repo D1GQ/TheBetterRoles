@@ -26,7 +26,7 @@ public abstract class CustomRoleBehavior
     public bool IsImpostor => RoleTeam == CustomRoleTeam.Impostor;
     public bool IsNeutral => RoleTeam == CustomRoleTeam.Neutral;
     public int RoleId => 100000 + 200 * (int)RoleType;
-    public abstract bool IsAddon { get; }
+    public virtual bool IsAddon => false;
     public abstract CustomRoleBehavior Role { get; }
     public abstract CustomRoles RoleType { get; }
     public abstract CustomRoleTeam RoleTeam { get; }
@@ -41,6 +41,8 @@ public abstract class CustomRoleBehavior
     public VentButton? VentButton { get; set; }
     public List<NetworkedPlayerInfo> RecruitedPlayers { get; set; } = [];
     public bool InteractableTarget { get; set; } = true;
+    public virtual float PlayerSpeed => _player.MyPhysics.Speed;
+    public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
     public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
     public virtual bool CanKill => false;
     public virtual bool CanVent => false;
@@ -70,7 +72,7 @@ public abstract class CustomRoleBehavior
             {
                 if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == RoleType))
                 {
-                    player.BetterData().RoleInfo.Addons.Add(this);
+                    player.BetterData().RoleInfo.Addons.Add((CustomAddonBehavior)this);
                     SetUpRole();
                 }
             }
@@ -92,7 +94,7 @@ public abstract class CustomRoleBehavior
 
         if (IsAddon)
         {
-            _player.BetterData().RoleInfo.Addons.Remove(this);
+            _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
         }
     }
 
@@ -310,6 +312,7 @@ public abstract class CustomRoleBehavior
         return true;
     }
 
+    public Sprite? LoadAbilitySprite(string name, float size = 115) => Utils.LoadSprite($"TheBetterRoles.Resources.Images.Ability.{name}.png", size);
     public virtual bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
     public virtual bool CheckMurder(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
 

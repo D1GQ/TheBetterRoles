@@ -10,7 +10,6 @@ public class DeadBodyButton : BaseButton
     public float DeadBodyRange {  get; set; }
     public DeadBody? lastDeadBody {  get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (DeadBody body) => true;
-
     public DeadBodyButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
@@ -47,7 +46,7 @@ public class DeadBodyButton : BaseButton
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
-                if (ActionButton.canInteract)
+                if (CanInteractOnPress())
                 {
                     Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
                 }

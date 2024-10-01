@@ -13,7 +13,7 @@ public class VentButton : BaseButton
     public float HighlightDistance { get; set; } = 3.5f;
     public float Distance { get; set; } = 0.8f;
     public bool IsAbility { get; set; }
-
+    public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public VentButton Create(int id, string name, float cooldown, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
         Role = role;
@@ -65,7 +65,7 @@ public class VentButton : BaseButton
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
-                if (ActionButton.canInteract)
+                if (CanInteractOnPress())
                 {
                     if (!isAbility)
                     {
@@ -151,7 +151,7 @@ public class VentButton : BaseButton
 
     public override void Update()
     {
-        var check = Role.CanVent && !IsAbility || IsAbility;
+        var check = Role.CanVent && !Addons.Any(a => !a.CanVent) && !IsAbility || IsAbility;
         Visible = check && UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         if (TempCooldown > 0)

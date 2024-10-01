@@ -18,7 +18,7 @@ public class MiniMapBehaviourPatch
             {
                 if (PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleAssigned)
                 {
-                    if (PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.CanSabotage)
+                    if (PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.CanSabotage && opts.Mode != MapOptions.Modes.CountOverlay)
                     {
                         opts.Mode = MapOptions.Modes.Sabotage;
                     }

@@ -8,7 +8,6 @@ namespace TheBetterRoles;
 public class SheriffRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool IsAddon => false;
     public override string RoleColor => "#feab00";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Sheriff;
@@ -44,7 +43,7 @@ public class SheriffRole : CustomRoleBehavior
     {
         base.SetUpRole();
         OptionItems.Initialize();
-        ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), null, this, true, ShootDistance.GetValue() + 1 / 1.5f)) as TargetButton;
+        ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetValue() + 1 / 1.5f)) as TargetButton;
     }
 
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)

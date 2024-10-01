@@ -6,7 +6,6 @@ namespace TheBetterRoles;
 public class ImpostorRoleTBR : CustomRoleBehavior
 {
     // Role Info
-    public override bool IsAddon => false;
     public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Impostor;

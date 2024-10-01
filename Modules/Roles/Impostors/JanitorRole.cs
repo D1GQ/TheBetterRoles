@@ -9,7 +9,6 @@ namespace TheBetterRoles;
 public class JanitorRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool IsAddon => false;
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Janitor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;

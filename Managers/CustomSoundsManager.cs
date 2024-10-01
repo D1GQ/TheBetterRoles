@@ -16,7 +16,7 @@ public static class CustomSoundsManager
             folder.Attributes = FileAttributes.Hidden;
         if (!File.Exists(path))
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TOHE.Resources.Sounds." + sound + ".wav");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TheBetterRoles.Resources.Sounds." + sound + ".wav");
             if (stream == null)
             {
                 Logger.Log($"Sound file missing：{sound}", "CustomSounds");

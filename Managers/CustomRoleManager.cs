@@ -26,8 +26,6 @@ public static class CustomRoleManager
         .OrderBy(role => role.RoleId)
         .ToArray();
 
-    public static CustomRoleBehavior? GetRoleInstance(CustomRoles role) => allRoles.FirstOrDefault(r => r.RoleType == role);
-
     public static CustomRoleBehavior? CreateNewRoleInstance(Func<CustomRoleBehavior, bool> selector)
     {
         Type selectedType = Assembly.GetExecutingAssembly()
@@ -150,7 +148,7 @@ public static class CustomRoleManager
                     {
                         selectedRole = new RoleAssignmentData
                         {
-                            _role = GetRoleInstance(CustomRoles.Impostor),
+                            _role = Utils.GetCustomRoleClass(CustomRoles.Impostor),
                             Amount = 1
                         };
                         ImposterAmount--;
@@ -159,7 +157,7 @@ public static class CustomRoleManager
                     {
                         selectedRole = new RoleAssignmentData
                         {
-                            _role = GetRoleInstance(CustomRoles.Crewmate),
+                            _role = Utils.GetCustomRoleClass(CustomRoles.Crewmate),
                             Amount = 1
                         };
                     }
@@ -280,6 +278,8 @@ public enum CustomRoles
 
     // Addons
     ButtonBerry,
+    Swift,
+    Giant,
 }
 
 public enum CustomRoleTeam

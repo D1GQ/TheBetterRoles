@@ -10,7 +10,7 @@ public class TargetButton : BaseButton
     public float TargetRange {  get; set; }
     public PlayerControl? lastTarget {  get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
-
+    public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public TargetButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
@@ -47,7 +47,7 @@ public class TargetButton : BaseButton
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
-                if (ActionButton.canInteract)
+                if (CanInteractOnPress())
                 {
                     Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
                 }

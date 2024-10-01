@@ -72,7 +72,7 @@ static class ActionRPCs
         {
             if (CheckSetRoleAction(player, role) == true || bypass)
             {
-                if (!CustomRoleManager.GetRoleInstance(role).IsAddon)
+                if (!Utils.GetCustomRoleClass(role).IsAddon)
                 {
                     CustomRoleManager.SetCustomRole(player, role);
                 }

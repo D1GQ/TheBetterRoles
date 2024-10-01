@@ -2,7 +2,7 @@
 
 namespace TheBetterRoles;
 
-internal static class TaskPatches
+internal static class TaskPatch
 {
     [HarmonyPatch(typeof(GameData), nameof(GameData.RecomputeTaskCounts))]
     private class GameData_RecomputeTaskCounts

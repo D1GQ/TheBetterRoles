@@ -78,24 +78,44 @@ class PlayerControlPatch
             var sbTagTop = new StringBuilder();
             var sbTagBottom = new StringBuilder();
 
-            sbTag.Append($"{player.GetRoleNameAndColor()}+++");
+            if (player.IsLocalPlayer() || player.IsImpostorTeammate())
+            {
+                sbTagTop.Append($"{player.GetRoleNameAndColor()}---");
 
-            // Put +++ at the end of each tag
+                foreach (var addon in player.BetterData().RoleInfo.Addons)
+                {
+                    sbTag.Append($"<color={addon.RoleColor}>{addon.RoleName}</color>+++");
+                }
+            }
+
+            // Put +++ or --- at the end of each tag
             static StringBuilder FormatInfo(StringBuilder source)
             {
                 var sb = new StringBuilder();
                 if (source.Length > 0)
                 {
                     string text = source.ToString();
-                    string[] parts = text.Split("+++");
+                    bool isPlus = text.Contains("+++");
+                    string[] parts;
+
+                    if (isPlus)
+                    {
+                        parts = text.Split(new[] { "+++" }, StringSplitOptions.None);
+                    }
+                    else
+                    {
+                        parts = text.Split(new[] { "---" }, StringSplitOptions.None);
+                    }
+
                     for (int i = 0; i < parts.Length; i++)
                     {
-                        if (!string.IsNullOrEmpty(Utils.RemoveHtmlText(parts[i])))
+                        if (!string.IsNullOrEmpty(parts[i]))
                         {
                             sb.Append(parts[i]);
+
                             if (i != parts.Length - 2)
                             {
-                                sb.Append(" - ");
+                                sb.Append(isPlus ? " + " : " - ");
                             }
                         }
                     }
@@ -103,6 +123,7 @@ class PlayerControlPatch
 
                 return sb;
             }
+
 
             sbTag = FormatInfo(sbTag);
             sbTagTop = FormatInfo(sbTagTop);

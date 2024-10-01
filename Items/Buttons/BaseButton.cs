@@ -8,10 +8,11 @@ namespace TheBetterRoles;
 public class BaseButton
 {
     public CustomRoleBehavior? Role { get; set; }
+    public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
+    public PlayerControl? _player => Role._player;
     public ActionButton? ActionButton { get; set; }
     public PassiveButton? Button { get; set; }
     public TextMeshPro? Text { get; set; }
-    public PlayerControl? _player => Role._player;
     public Func<bool> VisibleCondition = () => true;
     public int Id { get; set; }
     public bool UseAsDead { get; set; }
@@ -30,6 +31,7 @@ public class BaseButton
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
         (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
 
+    public virtual bool CanInteractOnPress() => ActionButton.canInteract;
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder();
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder();
 

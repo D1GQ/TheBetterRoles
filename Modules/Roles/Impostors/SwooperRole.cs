@@ -8,7 +8,6 @@ namespace TheBetterRoles;
 public class SwooperRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool IsAddon => false;
     public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Swooper;
@@ -43,7 +42,7 @@ public class SwooperRole : CustomRoleBehavior
         base.SetUpRole();
         OptionItems.Initialize();
 
-        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Swoop.png", 135), this, true)) as AbilityButton;
+        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true)) as AbilityButton;
         InvisibilityButton.CanCancelDuration = true;
     }
     public override void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -91,8 +90,11 @@ public class SwooperRole : CustomRoleBehavior
 
         if (!flag)
         {
-            _player.cosmetics.hat.gameObject.SetActive(IsVisible);
-            _player.cosmetics.visor.gameObject.SetActive(IsVisible);
+            _player.Visible = IsVisible;
+        }
+        else
+        {
+            _player.Visible = true;
         }
 
         _player.cosmetics.SetPhantomRoleAlpha(alpha);

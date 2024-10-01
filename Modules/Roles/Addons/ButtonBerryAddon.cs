@@ -3,10 +3,9 @@ using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
 
-public class ButtonBerryAddon : CustomRoleBehavior
+public class ButtonBerryAddon : CustomAddonBehavior
 {
     // Role Info
-    public override bool IsAddon => true;
     public override string RoleColor => "#FF00EE";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.ButtonBerry;

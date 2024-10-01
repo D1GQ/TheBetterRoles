@@ -9,6 +9,7 @@ public class AbilityButton : BaseButton
     public string DurationName { get; set; } = "";
     public float Duration { get; set; } = 0f;
     public bool CanCancelDuration { get; set; } = false;
+    public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
     public AbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, int index = -1)
     {
         Role = role;
@@ -45,7 +46,7 @@ public class AbilityButton : BaseButton
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
-                if (ActionButton.canInteract)
+                if (CanInteractOnPress())
                 {
                     if (State == 0)
                     {
@@ -141,9 +142,8 @@ public class AbilityButton : BaseButton
         }
 
         bool flag1 = Uses != 0 || InfiniteUses;
-        bool flag2 = !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
 
-        if (flag1 && flag2 && BaseInteractable())
+        if (flag1 && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }

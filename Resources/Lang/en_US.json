@@ -83,7 +83,14 @@
   "Role.Janitor.Option.SetKillCooldownOnClean": "Set KillCooldown On Clean",
   "Role.Janitor.Option.SetKillCooldown": "Set KillCooldown",
 
+  "Role.Swift": "Swift",
+  "Role.Swift.Info": "Info",
+  "Role.Swift.LongInfo": "Long Info",
+  "Role.Swift.Option.Speed": "Base Player Speed",
 
+  "Role.Giant": "Giant",
+  "Role.Giant.Info": "Info",
+  "Role.Giant.LongInfo": "Long Info",
 
   "Role.ButtonBerry": "ButtonBerry",
   "Role.ButtonBerry.Ability.1": "Button",

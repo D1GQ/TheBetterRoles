@@ -8,7 +8,6 @@ namespace TheBetterRoles;
 public class MorphlingRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool IsAddon => false;
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Morphling;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;

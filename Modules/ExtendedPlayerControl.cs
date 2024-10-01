@@ -188,7 +188,11 @@ static class ExtendedPlayerControl
     // Check if player can vent
     public static bool CanVent(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanVent == true;
     // Check if player can move in vents
-    public static bool CanMoveInVent(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanMoveInVent == true;
+    public static bool CanMoveInVent(this PlayerControl player) =>
+        player.IsLocalPlayer()
+        && player.BetterData().RoleInfo.RoleAssigned
+        && player.BetterData().RoleInfo.Role.CanMoveInVent == true
+        && !player.BetterData().RoleInfo.Addons.Any(a => !a.CanMoveInVent);
     // Check if player can kill
     public static bool CanKill(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanKill == true;
     // Check if player can sabotage
