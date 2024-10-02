@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheBetterRoles;
 
-public class NoiseMakerAddon : CustomAddonBehavior
+public class BaitAddon : CustomAddonBehavior
 {
     // Role Info
     public override string RoleColor => "#920086";
@@ -15,12 +15,14 @@ public class NoiseMakerAddon : CustomAddonBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
     public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
+    public BetterOptionItem? ArrowDuration;
     public override BetterOptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                ArrowDuration = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.NoiseMaker.Option.ArrowDuration"), [5f, 15f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }
@@ -29,20 +31,18 @@ public class NoiseMakerAddon : CustomAddonBehavior
     {
         if (target == _player)
         {
-            _player.StartCoroutine(PlayNoiseNotification());
+            _player.StartCoroutine(PlayNoiseNotification(ArrowDuration.GetFloat()));
         }
     }
 
     private IEnumerator PlayNoiseNotification(float duration = 15f, float flashInterval = 0.5f)
     {
-        var arrow = new ArrowLocator().Create(_player.transform.position, minDistance: 0.25f);
+        var arrow = new ArrowLocator().Create(_player.transform.position, Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.NoiseMaker-Arrow.png", 250f), minDistance: 0.25f);
         var spriteRenderer = arrow.SpriteRenderer;
         spriteRenderer.color = Color.white;
 
-        // Calculate the number of flashes based on the duration and interval
         int flashCount = Mathf.FloorToInt(duration / flashInterval);
 
-        // Flash for the specified duration
         for (int i = 0; i < flashCount; i++)
         {
             Color startColor = (i % 2 == 0) ? new Color(1f, 0f, 0f) : new Color(0.5f, 0f, 0f);
@@ -50,21 +50,31 @@ public class NoiseMakerAddon : CustomAddonBehavior
 
             float elapsedTime = 0f;
 
-            // Gradually fade between the colors during the flash interval
             while (elapsedTime < flashInterval)
             {
                 elapsedTime += Time.deltaTime;
                 float t = elapsedTime / flashInterval;
 
-                // Lerp from startColor to endColor over time
                 spriteRenderer.color = Color.Lerp(startColor, endColor, t);
 
-                // Wait for the next frame
                 yield return null;
             }
         }
 
-        // Destroy the arrow after the duration
+        float fadeDuration = 1f;
+        float fadeElapsedTime = 0f;
+        Color initialColor = spriteRenderer.color;
+
+        while (fadeElapsedTime < fadeDuration)
+        {
+            fadeElapsedTime += Time.deltaTime;
+            float t = fadeElapsedTime / fadeDuration;
+
+            spriteRenderer.color = Color.Lerp(initialColor, new Color(initialColor.r, initialColor.g, initialColor.b, 0f), t);
+
+            yield return null;
+        }
+
         arrow.Remove();
     }
 }

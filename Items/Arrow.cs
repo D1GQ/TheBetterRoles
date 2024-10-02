@@ -29,7 +29,7 @@ class ArrowLocator
         SpriteRenderer = arrow.image;
         if (sprite == null)
         {
-            Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Arrow.png", 100f);
+            Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.Arrow.png", 100f);
         }
         else
         {

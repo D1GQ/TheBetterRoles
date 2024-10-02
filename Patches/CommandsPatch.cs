@@ -83,7 +83,10 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
-                PlayerControl.LocalPlayer.SetRoleSync(CustomRoles.Janitor);
+                foreach(var player in Main.AllPlayerControls)
+                {
+                    CustomRoleManager.AddAddon(player, CustomRoles.Bait);
+                }
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(

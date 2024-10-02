@@ -236,7 +236,7 @@ public static class CustomRoleManager
 
             if (!predicate(role))
             {
-                if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                 return false;
             }
         }
@@ -256,7 +256,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return false;
                 }
             }
@@ -363,6 +363,7 @@ public enum CustomRoles
     ButtonBerry,
     Swift,
     Giant,
+    Bait,
     NoiseMaker,
 }
 

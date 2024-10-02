@@ -41,6 +41,10 @@ public class AbilityButton : BaseButton
             {
                 ActionButton.graphic.sprite = sprite;
             }
+            else
+            {
+                ActionButton.graphic.sprite = HudManager.Instance.UseButton.graphic.sprite;
+            }
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
             Button.OnClick.RemoveAllListeners();

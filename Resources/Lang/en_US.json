@@ -100,6 +100,14 @@
   "Role.NoiseMaker": "NoiseMaker",
   "Role.NoiseMaker.Info": "Info",
   "Role.NoiseMaker.LongInfo": "Long Info",
+  "Role.NoiseMaker.Option.ArrowDuration": "Arrow Duration",
+
+  "Role.Bait": "Bait",
+  "Role.Bait.Info": "Info",
+  "Role.Bait.LongInfo": "Long Info",
+  "Role.Bait.Option.Delay": "Delay",
+  "Role.Bait.Option.MaximumDelay": "Maximum Delay",
+  "Role.Bait.Option.MinimumDelay": "Minimum Delay",
 
   "Role.None": "None",
   "Role.None.Info": "None",
