@@ -37,11 +37,8 @@ public class SwooperRole : CustomRoleBehavior
 
     private bool IsVisible { get; set; } = true;
     public AbilityButton? InvisibilityButton = new();
-    public override void SetUpRole()
+    public override void OnSetUpRole()
     {
-        base.SetUpRole();
-        OptionItems.Initialize();
-
         InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true)) as AbilityButton;
         InvisibilityButton.CanCancelDuration = true;
     }
@@ -67,50 +64,56 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    // FIX VENT BUG WITH _player.Visible
     public override void Update()
     {
         InteractableTarget = IsVisible;
-
-        float alpha = 1f;
-
-        var flag = _player.IsLocalPlayer() || _player.IsImpostorTeammate() || !localPlayer.IsAlive();
-
-        if (!IsVisible)
-        {
-            if (flag)
-            {
-                alpha = 0.5f;
-            }
-            else
-            {
-                alpha = 0f;
-            }
-        }
-
-        if (!flag)
-        {
-            _player.Visible = IsVisible;
-        }
-        else
-        {
-            _player.Visible = true;
-        }
-
-        _player.cosmetics.SetPhantomRoleAlpha(alpha);
-
-        foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
-        {
-            text.color = new Color(1f, 1f, 1f, alpha);
-        }
+        SetInvisibility(!IsVisible);
     }
 
     public override void ResetAbilityState()
     {
+        InteractableTarget = true;
         IsVisible = true;
-        float alpha = 1f;
-        _player.Visible = true;
-        _player.cosmetics.SetPhantomRoleAlpha(alpha);
+        SetInvisibility(!IsVisible);
+    }
+
+    private void SetInvisibility(bool isActive)
+    {
+        if (!isActive)
+        {
+            _player.shouldAppearInvisible = false;
+            _player.Visible = true;
+        }
+        if (_player.IsLocalPlayer() || localPlayer.IsImpostorTeammate() || !localPlayer.IsAlive())
+        {
+            _player.invisibilityAlpha = isActive ? 0.5f : 1f;
+            SetNameTextAlpha(isActive ? 0.5f : 1f);
+        }
+        else
+        {
+            _player.invisibilityAlpha = isActive ? 0 : 1;
+            SetNameTextAlpha(isActive ? 0f : 1f);
+        }
+
+        _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
+        if (isActive && (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Role.IsImpostor))
+        {
+            return;
+        }
+        if (!_player.IsLocalPlayer())
+        {
+            _player.shouldAppearInvisible = isActive;
+            if (_player.inVent)
+            {
+                _player.Visible = false;
+                return;
+            }
+            _player.Visible = !isActive;
+        }
+    }
+
+    private void SetNameTextAlpha(float alpha)
+    {
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);

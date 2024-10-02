@@ -183,6 +183,26 @@ public static class CustomRoleManager
         }
     }
 
+    public static void RoleUpdate(PlayerControl player)
+    {
+        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        {
+            if (role == null) continue;
+
+            role.Update();
+
+            if (player.IsLocalPlayer())
+            {
+                foreach (var button in role.Buttons)
+                {
+                    if (button?.ActionButton == null) continue;
+
+                    button.Update();
+                }
+            }
+        }
+    }
+
     public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, CustomRoleBehavior? targetRole = null)
     {
         foreach (var role in player.BetterData().RoleInfo.AllRoles)
@@ -343,6 +363,7 @@ public enum CustomRoles
     ButtonBerry,
     Swift,
     Giant,
+    NoiseMaker,
 }
 
 public enum CustomRoleTeam

@@ -33,11 +33,11 @@ public class GiantAddon : CustomAddonBehavior
         }
     }
 
-    public override bool CanMoveInVent => false;
+    public override bool CanMoveInVents => !IsBig;
     public AbilityButton? MeetingButton = new();
-    public override void SetUpRole()
+    private bool IsBig = false;
+    public override void OnSetUpRole()
     {
-        OptionItems.Initialize();
         SetSize();
     }
 
@@ -58,6 +58,8 @@ public class GiantAddon : CustomAddonBehavior
 
     private void SetSize()
     {
+        if (IsBig) return;
+        IsBig = true;
         Size = _player.transform.localScale;
         CircleCollider = _player.GetComponent<CircleCollider2D>();
         Offset = CircleCollider.offset;
@@ -71,6 +73,8 @@ public class GiantAddon : CustomAddonBehavior
 
     private void ResetSize()
     {
+        if (!IsBig) return;
+        IsBig = false;
         _player.transform.localScale = Size;
         CircleCollider.offset = Offset;
         CircleCollider.radius = Radius;

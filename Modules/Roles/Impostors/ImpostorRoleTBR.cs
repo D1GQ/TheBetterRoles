@@ -25,8 +25,4 @@ public class ImpostorRoleTBR : CustomRoleBehavior
             ];
         }
     }
-    public override void SetUpRole()
-    {
-        base.SetUpRole();
-    }
 }

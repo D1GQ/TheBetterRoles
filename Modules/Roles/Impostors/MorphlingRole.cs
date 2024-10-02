@@ -1,7 +1,5 @@
 ﻿
 using TheBetterRoles.Patches;
-using TMPro;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -41,11 +39,8 @@ public class MorphlingRole : CustomRoleBehavior
     public TargetButton? SampleButton;
     public AbilityButton? TransformButton;
 
-    public override void SetUpRole()
+    public override void OnSetUpRole()
     {
-        base.SetUpRole();
-        OptionItems.Initialize();
-
         SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f)) as TargetButton;
         SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData == null; };
 
@@ -112,14 +107,9 @@ public class MorphlingRole : CustomRoleBehavior
         _player.SetOutfit(outfit, PlayerOutfitType.Default);
     }
 
-    public override void OnMurder(PlayerControl killer, PlayerControl target, bool IsAbility)
+    public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
-        if (target == _player && SampleData != null)
-        {
-            SetOutfit(OriginalData);
-            SampleData = null;
-            OriginalData = null;
-        }
+        ResetAbilityState();
     }
 
     public override void ResetAbilityState()

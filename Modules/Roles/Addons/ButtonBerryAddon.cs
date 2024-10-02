@@ -22,12 +22,9 @@ public class ButtonBerryAddon : CustomAddonBehavior
         }
     }
 
-    public AbilityButton? MeetingButton = new();
-
-    public override void SetUpRole()
+    public AbilityButton? MeetingButton;
+    public override void OnSetUpRole()
     {
-        OptionItems.Initialize();
-
         MeetingButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false)) as AbilityButton;
     }
 

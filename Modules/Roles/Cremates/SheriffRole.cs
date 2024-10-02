@@ -39,10 +39,8 @@ public class SheriffRole : CustomRoleBehavior
             ];
         }
     }
-    public override void SetUpRole()
+    public override void OnSetUpRole()
     {
-        base.SetUpRole();
-        OptionItems.Initialize();
         ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetValue() + 1 / 1.5f)) as TargetButton;
     }
 

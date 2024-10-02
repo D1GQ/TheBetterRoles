@@ -97,6 +97,10 @@
   "Role.ButtonBerry.Info": "Info",
   "Role.ButtonBerry.LongInfo": "Long Info",
 
+  "Role.NoiseMaker": "NoiseMaker",
+  "Role.NoiseMaker.Info": "Info",
+  "Role.NoiseMaker.LongInfo": "Long Info",
+
   "Role.None": "None",
   "Role.None.Info": "None",
   "Role.None.LongInfo": "None",

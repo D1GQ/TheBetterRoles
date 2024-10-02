@@ -21,8 +21,4 @@ public class CrewmateRoleTBR : CustomRoleBehavior
             ];
         }
     }
-
-    public override void SetUpRole()
-    {
-    }
 }

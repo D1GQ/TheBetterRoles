@@ -122,7 +122,7 @@ static class ActionRPCs
                     if (player.IsLocalPlayer())
                     {
                         ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
-                            player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVent, false));
+                            player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVents, false));
                     }
                 }
                 else
@@ -182,10 +182,10 @@ static class ActionRPCs
             if (CheckMurderAction(player, target, isAbility) == true || bypass)
             {
                 // Run after checks for roles
-                CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, isAbility));
-                CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, isAbility));
+                CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, player == target, isAbility));
+                CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
 
-                CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, isAbility));
+                CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
                 player.MurderPlayer(target, MurderResultFlags.Succeeded);
 
@@ -205,17 +205,17 @@ static class ActionRPCs
 
     private static bool CheckMurderAction(PlayerControl player, PlayerControl target, bool isAbility)
     {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckMurder(player, target, isAbility)))
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckMurder(player, target, player == target, isAbility)))
         {
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecks(target, role => role.CheckMurder(player, target, isAbility)))
+        if (!CustomRoleManager.RoleChecks(target, role => role.CheckMurder(player, target, player == target, isAbility)))
         {
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecksOther(role => role.CheckMurderOther(player, target, isAbility)))
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckMurderOther(player, target, player == target, isAbility)))
         {
             return false;
         }

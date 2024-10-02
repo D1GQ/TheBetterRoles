@@ -15,25 +15,15 @@ class RolePatch
         [HarmonyPrefix]
         public static void FixedUpdate_Prefix(PlayerControl __instance)
         {
-            if (__instance?.BetterData()?.RoleInfo?.RoleAssigned == true)
+            if (__instance.RoleAssigned())
             {
-                __instance.BetterData().RoleInfo.Role.Update();
+                CustomRoleManager.RoleUpdate(__instance);
             }
 
-            if (__instance.IsLocalPlayer())
+            var box = __instance.gameObject.GetComponent<BoxCollider2D>();
+            if (box != null)
             {
-                foreach (var button in __instance.BetterData().RoleInfo.Role.Buttons)
-                {
-                    button.Update();
-                }
-
-                foreach (var addon in __instance.BetterData().RoleInfo.Addons)
-                {
-                    foreach (var button in addon.Buttons)
-                    {
-                        button.Update();
-                    }
-                }
+                box.enabled = true;
             }
         }
 
@@ -46,12 +36,14 @@ class RolePatch
             {
                 box.size = new Vector2(0.8f, 1f);
             }
+
             var passiveButton = __instance.gameObject.GetComponent<PassiveButton>();
             if (passiveButton != null)
             {
                 passiveButton.OnClick.AddListener((Action)(() =>
                 {
-                    PlayerControl.LocalPlayer.PlayerPressSync(__instance);
+                    CustomRoleManager.RoleListener(__instance, role => role.OnPlayerPress(PlayerControl.LocalPlayer, __instance));
+                    CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(PlayerControl.LocalPlayer, __instance));
                 }));
             }
         }

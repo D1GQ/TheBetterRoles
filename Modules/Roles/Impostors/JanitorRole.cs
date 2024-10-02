@@ -40,11 +40,8 @@ public class JanitorRole : CustomRoleBehavior
     private DeadBody? Cleaning;
     bool IsVisible { get; set; } = true;
     public AbilityButton? CleanButton = new();
-    public override void SetUpRole()
+    public override void OnSetUpRole()
     {
-        base.SetUpRole();
-        OptionItems.Initialize();
-
         CleanButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, null, this, true, 1f)) as AbilityButton;
     }
 

@@ -48,7 +48,7 @@ static class GameSettingMenuPatch
 
         if (IsPreload)
         {
-            foreach (var role in CustomRoleManager.allRoles.Where(c => c.GetType().IsSubclassOf(typeof(CustomRoleBehavior))))
+            foreach (var role in CustomRoleManager.allRoles)
             {
                 role.SetUpSettings();
             }

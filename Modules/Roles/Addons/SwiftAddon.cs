@@ -14,6 +14,7 @@ public class SwiftAddon : CustomAddonBehavior
     public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
 
     public BetterOptionItem? SpeedX;
+    private bool HasSpeed = false;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -24,11 +25,8 @@ public class SwiftAddon : CustomAddonBehavior
             ];
         }
     }
-
-    public AbilityButton? MeetingButton = new();
-    public override void SetUpRole()
+    public override void OnSetUpRole()
     {
-        OptionItems.Initialize();
         SetSpeed();
     }
 
@@ -47,6 +45,16 @@ public class SwiftAddon : CustomAddonBehavior
         SetSpeed();
     }
 
-    private void SetSpeed() => _player.MyPhysics.Speed = PlayerSpeed * SpeedX.GetFloat();
-    private void ResetSpeed() => _player.MyPhysics.Speed = PlayerSpeed / SpeedX.GetFloat();
+    private void SetSpeed()
+    {
+        if (HasSpeed) return;
+        HasSpeed = true;
+        _player.MyPhysics.Speed = PlayerSpeed * SpeedX.GetFloat();
+    }
+    private void ResetSpeed()
+    {
+        if (!HasSpeed) return;
+        HasSpeed = false;
+        _player.MyPhysics.Speed = PlayerSpeed / SpeedX.GetFloat();
+    }
 }

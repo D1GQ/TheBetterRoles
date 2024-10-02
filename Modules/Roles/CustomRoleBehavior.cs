@@ -17,41 +17,169 @@ public enum TargetType
 
 public abstract class CustomRoleBehavior
 {
+    /// <summary>
+    /// Local player. Refers to the player that is controlled locally on the client.
+    /// </summary>
     public PlayerControl? localPlayer => PlayerControl.LocalPlayer;
-    public PlayerControl? _player;
-    public NetworkedPlayerInfo? _data;
-    public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
-    public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
-    public bool IsCrewmate => RoleTeam == CustomRoleTeam.Crewmate;
-    public bool IsImpostor => RoleTeam == CustomRoleTeam.Impostor;
-    public bool IsNeutral => RoleTeam == CustomRoleTeam.Neutral;
-    public int RoleId => 100000 + 200 * (int)RoleType;
-    public virtual bool IsAddon => false;
-    public abstract CustomRoleBehavior Role { get; }
-    public abstract CustomRoles RoleType { get; }
-    public abstract CustomRoleTeam RoleTeam { get; }
-    public abstract CustomRoleCategory RoleCategory { get; }
-    public abstract BetterOptionTab? SettingsTab { get; }
-    public abstract BetterOptionItem[]? OptionItems { get; }
-    public BetterOptionItem? RoleOptionItem { get; set; }
-    public BetterOptionItem? AmountOptionItem { get; set; }
-    public List<BaseButton> Buttons { get; set; } = [];
-    public TargetButton? KillButton { get; set; }
-    public SabotageButton? SabotageButton { get; set; }
-    public VentButton? VentButton { get; set; }
-    public List<NetworkedPlayerInfo> RecruitedPlayers { get; set; } = [];
-    public bool InteractableTarget { get; set; } = true;
-    public virtual float PlayerSpeed => _player.MyPhysics.Speed;
-    public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
-    public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
-    public virtual bool CanKill => false;
-    public virtual bool CanVent => false;
-    public virtual bool CanMoveInVent => true;
-    public virtual bool CanSabotage => false;
-    public virtual bool CanMove => true;
 
-    public bool Protected { get; set; }
-    public NetworkedPlayerInfo? ProtectedBy { get; set; }
+    /// <summary>
+    /// Player Base for role. This refers to the `PlayerControl` instance that represents the player 
+    /// this role is attached to.
+    /// </summary>
+    public PlayerControl? _player;
+
+    /// <summary>
+    /// Player Base data for role. Holds additional information about the player in a `NetworkedPlayerInfo` object, 
+    /// which includes networked data like the player's ID, status, or other properties that might be synced across clients.
+    /// </summary>
+    public NetworkedPlayerInfo? _data;
+
+    /// <summary>
+    /// Get role name. This returns a translated string for the role's name based on its type using a translator utility.
+    /// </summary>
+    public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
+
+    /// <summary>
+    /// Set role color. This returns the custom color for the role's team, using the team’s color configuration.
+    /// </summary>
+    public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
+
+    /// <summary>
+    /// Checks if the role belongs to the Crewmate team.
+    /// </summary>
+    public bool IsCrewmate => RoleTeam == CustomRoleTeam.Crewmate;
+
+    /// <summary>
+    /// Checks if the role belongs to the Impostor team.
+    /// </summary>
+    public bool IsImpostor => RoleTeam == CustomRoleTeam.Impostor;
+
+    /// <summary>
+    /// Checks if the role belongs to the Neutral team.
+    /// </summary>
+    public bool IsNeutral => RoleTeam == CustomRoleTeam.Neutral;
+
+    /// <summary>
+    /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
+    /// </summary>
+    public int RoleId => 100000 + 200 * (int)RoleType;
+
+    /// <summary>
+    /// Check if the role is an addon, meaning an additional or modified role. This should never be overridden in subclasses.
+    /// </summary>
+    public virtual bool IsAddon => false;
+
+    /// <summary>
+    /// Get the role class. This is an abstract method that will return the custom behavior associated with this role.
+    /// </summary>
+    public abstract CustomRoleBehavior Role { get; }
+
+    /// <summary>
+    /// Get the type of the role. This is an abstract method that returns the enum representing the role type.
+    /// </summary>
+    public abstract CustomRoles RoleType { get; }
+
+    /// <summary>
+    /// Set the role's team. This determines whether the role is part of the Crewmates, Impostors, or Neutrals.
+    /// </summary>
+    public abstract CustomRoleTeam RoleTeam { get; }
+
+    /// <summary>
+    /// Set the role's category. This organizes roles into specific categories for better management and classification.
+    /// </summary>
+    public abstract CustomRoleCategory RoleCategory { get; }
+
+    /// <summary>
+    /// Defines the settings tab that this role will automatically be placed into. 
+    /// This helps in organizing the role's configuration in the UI.
+    /// </summary>
+    public abstract BetterOptionTab? SettingsTab { get; }
+
+    /// <summary>
+    /// Array of setting options for the role. These can be initialized later to provide customization for the role.
+    /// </summary>
+    public abstract BetterOptionItem[]? OptionItems { get; }
+
+    /// <summary>
+    /// The role's specific chance option in the game settings. This allows the chance of this role appearing to be configured.
+    /// </summary>
+    public BetterOptionItem? RoleOptionItem { get; set; }
+
+    /// <summary>
+    /// The role's amount option in the game settings. This allows setting how many players can have this role in a game.
+    /// </summary>
+    public BetterOptionItem? AmountOptionItem { get; set; }
+
+    /// <summary>
+    /// List of all local ability buttons available to the player for this role. This can include things like kill, sabotage, or vent buttons.
+    /// </summary>
+    public List<BaseButton> Buttons { get; set; } = [];
+
+    /// <summary>
+    /// The kill button for the role, allowing the player to perform kills if applicable.
+    /// </summary>
+    public TargetButton? KillButton { get; set; }
+
+    /// <summary>
+    /// The sabotage button for the role, allowing the player to perform sabotage actions.
+    /// </summary>
+    public SabotageButton? SabotageButton { get; set; }
+
+    /// <summary>
+    /// The vent button for the role, allowing the player to use vents if they have that ability.
+    /// </summary>
+    public VentButton? VentButton { get; set; }
+
+    /// <summary>
+    /// A list of players that this role has recruited to win with. This is relevant for roles that can recruit other players (like a Jester or Cultist).
+    /// </summary>
+    public List<NetworkedPlayerInfo> RecruitedPlayers { get; set; } = [];
+
+    /// <summary>
+    /// Set if the player is interactable with a target ability button, determining whether they can be targeted by abilities.
+    /// </summary>
+    public bool InteractableTarget { get; set; } = true;
+
+    /// <summary>
+    /// The current speed of the player, which is often influenced by the role's special properties and physics settings.
+    /// </summary>
+    public virtual float PlayerSpeed => _player.MyPhysics.Speed;
+
+    /// <summary>
+    /// The base speed modification factor for the player, derived from game settings. This value affects overall movement speed.
+    /// </summary>
+    public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
+
+    /// <summary>
+    /// Checks if the role has tasks assigned. This is typical for Crewmate-aligned roles.
+    /// </summary>
+    public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
+
+    /// <summary>
+    /// Checks if the role can perform kills. This is typically overridden by roles that are allowed to kill, such as Impostors.
+    /// </summary>
+    public virtual bool CanKill => false;
+
+    /// <summary>
+    /// Checks if the role can use vents. This is typically overridden by roles like Impostors or other vent-using roles.
+    /// </summary>
+    public virtual bool CanVent => false;
+
+    /// <summary>
+    /// Checks if the role can move to other vents while inside a vent.
+    /// This is often set to true for roles that can use vents as a movement system, like Impostors.
+    /// </summary>
+    public virtual bool CanMoveInVents => true;
+
+    /// <summary>
+    /// Checks if the role can perform sabotage actions. This is typically overridden by roles that have the ability to sabotage, such as Impostors.
+    /// </summary>
+    public virtual bool CanSabotage => false;
+
+    /// <summary>
+    /// Set if the role is allowed to move, for example, if a certain condition freezes movement.
+    /// </summary>
+    public virtual bool CanMove => true;
 
     public float GetChance() => GameStates.IsHost ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
     public int GetAmount() => GameStates.IsHost ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0;
@@ -106,11 +234,12 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    // Run base if override
+    /// <summary>
+    /// Sets up the role by initializing the option items and calling any additional setup logic from <see cref="OnSetUpRole"/>.
+    /// Do not override this method.
+    /// </summary>
     public virtual void SetUpRole()
     {
-        if (IsAddon) return;
-
         SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
         SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
@@ -123,6 +252,9 @@ public abstract class CustomRoleBehavior
 
         VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
         VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecks(VentButton._player, role => role.CanVent, false); };
+
+        OptionItems.Initialize();
+        OnSetUpRole();
     }
 
     public void SetUpSettings()
@@ -186,7 +318,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public void SetCooldownAndUse(int id)
+    private void SetCooldownAndUse(int id)
     {
         Buttons.FirstOrDefault(b => b.Id == id)?.SetCooldown();
         Buttons.FirstOrDefault(b => b.Id == id)?.RemoveUse();
@@ -236,7 +368,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -266,7 +398,7 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    private bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -299,6 +431,10 @@ public abstract class CustomRoleBehavior
         return true;
     }
 
+    /// <summary>
+    /// Sets the cooldown for all ability buttons associated with the current role.
+    /// This loops through all local ability buttons and applies the appropriate cooldowns.
+    /// </summary>
     public void SetAllCooldowns()
     {
         foreach (var button in Buttons)
@@ -307,45 +443,162 @@ public abstract class CustomRoleBehavior
         }
     }
 
+    /// <summary>
+    /// Loads a sprite for a specific ability by its name. The sprite is fetched from the embedded resources
+    /// and resized according to the specified size.
+    /// </summary>
+    /// <param name="name">The name of the ability, used to locate the corresponding image file.</param>
+    /// <param name="size">The size to scale the loaded sprite to, with a default value of 115.</param>
+    /// <returns>A <see cref="Sprite"/> representing the ability icon, or null if the sprite could not be loaded.</returns>
     public Sprite? LoadAbilitySprite(string name, float size = 115) => Utils.LoadSprite($"TheBetterRoles.Resources.Images.Ability.{name}.png", size);
 
-    public virtual bool WinCondition() => false;
 
-    public virtual void OnDeinitialize() { }
-
+    /// <summary>
+    /// Called once per frame to update the state of the role or perform actions.
+    /// Override this method to implement any per-frame logic, such as checking conditions, updating timers, or managing abilities.
+    /// </summary>
     public virtual void Update() { }
 
-    public virtual bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
-    public virtual bool CheckMurder(PlayerControl killer, PlayerControl target, bool IsAbility) => true;
+    /// <summary>
+    /// Determines the win condition for the role. This can be overridden by roles that have special win conditions.
+    /// </summary>
+    public virtual bool WinCondition() => false;
 
-    public virtual void OnMurderOther(PlayerControl killer, PlayerControl target, bool IsAbility) { }
-    public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool IsAbility) { }
+    /// <summary>
+    /// A virtual method that can be overridden to include additional setup logic for the role.
+    /// This method is called at the end of <see cref="SetUpRole"/> to allow customization of role-specific behavior.
+    /// </summary>
+    public virtual void OnSetUpRole() { }
 
+    /// <summary>
+    /// Called when the role is de-initialized or removed. Can be used to clean up resources or reset states.
+    /// </summary>
+    public virtual void OnDeinitialize() { }
+
+    /// <summary>
+    /// Host-side check for the ability to murder another player. Returns false if the murder should be prevented.
+    /// The host checks if the action is valid based on the killer and target and if it was triggered by an ability.
+    /// </summary>
+    public virtual bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) => true;
+
+    /// <summary>
+    /// Host-side check for the local player attempting to murder. This checks if the murder action is allowed.
+    /// If the check fails, the action will be canceled.
+    /// </summary>
+    public virtual bool CheckMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) => true;
+
+    /// <summary>
+    /// Executes when the host has allowed another player (not the local player) to successfully murder a target.
+    /// This is where post-murder logic can be added, such as applying cooldowns or effects.
+    /// </summary>
+    public virtual void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
+
+    /// <summary>
+    /// Executes when the host has allowed the local player to successfully murder a target.
+    /// Custom logic for what happens after the murder action is validated by the host can be placed here.
+    /// </summary>
+    public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
+
+    /// <summary>
+    /// Host-side check for an ability being used by another player. This checks if the action is allowed before execution.
+    /// </summary>
     public virtual bool CheckAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
+
+    /// <summary>
+    /// Host-side check for an ability being used by the local player. The host validates the ability before it is executed.
+    /// </summary>
     public virtual bool CheckAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
 
+    /// <summary>
+    /// Called after the host has approved the ability action for another player. Executes custom logic once the ability is allowed.
+    /// </summary>
     public virtual void OnAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+
+    /// <summary>
+    /// Called after the host has approved the ability action for the local player. This runs the logic after the ability is allowed.
+    /// </summary>
     public virtual void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+
+    /// <summary>
+    /// Called when the duration of an ability ends, typically to clean up or reset states related to the ability.
+    /// </summary>
     public virtual void OnAbilityDurationEnd(int id) { }
 
+    /// <summary>
+    /// Host-side check when another player attempts to report a body. If the check fails, the report action will be canceled.
+    /// </summary>
     public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+
+    /// <summary>
+    /// Host-side check when the local player attempts to report a body. If the check fails, the report action will be canceled.
+    /// </summary>
     public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+
+    /// <summary>
+    /// Called after the host has allowed another player to report a body. This executes the logic after the report is approved.
+    /// </summary>
     public virtual void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
+
+    /// <summary>
+    /// Called after the host has allowed the local player to report a body. This executes the logic after the report is approved.
+    /// </summary>
     public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
 
+    /// <summary>
+    /// Called after a meeting has ended, determining what happens after the discussion or vote.
+    /// </summary>
     public virtual void OnMeetingEnd(PlayerControl? exiled, bool tie) { }
+
+    /// <summary>
+    /// Called after an exile has concluded, handling the logic for the player who was exiled.
+    /// </summary>
     public virtual void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData) { }
 
+    /// <summary>
+    /// Host-side check when another player attempts to use or exit a vent. This checks if the action is allowed before execution.
+    /// </summary>
     public virtual bool CheckVentOther(PlayerControl venter, int ventId, bool Exit) => true;
+
+    /// <summary>
+    /// Host-side check when the local player attempts to use or exit a vent. This checks if the action is allowed.
+    /// </summary>
     public virtual bool CheckVent(PlayerControl venter, int ventId, bool Exit) => true;
+
+    /// <summary>
+    /// Called after the host has allowed another player to vent. This handles the logic once the vent action is approved.
+    /// </summary>
     public virtual void OnVentOther(PlayerControl venter, int ventId, bool Exit) { }
+
+    /// <summary>
+    /// Called after the host has allowed the local player to vent. This handles the logic once the vent action is approved.
+    /// </summary>
     public virtual void OnVent(PlayerControl venter, int ventId, bool Exit) { }
 
+    /// <summary>
+    /// Called when a player disguises, handling the logic of what happens when the player changes their appearance.
+    /// </summary>
     public virtual void OnDisguise(PlayerControl player) { }
+
+    /// <summary>
+    /// Called when a player removes their disguise, handling the logic of what happens when they return to their original form.
+    /// </summary>
     public virtual void OnUndisguise(PlayerControl player) { }
 
+    /// <summary>
+    /// Called when another player presses an action button by directly clicking on a player with the mouse.
+    /// This method runs after host approval and processes the action taken by another player.
+    /// </summary>
     public virtual void OnPlayerPressOther(PlayerControl player, PlayerControl target) { }
+
+    /// <summary>
+    /// Called when the local player presses an action button by directly clicking on another player with the mouse.
+    /// This runs after the host has approved the action, and handles any logic tied to the local player's click interaction.
+    /// </summary>
     public virtual void OnPlayerPress(PlayerControl player, PlayerControl target) { }
 
+    /// <summary>
+    /// Resets the state of any ability-related cooldowns or flags for this role.
+    /// </summary>
     public virtual void ResetAbilityState() { }
+
 }

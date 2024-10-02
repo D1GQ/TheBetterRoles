@@ -20,7 +20,7 @@ public static class PlayerControlDataExtension
 
     public class ExtendedRoleInfo
     {
-        public bool RoleAssigned => Role != null;
+        public bool RoleAssigned => AllRoles.Any();
         public CustomRoleBehavior? Role { get; set; }
         public CustomRoles RoleType { get; set; }
         public List<CustomAddonBehavior>? Addons { get; set; } = [];

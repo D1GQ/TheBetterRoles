@@ -13,7 +13,6 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(PlayerControl))]
 class PlayerControlPatch
 {
-    public static float infotime = 0f;
     [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
     [HarmonyPrefix]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
@@ -54,15 +53,8 @@ class PlayerControlPatch
             __instance.cosmetics.colorBlindText.text = string.Empty;
         }
 
-        // Set text info
-        infotime -= Time.deltaTime;
 
-        if (infotime <= 0)
-        {
-            SetPlayerInfo(__instance);
-
-            infotime = 0.4f;
-        }
+        SetPlayerInfo(__instance);
 
         // Reset player data in lobby
         PlayerControlDataExtension.ResetPlayerData(__instance);

@@ -9,8 +9,9 @@ class ArrowLocator
 {
     public static List<ArrowLocator> allArrows { get; set; } = new List<ArrowLocator>(); // Corrected initialization
     public ArrowBehaviour? Arrow { get; set; }
+    public SpriteRenderer? SpriteRenderer { get; set; }
 
-    public ArrowLocator Create(Vector3 pos = default, float maxScale = 1f, float minDistance = 0.5f, Color color = default)
+    public ArrowLocator Create(Vector3 pos = default, Sprite? sprite = null, Color color = default, float maxScale = 1f, float minDistance = 0.5f)
     {
         pos = pos == default ? new Vector3(0, 0, 0) : pos;
         color = color == default ? Color.white : color;
@@ -25,12 +26,26 @@ class ArrowLocator
         Arrow = arrow;
         Arrow.MaxScale = maxScale;
         Arrow.minDistanceToShowArrow = minDistance;
-        Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Arrow.png", 100f);
+        SpriteRenderer = arrow.image;
+        if (sprite == null)
+        {
+            Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Arrow.png", 100f);
+        }
+        else
+        {
+            Arrow.image.sprite = sprite;
+        }
         Arrow.image.color = color;
         Arrow.target = pos;
 
         allArrows.Add(this);
         return this;
+    }
+
+    public void Remove()
+    {
+        allArrows.Remove(this);
+        UnityEngine.Object.Destroy(Arrow.gameObject);
     }
 
     [HarmonyPatch(typeof(ArrowBehaviour))]

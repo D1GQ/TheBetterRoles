@@ -15,5 +15,10 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
     public override bool CanKill => true;
     public override bool CanSabotage => true;
     public override bool CanVent => true;
-    public override bool CanMoveInVent => true;
+    public override bool CanMoveInVents => true;
+    public override void SetUpRole()
+    {
+        OptionItems.Initialize();
+        OnSetUpRole();
+    }
 }
