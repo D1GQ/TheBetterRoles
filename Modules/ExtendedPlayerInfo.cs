@@ -53,8 +53,10 @@ public static class PlayerControlDataExtension
     }
 
     // Helper method to initialize and return BetterData
-    private static ExtendedPlayerInfo GetOrCreateBetterData(NetworkedPlayerInfo data)
+    private static ExtendedPlayerInfo? GetOrCreateBetterData(NetworkedPlayerInfo data)
     {
+        if (data == null) return null;
+
         if (!playerInfo.ContainsKey(data))
         {
             ExtendedPlayerInfo newData = new ExtendedPlayerInfo

@@ -1,4 +1,5 @@
 ﻿
+using Hazel;
 using TheBetterRoles.Patches;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -44,7 +45,7 @@ public class SheriffRole : CustomRoleBehavior
         ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetValue() + 1 / 1.5f)) as TargetButton;
     }
 
-    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         if (role != this) return;
 

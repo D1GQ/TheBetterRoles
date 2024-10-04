@@ -20,14 +20,15 @@
 
   "Haunt.NoPlayers": "No Players Found!",
 
+  "Role": "Role: {0}",
+  "Role.Team": "Team: {0}",
+  "Role.Objective": "Objective: {0}",
+
   "Role.Team.Impostor": "Impostor",
   "Role.Team.Crewmate": "Crewmate",
   "Role.Team.Neutral": "Neutral",
   "Role.Team.None": "None",
 
-  "Role.Ability.Kill": "Kill",
-  "Role.Ability.Sabotage": "Sabotage",
-  "Role.Ability.Vent": "Vent",
   "Role.Ability.CanVent": "Can Vent",
 
   "Role.Option.Distance.1": "Short",

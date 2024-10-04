@@ -1,7 +1,9 @@
 ﻿
+using Hazel;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace TheBetterRoles;
 
@@ -32,43 +34,59 @@ public class MoleRole : CustomRoleBehavior
     public AbilityButton? DigButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, null, this, true)) as AbilityButton;
+        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, null, this, true)) as AbilityButton;
         DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 
-    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
-            case 5:
-                SpawnVent();
+            case 6:
+                if (reader != null)
+                {
+                    SpawnVent(NetHelpers.ReadVector2(reader));
+                }
+                else
+                {
+                    SpawnVent(_player.GetTruePosition());
+                }
+                break;
+        }
+    }
+
+    public override void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer)
+    {
+        switch (id)
+        {
+            case 6:
+                NetHelpers.WriteVector2(_player.GetTruePosition(), writer);
                 break;
         }
     }
 
     private List<Vent> Vents = [];
-    public void SpawnVent()
+    public void SpawnVent(Vector2 Pos)
     {
-        var ventPrefab = Main.AllVents.First();
+        var ventPrefab = ShipStatus.Instance.AllVents.First();
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Mole)";
 
         // Set usable for local player
         vent.enabled = _player.IsLocalPlayer();
+        float Alpha = _player.IsLocalPlayer() ? 1 : 0;
         if (vent.transform.Find("Sprite") == null)
         {
-            vent.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f);
-            vent.GetComponent<SpriteRenderer>().color.SetAlpha(_player.IsLocalPlayer() ? 1 : 0);
+            vent.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, Alpha);
         }
-        else
+        else if (vent.transform.Find("Sprite") != null)
         {
-            vent.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f);
-            vent.transform.Find("Sprite").GetComponent<SpriteRenderer>().color.SetAlpha(_player.IsLocalPlayer() ? 1 : 0);
+            vent.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, Alpha);
         }
 
         vent.Id = GetAvailableId();
-        var pos = _player.GetTruePosition();
-        float z = _player.gameObject.transform.position.z + 1.5f;
+        var pos = Pos;
+        float z = _player.gameObject.transform.position.z + 0.005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)
@@ -98,7 +116,7 @@ public class MoleRole : CustomRoleBehavior
         ShipStatus.Instance.AllVents = allVents.ToArray();
 
         // Play animation
-        if (_player.IsLocalPlayer())
+        if (vent.myAnim != null && _player.IsLocalPlayer())
         {
             vent.myAnim.Play(vent.ExitVentAnim, 1);
         }

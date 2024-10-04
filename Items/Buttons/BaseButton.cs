@@ -1,4 +1,5 @@
 ﻿
+using Hazel;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
@@ -26,7 +27,6 @@ public class BaseButton
     public float TempCooldown = 0f;
     public bool InfiniteUses = true;
     public int Uses = 0;
-
     public virtual bool BaseShow() =>
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
         (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);

@@ -1,4 +1,5 @@
 ﻿
+using Hazel;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
@@ -35,26 +36,43 @@ public class MinerRole : CustomRoleBehavior
         DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 
-    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
             case 5:
-                SpawnVent();
+                if (reader != null)
+                {
+                    SpawnVent(NetHelpers.ReadVector2(reader));
+                }
+                else
+                {
+                    SpawnVent(_player.GetTruePosition());
+                }
+                break;
+        }
+    }
+
+    public override void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer)
+    {
+        switch (id)
+        {
+            case 5:
+                NetHelpers.WriteVector2(_player.GetTruePosition(), writer);
                 break;
         }
     }
 
     private List<Vent> Vents = [];
-    public void SpawnVent()
+    public void SpawnVent(Vector2 Pos)
     {
-        var ventPrefab = Main.AllVents.First();
+        var ventPrefab = ShipStatus.Instance.AllVents.First();
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Miner)";
 
         vent.Id = GetAvailableId();
-        var pos = _player.GetTruePosition();
-        float z = _player.gameObject.transform.position.z + 1.5f;
+        var pos = Pos;
+        float z = _player.gameObject.transform.position.z + 0.005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)
@@ -84,7 +102,10 @@ public class MinerRole : CustomRoleBehavior
         ShipStatus.Instance.AllVents = allVents.ToArray();
 
         // Play animation
-        vent.myAnim.Play(vent.ExitVentAnim, 1);
+        if (vent.myAnim != null)
+        {
+            vent.myAnim.Play(vent.ExitVentAnim, 1);
+        }
 
         Vents.Add(vent);
     }

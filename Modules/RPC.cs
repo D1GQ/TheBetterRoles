@@ -27,10 +27,10 @@ public enum CustomRPC : int
     // The Better Roles RPC's
     VersionCheck = 105,
     SyncSettings,
-    CheckRoleAction,
     RoleAction,
     CheckAction,
     Action,
+    SyncAction,
 }
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -95,7 +95,6 @@ internal static class RPC
                     {
                     }
                     break;
-                case CustomRPC.CheckRoleAction:
                 case CustomRPC.RoleAction:
                     {
                         var User = reader.ReadNetObject<PlayerControl>();
@@ -114,6 +113,9 @@ internal static class RPC
                     break;
                 case CustomRPC.Action:
                     HandleActionRPC(player, oldReader, false);
+                    break;
+                case CustomRPC.SyncAction:
+                    HandleSyncActionRPC(player, oldReader, true);
                     break;
             }
         }
@@ -185,7 +187,7 @@ internal static class RPC
                 {
                     var ventId = reader.ReadInt32();
                     var exit = reader.ReadBoolean();
-                    player.VentSync(ventId, exit, hostFlag);
+                    player.VentSync(ventId, exit);
                 }
                 break;
             case RpcAction.Revive:
@@ -210,6 +212,30 @@ internal static class RPC
                     {
                         player.PlayerPressSync(target, hostFlag);
                     }
+                }
+                break;
+        }
+    }
+
+    public static void HandleSyncActionRPC(PlayerControl sender, MessageReader oldReader, bool IsRPC = false)
+    {
+        MessageReader reader = MessageReader.Get(oldReader);
+
+        var signature = reader.ReadString();
+        var action = reader.ReadInt32();
+        var player = reader.ReadNetObject<PlayerControl>();
+
+        if (Main.modSignature != signature) return;
+
+        ActionRPCs.SenderPlayer = sender;
+
+        switch ((RpcAction)action)
+        {
+            case RpcAction.Vent:
+                {
+                    var ventId = reader.ReadInt32();
+                    var exit = reader.ReadBoolean();
+                    player.VentSync(ventId, exit, IsRPC);
                 }
                 break;
         }

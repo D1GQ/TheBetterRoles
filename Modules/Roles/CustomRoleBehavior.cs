@@ -287,17 +287,17 @@ public abstract class CustomRoleBehavior
     {
         if (_player != null)
         {
-            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
+            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true)) as SabotageButton;
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
+            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
                 return !target.IsImpostorTeammate();
             };
 
-            VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
+            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), 0, 0, this, null, false, true)) as VentButton;
             VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
         }
 
@@ -326,44 +326,29 @@ public abstract class CustomRoleBehavior
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type) 
     {
-        if (GameStates.IsHost)
+        if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
+                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
         {
-            if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
-            {
-                UseAbility(id, targetId, type);
-            }
-        }
-        else
-        {
-            var writer = AmongUsClient.Instance.StartRpcImmediately(_player.NetId, (byte)CustomRPC.CheckRoleAction, SendOption.Reliable, AmongUsClient.Instance.GetHost().Id);
-            writer.WriteNetObject(_player);
-            writer.Write((int)RoleType);
-            writer.Write(id);
-            writer.Write(targetId);
-            writer.Write((int)type);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            UseAbility(id, targetId, type);
         }
     }
 
     private void UseAbility(int id, int targetId, TargetType type)
     {
-        if (GameStates.IsHost)
-        {
-            OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null);
-            SetCooldownAndUse(id);
+        OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
+                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, null);
+        SetCooldownAndUse(id);
 
-            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
-            writer.WriteNetObject(_player);
-            writer.Write((int)RoleType);
-            writer.Write(id);
-            writer.Write(targetId);
-            writer.Write((int)type);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
+        writer.WriteNetObject(_player);
+        writer.Write((int)RoleType);
+        writer.Write(id);
+        writer.Write(targetId);
+        writer.Write((int)type);
+        AbilityWriter(id, this, ref writer);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
     private void SetCooldownAndUse(int id)
@@ -379,44 +364,22 @@ public abstract class CustomRoleBehavior
 
         switch ((CustomRPC)callId)
         {
-            case CustomRPC.CheckRoleAction:
-                {
-                    // Sender is Client, User is Client
-                    if (GameStates.IsHost)
-                    {
-                        var id = reader.ReadInt32();
-                        var targetId = reader.ReadInt32();
-                        var type = (TargetType)reader.ReadInt32();
-
-                        if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
-                        {
-                            UseAbility(id, targetId, type);
-                        }
-                    }
-                }
-                break;
             case CustomRPC.RoleAction:
                 {
-                    // Sender is host, User is this role base player
-                    if (realSender.IsHost())
-                    {
-                        var id = reader.ReadInt32();
-                        var targetId = reader.ReadInt32();
-                        var type = (TargetType)reader.ReadInt32();
+                    var id = reader.ReadInt32();
+                    var targetId = reader.ReadInt32();
+                    var type = (TargetType)reader.ReadInt32();
 
-                        OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                            type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                            type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null);
-                        SetCooldownAndUse(id);
-                    }
+                    OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
+                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
+                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, reader);
+                    SetCooldownAndUse(id);
                 }
                 break;
         }
     }
 
-    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body, MessageReader? reader)
     {
         switch (id)
         {
@@ -439,8 +402,8 @@ public abstract class CustomRoleBehavior
                 break;
             default:
                 {
-                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, this, target, vent, body), this);
-                    CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, this, target, vent, body));
+                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, reader, this, target, vent, body), this);
+                    CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, reader, this, target, vent, body));
                 }
                  break;
         }
@@ -464,11 +427,11 @@ public abstract class CustomRoleBehavior
                 break;
                 default:
                 {
-                    if (!CustomRoleManager.RoleChecks(_player, role => role.CheckAbility(id, this, target, vent, body), targetRole: this))
+                    if (CustomRoleManager.RoleChecks(_player, role => role.CheckAbility(id, this, target, vent, body), targetRole: this) == false)
                     {
                         return false;
                     }
-                    if (!CustomRoleManager.RoleChecksOther(role => role.CheckAbilityOther(id, this, target, vent, body)))
+                    if (CustomRoleManager.RoleChecksOther(role => role.CheckAbilityOther(id, this, target, vent, body)) == false)
                     {
                         return false;
                     }
@@ -560,12 +523,18 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Called after the host has approved the ability action for another player. Executes custom logic once the ability is allowed.
     /// </summary>
-    public virtual void OnAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+    public virtual void OnAbilityOther(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
 
     /// <summary>
     /// Called after the host has approved the ability action for the local player. This runs the logic after the ability is allowed.
     /// </summary>
-    public virtual void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+    public virtual void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
+
+    /// <summary>
+    /// Provides additional data related to the ability when sending it over the network.
+    /// This method is meant to be overridden in subclasses to add custom ability-specific information.
+    /// </summary>
+    public virtual void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer) { }
 
     /// <summary>
     /// Called when the duration of an ability ends, typically to clean up or reset states related to the ability.

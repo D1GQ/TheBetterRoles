@@ -1,4 +1,5 @@
 ﻿
+using Hazel;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
@@ -43,7 +44,7 @@ public class SwooperRole : CustomRoleBehavior
         InvisibilityButton.CanCancelDuration = true;
     }
 
-    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {

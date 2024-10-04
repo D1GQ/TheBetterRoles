@@ -70,7 +70,7 @@ public class VentButton : BaseButton
                 {
                     if (!isAbility)
                     {
-                        if (!_player.IsInVent())
+                        if (!_player.inVent)
                         {
                             _player.VentSync(lastTargetVent.Id, false);
                         }

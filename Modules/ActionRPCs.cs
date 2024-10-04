@@ -104,76 +104,6 @@ static class ActionRPCs
 
     private static bool CheckSetRoleAction(PlayerControl player, CustomRoles role) => true;
 
-    // Make a player go in or out a vent
-    public static void VentSync(this PlayerControl player, int ventId, bool Exit, bool bypass = false)
-    {
-        if (GameStates.IsHost || bypass)
-        {
-            if (CheckVentAction(player, ventId, Exit) == true || bypass)
-            {
-                // Run after checks for roles
-                CustomRoleManager.RoleListener(player, role => role.OnVent(player, ventId, Exit));
-
-                CustomRoleManager.RoleListenerOther(role => role.OnVentOther(player, ventId, Exit));
-
-                if (!Exit)
-                {
-                    player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
-                    if (player.IsLocalPlayer())
-                    {
-                        ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
-                            player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVents, false));
-                    }
-                }
-                else
-                {
-                    player.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
-                    if (player.IsLocalPlayer())
-                    {
-                        ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
-                    }
-                }
-
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Vent, player);
-        writer.Write(ventId);
-        writer.Write(Exit);
-        AmongUsClient.Instance.EndActionRpc(writer);
-    }
-
-    private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)
-    {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckVent(player, ventId, Exit)))
-        {
-            return false;
-        }
-
-        if (!CustomRoleManager.RoleChecksOther(role => role.CheckVentOther(player, ventId, Exit)))
-        {
-            return false;
-        }
-
-        if (CustomRoleManager.RoleChecks(player, role => !role.CanVent) || !ValidateSenderCheck(player))
-        {
-            Logger.Log($"Host Canceled Vent Action: Invalid");
-            return false;
-        }
-
-        if (ShipStatus.Instance == null)
-        {
-            Logger.Log($"Host Canceled Vent Action: ShipStatus Null");
-        }
-
-        return true;
-    }
-
     // Make a player kill a target
     public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool bypass = false)
     {
@@ -354,4 +284,61 @@ static class ActionRPCs
     }
 
     private static bool CheckPlayerPressAction(PlayerControl player, PlayerControl target) => true;
+
+    // Make a player go in or out a vent
+    public static void VentSync(this PlayerControl player, int ventId, bool Exit, bool IsRPC = false)
+    {
+        if (CheckVentAction(player, ventId, Exit) == true)
+        {
+            // Run after checks for roles
+            CustomRoleManager.RoleListener(player, role => role.OnVent(player, ventId, Exit));
+
+            CustomRoleManager.RoleListenerOther(role => role.OnVentOther(player, ventId, Exit));
+
+            if (!Exit)
+            {
+                player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
+                if (player.IsLocalPlayer())
+                {
+                    ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
+                        player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVents, false));
+                }
+            }
+            else
+            {
+                player.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
+                if (player.IsLocalPlayer())
+                {
+                    ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
+                }
+            }
+
+            if (IsRPC) return;
+        }
+
+        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Vent, player, true);
+        writer.Write(ventId);
+        writer.Write(Exit);
+        AmongUsClient.Instance.EndActionRpc(writer);
+    }
+
+    private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)
+    {
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckVent(player, ventId, Exit)))
+        {
+            return false;
+        }
+
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckVentOther(player, ventId, Exit)))
+        {
+            return false;
+        }
+
+        if (ShipStatus.Instance == null)
+        {
+            Logger.Log($"Canceled Vent Action: ShipStatus Null");
+        }
+
+        return true;
+    }
 }

@@ -4,21 +4,28 @@ namespace TheBetterRoles;
 
 static class ExtendedInnerNetClient
 {
-    public static MessageWriter StartActionRpc(this InnerNetClient client, RpcAction action, PlayerControl? asPlayer = null)
+    public static MessageWriter StartActionRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null, bool sync = false)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
 
         MessageWriter writer;
-        if (GameStates.IsHost)
+        if (sync)
         {
-            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable, -1);
+            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
+            writer.Write(Main.modSignature);
+            writer.Write((int)action);
+            writer.WriteNetObject(LocalPlayer);
+        }
+        else if (GameStates.IsHost)
+        {
+            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(asPlayer ?? LocalPlayer);
         }
         else
         {
-            writer = client.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable, AmongUsClient.Instance.GetHost().Id);
+            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(LocalPlayer);
@@ -27,7 +34,7 @@ static class ExtendedInnerNetClient
         return writer;
     }
 
-    public static void EndActionRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
+    public static void EndActionRpc(this InnerNetClient _, MessageWriter writer) => writer.EndMessage();
 
     /// <summary>
     /// Starts the RPC desynchronization process for the given player, call ID, and send option.

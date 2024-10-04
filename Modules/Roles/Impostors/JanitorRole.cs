@@ -1,5 +1,6 @@
 ﻿
 using BepInEx.Unity.IL2CPP.Utils;
+using Hazel;
 using System.Collections;
 using TheBetterRoles.Patches;
 using UnityEngine;
@@ -45,7 +46,7 @@ public class JanitorRole : CustomRoleBehavior
         CleanButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, null, this, true, 1f)) as AbilityButton;
     }
 
-    public override void OnAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
