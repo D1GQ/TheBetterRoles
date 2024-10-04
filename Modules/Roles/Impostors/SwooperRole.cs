@@ -70,7 +70,7 @@ public class SwooperRole : CustomRoleBehavior
         SetInvisibility(!IsVisible);
     }
 
-    public override void ResetAbilityState()
+    public override void OnResetAbilityState()
     {
         InteractableTarget = true;
         IsVisible = true;

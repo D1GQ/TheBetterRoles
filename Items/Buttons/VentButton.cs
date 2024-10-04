@@ -10,6 +10,7 @@ namespace TheBetterRoles;
 public class VentButton : BaseButton
 {
     public Vent? lastTargetVent { get; set; }
+    public float closestDistance = float.MaxValue;
     public float HighlightDistance { get; set; } = 3.5f;
     public float Distance { get; set; } = 0.8f;
     public bool IsAbility { get; set; }
@@ -86,6 +87,7 @@ public class VentButton : BaseButton
             }));
         }
 
+        ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
@@ -120,7 +122,7 @@ public class VentButton : BaseButton
         float closeDistanceThreshold = 0.335f;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<Vent> allVents = ShipStatus.Instance.AllVents.ToList();
+        List<Vent> allVents = Main.AllVents.ToList();
 
         for (int i = 0; i < allVents.Count; i++)
         {
@@ -164,7 +166,7 @@ public class VentButton : BaseButton
         }
 
         Vent? targetVent = null;
-        float closestDistance = float.MaxValue;
+        closestDistance = float.MaxValue;
 
         if (Visible)
         {

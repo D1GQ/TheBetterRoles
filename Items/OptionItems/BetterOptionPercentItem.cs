@@ -15,7 +15,7 @@ public class BetterOptionPercentItem : BetterOptionItem
 
     public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
-        Id = id;
+        Id = id >= 0 ? id : GetGeneratedId();
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
         if (DefaultValue > floatRange.max) DefaultValue = floatRange.max;
         CurrentValue = DefaultValue;

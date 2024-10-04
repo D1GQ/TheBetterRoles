@@ -80,7 +80,7 @@ public class MorphlingRole : CustomRoleBehavior
             case 6:
                 if (OriginalData != null)
                 {
-                    ResetAbilityState();
+                    OnResetAbilityState();
                     SampleButton.SetCooldown();
                 }
                 break;
@@ -109,10 +109,10 @@ public class MorphlingRole : CustomRoleBehavior
 
     public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
-        ResetAbilityState();
+        OnResetAbilityState();
     }
 
-    public override void ResetAbilityState()
+    public override void OnResetAbilityState()
     {
         if (SampleData != null)
         {

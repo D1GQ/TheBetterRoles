@@ -37,6 +37,7 @@ static class ExtendedPlayerControl
             return player.Data.PlayerName;
         }
     }
+    public static CustomRoleBehavior? Role(this PlayerControl player) => player.BetterData().RoleInfo.Role;
     public static string GetRoleNameAndColor(this PlayerControl player) => $"<color={player.GetRoleColorHex()}>{player.GetRoleName()}</color>";
     public static string GetRoleName(this PlayerControl player) => Utils.GetCustomRoleName(player.BetterData().RoleInfo.RoleType);
     public static Color GetRoleColor(this PlayerControl player) => Utils.GetCustomRoleColor(player.BetterData().RoleInfo.RoleType);

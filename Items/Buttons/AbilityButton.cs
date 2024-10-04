@@ -1,4 +1,5 @@
 ﻿
+using Rewired.Utils.Classes.Data;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class AbilityButton : BaseButton
     public string DurationName { get; set; } = "";
     public float Duration { get; set; } = 0f;
     public bool CanCancelDuration { get; set; } = false;
+    public Func<bool> InteractCondition { get; set; } = () => true;
     public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
     public AbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, int index = -1)
     {
@@ -64,6 +66,7 @@ public class AbilityButton : BaseButton
             }));
         }
 
+        ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
@@ -147,7 +150,7 @@ public class AbilityButton : BaseButton
 
         bool flag1 = Uses != 0 || InfiniteUses;
 
-        if (flag1 && BaseInteractable())
+        if (flag1 && BaseInteractable() && InteractCondition())
         {
             ActionButton.SetEnabled();
         }

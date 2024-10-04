@@ -6,8 +6,16 @@ using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Patches;
 
-class RolePatch
+public class RolePatch
 {
+    public static void Update()
+    {
+        if (!GameStates.IsInGamePlay && CustomRoleBehavior.SubTeam.Count > 0)
+        {
+            CustomRoleBehavior.SubTeam.Clear();
+        }
+    }
+
     [HarmonyPatch(typeof(PlayerControl))]
     class PlayerControlPatch
     {

@@ -80,46 +80,9 @@ class PlayerControlPatch
                 }
             }
 
-            // Put +++ or --- at the end of each tag
-            static StringBuilder FormatInfo(StringBuilder source)
-            {
-                var sb = new StringBuilder();
-                if (source.Length > 0)
-                {
-                    string text = source.ToString();
-                    bool isPlus = text.Contains("+++");
-                    string[] parts;
-
-                    if (isPlus)
-                    {
-                        parts = text.Split(new[] { "+++" }, StringSplitOptions.None);
-                    }
-                    else
-                    {
-                        parts = text.Split(new[] { "---" }, StringSplitOptions.None);
-                    }
-
-                    for (int i = 0; i < parts.Length; i++)
-                    {
-                        if (!string.IsNullOrEmpty(parts[i]))
-                        {
-                            sb.Append(parts[i]);
-
-                            if (i != parts.Length - 2)
-                            {
-                                sb.Append(isPlus ? " + " : " - ");
-                            }
-                        }
-                    }
-                }
-
-                return sb;
-            }
-
-
-            sbTag = FormatInfo(sbTag);
-            sbTagTop = FormatInfo(sbTagTop);
-            sbTagBottom = FormatInfo(sbTagBottom);
+            sbTag = Utils.FormatStringBuilder(sbTag);
+            sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+            sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
 
             player.SetPlayerTextInfo(sbTagTop.ToString());
             player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);

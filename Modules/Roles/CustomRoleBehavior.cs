@@ -18,6 +18,46 @@ public enum TargetType
 public abstract class CustomRoleBehavior
 {
     /// <summary>
+    /// A dictionary representing players recruited by this role to win together. 
+    /// The key is the recruiter, and the value is a list of players they recruited.
+    /// </summary>
+    public static Dictionary<byte, List<byte>> SubTeam { get; set; } = [];
+
+    /// <summary>
+    /// Adds a recruited player to the recruiter's sub-team. 
+    /// If the recruiter is not already in the dictionary, a new entry is created for them.
+    /// </summary>
+    /// <param name="Recruiter">The player who is recruiting another player.</param>
+    /// <param name="Recruited">The player being recruited.</param>
+    public static void AddSubTeam(NetworkedPlayerInfo Recruiter, NetworkedPlayerInfo Recruited)
+    {
+        if (!SubTeam.ContainsKey(Recruiter.PlayerId))
+        {
+            SubTeam[Recruiter.PlayerId] = [];
+        }
+        SubTeam[Recruiter.PlayerId].Add(Recruited.PlayerId);
+    }
+
+    /// <summary>
+    /// Removes a recruited player from the recruiter's sub-team. 
+    /// If the recruiter or the recruited player is not present, no action is taken.
+    /// </summary>
+    /// <param name="Recruiter">The player who recruited another player.</param>
+    /// <param name="Recruited">The player being removed from the recruiter's sub-team.</param>
+    public static void RemoveSubTeam(NetworkedPlayerInfo Recruiter, NetworkedPlayerInfo Recruited)
+    {
+        if (SubTeam.ContainsKey(Recruiter.PlayerId) && SubTeam[Recruiter.PlayerId].Contains(Recruited.PlayerId))
+        {
+            SubTeam[Recruiter.PlayerId].Remove(Recruited.PlayerId);
+
+            if (SubTeam[Recruiter.PlayerId].Count == 0)
+            {
+                SubTeam.Remove(Recruiter.PlayerId);
+            }
+        }
+    }
+
+    /// <summary>
     /// Local player. Refers to the player that is controlled locally on the client.
     /// </summary>
     public PlayerControl? localPlayer => PlayerControl.LocalPlayer;
@@ -58,6 +98,11 @@ public abstract class CustomRoleBehavior
     /// Checks if the role belongs to the Neutral team.
     /// </summary>
     public bool IsNeutral => RoleTeam == CustomRoleTeam.Neutral;
+
+    /// <summary>
+    /// Determines whether the vote-out message is always shown for this role.
+    /// </summary>
+    public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
     /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
@@ -131,11 +176,6 @@ public abstract class CustomRoleBehavior
     public VentButton? VentButton { get; set; }
 
     /// <summary>
-    /// A list of players that this role has recruited to win with. This is relevant for roles that can recruit other players (like a Jester or Cultist).
-    /// </summary>
-    public List<NetworkedPlayerInfo> RecruitedPlayers { get; set; } = [];
-
-    /// <summary>
     /// Set if the player is interactable with a target ability button, determining whether they can be targeted by abilities.
     /// </summary>
     public bool InteractableTarget { get; set; } = true;
@@ -151,9 +191,14 @@ public abstract class CustomRoleBehavior
     public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
 
     /// <summary>
-    /// Checks if the role has tasks assigned. This is typical for Crewmate-aligned roles.
+    /// Sets if the role has tasks assigned. This is typical for Crewmate-aligned roles.
     /// </summary>
     public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
+
+    /// <summary>
+    /// Sets if the role has tasks assigned for them self.
+    /// </summary>
+    public virtual bool HasSelfTask => false;
 
     /// <summary>
     /// Checks if the role can perform kills. This is typically overridden by roles that are allowed to kill, such as Impostors.
@@ -217,7 +262,7 @@ public abstract class CustomRoleBehavior
     public void Deinitialize()
     {
         OnDeinitialize();
-        ResetAbilityState();
+        OnResetAbilityState();
 
         // Remove Buttons
         foreach (var button in Buttons)
@@ -240,18 +285,21 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual void SetUpRole()
     {
-        SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
-        SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
-
-        KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
-        KillButton.VisibleCondition = () => { return CustomRoleManager.RoleChecks(KillButton._player, role => role.CanKill, false); };
-        KillButton.TargetCondition = (PlayerControl target) =>
+        if (_player != null)
         {
-            return !target.IsImpostorTeammate();
-        };
+            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString("Role.Ability.Sabotage"), this, true)) as SabotageButton;
+            SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-        VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
-        VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecks(VentButton._player, role => role.CanVent, false); };
+            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString("Role.Ability.Kill"), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
+            KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
+            KillButton.TargetCondition = (PlayerControl target) =>
+            {
+                return !target.IsImpostorTeammate();
+            };
+
+            VentButton = AddButton(new VentButton().Create(3, Translator.GetString("Role.Ability.Vent"), 0, 0, this, null, false, true)) as VentButton;
+            VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
+        }
 
         OptionItems.Initialize();
         OnSetUpRole();
@@ -599,6 +647,11 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Resets the state of any ability-related cooldowns or flags for this role.
     /// </summary>
-    public virtual void ResetAbilityState() { }
+    public virtual void OnResetAbilityState() { }
 
+    /// <summary>
+    /// This method is called at the end of the game to process the winning players.
+    /// </summary>
+    /// <param name="WinnerIds">A reference to the list containing the IDs of the winning players.</param>
+    public virtual void OnGameEnd(ref List<byte> WinnerIds) { }
 }

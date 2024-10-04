@@ -7,6 +7,7 @@ namespace TheBetterRoles;
 
 public class BetterOptionItem
 {
+    public static int IdNum = 0;
     public float StaticSpacingNum => 1f;
     public float StaticSpacingNumPlus => 0.45f;
     public static Dictionary<int, int> TempPlayerOptionData = [];
@@ -87,6 +88,13 @@ public class BetterOptionItem
             textMeshPro.fontMaterial.SetFloat("_StencilComp", 3f);
             textMeshPro.fontMaterial.SetFloat("_Stencil", maskLayer);
         }
+    }
+
+    public int GetGeneratedId()
+    {
+        var num = 100 * IdNum;
+        IdNum++;
+        return num;
     }
 
     public virtual bool GetBool()

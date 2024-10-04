@@ -187,9 +187,10 @@ public static class CustomRoleManager
     {
         foreach (var role in player.BetterData().RoleInfo.AllRoles)
         {
-            if (role == null) continue;
-
-            role.Update();
+            if (role != null)
+            {
+                role.Update();
+            }
 
             if (player.IsLocalPlayer())
             {
@@ -228,31 +229,14 @@ public static class CustomRoleManager
         }
     }
 
-    public static bool RoleChecks(this PlayerControl player, Func<CustomRoleBehavior, bool> predicate, bool log = true, CustomRoleBehavior? targetRole = null)
+    public static bool RoleChecks(this PlayerControl player, Func<CustomRoleBehavior, bool> predicate, bool log = true,
+        CustomRoleBehavior? targetRole = null, Func<CustomRoleBehavior, bool>? filter = null)
     {
-        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        if (player.RoleAssigned() && player != null)
         {
-            if (role == null || targetRole != null && targetRole != role) continue;
-
-            if (!predicate(role))
-            {
-                if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static bool RoleChecksOther(Func<CustomRoleBehavior, bool> predicate, bool log = true)
-    {
-        foreach (var player in Main.AllPlayerControls)
-        {
-            if (player == null) continue;
-
             foreach (var role in player.BetterData().RoleInfo.AllRoles)
             {
-                if (role == null) continue;
+                if (role == null || targetRole != null && targetRole != role || filter != null && !filter(role)) continue;
 
                 if (!predicate(role))
                 {
@@ -265,6 +249,70 @@ public static class CustomRoleManager
         return true;
     }
 
+    public static bool RoleChecksOther(Func<CustomRoleBehavior, bool> predicate, bool log = true,
+         Func<CustomRoleBehavior, bool>? filter = null)
+    {
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (player == null) continue;
+
+            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            {
+                if (role == null || filter != null && !filter(role)) continue;
+
+                if (!predicate(role))
+                {
+                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static bool RoleChecksAny(this PlayerControl player, Func<CustomRoleBehavior, bool> predicate, bool log = true,
+        CustomRoleBehavior? targetRole = null, Func<CustomRoleBehavior, bool>? filter = null)
+    {
+        if (player.RoleAssigned() && player != null)
+        {
+            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            {
+                if (role == null || (targetRole != null && targetRole != role) || (filter != null && !filter(role))) continue;
+
+                if (predicate(role))
+                {
+                    if (log) Logger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    public static bool RoleChecksOtherAny(Func<CustomRoleBehavior, bool> predicate, bool log = true,
+        Func<CustomRoleBehavior, bool>? filter = null)
+    {
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (player == null) continue;
+
+            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            {
+                if (role == null || (filter != null && !filter(role))) continue;
+
+                if (predicate(role))
+                {
+                    if (log) Logger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static void ClearRoles(this PlayerControl player)
     {
@@ -351,13 +399,20 @@ public static class CustomRoleManager
 
 public enum CustomRoles
 {
-    // Roles
+    // Crewmates
     Crewmate,
-    Impostor,
     Sheriff,
+
+    // Impostors
+    Impostor,
     Morphling,
     Swooper,
     Janitor,
+    Miner,
+
+    // Neutrals
+    Jester,
+    Mole,
 
     // Addons
     ButtonBerry,

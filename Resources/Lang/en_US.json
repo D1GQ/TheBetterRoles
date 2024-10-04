@@ -42,10 +42,6 @@
   "Role.Crewmate.Info": "Info",
   "Role.Crewmate.LongInfo": "Long Info",
 
-  "Role.Impostor": "Impostor",
-  "Role.Impostor.Info": "Info",
-  "Role.Impostor.LongInfo": "Long Info",
-
   "Role.Sheriff": "Sheriff",
   "Role.Sheriff.Info": "Info",
   "Role.Sheriff.LongInfo": "Long Info",
@@ -57,6 +53,10 @@
   "Role.Sheriff.Option.KillOnMisfire": "Kill On Misfire",
   "Role.Sheriff.Option.CanShootImposters": "Can Shoot Imposters",
   "Role.Sheriff.Option.CanShootNeutralKilling": "Can Shoot Neutral Killing",
+
+  "Role.Impostor": "Impostor",
+  "Role.Impostor.Info": "Info",
+  "Role.Impostor.LongInfo": "Long Info",
 
   "Role.Morphling": "Morphling",
   "Role.Morphling.Info": "Info",
@@ -82,6 +82,22 @@
   "Role.Janitor.Option.CleanCooldown": "Clean Cooldown",
   "Role.Janitor.Option.SetKillCooldownOnClean": "Set KillCooldown On Clean",
   "Role.Janitor.Option.SetKillCooldown": "Set KillCooldown",
+
+  "Role.Miner": "Miner",
+  "Role.Miner.Info": "Info",
+  "Role.Miner.LongInfo": "Long Info",
+  "Role.Miner.Ability.1": "Dig Vent",
+  "Role.Miner.Option.": "",
+
+  "Role.Mole": "Mole",
+  "Role.Mole.Info": "Info",
+  "Role.Mole.LongInfo": "Long Info",
+  "Role.Mole.Ability.1": "Dig Hole",
+  "Role.Mole.Option.": "",
+
+  "Role.Jester": "Jester",
+  "Role.Jester.Info": "Info",
+  "Role.Jester.LongInfo": "Long Info",
 
   "Role.Swift": "Swift",
   "Role.Swift.Info": "Info",

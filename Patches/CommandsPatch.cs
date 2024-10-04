@@ -85,7 +85,7 @@ class CommandsPatch
             case "test":
                 foreach(var player in Main.AllPlayerControls)
                 {
-                    CustomRoleManager.AddAddon(player, CustomRoles.Bait);
+                    CustomRoleManager.SetCustomRole(player, CustomRoles.Jester);
                 }
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):

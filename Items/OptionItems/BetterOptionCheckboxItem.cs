@@ -13,7 +13,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
     public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, bool DefaultValue = true, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
-        Id = id;
+        Id = id >= 0 ? id : GetGeneratedId();
         Tab = gameOptionsMenu;
         Name = name;
         IsChecked = DefaultValue;

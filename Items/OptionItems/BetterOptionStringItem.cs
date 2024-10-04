@@ -14,7 +14,7 @@ public class BetterOptionStringItem : BetterOptionItem
 
     public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, string[] strings, int DefaultValue = 0, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
-        Id = id;
+        Id = id >= 0 ? id : GetGeneratedId();
         Values = strings;
         Tab = gameOptionsMenu;
         Name = name;

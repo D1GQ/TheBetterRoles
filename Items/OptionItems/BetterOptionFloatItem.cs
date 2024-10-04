@@ -17,7 +17,7 @@ public class BetterOptionFloatItem : BetterOptionItem
 
     public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
-        Id = id;
+        Id = id >= 0 ? id : GetGeneratedId();
         floatRange = new(values[0], values[1]);
         Increment = values[2];
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;

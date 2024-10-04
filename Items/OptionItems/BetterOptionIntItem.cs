@@ -17,7 +17,7 @@ public class BetterOptionIntItem : BetterOptionItem
 
     public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, int[] values, int DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
-        Id = id;
+        Id = id >= 0 ? id : GetGeneratedId();
         intRange = new(values[0], values[1]);
         Increment = values[2];
         if (DefaultValue < intRange.min) DefaultValue = intRange.min;

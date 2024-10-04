@@ -216,6 +216,42 @@ public static class Utils
         return new Color32(r, g, b, 255);
     }
 
+    // Put +++ or --- at the end of each tag
+    public static StringBuilder FormatStringBuilder(StringBuilder source)
+    {
+        var sb = new StringBuilder();
+        if (source.Length > 0)
+        {
+            string text = source.ToString();
+            bool isPlus = text.Contains("+++");
+            string[] parts;
+
+            if (isPlus)
+            {
+                parts = text.Split(new[] { "+++" }, StringSplitOptions.None);
+            }
+            else
+            {
+                parts = text.Split(new[] { "---" }, StringSplitOptions.None);
+            }
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(parts[i]))
+                {
+                    sb.Append(parts[i]);
+
+                    if (i != parts.Length - 2)
+                    {
+                        sb.Append(isPlus ? " + " : " - ");
+                    }
+                }
+            }
+        }
+
+        return sb;
+    }
+
     public static void DisconnectAccountFromOnline(bool apiError = false)
     {
         if (GameStates.IsInGame)

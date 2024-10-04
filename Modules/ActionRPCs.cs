@@ -262,7 +262,7 @@ static class ActionRPCs
             if (CheckReportBodyAction(player, bodyInfo, isButton) == true || bypass)
             {
                 // Run after checks for roles
-                CustomRoleManager.RoleListenerOther(role => role.ResetAbilityState());
+                CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState());
                 CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, isButton));
                 CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, isButton));
 

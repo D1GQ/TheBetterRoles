@@ -58,6 +58,7 @@ public class TargetButton : BaseButton
             }));
         }
 
+        ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;

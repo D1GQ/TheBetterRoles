@@ -8,9 +8,14 @@ namespace TheBetterRoles.Patches;
 
 class BetterGameSettings
 {
+    public static BetterOptionItem? Preset;
     public static BetterOptionItem? ImposterAmount;
-    public static BetterOptionItem? BenignNeutralAmount;
-    public static BetterOptionItem? KillingNeutralAmount;
+    public static BetterOptionItem? MaximumBenignNeutralAmount;
+    public static BetterOptionItem? MinimumBenignNeutralAmount;
+    public static BetterOptionItem? MaximumKillingNeutralAmount;
+    public static BetterOptionItem? MinimumKillingNeutralAmount;
+    public static BetterOptionItem? MaximumAddonAmount;
+    public static BetterOptionItem? MinimumAddonAmount;
 }
 
 class BetterGameSettingsTemp
@@ -35,6 +40,7 @@ static class GameSettingMenuPatch
 
     public static void SetupSettings(bool IsPreload = false)
     {
+        BetterOptionItem.IdNum = 0;
         BetterOptionItem.BetterOptionItems.Clear();
         BetterOptionTab.allTabs.Clear();
         BetterOptionItem.TempPlayerOptionDataNum = 0;
@@ -45,6 +51,19 @@ static class GameSettingMenuPatch
         BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, "Imposter Roles", "None", Color.red);
         BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Add-ons", "None", Color.magenta);
+
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, "Impostor Settings"));
+        BetterGameSettings.ImposterAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, "Impostors", [0, 5, 1], 2, "", "");
+
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, "Neutral Settings"));
+        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Non-Killing Neutrals", [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Non-Killing Neutrals", [0, 5, 1], 0, "", "");
+        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Killing Neutrals", [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Killing Neutrals", [0, 5, 1], 0, "", "");
+
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.Addons, "Add-on Settings"));
+        BetterGameSettings.MaximumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, "Maximum Add-ons", [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, "Minimum Add-ons", [0, 5, 1], 0, "", "");
 
         if (IsPreload)
         {

@@ -70,9 +70,15 @@ public class CustomGameManager
         {
             List<PlayerControl> teamToShow = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) ? Main.AllPlayerControls.ToList() : Main.AllPlayerControls.Where(p => p.IsTeammate()).ToList();
 
-            foreach (var other in PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.RecruitedPlayers) 
+            foreach (PlayerControl player in teamToShow) 
             {
-                teamToShow.Add(Utils.PlayerFromPlayerId(other.PlayerId));
+                if (CustomRoleBehavior.SubTeam.ContainsKey(player.Data.PlayerId))
+                {
+                    foreach (var other in CustomRoleBehavior.SubTeam[player.Data.PlayerId])
+                    {
+                        teamToShow.Add(Utils.PlayerFromPlayerId(other));
+                    }
+                }
             }
 
             Begin(__instance, teamToShow);
@@ -417,6 +423,8 @@ public class CustomGameManager
 
     public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)
     {
+        CustomRoleManager.RoleListenerOther(role => role.OnGameEnd(ref Winners));
+
         // Set player data for endgame
         winners.Clear();
         winners = Winners;
@@ -464,16 +472,14 @@ public class CustomGameManager
         {
             Logger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
             List<byte> players = [player.Data.PlayerId];
-            foreach (var other in player.BetterData().RoleInfo.Role.RecruitedPlayers)
-            {
-                players.Add(other.PlayerId);
-            }
+            GetSubTeamWin(ref players);
             ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole, CustomRoleTeam.Neutral);
             GameHasEnded = true;
         }
-        else if (CheckCrewAndImpAmount())
+        else if (CheckPlayerAmount())
         {
             var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
+            GetSubTeamWin(ref Impostors);
             Logger.Log("Ending Game As Host: Crew Outnumbered");
             ActionRPCs.EndGameSync(Impostors, EndGameReason.Outnumbered, CustomRoleTeam.Impostor);
             GameHasEnded = true;
@@ -481,6 +487,7 @@ public class CustomGameManager
         else if (CheckSabotageWin())
         {
             var Impostors = GetPlayerIdsFromTeam(CustomRoleTeam.Impostor);
+            GetSubTeamWin(ref Impostors);
             Logger.Log("Ending Game As Host: Critical Sabotage");
             ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage, CustomRoleTeam.Impostor);
             GameHasEnded = true;
@@ -488,17 +495,35 @@ public class CustomGameManager
         else if (CheckCrewmateWin())
         {
             var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
+            GetSubTeamWin(ref Crewmates);
             Logger.Log("Ending Game As Host: All Tasks");
             ActionRPCs.EndGameSync(Crewmates, EndGameReason.Tasks, CustomRoleTeam.Crewmate);
             GameHasEnded = true;
         }
-        else if (CheckImposterAmount())
+        else if (CheckKillingRoleAmount())
         {
             var Crewmates = GetPlayerIdsFromTeam(CustomRoleTeam.Crewmate);
+            GetSubTeamWin(ref Crewmates);
             Logger.Log("Ending Game As Host: No Imps");
             ActionRPCs.EndGameSync(Crewmates, EndGameReason.Outnumbered, CustomRoleTeam.Crewmate);
             GameHasEnded = true;
         }
+    }
+
+    public static List<byte> GetSubTeamWin(ref List<byte> players)
+    {
+        foreach (var playerId in players)
+        {
+            if (CustomRoleBehavior.SubTeam.ContainsKey(playerId))
+            { 
+                foreach (var otherId in CustomRoleBehavior.SubTeam[playerId])
+                {
+                    players.Add(otherId);
+                }
+            }
+        }
+
+        return players;
     }
 
     public static List<NetworkedPlayerInfo> GetPlayersFromTeam(CustomRoleTeam team)
@@ -525,12 +550,13 @@ public class CustomGameManager
         return players;
     }
 
-    public static bool CheckCrewAndImpAmount()
+    public static bool CheckPlayerAmount()
     {
         var Impostors = Main.AllAlivePlayerControls.Where(pc => pc.Is(CustomRoleTeam.Impostor));
         var Players = Main.AllAlivePlayerControls.Where(pc => !pc.Is(CustomRoleTeam.Impostor));
+        var NeutralKilling = Main.AllAlivePlayerControls.Where(pc => CustomRoleManager.RoleChecks(pc, role => role.CanKill, false, filter: role => role.IsNeutral));
 
-        if (Impostors.Count() >= Players.Count())
+        if (Impostors.Count() >= Players.Count() && !NeutralKilling.Any())
         {
             return true;
         }
@@ -563,7 +589,8 @@ public class CustomGameManager
         return false;
     }
 
-    public static bool CheckImposterAmount() => Main.AllAlivePlayerControls.Where(pc => pc.Is(CustomRoleTeam.Impostor)).Count() == 0;
+    public static bool CheckKillingRoleAmount() => !Main.AllAlivePlayerControls
+        .Where(pc => CustomRoleManager.RoleChecks(pc, role => role.CanKill, false, filter: role => !role.IsAddon)).Any();
 
     public static bool CheckCrewmateWin() => Main.AllPlayerControls
         .Where(pc => pc.Is(CustomRoleTeam.Crewmate) && pc.BetterData().RoleInfo.RoleAssigned && pc.BetterData().RoleInfo.Role.HasTask)

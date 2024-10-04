@@ -1,5 +1,6 @@
 ﻿
 using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -48,6 +49,7 @@ public class SabotageButton : BaseButton
             }));
         }
 
+        ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
