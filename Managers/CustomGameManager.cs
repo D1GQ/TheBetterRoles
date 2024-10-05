@@ -184,12 +184,12 @@ public class CustomGameManager
             List<NetworkedPlayerInfo> players = playerData.Where(CheckWinner).ToList();
             var anyFlag = players.Any();
             NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
-            var role = first?.GetOldBetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
+            var role = first?.BetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
             var team = winTeam;
             Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
-                : Utils.HexToColor32(first.GetOldBetterData().RoleInfo.Role.RoleColor);
+                : Utils.HexToColor32(first.BetterData().RoleInfo.Role.RoleColor);
 
-            bool flag = players.Any(data => data.GetOldBetterData().IsSelf);
+            bool flag = players.Any(data => data.BetterData().IsSelf);
 
             if (!anyFlag)
             {
@@ -234,11 +234,11 @@ public class CustomGameManager
 
                 var player = Utils.PlayerDataFromPlayerId(playerIds);
                 players.Add(player);
-                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.GetOldBetterData().RoleInfo.Role.RoleColor}>" +
-                    $"{player.GetOldBetterData().RoleInfo.Role.RoleName}</color></size>";
+                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.BetterData().RoleInfo.Role.RoleColor}>" +
+                    $"{player.BetterData().RoleInfo.Role.RoleName}</color></size>";
             }
 
-            __instance.WinText.text += $" Win</color>";
+            __instance.WinText.text += $" Wins</color>";
 
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
@@ -286,7 +286,7 @@ public class CustomGameManager
             List<NetworkedPlayerInfo> players = playerData;
             var anyFlag = players.Any();
             NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
-            var role = first?.GetOldBetterData()?.RoleInfo?.Role;
+            var role = first?.BetterData()?.RoleInfo?.Role;
             if (role == null) return;
 
             Logger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameStates.GetActiveMapId)}/{GameStates.GetActiveMapId}", "GamePlayManager");
@@ -322,23 +322,25 @@ public class CustomGameManager
                     .OrderBy(pd => pd.Disconnected)  // Disconnected players last
                     .ThenBy(pd => pd.IsDead)          // Dead players after live players
                     .ThenBy(pd => CheckWinner(pd) ? 0 : 1) // Winners first
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
-                    .ThenBy(pd => pd.GetOldBetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
+                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
+                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
+                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
                     .ToArray();
 
 
-                string winTeam = role.RoleName;
+                string winteam = role.RoleName;
+                string winColor = role.RoleColor;
                 switch (role.RoleTeam)
                 {
                     case CustomRoleTeam.Impostor:
-                        winTeam = Translator.GetString(StringNames.ImpostorsCategory);
+                        winteam = Translator.GetString(StringNames.ImpostorsCategory);
+                        winColor = Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor);
                         break;
                     case CustomRoleTeam.Crewmate:
-                        winTeam = Translator.GetString(StringNames.Crewmates);
+                        winteam = Translator.GetString(StringNames.Crewmates);
+                        winColor = Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate);
                         break;
                 }
-                string winColor = role.RoleColor;
                 string winTag;
 
                 switch (winReason)
@@ -360,28 +362,28 @@ public class CustomGameManager
                         break;
                 }
 
-                Logger.Log($"{winTeam}: {winTag}", "GameSummary");
+                Logger.Log($"{winteam}: {winTag}", "GameSummary");
 
                 string SummaryHeader = $"<align=\"center\"><size=150%>   {Translator.GetString("GameSummary")}</size></align>";
-                SummaryHeader += $"\n\n<size=90%><color={winColor}>{winTeam} {Translator.GetString("Game.Summary.Won")}</color></size>" +
+                SummaryHeader += $"\n\n<size=90%><color={winColor}>{winteam} {Translator.GetString("Game.Summary.Won")}</color></size>" +
                     $"\n<size=60%>\n{Translator.GetString("Game.Summary.By")} {winTag}</size>";
 
                 StringBuilder sb = new StringBuilder();
 
                 foreach (var data in playersData)
                 {
-                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.GetOldBetterData().RealName}</color>";
-                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.GetOldBetterData().RoleInfo.Role.RoleTeam)}>{text}</color>";
+                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.BetterData().RealName}</color>";
+                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.BetterData().RoleInfo.Role.RoleTeam)}>{text}</color>";
 
-                    var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.GetOldBetterData().RoleInfo.Role.RoleType)})";
+                    var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.BetterData().RoleInfo.Role.RoleType)})";
 
-                    if (data.GetOldBetterData().RoleInfo.Role.HasTask)
+                    if (data.BetterData().RoleInfo.Role.HasTask)
                     {
                         roleInfo += $" → {playerTheme($"{Translator.GetString("Tasks")}: {data.Tasks.ToArray().Where(task => task.Complete).Count()}/{data.Tasks.Count}")}";
                     }
-                    if (data.GetOldBetterData().RoleInfo.Role.CanKill)
+                    if (data.BetterData().RoleInfo.Role.CanKill)
                     {
-                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {data.GetOldBetterData().RoleInfo.Kills}")}";
+                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {data.BetterData().RoleInfo.Kills}")}";
                     }
 
                     string deathReason;

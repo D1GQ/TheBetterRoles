@@ -31,13 +31,11 @@ public static class PlayerControlDataExtension
             .ToList();
     }
 
-    public static List<ExtendedPlayerInfo> cachedplayerInfo = [];
     public static Dictionary<NetworkedPlayerInfo, ExtendedPlayerInfo> playerInfo = [];
 
     public static void ClearAllData()
     {
         playerInfo.Clear();
-        cachedplayerInfo.Clear();
     }
 
     public static void ClearData(this ExtendedPlayerInfo BetterData) => playerInfo[BetterData._Data] = new ExtendedPlayerInfo
@@ -59,17 +57,23 @@ public static class PlayerControlDataExtension
 
         if (!playerInfo.ContainsKey(data))
         {
-            ExtendedPlayerInfo newData = new ExtendedPlayerInfo
+            if (playerInfo.Any() && playerInfo.Keys.FirstOrDefault(Data => Data.PlayerId == data.PlayerId) is NetworkedPlayerInfo info && info != null)
             {
-                IsSelf = data == PlayerControl.LocalPlayer.Data,
-                _PlayerId = data.PlayerId,
-                _Data = data,
-                RoleInfo = new ExtendedRoleInfo(),
-            };
-            cachedplayerInfo.Add(newData);
-            playerInfo[data] = cachedplayerInfo.First(data2 => data2 == newData);
-            playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR().Initialize(Utils.PlayerFromPlayerId(data.PlayerId));
-            playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
+                return playerInfo[info];
+            }
+            else
+            {
+                ExtendedPlayerInfo newData = new ExtendedPlayerInfo
+                {
+                    IsSelf = data == PlayerControl.LocalPlayer.Data,
+                    _PlayerId = data.PlayerId,
+                    _Data = data,
+                    RoleInfo = new ExtendedRoleInfo(),
+                };
+                playerInfo[data] = newData;
+                playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR().Initialize(Utils.PlayerFromPlayerId(data.PlayerId));
+                playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
+            }
         }
         return playerInfo[data];
     }
@@ -92,7 +96,4 @@ public static class PlayerControlDataExtension
         var player = Utils.PlayerFromClientId(data.Id);
         return player == null ? null : GetOrCreateBetterData(player.Data);
     }
-
-    // Get BetterData from NetworkedPlayerInfo
-    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => cachedplayerInfo.First(data => data._PlayerId == info.PlayerId);
 }
