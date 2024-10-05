@@ -54,6 +54,7 @@ static class GameSettingMenuPatch
         BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Add-ons", "None", Color.magenta);
 
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, "Mod Settings"));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, "Impostor Settings"));
@@ -259,9 +260,18 @@ static class OptionsConsolePatch
 {
     [HarmonyPatch(nameof(OptionsConsole.CanUse))]
     [HarmonyPrefix]
-    public static void CanUse_Prefix(OptionsConsole __instance)
+    public static bool CanUse_Prefix(OptionsConsole __instance, ref bool canUse, ref bool couldUse, ref float __result)
     {
         __instance.HostOnly = false;
+        if (!PlayerControl.LocalPlayer.BetterData().HasMod && !GameStates.IsHost)
+        {
+            couldUse = false;
+            canUse = false;
+            __result = float.MaxValue;
+            return false;
+        }
+
+        return true;
     }
 }
 

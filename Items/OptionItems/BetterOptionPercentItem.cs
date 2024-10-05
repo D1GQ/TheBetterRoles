@@ -34,13 +34,13 @@ public class BetterOptionPercentItem : BetterOptionItem
         if (GameSettingMenuPatch.Preload)
         {
             Load(DefaultValue);
-            BetterOptionItems.Add(this);
             if (BetterOptionItems.Any(op => op.Id == id))
             {
                 return BetterOptionItems.First(op => op.Id == id);
             }
             else
             {
+                BetterOptionItems.Add(this);
                 return this;
             }
         }

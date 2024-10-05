@@ -99,7 +99,7 @@ public class BetterOptionPresetItem : BetterOptionItem
     {
         if (ThisOption == null) return;
 
-        ThisOption.ValueText.text = Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString();
+        ThisOption.ValueText.text = GameStates.IsHost ? Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString() : Translator.GetString(StringNames.HostHeader);
 
         if (!GameStates.IsHost)
         {

@@ -131,27 +131,7 @@ public static class Utils
 
             string msg = $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{RemoveSizeHtmlText(Name)} <size=85%>{Translator.GetString("BetterSetting.SetTo")}</size> {info}";
 
-            var Notifier = HudManager.Instance.Notifier;
-            if (Notifier.lastMessageKey == Id && Notifier.activeMessages.Count > 0)
-            {
-                Notifier.activeMessages[Notifier.activeMessages.Count - 1].UpdateMessage(msg);
-            }
-            else
-            {
-                Notifier.lastMessageKey = Id;
-                LobbyNotificationMessage newMessage = UnityEngine.Object.Instantiate<LobbyNotificationMessage>(Notifier.notificationMessageOrigin, Vector3.zero, Quaternion.identity, Notifier.transform);
-                newMessage.transform.localPosition = new Vector3(0f, 0f, -2f);
-                newMessage.SetUp(msg, Notifier.settingsChangeSprite, Notifier.settingsChangeColor, (Action)(() =>
-                {
-                    Notifier.OnMessageDestroy(newMessage);
-                }));
-                Notifier.ShiftMessages();
-                Notifier.AddMessageToQueue(newMessage);
-            }
-            if (playSound)
-            {
-                SoundManager.Instance.PlaySoundImmediate(Notifier.settingsChangeSound, false, 1f, 1f, null);
-            }
+            SettingsChangeNotifierSync(Id, msg, playSound);
 
             return msg;
         }

@@ -109,33 +109,44 @@ internal static class RPC
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncSettings, SendOption.Reliable, player != null ? player.Data.ClientId : -1);
         writer.Write(Main.modSignature);
 
+        List<int> Ids = [];
         Dictionary<int, string> settings = [];
         int count = 0;
         foreach (var item in BetterOptionItem.BetterOptionItems)
         {
             if (item is BetterOptionFloatItem option1 && option1.CurrentValue != option1.defaultValue)
             {
+                if (Ids.Contains(item.Id)) continue;
                 settings[item.Id] = option1.CurrentValue.ToString();
+                Ids.Add(item.Id);
                 count++;
             }
             else if (item is BetterOptionIntItem option2 && option2.CurrentValue != option2.defaultValue)
             {
+                if (Ids.Contains(item.Id)) continue;
                 settings[item.Id] = option2.CurrentValue.ToString();
+                Ids.Add(item.Id);
                 count++;
             }
             else if (item is BetterOptionCheckboxItem option3 && option3.IsChecked != option3.defaultValue)
             {
+                if (Ids.Contains(item.Id)) continue;
                 settings[item.Id] = option3.IsChecked.ToString() ?? false.ToString();
+                Ids.Add(item.Id);
                 count++;
             }
             else if (item is BetterOptionPercentItem option4 && option4.CurrentValue != option4.defaultValue)
             {
+                if (Ids.Contains(item.Id)) continue;
                 settings[item.Id] = option4.CurrentValue.ToString();
+                Ids.Add(item.Id);
                 count++;
             }
             else if (item is BetterOptionStringItem option5 && option5.CurrentValue != option5.defaultValue)
             {
+                if (Ids.Contains(item.Id)) continue;
                 settings[item.Id] = option5.CurrentValue.ToString();
+                Ids.Add(item.Id);
                 count++;
             }
         }
@@ -180,6 +191,8 @@ internal static class RPC
                         var signature = reader.ReadString();
                         if (player.IsHost() && Main.modSignature == signature)
                         {
+                            PlayerControl.LocalPlayer.BetterData().HasMod = true;
+                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", "");
                             SendModAccept();
                         }
                     }
