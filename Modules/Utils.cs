@@ -129,7 +129,8 @@ public static class Utils
             Name = string.Join("<color=#868686>/</color>", names.AsEnumerable().Reverse());
 
 
-            string msg = $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{RemoveSizeHtmlText(Name)} <size=85%>{Translator.GetString("BetterSetting.SetTo")}</size> {info}";
+            string msg = $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{RemoveSizeHtmlText(Name)} " +
+                $"<color=#868686><size=85%>{Translator.GetString("BetterSetting.SetTo")}</size></color> {info}";
 
             SettingsChangeNotifierSync(Id, msg, playSound);
 

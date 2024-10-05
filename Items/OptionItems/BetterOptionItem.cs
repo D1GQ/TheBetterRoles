@@ -59,6 +59,13 @@ public class BetterOptionItem
             };
 
             item.obj.transform.SetLocalY(2f - 1f * SpacingNum);
+            _ = new LateTask(() =>
+            {
+                if (item?.TitleText?.text != null && item.Name != null)
+                {
+                    item.TitleText.text = item.Name;
+                }
+            }, 0.005f, shoudLog: false);
 
             SpacingNum += item switch
             {

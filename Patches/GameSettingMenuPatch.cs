@@ -131,23 +131,7 @@ static class GameSettingMenuPatch
 
     private static void Initialize()
     {
-        _ = new LateTask(() =>
-        {
-            foreach (var item in BetterOptionItem.BetterOptionItems)
-            {
-                if (item != null)
-                {
-                    item.obj.SetActive(true);
-
-                    if (item.TitleText != null)
-                    {
-                        item.TitleText.text = item.Name;
-                    }
-                }
-            }
-
-            BetterOptionItem.UpdatePositions();
-        }, 0.005f, shoudLog: false);
+        BetterOptionItem.UpdatePositions();
     }
 
     [HarmonyPatch(nameof(GameSettingMenu.Update))]

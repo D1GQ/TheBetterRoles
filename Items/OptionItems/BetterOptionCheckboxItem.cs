@@ -137,7 +137,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     {
         IsChecked = !IsChecked;
         BetterDataManager.SaveSetting(Id, IsChecked.ToString());
-        RPC.SyncOption(id, IsChecked.ToString(), IsChecked.ToString());
+        Color color = IsChecked ?? false ? Color.green : Color.red;
+        RPC.SyncOption(id, IsChecked.ToString(), $"<color={Utils.Color32ToHex(color)}>{IsChecked}</color>");
 
         if (IsParent || IsChild)
         {
