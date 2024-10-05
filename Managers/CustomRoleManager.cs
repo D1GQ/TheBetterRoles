@@ -413,6 +413,7 @@ public enum CustomRoles
     // Neutrals
     Jester,
     Mole,
+    Opportunist,
 
     // Addons
     ButtonBerry,

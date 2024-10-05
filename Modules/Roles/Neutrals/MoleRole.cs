@@ -16,7 +16,6 @@ public class MoleRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
-    public override bool CanSabotage => true;
     public override bool CanVent => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
@@ -43,14 +42,8 @@ public class MoleRole : CustomRoleBehavior
         switch (id)
         {
             case 6:
-                if (reader != null)
-                {
-                    SpawnVent(NetHelpers.ReadVector2(reader));
-                }
-                else
-                {
-                    SpawnVent(_player.GetTruePosition());
-                }
+                Vector2 pos = reader != null ? NetHelpers.ReadVector2(reader) : _player.GetTruePosition();
+                SpawnVent(pos);
                 break;
         }
     }

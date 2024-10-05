@@ -1,0 +1,32 @@
+﻿
+using Rewired;
+using TheBetterRoles.Patches;
+
+namespace TheBetterRoles;
+
+public class OpportunistRole : CustomRoleBehavior
+{
+    // Role Info
+    public override string RoleColor => "#00CA28";
+    public override CustomRoleBehavior Role => this;
+    public override CustomRoles RoleType => CustomRoles.Opportunist;
+    public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
+    public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
+    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override BetterOptionItem[]? OptionItems
+    {
+        get
+        {
+            return
+            [
+            ];
+        }
+    }
+    public override void OnGameEnd(ref List<byte> OtherWinnerIds)
+    {
+        if (_player.IsAlive())
+        {
+            OtherWinnerIds.Add(_data.PlayerId);
+        }
+    }
+}

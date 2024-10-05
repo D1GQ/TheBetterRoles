@@ -94,5 +94,5 @@ public static class PlayerControlDataExtension
     }
 
     // Get BetterData from NetworkedPlayerInfo
-    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => cachedplayerInfo.FirstOrDefault(data => data._PlayerId == info.PlayerId);
+    public static ExtendedPlayerInfo? GetOldBetterData(this NetworkedPlayerInfo info) => cachedplayerInfo.First(data => data._PlayerId == info.PlayerId);
 }

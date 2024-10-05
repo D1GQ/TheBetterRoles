@@ -11,21 +11,21 @@ static class ExtendedInnerNetClient
         MessageWriter writer;
         if (sync)
         {
-            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
+            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(LocalPlayer);
         }
         else if (GameStates.IsHost)
         {
-            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable);
+            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable, -1);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(asPlayer ?? LocalPlayer);
         }
         else
         {
-            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable);
+            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable, AmongUsClient.Instance.GetHost().Id);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(LocalPlayer);
@@ -34,7 +34,7 @@ static class ExtendedInnerNetClient
         return writer;
     }
 
-    public static void EndActionRpc(this InnerNetClient _, MessageWriter writer) => writer.EndMessage();
+    public static void EndActionRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
 
     /// <summary>
     /// Starts the RPC desynchronization process for the given player, call ID, and send option.

@@ -1,8 +1,6 @@
 ﻿using AmongUs.GameOptions;
-using Epic.OnlineServices.Mods;
 using HarmonyLib;
 using InnerNet;
-using Microsoft.Extensions.Logging;
 
 namespace TheBetterRoles;
 

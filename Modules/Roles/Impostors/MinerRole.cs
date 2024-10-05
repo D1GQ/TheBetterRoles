@@ -41,14 +41,8 @@ public class MinerRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                if (reader != null)
-                {
-                    SpawnVent(NetHelpers.ReadVector2(reader));
-                }
-                else
-                {
-                    SpawnVent(_player.GetTruePosition());
-                }
+                Vector2 pos = reader != null ? NetHelpers.ReadVector2(reader) : _player.GetTruePosition();
+                SpawnVent(pos);
                 break;
         }
     }

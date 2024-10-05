@@ -120,6 +120,7 @@ class GamePlayManager
         private static void FinallyBegin_Prefix(/*GameStartManager __instance*/)
         {
             Logger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameStates.GetActiveMapId)}/{GameStates.GetActiveMapId}", "GamePlayManager");
+            CustomGameManager.GameStart();
         }
     }
     [HarmonyPatch(typeof(EndGameManager))]
