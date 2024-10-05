@@ -42,7 +42,7 @@ public static class OnPlayerJoinedPatch
                     player.BetterData().ClearData();
                 }
 
-                if (GameStates.IsHost) RPC.SendModRequest(player);
+                if (GameStates.IsHost) RPC.SendModRequest();
 
                 /*
                 // Auto ban player on ban list

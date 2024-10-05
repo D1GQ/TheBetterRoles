@@ -10,8 +10,10 @@ public static class PlayerControlDataExtension
     public class ExtendedPlayerInfo
     {
         // Mod Info
+        public float KickTimer { get; set; } = 8f;
         public bool HasMod { get; set; }
         public string Version { get; set; } = "";
+        public bool MismatchVersion { get; set; }
 
         public bool IsSelf { get; set; }
         public byte _PlayerId { get; set; }

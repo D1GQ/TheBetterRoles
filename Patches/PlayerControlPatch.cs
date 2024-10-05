@@ -58,6 +58,21 @@ class PlayerControlPatch
 
         // Reset player data in lobby
         PlayerControlDataExtension.ResetPlayerData(__instance);
+
+        if (GameStates.IsHost && GameStates.IsLobby)
+        {
+            if (!__instance.IsHost())
+            {
+                if (__instance.BetterData().HasMod == false || __instance.BetterData().MismatchVersion == true)
+                {
+                    __instance.BetterData().KickTimer -= Time.deltaTime;
+                    if (__instance.BetterData().KickTimer <= 0)
+                    {
+                        __instance.Kick();
+                    }
+                }
+            }
+        }
     }
 
     public static void SetPlayerInfo(PlayerControl player)
@@ -70,13 +85,39 @@ class PlayerControlPatch
             var sbTagTop = new StringBuilder();
             var sbTagBottom = new StringBuilder();
 
-            if (player.IsLocalPlayer() || player.IsImpostorTeammate())
+            if (GameStates.IsLobby)
             {
-                sbTagTop.Append($"{player.GetRoleNameAndColor()}---");
-
-                foreach (var addon in player.BetterData().RoleInfo.Addons)
+                if (player.BetterData().HasMod || player.IsLocalPlayer())
                 {
-                    sbTag.Append($"<color={addon.RoleColor}>{addon.RoleName}</color>+++");
+                    player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
+                }
+                else
+                {
+                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
+                }
+
+                if (player.BetterData().MismatchVersion)
+                {
+                    if (GameStates.IsHost)
+                    {
+                        sbTag.Append($"<color=#FF0800>{player.BetterData().Version} - {(int)player.BetterData().KickTimer}s</color>+++");
+                    }
+                    else
+                    {
+                        sbTag.Append($"<color=#FF0800>{player.BetterData().Version}</color>+++");
+                    }
+                }
+            }
+            else if (GameStates.IsInGamePlay)
+            {
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate())
+                {
+                    sbTagTop.Append($"{player.GetRoleNameAndColor()}---");
+
+                    foreach (var addon in player.BetterData().RoleInfo.Addons)
+                    {
+                        sbTag.Append($"<color={addon.RoleColor}>{addon.RoleName}</color>+++");
+                    }
                 }
             }
 

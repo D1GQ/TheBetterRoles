@@ -76,22 +76,17 @@ public static class MessageReaderUpdateSystemPatch
 
 internal static class RPC
 {
-    public static void SendModRequest(PlayerControl player)
+    public static void SendModRequest()
     {
-        if (!GameStates.IsHost) return;
-
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionRequest, SendOption.None, player.Data.ClientId);
-        messageWriter.Write(Main.modSignature);
+        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionRequest, SendOption.None, -1);
+        messageWriter.Write(Main.GetVersionText().Replace(" ", "."));
         AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
     }
 
     public static void SendModAccept()
     {
-        if (GameStates.IsHost) return;
-
         MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionAccept, SendOption.None, -1);
-        messageWriter.Write(Main.modSignature);
-        messageWriter.Write(Main.GetVersionText().Replace(" ", ""));
+        messageWriter.Write(Main.GetVersionText().Replace(" ", "."));
         AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
     }
 
@@ -168,12 +163,12 @@ internal static class RPC
 
         var text = Utils.SettingsChangeNotifier(id, value);
 
-        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncOption, SendOption.Reliable, -1);
+        var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncOption, SendOption.Reliable);
         writer.Write(Main.modSignature);
         writer.Write(id);
         writer.Write(data);
         writer.Write(text);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        writer.EndMessage();
     }
 
     public static void HandleCustomRPC(PlayerControl player, byte callId, MessageReader oldReader)
@@ -188,56 +183,49 @@ internal static class RPC
             {
                 case CustomRPC.VersionRequest:
                     {
-                        var signature = reader.ReadString();
-                        if (player.IsHost() && Main.modSignature == signature)
+                        var version = reader.ReadString();
+
+                        player.BetterData().HasMod = true;
+                        player.BetterData().Version = version;
+
+                        if (version == Main.GetVersionText().Replace(" ", "."))
                         {
                             PlayerControl.LocalPlayer.BetterData().HasMod = true;
-                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", "");
-                            SendModAccept();
+                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
                         }
+                        else
+                        {
+                            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
+                            PlayerControl.LocalPlayer.BetterData().MismatchVersion = true;
+                            PlayerControl.LocalPlayer.BetterData().HasMod = true;
+                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
+                        }
+                        SendModAccept();
                     }
                     break;
                 case CustomRPC.VersionAccept:
                     {
-                        var signature = reader.ReadString();
-                        if (Main.modSignature == signature)
-                        {
-                            var version = reader.ReadString();
+                        var version = reader.ReadString();
 
-                            if (version == Main.GetVersionText().Replace(" ", ""))
-                            {
-                                player.BetterData().HasMod = true;
-                                player.BetterData().Version = version;
-                            }
+                        if (version == Main.GetVersionText().Replace(" ", "."))
+                        {
+                            player.BetterData().HasMod = true;
+                            player.BetterData().Version = version;
 
                             if (GameStates.IsHost)
                             {
                                 SyncSettings(player);
                             }
                         }
-                    }
-                    break;
-                case CustomRPC.RoleAction:
-                    {
-                        var User = reader.ReadNetObject<PlayerControl>();
-                        var RoleType = (CustomRoles)reader.ReadInt32();
-                        if (User != null)
+                        else
                         {
-                            if (User.BetterData().RoleInfo.RoleAssigned && User.BetterData().RoleInfo.Role.RoleType == RoleType)
-                            {
-                                User.BetterData().RoleInfo.Role.HandleRpc(oldReader, callId, User, player);
-                            }
+                            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
+                            player.BetterData().MismatchVersion = true;
+                            player.BetterData().HasMod = true;
+                            player.BetterData().Version = version;
+                            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
                         }
                     }
-                    break;
-                case CustomRPC.CheckAction:
-                    HandleActionRPC(player, oldReader, true);
-                    break;
-                case CustomRPC.Action:
-                    HandleActionRPC(player, oldReader, false);
-                    break;
-                case CustomRPC.SyncAction:
-                    HandleSyncActionRPC(player, oldReader, true);
                     break;
                 case CustomRPC.SyncSettings:
                     {
@@ -276,6 +264,28 @@ internal static class RPC
                             Utils.SettingsChangeNotifierSync(Id, text);
                         }
                     }
+                    break;
+                case CustomRPC.RoleAction:
+                    {
+                        var User = reader.ReadNetObject<PlayerControl>();
+                        var RoleType = (CustomRoles)reader.ReadInt32();
+                        if (User != null)
+                        {
+                            if (User.BetterData().RoleInfo.RoleAssigned && User.BetterData().RoleInfo.Role.RoleType == RoleType)
+                            {
+                                User.BetterData().RoleInfo.Role.HandleRpc(oldReader, callId, User, player);
+                            }
+                        }
+                    }
+                    break;
+                case CustomRPC.CheckAction:
+                    HandleActionRPC(player, oldReader, true);
+                    break;
+                case CustomRPC.Action:
+                    HandleActionRPC(player, oldReader, false);
+                    break;
+                case CustomRPC.SyncAction:
+                    HandleSyncActionRPC(player, oldReader, true);
                     break;
             }
         }

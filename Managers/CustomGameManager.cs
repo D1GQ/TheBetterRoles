@@ -189,6 +189,53 @@ public class CustomGameManager
             Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
                 : Utils.HexToColor32(first.BetterData().RoleInfo.Role.RoleColor);
 
+            __instance.WinText.alignment = TextAlignmentOptions.Right;
+
+            __instance.WinText.text = $"<color={Utils.Color32ToHex(teamColor)}>";
+
+            switch (team)
+            {
+                case CustomRoleTeam.Impostor:
+                    __instance.WinText.text += $"{Translator.GetString(StringNames.ImpostorsCategory)}\n<size=75%>";
+                    Logger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    break;
+                case CustomRoleTeam.Crewmate:
+                    __instance.WinText.text += $"{Translator.GetString(StringNames.Crewmates)}\n<size=75%>";
+                    Logger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    break;
+                case CustomRoleTeam.Neutral:
+                    Logger.Log($"Game Has Ended: Team -> Neutral, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    __instance.WinText.text += $"{Utils.GetCustomRoleName(role)}\n<size=75%>";
+                    break;
+                case CustomRoleTeam.None:
+                    if (winReason == EndGameReason.ByHost)
+                    {
+                        __instance.WinText.text = Translator.GetString("Game.Summary.Abandoned");
+                        __instance.WinText.color = Color.gray;
+                        teamColor = Color.gray;
+                        Logger.Log($"Game Has Ended: By Host");
+                    }
+                    break;
+                default:
+                    Logger.Log($"Game Has Ended: Error");
+                    __instance.WinText.text = Translator.GetString("Game.Summary.Error");
+                    __instance.WinText.color = Color.red;
+                    teamColor = Color.red;
+                    break;
+            }
+
+            __instance.BackgroundBar.material.SetColor("_Color", teamColor);
+
+            foreach (var playerIds in subWinners)
+            {
+                if (winners.Contains(playerIds)) continue;
+
+                var player = Utils.PlayerDataFromPlayerId(playerIds);
+                players.Add(player);
+                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.BetterData().RoleInfo.Role.RoleColor}>" +
+                    $"{player.BetterData().RoleInfo.Role.RoleName}</color></size>";
+            }
+
             bool flag = players.Any(data => data.BetterData().IsSelf);
 
             if (!anyFlag)
@@ -204,41 +251,7 @@ public class CustomGameManager
                 SoundManager.Instance.PlaySound(__instance.ImpostorStinger, false);
             }
 
-            __instance.WinText.alignment = TMPro.TextAlignmentOptions.Right;
-            __instance.BackgroundBar.material.SetColor("_Color", teamColor);
-
-            __instance.WinText.text = $"<color={Utils.Color32ToHex(teamColor)}>";
-
-            switch (team)
-            {
-                case CustomRoleTeam.Impostor:
-                    __instance.WinText.text += $"{Translator.GetString(StringNames.ImpostorsCategory)}\n<size=75%>";
-                    Logger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
-                    break;
-                case CustomRoleTeam.Crewmate:
-                    __instance.WinText.text += $"{Translator.GetString(StringNames.Crewmates)}\n<size=75%>";
-                    Logger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
-                    break;
-                case CustomRoleTeam.Neutral:
-                    __instance.WinText.text += $"{Utils.GetCustomRoleName(role)}\n<size=75%>";
-                    break;
-                default:
-                    __instance.WinText.text = $"Error Occurred";
-                    __instance.WinText.color = Color.red;
-                    break;
-            }
-
-            foreach (var playerIds in subWinners)
-            {
-                if (winners.Contains(playerIds)) continue;
-
-                var player = Utils.PlayerDataFromPlayerId(playerIds);
-                players.Add(player);
-                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.BetterData().RoleInfo.Role.RoleColor}>" +
-                    $"{player.BetterData().RoleInfo.Role.RoleName}</color></size>";
-            }
-
-            __instance.WinText.text += $" Wins</color>";
+            __instance.WinText.text += $" {Translator.GetString("Game.Summary.Wins")}</color>";
 
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
@@ -330,7 +343,7 @@ public class CustomGameManager
 
                 string winteam = role.RoleName;
                 string winColor = role.RoleColor;
-                switch (role.RoleTeam)
+                switch (winTeam)
                 {
                     case CustomRoleTeam.Impostor:
                         winteam = Translator.GetString(StringNames.ImpostorsCategory);
@@ -339,6 +352,10 @@ public class CustomGameManager
                     case CustomRoleTeam.Crewmate:
                         winteam = Translator.GetString(StringNames.Crewmates);
                         winColor = Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate);
+                        break;
+                    case CustomRoleTeam.Neutral:
+                        winteam = Translator.GetString("Neutrals");
+                        winColor = Utils.GetCustomRoleTeamColor(CustomRoleTeam.Neutral);
                         break;
                 }
                 string winTag;

@@ -14,6 +14,10 @@ class GamePlayManager
         [HarmonyPostfix]
         private static void Start_Postfix(/*LobbyBehaviour __instance*/)
         {
+            _ = new LateTask(() =>
+            {
+                if (GameStates.IsHost) RPC.SendModRequest();
+            }, 1f, shoudLog: false);
         }
 
         // Disabled annoying music
@@ -98,6 +102,8 @@ class GamePlayManager
         [HarmonyPrefix]
         private static bool BeginGame_Prefix(GameStartManager __instance)
         {
+            if (Main.AllPlayerControls.Where(pc => !pc.IsHost()).Any(pc => pc.BetterData().MismatchVersion || !pc.BetterData().HasMod)) return false;
+
             if (__instance.startState == GameStartManager.StartingStates.Countdown)
             {
                 SoundManager.instance.StopSound(__instance.gameStartSound);

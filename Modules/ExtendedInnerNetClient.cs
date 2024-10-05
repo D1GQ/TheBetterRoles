@@ -11,7 +11,7 @@ static class ExtendedInnerNetClient
         MessageWriter writer;
         if (sync)
         {
-            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
+            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
             writer.Write(Main.modSignature);
             writer.Write((int)action);
             writer.WriteNetObject(LocalPlayer);
@@ -34,7 +34,17 @@ static class ExtendedInnerNetClient
         return writer;
     }
 
-    public static void EndActionRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
+    public static void EndActionRpc(this InnerNetClient client, MessageWriter writer, bool sync = false)
+    {
+        if (!sync)
+        {
+            client.FinishRpcImmediately(writer);
+        }
+        else
+        {
+            writer.EndMessage();
+        }
+    }
 
     /// <summary>
     /// Starts the RPC desynchronization process for the given player, call ID, and send option.

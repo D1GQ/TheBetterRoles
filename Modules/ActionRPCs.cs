@@ -317,7 +317,7 @@ static class ActionRPCs
         var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Vent, player, true);
         writer.Write(ventId);
         writer.Write(Exit);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        AmongUsClient.Instance.EndActionRpc(writer, true);
     }
 
     private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)
