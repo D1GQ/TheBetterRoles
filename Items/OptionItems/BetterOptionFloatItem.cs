@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -6,6 +7,7 @@ public class BetterOptionFloatItem : BetterOptionItem
 {
     private NumberOption? ThisOption;
     public float CurrentValue;
+    public float defaultValue;
     public FloatRange floatRange = new(0f, 180f);
     public float Increment = 2.5f;
     private string? PostFix;
@@ -23,12 +25,28 @@ public class BetterOptionFloatItem : BetterOptionItem
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
         if (DefaultValue > floatRange.max) DefaultValue = floatRange.max;
         CurrentValue = DefaultValue;
+        defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
         if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
         {
             Load(DefaultValue);
+            BetterOptionItems.Add(this);
             return this;
+        }
+
+        if (GameSettingMenuPatch.Preload)
+        {
+            Load(DefaultValue);
+            BetterOptionItems.Add(this);
+            if (BetterOptionItems.Any(op => op.Id == id))
+            {
+                return BetterOptionItems.First(op => op.Id == id);
+            }
+            else
+            {
+                return this;
+            }
         }
 
         if (values.Length is < 3 or > 3) return null;
@@ -103,6 +121,13 @@ public class BetterOptionFloatItem : BetterOptionItem
 
         ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
 
+        if (!GameStates.IsHost)
+        {
+            ThisOption.PlusBtn.SetInteractable(false);
+            ThisOption.MinusBtn.SetInteractable(false);
+            return;
+        }
+
         ThisOption.PlusBtn.SetInteractable(true);
         ThisOption.MinusBtn.SetInteractable(true);
 
@@ -130,6 +155,7 @@ public class BetterOptionFloatItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
     }
 
     public void Decrease()
@@ -150,6 +176,7 @@ public class BetterOptionFloatItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
     }
 
     public void Load(float DefaultValue)

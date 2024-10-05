@@ -37,9 +37,11 @@ static class GameSettingMenuPatch
     public static List<BetterOptionTab> Tabs = [];
     private static List<BetterOptionItem> TitleList = [];
     public static int ActiveTab = 0;
+    public static bool Preload = false;
 
     public static void SetupSettings(bool IsPreload = false)
     {
+        Preload = IsPreload;
         BetterOptionItem.IdNum = 0;
         BetterOptionItem.BetterOptionItems.Clear();
         BetterOptionTab.allTabs.Clear();
@@ -51,6 +53,8 @@ static class GameSettingMenuPatch
         BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, "Imposter Roles", "None", Color.red);
         BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Add-ons", "None", Color.magenta);
+
+        new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, "Impostor Settings"));
         BetterGameSettings.ImposterAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, "Impostors", [0, 5, 1], 2, "", "");
@@ -121,8 +125,7 @@ static class GameSettingMenuPatch
             }
         }
 
-
-        // Use 100 next ID
+        Preload = false;
     }
 
     private static void Initialize()

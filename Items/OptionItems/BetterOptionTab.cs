@@ -18,12 +18,24 @@ public class BetterOptionTab
 
     public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color)
     {
+        if (GameSettingMenuPatch.Preload)
+        {
+            if (GameSettingMenuPatch.Tabs.Any(op => op.Id == Id))
+            {
+                return GameSettingMenuPatch.Tabs.First(op => op.Id == Id);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
         this.Id = Id;
         this.Name = Name;
         this.Description = Description;
         this.Color = Color;
 
-        if (!GameStates.IsLobby)
+        if (!GameSettingMenu.Instance)
         {
             return this;
         }

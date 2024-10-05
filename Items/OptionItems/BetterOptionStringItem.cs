@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -7,6 +8,7 @@ public class BetterOptionStringItem : BetterOptionItem
     private StringOption? ThisOption;
     public string[] Values = [];
     public int CurrentValue;
+    public int defaultValue;
 
     public override bool ShowChildrenCondition() => CurrentValue > 0;
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
@@ -21,12 +23,28 @@ public class BetterOptionStringItem : BetterOptionItem
         if (DefaultValue < 0) DefaultValue = 0;
         if (DefaultValue > Values.Length) DefaultValue = Values.Length;
         CurrentValue = DefaultValue;
+        defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
         if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
         {
             Load(DefaultValue);
+            BetterOptionItems.Add(this);
             return this;
+        }
+
+        if (GameSettingMenuPatch.Preload)
+        {
+            Load(DefaultValue);
+            BetterOptionItems.Add(this);
+            if (BetterOptionItems.Any(op => op.Id == id))
+            {
+                return BetterOptionItems.First(op => op.Id == id);
+            }
+            else
+            {
+                return this;
+            }
         }
 
         StringOption optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(gameOptionsMenu.Tab.stringOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
@@ -98,6 +116,13 @@ public class BetterOptionStringItem : BetterOptionItem
             ThisOption.ValueText.text = Values[CurrentValue];
         }
 
+        if (!GameStates.IsHost)
+        {
+            ThisOption.PlusBtn.SetInteractable(false);
+            ThisOption.MinusBtn.SetInteractable(false);
+            return;
+        }
+
         ThisOption.PlusBtn.SetInteractable(true);
         ThisOption.MinusBtn.SetInteractable(true);
 
@@ -113,6 +138,7 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue++;
             AdjustButtonsActiveState();
+            RPC.SyncOption(Id, CurrentValue.ToString(), Values[CurrentValue]);
         }
     }
 
@@ -122,6 +148,7 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue--;
             AdjustButtonsActiveState();
+            RPC.SyncOption(Id, CurrentValue.ToString(), Values[CurrentValue]);
         }
     }
 

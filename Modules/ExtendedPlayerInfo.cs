@@ -9,6 +9,10 @@ public static class PlayerControlDataExtension
     // Base
     public class ExtendedPlayerInfo
     {
+        // Mod Info
+        public bool HasMod { get; set; }
+        public string Version { get; set; } = "";
+
         public bool IsSelf { get; set; }
         public byte _PlayerId { get; set; }
         public NetworkedPlayerInfo? _Data { get; set; }

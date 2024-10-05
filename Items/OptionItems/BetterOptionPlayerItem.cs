@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -18,7 +19,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
         Name = name;
         ShowCondition = selfShowCondition;
 
-        if (gameOptionsMenu?.Tab == null)
+        if (gameOptionsMenu?.Tab == null || GameSettingMenuPatch.Preload)
         {
             return this;
         }
@@ -96,6 +97,13 @@ public class BetterOptionPlayerItem : BetterOptionItem
             ThisOption.ValueText.text = "<color=#ababab>Random</color>";
         }
 
+        if (!GameStates.IsHost)
+        {
+            ThisOption.PlusBtn.SetInteractable(false);
+            ThisOption.MinusBtn.SetInteractable(false);
+            return;
+        }
+
         if (CurrentIndex >= Main.AllPlayerControls.Length - 1)
         {
             ThisOption.PlusBtn.SetInteractable(false);
@@ -121,6 +129,17 @@ public class BetterOptionPlayerItem : BetterOptionItem
         {
             CurrentIndex++;
             AdjustButtonsActiveState();
+
+            string text;
+            if (CurrentIndex >= 0)
+            {
+                text = Utils.PlayerFromPlayerId(CurrentIndex).GetPlayerNameAndColor();
+            }
+            else
+            {
+                text = "<color=#ababab>Random</color>";
+            }
+            RPC.SyncOption(Id, CurrentIndex.ToString(), text);
         }
     }
 
@@ -130,6 +149,17 @@ public class BetterOptionPlayerItem : BetterOptionItem
         {
             CurrentIndex--;
             AdjustButtonsActiveState();
+
+            string text;
+            if (CurrentIndex >= 0)
+            {
+                text = Utils.PlayerFromPlayerId(CurrentIndex).GetPlayerNameAndColor();
+            }
+            else
+            {
+                text = "<color=#ababab>Random</color>";
+            }
+            RPC.SyncOption(Id, CurrentIndex.ToString(), text);
         }
     }
 

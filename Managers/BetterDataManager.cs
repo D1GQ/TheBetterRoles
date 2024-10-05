@@ -1,17 +1,30 @@
-﻿using System.Text.Json;
+﻿using Epic.OnlineServices.Presence;
+using System.Text.Json;
 
 namespace TheBetterRoles;
 
 class BetterDataManager
 {
     private static string filePath = GetFilePath("BetterRoleData");
-    public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), $"BetterRole_Data");
-    public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, $"SaveInfo");
-    public static string filePathFolderSettings = Path.Combine(filePathFolder, $"Settings");
-    public static string SettingsFile = Path.Combine(filePathFolderSettings, "Preset.json");
+    public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), "BetterRole_Data");
+    public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, "SaveInfo");
+    public static string filePathFolderSettings = Path.Combine(filePathFolder, "Settings");
+    public static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{GetPreset()}.json");
     public static string banPlayerListFile = Path.Combine(filePathFolderSaveInfo, "BanPlayerList.txt");
     public static string banNameListFile = Path.Combine(filePathFolderSaveInfo, "BanNameList.txt");
     public static string banWordListFile = Path.Combine(filePathFolderSaveInfo, "BanWordList.txt");
+
+    public static string GetPreset()
+    {
+        if (!GameStates.IsHost && GameStates.IsInGame)
+        {
+            return "Host";
+        }
+        else
+        {
+            return Main.Preset.Value.ToString();
+        }
+    }
 
     public static string GetFilePath(string name)
     {
@@ -98,6 +111,12 @@ class BetterDataManager
             json = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(filePath, json);
         }
+    }
+
+    public static void ClearAndCreateSettings()
+    {
+        string filePath = SettingsFile;
+        File.WriteAllText(filePath, "{}");
     }
 
     public static void SaveSetting(int id, string input)

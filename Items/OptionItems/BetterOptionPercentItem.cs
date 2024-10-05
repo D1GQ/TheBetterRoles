@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -6,6 +7,7 @@ public class BetterOptionPercentItem : BetterOptionItem
 {
     private NumberOption? ThisOption;
     public float CurrentValue;
+    public float defaultValue;
     public FloatRange floatRange => new(0f, 100f);
     public float Increment = 5f;
 
@@ -19,12 +21,28 @@ public class BetterOptionPercentItem : BetterOptionItem
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
         if (DefaultValue > floatRange.max) DefaultValue = floatRange.max;
         CurrentValue = DefaultValue;
+        defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
         if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
         {
             Load(DefaultValue);
+            BetterOptionItems.Add(this);
             return this;
+        }
+
+        if (GameSettingMenuPatch.Preload)
+        {
+            Load(DefaultValue);
+            BetterOptionItems.Add(this);
+            if (BetterOptionItems.Any(op => op.Id == id))
+            {
+                return BetterOptionItems.First(op => op.Id == id);
+            }
+            else
+            {
+                return this;
+            }
         }
 
         NumberOption optionBehaviour = UnityEngine.Object.Instantiate<NumberOption>(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
@@ -95,6 +113,13 @@ public class BetterOptionPercentItem : BetterOptionItem
 
         ThisOption.ValueText.text = $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
 
+        if (!GameStates.IsHost)
+        {
+            ThisOption.PlusBtn.SetInteractable(false);
+            ThisOption.MinusBtn.SetInteractable(false);
+            return;
+        }
+
         ThisOption.PlusBtn.SetInteractable(true);
         ThisOption.MinusBtn.SetInteractable(true);
 
@@ -139,6 +164,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        RPC.SyncOption(Id, CurrentValue.ToString(), $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>");
     }
 
     public void Decrease()
@@ -159,6 +185,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        RPC.SyncOption(Id, CurrentValue.ToString(), $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>");
     }
 
     public void Load(float DefaultValue)

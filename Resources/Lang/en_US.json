@@ -163,6 +163,9 @@
   "BetterOption.SaveData": "Open Save Data",
   "BetterOption.ToVanilla": "Switch To Vanilla",
 
+  "BetterSetting.Preset": "Preset",
+  "BetterSetting.Presets": "Presets",
+  "BetterSetting.SetTo": "Set To:",
   "BetterSetting.RoleCategory.Vanilla": "Vanilla",
   "BetterSetting.RoleCategory.ImpostorBenign": "Impostor Benign",
   "BetterSetting.RoleCategory.ImpostorKilling": "Impostor Killing",

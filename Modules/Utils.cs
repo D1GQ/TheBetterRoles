@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
+using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace TheBetterRoles;
 
@@ -109,6 +111,79 @@ public static class Utils
         }
     }
 
+    public static string SettingsChangeNotifier(int Id, string info, bool playSound = true)
+    {
+        var option = BetterOptionItem.BetterOptionItems.FirstOrDefault(op => op.Id == Id);
+        if (option != null)
+        {
+            string Name = option.Name ?? "???";
+            List<string> names = [Name];
+            BetterOptionItem tempOption = option;
+
+            while (tempOption.ThisParent != null)
+            {
+                names.Add(tempOption.ThisParent.Name);
+                tempOption = tempOption.ThisParent;
+            }
+
+            Name = string.Join("<color=#868686>/</color>", names.AsEnumerable().Reverse());
+
+
+            string msg = $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{RemoveSizeHtmlText(Name)} <size=85%>{Translator.GetString("BetterSetting.SetTo")}</size> {info}";
+
+            var Notifier = HudManager.Instance.Notifier;
+            if (Notifier.lastMessageKey == Id && Notifier.activeMessages.Count > 0)
+            {
+                Notifier.activeMessages[Notifier.activeMessages.Count - 1].UpdateMessage(msg);
+            }
+            else
+            {
+                Notifier.lastMessageKey = Id;
+                LobbyNotificationMessage newMessage = UnityEngine.Object.Instantiate<LobbyNotificationMessage>(Notifier.notificationMessageOrigin, Vector3.zero, Quaternion.identity, Notifier.transform);
+                newMessage.transform.localPosition = new Vector3(0f, 0f, -2f);
+                newMessage.SetUp(msg, Notifier.settingsChangeSprite, Notifier.settingsChangeColor, (Action)(() =>
+                {
+                    Notifier.OnMessageDestroy(newMessage);
+                }));
+                Notifier.ShiftMessages();
+                Notifier.AddMessageToQueue(newMessage);
+            }
+            if (playSound)
+            {
+                SoundManager.Instance.PlaySoundImmediate(Notifier.settingsChangeSound, false, 1f, 1f, null);
+            }
+
+            return msg;
+        }
+
+        return "";
+    }
+
+    public static void SettingsChangeNotifierSync(int Id, string text, bool playSound = true)
+    {
+        var Notifier = HudManager.Instance.Notifier;
+        if (Notifier.lastMessageKey == Id && Notifier.activeMessages.Count > 0)
+        {
+            Notifier.activeMessages[Notifier.activeMessages.Count - 1].UpdateMessage(text);
+        }
+        else
+        {
+            Notifier.lastMessageKey = Id;
+            LobbyNotificationMessage newMessage = UnityEngine.Object.Instantiate<LobbyNotificationMessage>(Notifier.notificationMessageOrigin, Vector3.zero, Quaternion.identity, Notifier.transform);
+            newMessage.transform.localPosition = new Vector3(0f, 0f, -2f);
+            newMessage.SetUp(text, Notifier.settingsChangeSprite, Notifier.settingsChangeColor, (Action)(() =>
+            {
+                Notifier.OnMessageDestroy(newMessage);
+            }));
+            Notifier.ShiftMessages();
+            Notifier.AddMessageToQueue(newMessage);
+        }
+        if (playSound)
+        {
+            SoundManager.Instance.PlaySoundImmediate(Notifier.settingsChangeSound, false, 1f, 1f, null);
+        }
+    }
+
     // Get players HashPuid
     public static string GetHashPuid(PlayerControl player)
     {
@@ -137,7 +212,7 @@ public static class Utils
         }
         else
         {
-            return $"<size=150%>★ <color={GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
+            return $"<size=150%><color={GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
         }
     }
     public static CustomRoleBehavior? GetCustomRoleClass(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role);
@@ -179,6 +254,16 @@ public static class Utils
         text = Regex.Replace(text, "{[^}]*}", "");
         text = text.Replace("\n", " ").Replace("\r", " ");
         text = text.Trim();
+
+        return text;
+    }
+
+    public static string RemoveSizeHtmlText(string text)
+    {
+        text = Regex.Replace(text, "<size=[^>]*>", "", RegexOptions.IgnoreCase);
+        text = Regex.Replace(text, "</size>", "", RegexOptions.IgnoreCase);
+        text = Regex.Replace(text, "{[^}]*}", "");
+        text = text.Replace("\n", " ").Replace("\r", " ").Trim();
 
         return text;
     }

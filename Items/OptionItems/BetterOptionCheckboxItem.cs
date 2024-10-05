@@ -1,11 +1,14 @@
-﻿using UnityEngine;
+﻿using BepInEx.Unity.IL2CPP.UnityEngine;
+using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
 public class BetterOptionCheckboxItem : BetterOptionItem
 {
     private ToggleOption? ThisOption;
-    private bool? IsChecked;
+    public bool? IsChecked;
+    public bool defaultValue;
 
     public override bool ShowChildrenCondition() => IsChecked == true;
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
@@ -17,12 +20,28 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         Tab = gameOptionsMenu;
         Name = name;
         IsChecked = DefaultValue;
+        defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
         if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
         {
             Load(DefaultValue);
+            BetterOptionItems.Add(this);
             return this;
+        }
+
+        if (GameSettingMenuPatch.Preload)
+        {
+            Load(DefaultValue);
+            BetterOptionItems.Add(this);
+            if (BetterOptionItems.Any(op => op.Id == id))
+            {
+                return BetterOptionItems.First(op => op.Id == id);
+            }
+            else
+            {
+                return this;
+            }
         }
 
         ToggleOption optionBehaviour = UnityEngine.Object.Instantiate<ToggleOption>(gameOptionsMenu.Tab.checkboxOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
@@ -69,6 +88,11 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Parent.ChildrenList.Add(this);
         }
 
+        if (!GameStates.IsHost)
+        {
+            optionBehaviour.transform.Find("Toggle").GetComponent<PassiveButton>().enabled = false;
+        }
+
         return this;
     }
 
@@ -113,6 +137,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     {
         IsChecked = !IsChecked;
         BetterDataManager.SaveSetting(Id, IsChecked.ToString());
+        RPC.SyncOption(id, IsChecked.ToString(), IsChecked.ToString());
 
         if (IsParent || IsChild)
         {

@@ -116,6 +116,7 @@ public class Main : BasePlugin
     {
         try
         {
+            Preset = Config.Bind("Better Settings", "Preset", 1);
             ConsoleManager.CreateConsole();
             ConsoleManager.SetConsoleTitle("Among Us - TBR Console");
             ConsoleManager.ConfigPreventClose.Value = true;
@@ -159,7 +160,6 @@ public class Main : BasePlugin
     public static ConfigEntry<string> CommandPrefix { get; set; }
     private void LoadOptions()
     {
-        Preset = Config.Bind("Better Settings", "Preset", 1);
         ForceOwnLanguage = Config.Bind("Better Options", "ForceOwnLanguage", false);
         ChatDarkMode = Config.Bind("Better Options", "ChatDarkMode", true);
         DisableLobbyTheme = Config.Bind("Better Options", "DisableLobbyTheme", true);

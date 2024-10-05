@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using Hazel;
+using Il2CppSystem.Linq;
 using InnerNet;
+using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
 
@@ -25,8 +27,10 @@ public enum CustomRPC : int
     AUMChat = 101,
 
     // The Better Roles RPC's
-    VersionCheck = 105,
+    VersionRequest = 105,
+    VersionAccept,
     SyncSettings,
+    SyncOption,
     RoleAction,
     CheckAction,
     Action,
@@ -72,13 +76,93 @@ public static class MessageReaderUpdateSystemPatch
 
 internal static class RPC
 {
-    public static void SendBetterRoleCheck()
+    public static void SendModRequest(PlayerControl player)
     {
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionCheck, SendOption.None, -1);
-        messageWriter.Write(true);
+        if (!GameStates.IsHost) return;
+
+        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionRequest, SendOption.None, player.Data.ClientId);
+        messageWriter.Write(Main.modSignature);
+        AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+    }
+
+    public static void SendModAccept()
+    {
+        if (GameStates.IsHost) return;
+
+        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionAccept, SendOption.None, -1);
         messageWriter.Write(Main.modSignature);
         messageWriter.Write(Main.GetVersionText().Replace(" ", ""));
         AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+    }
+
+    public enum SettingType 
+    { 
+        Bool,
+        Float,
+        Int
+    }
+
+    public static void SyncSettings(PlayerControl? player = null)
+    {
+        if (!GameStates.IsHost) return;
+
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncSettings, SendOption.Reliable, player != null ? player.Data.ClientId : -1);
+        writer.Write(Main.modSignature);
+
+        Dictionary<int, string> settings = [];
+        int count = 0;
+        foreach (var item in BetterOptionItem.BetterOptionItems)
+        {
+            if (item is BetterOptionFloatItem option1 && option1.CurrentValue != option1.defaultValue)
+            {
+                settings[item.Id] = option1.CurrentValue.ToString();
+                count++;
+            }
+            else if (item is BetterOptionIntItem option2 && option2.CurrentValue != option2.defaultValue)
+            {
+                settings[item.Id] = option2.CurrentValue.ToString();
+                count++;
+            }
+            else if (item is BetterOptionCheckboxItem option3 && option3.IsChecked != option3.defaultValue)
+            {
+                settings[item.Id] = option3.IsChecked.ToString() ?? false.ToString();
+                count++;
+            }
+            else if (item is BetterOptionPercentItem option4 && option4.CurrentValue != option4.defaultValue)
+            {
+                settings[item.Id] = option4.CurrentValue.ToString();
+                count++;
+            }
+            else if (item is BetterOptionStringItem option5 && option5.CurrentValue != option5.defaultValue)
+            {
+                settings[item.Id] = option5.CurrentValue.ToString();
+                count++;
+            }
+        }
+
+        writer.Write(count);
+
+        foreach (var kvp in settings)
+        {
+            writer.Write(kvp.Key);
+            writer.Write(kvp.Value);
+        }
+
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+
+    public static void SyncOption(int id, string data, string value)
+    {
+        if (!GameStates.IsHost) return;
+
+        var text = Utils.SettingsChangeNotifier(id, value);
+
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncOption, SendOption.Reliable, -1);
+        writer.Write(Main.modSignature);
+        writer.Write(id);
+        writer.Write(data);
+        writer.Write(text);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
     public static void HandleCustomRPC(PlayerControl player, byte callId, MessageReader oldReader)
@@ -91,8 +175,33 @@ internal static class RPC
 
             switch ((CustomRPC)callId)
             {
-                case CustomRPC.VersionCheck:
+                case CustomRPC.VersionRequest:
                     {
+                        var signature = reader.ReadString();
+                        if (player.IsHost() && Main.modSignature == signature)
+                        {
+                            SendModAccept();
+                        }
+                    }
+                    break;
+                case CustomRPC.VersionAccept:
+                    {
+                        var signature = reader.ReadString();
+                        if (Main.modSignature == signature)
+                        {
+                            var version = reader.ReadString();
+
+                            if (version == Main.GetVersionText().Replace(" ", ""))
+                            {
+                                player.BetterData().HasMod = true;
+                                player.BetterData().Version = version;
+                            }
+
+                            if (GameStates.IsHost)
+                            {
+                                SyncSettings(player);
+                            }
+                        }
                     }
                     break;
                 case CustomRPC.RoleAction:
@@ -116,6 +225,44 @@ internal static class RPC
                     break;
                 case CustomRPC.SyncAction:
                     HandleSyncActionRPC(player, oldReader, true);
+                    break;
+                case CustomRPC.SyncSettings:
+                    {
+                        var signature = reader.ReadString();
+                        if (!GameStates.IsHost && signature == Main.modSignature && player.IsHost())
+                        {
+                            BetterDataManager.ClearAndCreateSettings();
+                            GameSettingMenuPatch.SetupSettings(true);
+                            int count = reader.ReadInt32();
+
+                            Dictionary<int, string> settings = [];
+                            for (int i = 0; i < count; i++)
+                            {
+                                int Id = reader.ReadInt32();
+                                string data = reader.ReadString();
+                                settings.Add(Id, data);
+                            }
+
+                            foreach (var kvp in settings)
+                            {
+                                BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
+                            }
+                        }
+                    }
+                    break;
+                case CustomRPC.SyncOption:
+                    {
+                        var signature = reader.ReadString();
+                        if (!GameStates.IsHost && signature == Main.modSignature && player.IsHost())
+                        {
+                            int Id = reader.ReadInt32();
+                            string data = reader.ReadString();
+                            string text = reader.ReadString();
+
+                            BetterDataManager.SaveSetting(Id, data);
+                            Utils.SettingsChangeNotifierSync(Id, text);
+                        }
+                    }
                     break;
             }
         }
