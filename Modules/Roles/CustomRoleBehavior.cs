@@ -110,6 +110,11 @@ public abstract class CustomRoleBehavior
     public int RoleId => 100000 + 200 * (int)RoleType;
 
     /// <summary>
+    /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 
+    /// </summary>
+    public virtual bool CanBeAssigned => true;
+
+    /// <summary>
     /// Check if the role is an addon, meaning an additional or modified role. This should never be overridden in subclasses.
     /// </summary>
     public virtual bool IsAddon => false;
@@ -226,8 +231,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual bool CanMove => true;
 
-    public float GetChance() => GameStates.IsHost ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
-    public int GetAmount() => GameStates.IsHost ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0;
+    public float GetChance() => GameStates.IsHost ? CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleId) : 0f : 0f;
+    public int GetAmount() => GameStates.IsHost ? CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0 : 0;
 
     public CustomRoleBehavior Initialize(PlayerControl player)
     {
@@ -283,7 +288,7 @@ public abstract class CustomRoleBehavior
     /// Sets up the role by initializing the option items and calling any additional setup logic from <see cref="OnSetUpRole"/>.
     /// Do not override this method.
     /// </summary>
-    public virtual void SetUpRole()
+    protected virtual void SetUpRole()
     {
         if (_player != null)
         {
@@ -305,20 +310,26 @@ public abstract class CustomRoleBehavior
         OnSetUpRole();
     }
 
-    public void SetUpSettings()
+    public void LoadSettings()
+    {
+        SetUpSettings();
+    }
+
+    protected virtual void SetUpSettings()
     {
         RoleOptionItem = new BetterOptionPercentItem().Create(RoleId, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
-        AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 5, SettingsTab, "Amount", [1, 15, 1], 1, "", "", RoleOptionItem);
+        AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+
         OptionItems.Initialize();
     }
 
-    public BaseButton AddButton(BaseButton button)
+    protected BaseButton AddButton(BaseButton button)
     {
         Buttons.Add(button);
         return button;
     }
 
-    public void RemoveButton(BaseButton button)
+    protected void RemoveButton(BaseButton button)
     {
         button.RemoveButton();
         Buttons.Remove(button);

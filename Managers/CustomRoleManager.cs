@@ -96,7 +96,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableRoles = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon)
+                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.CanBeAssigned)
                 {
                     availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -105,7 +105,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableAddons = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && role.IsAddon)
+                if (role != null && role.GetChance() > 0 && role.IsAddon && role.CanBeAssigned)
                 {
                     availableAddons.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -240,17 +240,23 @@ public static class CustomRoleManager
                     {
                         foreach (var roleData in availableAddons)
                         {
-                            if (roleData._role.RoleCategory == CustomRoleCategory.EvilAddon && !playerRoleAssignments[player]._role.CanKill) continue;
-                            if (roleData._role.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.HasTask
-                                && !playerRoleAssignments[player]._role.HasSelfTask) continue;
-
-                            int rng = IRandom.Instance.Next(100);
-                            if (!selectedAddons.Contains(roleData) && roleData.Amount > 0 && rng <= roleData._role.GetChance())
+                            if (roleData.Amount <= 0) continue;
+                            if (roleData._role is CustomAddonBehavior addon)
                             {
-                                selectedAddons.Add(roleData);
-                                addonAmount--;
-                                safeAttempts = 0;
-                                break;
+                                if (!addon.CanBeAssignedWithTeam(playerRoleAssignments[player]._role.RoleTeam)) continue;
+                                if (addon.RoleCategory == CustomRoleCategory.EvilAddon && !playerRoleAssignments[player]._role.CanKill) continue;
+                                if (addon.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.HasTask
+                                    && !playerRoleAssignments[player]._role.HasSelfTask) continue;
+
+                                int rng = IRandom.Instance.Next(100);
+                                if (!selectedAddons.Contains(roleData) && roleData.Amount > 0 && rng <= addon.GetChance())
+                                {
+                                    selectedAddons.Add(roleData);
+                                    addonAmount--;
+                                    roleData.Amount--;
+                                    safeAttempts = 0;
+                                    break;
+                                }
                             }
                         }
 

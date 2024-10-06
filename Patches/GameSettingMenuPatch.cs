@@ -79,7 +79,7 @@ static class GameSettingMenuPatch
         {
             foreach (var role in CustomRoleManager.allRoles)
             {
-                role.SetUpSettings();
+                role.LoadSettings();
             }
         }
 
@@ -125,7 +125,7 @@ static class GameSettingMenuPatch
                 foreach (var role in Roles)
                 {
                     if (num > 0) new BetterOptionDividerItem().Create(roleCategory.Tab);
-                    role.SetUpSettings();
+                    role.LoadSettings();
                     num++;
                 }
             }

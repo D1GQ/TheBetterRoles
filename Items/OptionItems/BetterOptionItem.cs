@@ -74,8 +74,12 @@ public class BetterOptionItem
                 _ => 0.45f,
             };
 
-            item.Tab.Tab.scrollBar.SetYBoundsMax(1.5f * SpacingNum / 2);
-            // item.Tab.Tab.scrollBar.ScrollRelative(new(0f, 0f));
+
+            _ = new LateTask(() =>
+            {
+                item.Tab.Tab.scrollBar.SetYBoundsMax(1.5f * SpacingNum / 1.5f);
+                item.Tab.Tab.scrollBar.ScrollRelative(new(0f, 0f));
+            }, 0.005f, shoudLog: false);
         }
     }
 

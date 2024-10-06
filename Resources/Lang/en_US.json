@@ -36,6 +36,10 @@
   "Role.Option.Distance.2": "Medium",
   "Role.Option.Distance.3": "Far",
 
+  "Role.Option.Amount": "Amount",
+  "Role.Option.AssignToCrewmate": "Assign To {0}Crewmates{1}",
+  "Role.Option.AssignToImpostor": "Assign To {0}Impostors{1}",
+  "Role.Option.AssignToNeutral": "Assign To {0}Neutrals{1}",
   "Role.Option.AtSelf": "Self",
   "Role.Option.AtTarget": "Target",
   "Role.Option.AtNone": "None",

@@ -12,6 +12,7 @@ namespace TheBetterRoles;
 public class MoleRole : CustomRoleBehavior
 {
     // Role Info
+    public override bool CanBeAssigned => false;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mole;
@@ -29,7 +30,7 @@ public class MoleRole : CustomRoleBehavior
         {
             return
             [
-                MaximumVents = new BetterOptionIntItem().Create(RoleId + 10, SettingsTab, "Max Vents", [2, 5, 0], 3, "", "", RoleOptionItem),
+                MaximumVents = new BetterOptionIntItem().Create(RoleId + 10, SettingsTab, "Max Vents", [2, 5, 1], 3, "", "", RoleOptionItem),
             ];
         }
     }
