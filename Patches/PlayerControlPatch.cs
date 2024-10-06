@@ -85,7 +85,7 @@ class PlayerControlPatch
             var sbTagTop = new StringBuilder();
             var sbTagBottom = new StringBuilder();
 
-            if (GameStates.IsLobby)
+            if (GameStates.IsLobby && !GameStates.IsFreePlay)
             {
                 if (player.BetterData().HasMod || player.IsLocalPlayer())
                 {
@@ -112,11 +112,11 @@ class PlayerControlPatch
             {
                 if (player.IsLocalPlayer() || player.IsImpostorTeammate())
                 {
-                    sbTagTop.Append($"{player.GetRoleNameAndColor()}---");
+                    sbTag.Append($"{player.GetRoleNameAndColor()}---");
 
                     foreach (var addon in player.BetterData().RoleInfo.Addons)
                     {
-                        sbTag.Append($"<color={addon.RoleColor}>{addon.RoleName}</color>+++");
+                        sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
                     }
                 }
             }

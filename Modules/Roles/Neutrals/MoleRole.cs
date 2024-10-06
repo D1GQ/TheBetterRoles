@@ -1,5 +1,7 @@
 ﻿
+using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
+using System.Collections;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
@@ -19,12 +21,15 @@ public class MoleRole : CustomRoleBehavior
     public override bool CanVent => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
+    public BetterOptionItem? MaximumVents;
+
     public override BetterOptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                MaximumVents = new BetterOptionIntItem().Create(RoleId + 10, SettingsTab, "Max Vents", [2, 5, 0], 3, "", "", RoleOptionItem),
             ];
         }
     }
@@ -33,7 +38,7 @@ public class MoleRole : CustomRoleBehavior
     public AbilityButton? DigButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, null, this, true)) as AbilityButton;
+        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.1"), 0, 0, MaximumVents.GetInt() + 1, null, this, true)) as AbilityButton;
         DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 
@@ -59,8 +64,13 @@ public class MoleRole : CustomRoleBehavior
     }
 
     private List<Vent> Vents = [];
-    public void SpawnVent(Vector2 Pos)
+    private void SpawnVent(Vector2 Pos)
     {
+        if (Vents.Count >= MaximumVents.GetInt())
+        {
+            RemoveVent(Vents.First());
+        }
+
         var ventPrefab = ShipStatus.Instance.AllVents.First();
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Mole)";
@@ -79,7 +89,7 @@ public class MoleRole : CustomRoleBehavior
 
         vent.Id = GetAvailableId();
         var pos = Pos;
-        float z = _player.gameObject.transform.position.z + 0.005f;
+        float z = _player.gameObject.transform.position.z + 0.000005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)
@@ -117,7 +127,7 @@ public class MoleRole : CustomRoleBehavior
         Vents.Add(vent);
     }
 
-    public int GetAvailableId()
+    private int GetAvailableId()
     {
         var id = 0;
 
@@ -126,5 +136,46 @@ public class MoleRole : CustomRoleBehavior
             if (ShipStatus.Instance.AllVents.All(v => v.Id != id)) return id;
             id++;
         }
+    }
+
+    private void RemoveVent(Vent vent)
+    {
+        vent.enabled = false;
+        Vents.Remove(vent);
+        _player.StartCoroutine(FadeVentOut(vent));
+    }
+
+    private IEnumerator FadeVentOut(Vent vent)
+    {
+        float fadeDuration = 1f;
+        float fadeSpeed = 1f / fadeDuration;
+        bool fading = true;
+
+        if (_player.IsLocalPlayer())
+        {
+            while (fading)
+            {
+                fading = false;
+
+                foreach (var renderer in vent.GetComponentsInChildren<SpriteRenderer>())
+                {
+                    Color currentColor = renderer.color;
+
+                    float newAlpha = Mathf.Max(currentColor.a - fadeSpeed * Time.deltaTime, 0f);
+                    renderer.color = new Color(currentColor.r, currentColor.g, currentColor.b, newAlpha);
+
+                    if (newAlpha > 0f)
+                    {
+                        fading = true;
+                    }
+                }
+
+                yield return null;
+            }
+
+            DigButton.AddUse();
+        }
+
+        UnityEngine.Object.Destroy(vent.gameObject);
     }
 }

@@ -1,14 +1,18 @@
 ﻿
 using AmongUs.GameOptions;
+using HarmonyLib;
 using System.Linq;
 using System.Reflection;
 using TheBetterRoles.Patches;
+using TMPro;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
 public class RoleAssignmentData
 {
     public CustomRoleBehavior? _role;
+    public bool CanKill => _role.CanKill;
     public CustomRoleTeam RoleTeam => _role.RoleTeam;
     public bool IsAddon => _role.IsAddon;
     public int Chance => (int)_role.GetChance();
@@ -45,6 +49,19 @@ public static class CustomRoleManager
         return null;
     }
 
+    public static int GetAmount(int min, int max)
+    {
+        if (min >= max || max <= min)
+        {
+            return max;
+        }
+        else
+        {
+            return IRandom.Instance.Next(min, max);
+        }
+    }
+
+    // fix null errors with settings
     public static void AssignRoles()
     {
         if (!GameStates.IsHost) return;
@@ -54,9 +71,9 @@ public static class CustomRoleManager
             IRandom.SetInstanceById(0);
 
             // Define role amounts
-            int ImposterAmount = 1;  // BetterGameSettings.ImposterAmount.GetInt();
-            int BenignNeutralAmount = 1; // BetterGameSettings.BenignNeutralAmount.GetInt();
-            int KillingNeutralAmount = 1; // BetterGameSettings.KillingNeutralAmount.GetInt();
+            int ImposterAmount = BetterGameSettings.ImposterAmount.GetInt();
+            int BenignNeutralAmount = GetAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
+            int KillingNeutralAmount = GetAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
 
             var impostorLimits = new Dictionary<int, int>
             {
@@ -79,22 +96,42 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableRoles = [];
             foreach (var role in allRoles)
             {
-                if (role.GetChance() > 0 && role.GetAmount() > 0 && !role.IsAddon)
+                if (role != null && role.GetChance() > 0 && !role.IsAddon)
                 {
                     availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
             }
 
+            List<RoleAssignmentData> availableAddons = [];
+            foreach (var role in allRoles)
+            {
+                if (role != null && role.GetChance() > 0 && role.IsAddon)
+                {
+                    availableAddons.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
+                }
+            }
+
+            int shuffleCount = 25;
 
             // Shuffle the available roles to randomize selection multiple times
-            int shuffleCount = 25;
+            for (int s = 0; s < shuffleCount; s++)
+            {
+                for (int i = availableAddons.Count - 1; i > 0; i--)
+                {
+                    int j = IRandom.Instance.Next(i + 1);
+
+                    var temp = availableAddons[i];
+                    availableAddons[i] = availableAddons[j];
+                    availableAddons[j] = temp;
+                }
+            }
 
             for (int s = 0; s < shuffleCount; s++)
             {
                 for (int i = availableRoles.Count - 1; i > 0; i--)
                 {
-                    int j = IRandom.Instance.Next(i + 1); // Get a random index
-                                                          // Swap the elements at indices i and j
+                    int j = IRandom.Instance.Next(i + 1);
+
                     var temp = availableRoles[i];
                     availableRoles[i] = availableRoles[j];
                     availableRoles[j] = temp;
@@ -120,10 +157,34 @@ public static class CustomRoleManager
             {
                 if (player == null) continue;
 
-                // Filter valid roles based on current game needs
-                var validRoles = availableRoles
-                    .Where(r => r.Amount > 0 && (ImposterAmount > 0 ? r._role.RoleTeam == CustomRoleTeam.Impostor : r._role.RoleTeam != CustomRoleTeam.Impostor))
-                    .ToList();
+                List<RoleAssignmentData> validRoles = [];
+
+                // Filter valid roles based on multiple conditions in one loop
+                foreach (var role in availableRoles)
+                {
+                    if (role.Amount > 0)
+                    {
+                        if (ImposterAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Impostor)
+                        {
+                            validRoles.Add(role);
+                            continue;
+                        }
+                        else if (BenignNeutralAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Neutral && !role._role.CanKill)
+                        {
+                            validRoles.Add(role);
+                            continue;
+                        }
+                        else if (KillingNeutralAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Neutral && role._role.CanKill)
+                        {
+                            validRoles.Add(role);
+                            continue;
+                        }
+                        else
+                        {
+                            validRoles.Add(role);
+                        }
+                    }
+                }
 
                 RoleAssignmentData? selectedRole = null;
 
@@ -151,7 +212,6 @@ public static class CustomRoleManager
                             _role = Utils.GetCustomRoleClass(CustomRoles.Impostor),
                             Amount = 1
                         };
-                        ImposterAmount--;
                     }
                     else
                     {
@@ -167,8 +227,42 @@ public static class CustomRoleManager
                 selectedRole.Amount--;
 
                 if (selectedRole._role.IsImpostor) ImposterAmount--;
-                if (selectedRole._role.IsNeutral && selectedRole._role.CanKill) KillingNeutralAmount--;
-                if (selectedRole._role.IsNeutral && !selectedRole._role.CanKill) BenignNeutralAmount--;
+                if (selectedRole._role.IsNeutral && selectedRole.CanKill) KillingNeutralAmount--;
+                if (selectedRole._role.IsNeutral && !selectedRole.CanKill) BenignNeutralAmount--;
+
+                // Set Addons
+                {
+                    int safeAttempts = 0;
+                    int addonAmount = GetAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
+                    List<RoleAssignmentData> selectedAddons = [];
+
+                    while (addonAmount > 0 && safeAttempts < 50)
+                    {
+                        foreach (var roleData in availableAddons)
+                        {
+                            if (roleData._role.RoleCategory == CustomRoleCategory.EvilAddon && !playerRoleAssignments[player]._role.CanKill) continue;
+                            if (roleData._role.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.HasTask
+                                && !playerRoleAssignments[player]._role.HasSelfTask) continue;
+
+                            int rng = IRandom.Instance.Next(100);
+                            if (!selectedAddons.Contains(roleData) && roleData.Amount > 0 && rng <= roleData._role.GetChance())
+                            {
+                                selectedAddons.Add(roleData);
+                                addonAmount--;
+                                safeAttempts = 0;
+                                break;
+                            }
+                        }
+
+                        safeAttempts++;
+                    }
+
+                    foreach (var roleData in selectedAddons)
+                    {
+                        Logger.Log($"{player.Data.PlayerName} -> {roleData._role.RoleName}");
+                        player.SetRoleSync(roleData._role.RoleType);
+                    }
+                }
             }
 
             foreach (var assignment in playerRoleAssignments)

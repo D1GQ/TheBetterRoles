@@ -38,9 +38,9 @@ public class BetterOptionIntItem : BetterOptionItem
         if (GameSettingMenuPatch.Preload)
         {
             Load(DefaultValue);
-            if (BetterOptionItems.Any(op => op.Id == id))
+            if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return BetterOptionItems.First(op => op.Id == id);
+                return BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {

@@ -63,8 +63,8 @@ static class GameSettingMenuPatch
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, "Neutral Settings"));
         BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Non-Killing Neutrals", [0, 5, 1], 2, "", "");
         BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Non-Killing Neutrals", [0, 5, 1], 0, "", "");
-        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Killing Neutrals", [0, 5, 1], 2, "", "");
-        BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Killing Neutrals", [0, 5, 1], 0, "", "");
+        BetterGameSettings.MaximumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Killing Neutrals", [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Killing Neutrals", [0, 5, 1], 0, "", "");
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.Addons, "Add-on Settings"));
         BetterGameSettings.MaximumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, "Maximum Add-ons", [0, 5, 1], 2, "", "");

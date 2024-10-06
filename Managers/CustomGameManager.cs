@@ -157,6 +157,25 @@ public class CustomGameManager
 
                     __instance.ourCrewmate.ToggleName(false);
                     __instance.RoleText.text = PlayerControl.LocalPlayer.GetRoleName();
+
+                    var addonText = UnityEngine.Object.Instantiate(__instance.RoleBlurbText, __instance.RoleBlurbText.transform.parent);
+                    if (addonText != null)
+                    {
+                        addonText.name = "Addons(TMP)";
+                        addonText.color = Color.white;
+                        addonText.text = "";
+                        addonText.transform.position += new Vector3(0f, 2.8f, 0f);
+                        bool first = true;
+                        foreach (var addon in PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons)
+                        {
+                            if (addon == null) return;
+
+                            if (!first) addonText.text += " + ";
+                            addonText.text += $"<color={addon.RoleColor}>{addon.RoleName}</color>";
+                            first = false;
+                        }
+                    }
+
                     __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
                     __instance.ImpostorText.gameObject.SetActive(false);
                     __instance.TeamTitle.gameObject.SetActive(false);
@@ -469,7 +488,7 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
+    public static bool ShouldCheckConditions => false; // !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
 
     public static void GameStart()
     {
