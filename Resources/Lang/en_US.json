@@ -164,6 +164,22 @@
   "BetterSetting.Preset": "Preset",
   "BetterSetting.Presets": "Presets",
   "BetterSetting.SetTo": "Set To:",
+
+  "BetterSetting.Tab.SystemSettings": "System Settings",
+  "BetterSetting.Description.SystemSettings": "Configure system/mod options related to the game.",
+
+  "BetterSetting.Tab.CrewmateRoles": "Crewmate Roles",
+  "BetterSetting.Description.CrewmateRoles": "Customize roles and settings for the Crewmates, defining their tasks and abilities.",
+
+  "BetterSetting.Tab.ImposterRoles": "Imposter Roles",
+  "BetterSetting.Description.ImposterRoles": "Adjust the roles and features for Imposters, managing their unique abilities and kill mechanics.",
+
+  "BetterSetting.Tab.NeutralRoles": "Neutral Roles",
+  "BetterSetting.Description.NeutralRoles": "Set up roles that fall outside of the traditional Crewmate and Imposter dynamics, such as third-party characters with unique objectives.",
+
+  "BetterSetting.Tab.Addons": "Add-ons",
+  "BetterSetting.Description.Addons": "Control additional role modifiers and enhancements that can affect all.",
+
   "BetterSetting.RoleCategory.Vanilla": "Vanilla",
   "BetterSetting.RoleCategory.ImpostorBenign": "Impostor Benign",
   "BetterSetting.RoleCategory.ImpostorKilling": "Impostor Killing",

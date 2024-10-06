@@ -48,11 +48,16 @@ static class GameSettingMenuPatch
         BetterOptionItem.TempPlayerOptionDataNum = 0;
         TitleList.Clear();
 
-        BetterTabs.SystemSettings = new BetterOptionTab().CreateTab(2, "System Settings", "None", Color.green);
-        BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, "Crewmate Roles", "None", Color.cyan);
-        BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, "Imposter Roles", "None", Color.red);
-        BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, "Neutral Roles", "None", Color.gray);
-        BetterTabs.Addons = new BetterOptionTab().CreateTab(6, "Add-ons", "None", Color.magenta);
+        BetterTabs.SystemSettings = new BetterOptionTab().CreateTab(2, Translator.GetString("BetterSetting.Tab.SystemSettings"),
+            Translator.GetString("BetterSetting.Description.SystemSettings"), Color.green);
+        BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, Translator.GetString("BetterSetting.Tab.CrewmateRoles"),
+            Translator.GetString("BetterSetting.Description.CrewmateRoles"), Color.cyan);
+        BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, Translator.GetString("BetterSetting.Tab.ImposterRoles"),
+            Translator.GetString("BetterSetting.Description.ImposterRoles"), Color.red);
+        BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, Translator.GetString("BetterSetting.Tab.NeutralRoles"),
+            Translator.GetString("BetterSetting.Description.NeutralRoles"), Color.gray);
+        BetterTabs.Addons = new BetterOptionTab().CreateTab(6, Translator.GetString("BetterSetting.Tab.Addons"),
+            Translator.GetString("BetterSetting.Description.Addons"), Color.magenta);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, "Mod Settings"));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);

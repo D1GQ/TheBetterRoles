@@ -89,7 +89,7 @@ public class MoleRole : CustomRoleBehavior
 
         vent.Id = GetAvailableId();
         var pos = Pos;
-        float z = _player.gameObject.transform.position.z + 0.000005f;
+        float z = _player.gameObject.transform.position.z + 0.00005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)
