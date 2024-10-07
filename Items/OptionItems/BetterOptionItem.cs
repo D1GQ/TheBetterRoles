@@ -77,7 +77,7 @@ public class BetterOptionItem
 
             _ = new LateTask(() =>
             {
-                item.Tab.Tab.scrollBar.SetYBoundsMax(1.5f * SpacingNum / 1.5f);
+                item.Tab.Tab.scrollBar.SetYBoundsMax(1.65f * SpacingNum / 2f);
                 item.Tab.Tab.scrollBar.ScrollRelative(new(0f, 0f));
             }, 0.005f, shoudLog: false);
         }

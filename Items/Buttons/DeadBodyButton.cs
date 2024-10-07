@@ -14,7 +14,7 @@ public class DeadBodyButton : BaseButton
     {
         Role = role;
         Id = id;
-        DeadBodyRange = range;
+        DeadBodyRange = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
         Uses = abilityUses;

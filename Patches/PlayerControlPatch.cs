@@ -13,6 +13,7 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(PlayerControl))]
 class PlayerControlPatch
 {
+    public static float time = 0f;
     [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
     [HarmonyPrefix]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
@@ -57,7 +58,12 @@ class PlayerControlPatch
         SetPlayerInfo(__instance);
 
         // Reset player data in lobby
-        PlayerControlDataExtension.ResetPlayerData(__instance);
+        time += Time.deltaTime;
+        if (time > 0.5f)
+        {
+            PlayerControlDataExtension.ResetPlayerData(__instance);
+            time = 0f;
+        }
 
         if (GameStates.IsHost && GameStates.IsLobby)
         {
@@ -110,6 +116,15 @@ class PlayerControlPatch
             }
             else if (GameStates.IsInGamePlay)
             {
+                if (player.BetterData().NameColor != string.Empty)
+                {
+                    player.cosmetics.nameText.color = Utils.HexToColor32(player.BetterData().NameColor);
+                }
+                else
+                {
+                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
+                }
+
                 if (player.IsLocalPlayer() || player.IsImpostorTeammate())
                 {
                     sbTag.Append($"{player.GetRoleNameAndColor()}---");

@@ -161,6 +161,11 @@ public abstract class CustomRoleBehavior
     public BetterOptionItem? AmountOptionItem { get; set; }
 
     /// <summary>
+    /// The option that determines whether players can use vents while playing this role. 
+    /// </summary>
+    public BetterOptionItem? CanVentOptionItem { get; set; }
+
+    /// <summary>
     /// List of all local ability buttons available to the player for this role. This can include things like kill, sabotage, or vent buttons.
     /// </summary>
     public List<BaseButton> Buttons { get; set; } = [];
@@ -211,9 +216,15 @@ public abstract class CustomRoleBehavior
     public virtual bool CanKill => false;
 
     /// <summary>
+    /// Indicates whether this role is reliant on using vents. 
+    /// This property can be overridden by specific roles that require vent usage, 
+    /// </summary>
+    public virtual bool VentReliantRole => false;
+
+    /// <summary>
     /// Checks if the role can use vents. This is typically overridden by roles like Impostors or other vent-using roles.
     /// </summary>
-    public virtual bool CanVent => false;
+    public virtual bool CanVent => CanVentOptionItem?.GetBool() == true || VentReliantRole;
 
     /// <summary>
     /// Checks if the role can move to other vents while inside a vent.
@@ -295,7 +306,7 @@ public abstract class CustomRoleBehavior
             SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true)) as SabotageButton;
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance + 1)) as TargetButton;
+            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance)) as TargetButton;
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
@@ -306,6 +317,7 @@ public abstract class CustomRoleBehavior
             VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
         }
 
+        SetUpSettings();
         OptionItems.Initialize();
         OnSetUpRole();
     }
@@ -319,6 +331,8 @@ public abstract class CustomRoleBehavior
     {
         RoleOptionItem = new BetterOptionPercentItem().Create(RoleId, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
         AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+        if (RoleTeam == CustomRoleTeam.Neutral && !VentReliantRole)
+            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem);
 
         OptionItems.Initialize();
     }
@@ -349,7 +363,7 @@ public abstract class CustomRoleBehavior
     {
         OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
                         type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, null);
+                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, null, type);
         SetCooldownAndUse(id);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
@@ -383,15 +397,22 @@ public abstract class CustomRoleBehavior
 
                     OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
                         type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, reader);
+                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, reader, type);
                     SetCooldownAndUse(id);
                 }
                 break;
         }
     }
 
-    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body, MessageReader? reader)
+    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body, MessageReader? reader, TargetType type)
     {
+        if (target != null && type == TargetType.Player)
+        {
+            CustomRoleManager.RoleListener(_player, role => role.OnPlayerInteracted(_player, target), this);
+            CustomRoleManager.RoleListener(target, role => role.OnPlayerInteracted(_player, target), this);
+            CustomRoleManager.RoleListenerOther(role => role.OnPlayerInteractedOther(_player, target));
+        }
+
         switch (id)
         {
             case 1:
@@ -623,6 +644,16 @@ public abstract class CustomRoleBehavior
     /// This runs after the host has approved the action, and handles any logic tied to the local player's click interaction.
     /// </summary>
     public virtual void OnPlayerPress(PlayerControl player, PlayerControl target) { }
+
+    /// <summary>
+    /// Called when another player interacts or gets interaction with a Target button.
+    /// </summary>
+    public virtual void OnPlayerInteractedOther(PlayerControl player, PlayerControl target) { }
+
+    /// <summary>
+    /// Called when the local player interacts or gets interaction with a Target button.
+    /// </summary>
+    public virtual void OnPlayerInteracted(PlayerControl player, PlayerControl target) { }
 
     /// <summary>
     /// Resets the state of any ability-related cooldowns or flags for this role.

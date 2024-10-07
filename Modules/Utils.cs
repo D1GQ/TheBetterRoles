@@ -189,11 +189,11 @@ public static class Utils
     {
         if (!bigText)
         {
-            return $"<color={GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color>";
+            return $"<{GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color>";
         }
         else
         {
-            return $"<size=150%><color={GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
+            return $"<size=150%><{GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
         }
     }
     public static CustomRoleBehavior? GetCustomRoleClass(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role);

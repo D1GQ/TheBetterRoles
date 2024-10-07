@@ -59,6 +59,24 @@ public class BaseButton
         }
     }
 
+    public void SetUses(int Amount)
+    {
+        if (Amount >= 0)
+        {
+            InfiniteUses = false;
+            if (Uses + Amount <= Range.max)
+            {
+                Uses = Amount;
+                ActionButton.SetUsesRemaining(Uses);
+            }
+        }
+        else
+        {
+            InfiniteUses = true;
+            ActionButton.SetInfiniteUses();
+        }
+    }
+
     public void AddUse(int Amount = 1)
     {
         if (!InfiniteUses)

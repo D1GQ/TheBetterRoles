@@ -1,6 +1,7 @@
 ﻿
 using AmongUs.GameOptions;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Linq;
 using System.Reflection;
 using TheBetterRoles.Patches;
@@ -29,6 +30,17 @@ public static class CustomRoleManager
         .Select(t => (CustomRoleBehavior)Activator.CreateInstance(t))
         .OrderBy(role => role.RoleId)
         .ToArray();
+
+    public static T? GetRoleInstance<T>() where T : CustomRoleBehavior
+    {
+        var foundRole = allRoles.FirstOrDefault(role => role.GetType() == typeof(T));
+
+        if (foundRole is T roleInstance)
+        {
+            return roleInstance;
+        }
+        return null;
+    }
 
     public static CustomRoleBehavior? CreateNewRoleInstance(Func<CustomRoleBehavior, bool> selector)
     {
@@ -283,6 +295,31 @@ public static class CustomRoleManager
         }
     }
 
+    public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)
+    {
+        if (player != null)
+        {
+            if (player?.BetterData()?.RoleInfo != null)
+            {
+                player.BetterData().RoleInfo.OverrideLongTasks = longTasks;
+                player.BetterData().RoleInfo.OverrideShortTasks = shortTasks;
+                player.BetterData().RoleInfo.OverrideCommonTasks = commonTasks;
+            }
+            player.ClearTasks();
+            player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0));
+        }
+    }
+
+    public static int GetRandomIndex<T>(Il2CppSystem.Collections.Generic.List<T> list)
+    {
+        if (list == null || list.Count == 0)
+            throw new ArgumentException("List is null or empty!");
+
+        System.Random random = new System.Random();
+        return random.Next(0, list.Count); // Returns a random index from 0 to list.Count - 1
+    }
+
+
     public static void RoleUpdate(PlayerControl player)
     {
         foreach (var role in player.BetterData().RoleInfo.AllRoles)
@@ -514,6 +551,8 @@ public enum CustomRoles
     Jester,
     Mole,
     Opportunist,
+    Plaguebearer,
+    Pestillence,
 
     // Addons
     ButtonBerry,
@@ -537,6 +576,7 @@ public enum CustomRoleCategory
     Vanilla,
 
     Benign,
+    Evil,
     Killing,
     Support,
     Chaos,

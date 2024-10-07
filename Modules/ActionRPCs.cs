@@ -115,6 +115,7 @@ static class ActionRPCs
 
                 CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
+                player.BetterData().RoleInfo.Kills++;
                 player.MurderPlayer(target, MurderResultFlags.Succeeded);
 
                 if (bypass) return;

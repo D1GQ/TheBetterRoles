@@ -18,12 +18,16 @@ public class MinerRole : CustomRoleBehavior
     public override bool CanVent => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
+    public BetterOptionItem? DigCooldown;
+    public BetterOptionItem? DigAmount;
     public override BetterOptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                DigCooldown = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Miner.Option.DigCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                DigAmount = new BetterOptionIntItem().Create(RoleId + 15, SettingsTab, Translator.GetString("Role.Miner.Option.DigAmount"), [0, 100, 1], 0, "", "", RoleOptionItem),
             ];
         }
     }
@@ -32,7 +36,7 @@ public class MinerRole : CustomRoleBehavior
     public AbilityButton? DigButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), 0, 0, 0, null, this, true)) as AbilityButton;
+        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true)) as AbilityButton;
         DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 
@@ -66,7 +70,7 @@ public class MinerRole : CustomRoleBehavior
 
         vent.Id = GetAvailableId();
         var pos = Pos;
-        float z = _player.gameObject.transform.position.z + 0.00005f;
+        float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)

@@ -15,7 +15,21 @@ class ExileControllerPatch
     [HarmonyPrefix]
     public static void HandleText_Prefix(ExileController __instance)
     {
-        __instance.completeString = "";
+        var init = __instance.initData;
+
+        if (init != null && init.outfit != null)
+        {
+            if (BetterGameSettings.ConfirmEjects.GetBool() || init.networkedPlayer.BetterData().RoleInfo.Role.AlwaysShowVoteOutMsg)
+            {
+                __instance.completeString = string.Format(Translator.GetString("ConfirmEject"), init.outfit.PlayerName, $"{Utils.GetCustomRoleNameAndColor(init.networkedPlayer.BetterData().RoleInfo.Role.RoleType)}");
+            }
+            else
+            {
+                __instance.completeString = string.Format(Translator.GetString(StringNames.ExileTextNonConfirm), init.outfit.PlayerName);
+            }
+        }
+
+        __instance.ImpostorText.text = "";
     }
 
     [HarmonyPatch(nameof(ExileController.WrapUp))]

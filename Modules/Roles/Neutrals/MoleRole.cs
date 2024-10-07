@@ -3,23 +3,20 @@ using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
 using TheBetterRoles.Patches;
-using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 namespace TheBetterRoles;
 
 public class MoleRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool CanBeAssigned => false;
+    public override bool VentReliantRole => true;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mole;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
-    public override bool CanVent => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
     public BetterOptionItem? MaximumVents;
@@ -90,7 +87,7 @@ public class MoleRole : CustomRoleBehavior
 
         vent.Id = GetAvailableId();
         var pos = Pos;
-        float z = _player.gameObject.transform.position.z + 0.00005f;
+        float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
 
         if (Vents.Count > 0)

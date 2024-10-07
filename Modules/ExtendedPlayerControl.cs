@@ -145,6 +145,9 @@ static class ExtendedPlayerControl
             }
         }
     }
+
+    public static void SetTrueVisorColor(this PlayerControl player, Color color) => player?.cosmetics?.bodySprites[0]?.BodySprite?.material?.SetColor(PlayerMaterial.VisorColor, color);
+
     public static void RawSetRole(this PlayerControl player, RoleTypes role) => DestroyableSingleton<RoleManager>.Instance.SetRole(player, role);
     // Check if player is selecting room to spawn in, for Airship
     public static bool IsInRoomSelect(this PlayerControl player)
@@ -192,7 +195,7 @@ static class ExtendedPlayerControl
     public static bool CanKill(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanKill == true;
     // Check if player can sabotage
     public static bool CanSabotage(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanSabotage == true;
-    public static bool RoleAssigned(this PlayerControl player) => player?.BetterData()?.RoleInfo != null && player?.BetterData()?.RoleInfo?.RoleAssigned == true;
+    public static bool RoleAssigned(this PlayerControl player) => player != null && player?.BetterData()?.RoleInfo != null && player?.BetterData()?.RoleInfo?.RoleAssigned == true;
     // Get hex color for team
     public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam);
     public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam));

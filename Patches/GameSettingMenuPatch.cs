@@ -8,7 +8,10 @@ namespace TheBetterRoles.Patches;
 
 class BetterGameSettings
 {
-    public static BetterOptionItem? Preset;
+    public static BetterOptionItem? ConfirmEjects;
+    public static BetterOptionItem? CommonTasksNum;
+    public static BetterOptionItem? LongTasksNum;
+    public static BetterOptionItem? ShortTasksNum;
     public static BetterOptionItem? ImposterAmount;
     public static BetterOptionItem? MaximumBenignNeutralAmount;
     public static BetterOptionItem? MinimumBenignNeutralAmount;
@@ -52,28 +55,32 @@ static class GameSettingMenuPatch
             Translator.GetString("BetterSetting.Description.SystemSettings"), Color.green);
         BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, Translator.GetString("BetterSetting.Tab.CrewmateRoles"),
             Translator.GetString("BetterSetting.Description.CrewmateRoles"), Color.cyan);
-        BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, Translator.GetString("BetterSetting.Tab.ImposterRoles"),
-            Translator.GetString("BetterSetting.Description.ImposterRoles"), Color.red);
+        BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, Translator.GetString("BetterSetting.Tab.ImpostorRoles"),
+            Translator.GetString("BetterSetting.Description.ImpostorRoles"), Color.red);
         BetterTabs.NeutralRoles = new BetterOptionTab().CreateTab(5, Translator.GetString("BetterSetting.Tab.NeutralRoles"),
             Translator.GetString("BetterSetting.Description.NeutralRoles"), Color.gray);
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, Translator.GetString("BetterSetting.Tab.Addons"),
             Translator.GetString("BetterSetting.Description.Addons"), Color.magenta);
 
-        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, "Mod Settings"));
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.ModSettings")));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);
+        BetterGameSettings.ConfirmEjects = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.ConfirmEjects"), false);
+        BetterGameSettings.CommonTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, "Common Tasks", [0, 5, 1], 2);
+        BetterGameSettings.ShortTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, "Short Tasks", [0, 5, 1], 4);
+        BetterGameSettings.LongTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, "Long Tasks", [0, 5, 1], 3);
 
-        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, "Impostor Settings"));
-        BetterGameSettings.ImposterAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, "Impostors", [0, 5, 1], 2, "", "");
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Title.ImpostorSettings")));
+        BetterGameSettings.ImposterAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Impostors"), [0, 5, 1], 2, "", "");
 
-        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, "Neutral Settings"));
-        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Non-Killing Neutrals", [0, 5, 1], 2, "", "");
-        BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Non-Killing Neutrals", [0, 5, 1], 0, "", "");
-        BetterGameSettings.MaximumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Maximum Killing Neutrals", [0, 5, 1], 2, "", "");
-        BetterGameSettings.MinimumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, "Minimum Killing Neutrals", [0, 5, 1], 0, "", "");
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.Title.NeutralSettings")));
+        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaxNonKillingNeutrals"), [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MinimumBenignNeutralAmount"), [0, 5, 1], 0, "", "");
+        BetterGameSettings.MaximumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaximumKillingNeutralAmount"), [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MinimumKillingNeutralAmount"), [0, 5, 1], 0, "", "");
 
-        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.Addons, "Add-on Settings"));
-        BetterGameSettings.MaximumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, "Maximum Add-ons", [0, 5, 1], 2, "", "");
-        BetterGameSettings.MinimumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, "Minimum Add-ons", [0, 5, 1], 0, "", "");
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.Addons, Translator.GetString("BetterSetting.Title.AddonSettings")));
+        BetterGameSettings.MaximumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, Translator.GetString("BetterSetting.MaximumAddonAmount"), [0, 5, 1], 2, "", "");
+        BetterGameSettings.MinimumAddonAmount = new BetterOptionIntItem().Create(-1, BetterTabs.Addons, Translator.GetString("BetterSetting.MinimumAddonAmount"), [0, 5, 1], 0, "", "");
 
         if (IsPreload)
         {
@@ -87,6 +94,7 @@ static class GameSettingMenuPatch
         {
             new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.Vanilla"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Vanilla },
             new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorBenign"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorEvil"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Evil },
             new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorKilling"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Killing },
             new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorSupport"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Support },
             new { Tab = BetterTabs.ImpostorRoles, Title = Translator.GetString("BetterSetting.RoleCategory.ImpostorChaos"), Team = CustomRoleTeam.Impostor, Category = CustomRoleCategory.Chaos },
@@ -94,12 +102,14 @@ static class GameSettingMenuPatch
 
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.Vanilla"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Vanilla },
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateBenign"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateEvil"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Evil },
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateKilling"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Killing },
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateSupport"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Support },
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateChaos"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Chaos },
             new { Tab = BetterTabs.CrewmateRoles, Title = Translator.GetString("BetterSetting.RoleCategory.CrewmateGhost"), Team = CustomRoleTeam.Crewmate, Category = CustomRoleCategory.Ghost },
 
             new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralBenign"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Benign },
+            new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralEvil"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Evil },
             new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralKilling"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Killing },
             new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralSupport"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Support },
             new { Tab = BetterTabs.NeutralRoles, Title = Translator.GetString("BetterSetting.RoleCategory.NeutralChaos"), Team = CustomRoleTeam.Neutral, Category = CustomRoleCategory.Chaos },
@@ -116,7 +126,7 @@ static class GameSettingMenuPatch
         foreach (var roleCategory in roleCategories)
         {
             int num = 0;
-            var Roles = CustomRoleManager.allRoles.Where(r => r.RoleTeam == roleCategory.Team && r.RoleCategory == roleCategory.Category);
+            var Roles = CustomRoleManager.allRoles.Where(r => r.RoleTeam == roleCategory.Team && r.RoleCategory == roleCategory.Category && r.CanBeAssigned);
 
             if (Roles.Any())
             {

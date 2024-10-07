@@ -10,7 +10,7 @@ public class JesterRole : CustomRoleBehavior
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Jester;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
-    public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
+    public override CustomRoleCategory RoleCategory => CustomRoleCategory.Evil;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
     public override bool AlwaysShowVoteOutMsg => true;
     public override BetterOptionItem[]? OptionItems

@@ -18,6 +18,7 @@ public static class PlayerControlDataExtension
         public bool IsSelf { get; set; }
         public byte _PlayerId { get; set; }
         public NetworkedPlayerInfo? _Data { get; set; }
+        public string? NameColor { get; set; } = string.Empty;
         public string? RealName => _Data.PlayerName;
         public bool HasShowDcMsg { get; set; } = false;
         public DisconnectReasons? DisconnectReason { get; set; }
@@ -30,6 +31,9 @@ public static class PlayerControlDataExtension
         public CustomRoleBehavior? Role { get; set; }
         public CustomRoles RoleType { get; set; }
         public List<CustomAddonBehavior>? Addons { get; set; } = [];
+        public int OverrideCommonTasks { get; set; } = -1;
+        public int OverrideShortTasks { get; set; } = -1;
+        public int OverrideLongTasks { get; set; } = -1;
         public int Kills { get; set; } = 0;
         public List<CustomRoleBehavior> AllRoles =>
             (Addons?.Cast<CustomRoleBehavior>() ?? Enumerable.Empty<CustomRoleBehavior>())

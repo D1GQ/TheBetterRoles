@@ -15,7 +15,7 @@ public class TargetButton : BaseButton
     {
         Role = role;
         Id = id;
-        TargetRange = range;
+        TargetRange = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
         Uses = abilityUses;
