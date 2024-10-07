@@ -29,9 +29,9 @@ public class SwooperRole : CustomRoleBehavior
         {
             return
             [
-                InvisibilityCooldown = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityCooldow"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                InvisibilityDuration = new BetterOptionFloatItem().Create(RoleId + 15, SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
-                AllowVenting = new BetterOptionCheckboxItem().Create(RoleId + 20, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
+                InvisibilityCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityCooldow"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                InvisibilityDuration = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
+                AllowVenting = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
             ];
         }
     }

@@ -21,7 +21,7 @@ public class SwiftAddon : CustomAddonBehavior
         {
             return
             [
-                SpeedX = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Swift.Option.Speed"), [1.5f, 5f, 0.25f], 2f, "x", "", RoleOptionItem),
+                SpeedX = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Swift.Option.Speed"), [1.5f, 5f, 0.25f], 2f, "x", "", RoleOptionItem),
             ];
         }
     }

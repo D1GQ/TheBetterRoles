@@ -176,25 +176,22 @@ public static class CustomRoleManager
                 {
                     if (role.Amount > 0)
                     {
-                        if (ImposterAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Impostor)
+                        if (role._role.IsImpostor)
                         {
-                            validRoles.Add(role);
-                            continue;
+                            if (ImposterAmount <= 0) continue;
                         }
-                        else if (BenignNeutralAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Neutral && !role._role.CanKill)
+                        
+                        if (role._role.IsNeutral && !role._role.CanKill)
                         {
-                            validRoles.Add(role);
-                            continue;
+                            if (BenignNeutralAmount <= 0) continue;
                         }
-                        else if (KillingNeutralAmount > 0 && role._role.RoleTeam == CustomRoleTeam.Neutral && role._role.CanKill)
+                        
+                        if (role._role.IsNeutral && role._role.CanKill)
                         {
-                            validRoles.Add(role);
-                            continue;
+                            if (KillingNeutralAmount <= 0) continue;
                         }
-                        else
-                        {
-                            validRoles.Add(role);
-                        }
+
+                        validRoles.Add(role);
                     }
                 }
 
@@ -539,6 +536,7 @@ public enum CustomRoles
     // Crewmates
     Crewmate,
     Sheriff,
+    Snitch,
 
     // Impostors
     Impostor,
@@ -575,6 +573,7 @@ public enum CustomRoleCategory
     // Roles
     Vanilla,
 
+    Information,
     Benign,
     Evil,
     Killing,

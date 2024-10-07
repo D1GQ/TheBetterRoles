@@ -27,10 +27,10 @@ public class MorphlingRole : CustomRoleBehavior
         {
             return
             [
-                SampleCooldown = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Morphling.Option.SampleCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                TransformCooldown = new BetterOptionFloatItem().Create(RoleId + 15, SettingsTab, Translator.GetString("Role.Morphling.Option.TransformCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                TransformDuration = new BetterOptionFloatItem().Create(RoleId + 20, SettingsTab, Translator.GetString("Role.Morphling.Option.TransformDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
-                AllowVenting = new BetterOptionCheckboxItem().Create(RoleId + 25, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
+                SampleCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Morphling.Option.SampleCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                TransformCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                TransformDuration = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
+                AllowVenting = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
             ];
         }
     }

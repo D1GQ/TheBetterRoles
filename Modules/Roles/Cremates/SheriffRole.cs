@@ -29,14 +29,14 @@ public class SheriffRole : CustomRoleBehavior
         {
             return
             [
-                ShootCooldown = new BetterOptionFloatItem().Create(RoleId + 10, SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
-                ShootDistance = new BetterOptionStringItem().Create(RoleId + 15, SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootDistance"),
+                ShootCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
+                ShootDistance = new BetterOptionStringItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootDistance"),
                 [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
-                ShotsAmount = new BetterOptionIntItem().Create(RoleId + 20, SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootsAmount"), [0, 15, 1], 0, "", "", RoleOptionItem),
-                Misfire = new BetterOptionStringItem().Create(RoleId + 25, SettingsTab, Translator.GetString("Role.Sheriff.Option.KillOnMisfire"),
+                ShotsAmount = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootsAmount"), [0, 15, 1], 0, "", "", RoleOptionItem),
+                Misfire = new BetterOptionStringItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Sheriff.Option.KillOnMisfire"),
                 [Translator.GetString("Role.Option.AtSelf"), Translator.GetString("Role.Option.AtTarget"), Translator.GetString("Role.Option.AtNone")], 0, RoleOptionItem),
-                CanShootImposters = new BetterOptionCheckboxItem().Create(RoleId + 30, SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImposters"), true, RoleOptionItem),
-                CanShootNeutrals = new BetterOptionCheckboxItem().Create(RoleId + 35, SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootNeutralKilling"), false, RoleOptionItem)
+                CanShootImposters = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImposters"), true, RoleOptionItem),
+                CanShootNeutrals = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootNeutralKilling"), false, RoleOptionItem)
             ];
         }
     }

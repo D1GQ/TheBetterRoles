@@ -47,11 +47,11 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
 
         if (RoleCategory is not CustomRoleCategory.GoodAddon or CustomRoleCategory.EvilAddon)
         {
-            AssignToCrewmate = new BetterOptionCheckboxItem().Create(RoleId + 3, SettingsTab,
+            AssignToCrewmate = new BetterOptionCheckboxItem().Create(RoleId + 7, SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToCrewmate"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>", "</color>"), true, RoleOptionItem);
-            AssignToImpostor = new BetterOptionCheckboxItem().Create(RoleId + 4, SettingsTab,
+            AssignToImpostor = new BetterOptionCheckboxItem().Create(RoleId + 8, SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToImpostor"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>", "</color>"), true, RoleOptionItem);
-            AssignToNeutral = new BetterOptionCheckboxItem().Create(RoleId + 5, SettingsTab,
+            AssignToNeutral = new BetterOptionCheckboxItem().Create(RoleId + 9, SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToNeutral"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Neutral)}>", "</color>"), true, RoleOptionItem);
         }
 

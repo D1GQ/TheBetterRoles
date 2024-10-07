@@ -166,6 +166,26 @@ public abstract class CustomRoleBehavior
     public BetterOptionItem? CanVentOptionItem { get; set; }
 
     /// <summary>
+    /// The option that determines if the normal task amount is overrated.
+    /// </summary>
+    public BetterOptionItem? OverrideTasksOptionItem { get; set; }
+
+    /// <summary>
+    /// The option that determines the amount of common tasks assigned to this role.
+    /// </summary>
+    public BetterOptionItem? CommonTasksOptionItem { get; set; }
+
+    /// <summary>
+    /// The option that determines the amount of long tasks assigned to this role when using vents.
+    /// </summary>
+    public BetterOptionItem? LongTasksOptionItem { get; set; }
+
+    /// <summary>
+    /// The option that determines the amount of short tasks assigned to this role.
+    /// </summary>
+    public BetterOptionItem? ShortTasksOptionItem { get; set; }
+
+    /// <summary>
     /// List of all local ability buttons available to the player for this role. This can include things like kill, sabotage, or vent buttons.
     /// </summary>
     public List<BaseButton> Buttons { get; set; } = [];
@@ -222,6 +242,12 @@ public abstract class CustomRoleBehavior
     public virtual bool VentReliantRole => false;
 
     /// <summary>
+    /// Indicates whether this role is reliant on tasks. 
+    /// This property can be overridden by specific roles that require task usage, 
+    /// </summary>
+    public virtual bool TaskReliantRole => false;
+
+    /// <summary>
     /// Checks if the role can use vents. This is typically overridden by roles like Impostors or other vent-using roles.
     /// </summary>
     public virtual bool CanVent => CanVentOptionItem?.GetBool() == true || VentReliantRole;
@@ -242,8 +268,21 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual bool CanMove => true;
 
-    public float GetChance() => GameStates.IsHost ? CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleId) : 0f : 0f;
-    public int GetAmount() => GameStates.IsHost ? CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleId + 5) : 0 : 0;
+    public float GetChance() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
+    public int GetAmount() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleId + 1) : 0;
+
+    private int TempOptionNum = 0;
+    public int GenerateOptionId(bool firstOption = false)
+    {
+        if (firstOption)
+        {
+            TempOptionNum = 1;
+        }
+
+        var num = TempOptionNum;
+        TempOptionNum++;
+        return RoleId + 10 + 5 * num;
+    }
 
     public CustomRoleBehavior Initialize(PlayerControl player)
     {
@@ -333,6 +372,13 @@ public abstract class CustomRoleBehavior
         AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
         if (RoleTeam == CustomRoleTeam.Neutral && !VentReliantRole)
             CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem);
+        if (TaskReliantRole)
+        {
+            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
+            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 5, 1], 2, "", "", OverrideTasksOptionItem);
+            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 5, 1], 2, "", "", OverrideTasksOptionItem);
+            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 5, 1], 4, "", "", OverrideTasksOptionItem);
+        }
 
         OptionItems.Initialize();
     }
@@ -472,6 +518,14 @@ public abstract class CustomRoleBehavior
         }
 
         return true;
+    }
+
+    public void TryOverrideTasks()
+    {
+        if (TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
+        {
+            _player.SetNewTasks(LongTasksOptionItem.GetInt(), ShortTasksOptionItem.GetInt(), CommonTasksOptionItem.GetInt());
+        }
     }
 
     /// <summary>
