@@ -232,7 +232,7 @@ internal static class RPC
                         var signature = reader.ReadString();
                         if (!GameStates.IsHost && signature == Main.modSignature && player.IsHost())
                         {
-                            BetterDataManager.ClearAndCreateSettings();
+                            BetterDataManager.HostSettings.Clear();
                             GameSettingMenuPatch.SetupSettings(true);
                             int count = reader.ReadInt32();
 

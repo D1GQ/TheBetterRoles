@@ -9,22 +9,11 @@ class BetterDataManager
     public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), "BetterRole_Data");
     public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, "SaveInfo");
     public static string filePathFolderSettings = Path.Combine(filePathFolder, "Settings");
-    public static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{GetPreset()}.json");
+    public static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{Main.Preset.Value}.json");
     public static string banPlayerListFile = Path.Combine(filePathFolderSaveInfo, "BanPlayerList.txt");
     public static string banNameListFile = Path.Combine(filePathFolderSaveInfo, "BanNameList.txt");
     public static string banWordListFile = Path.Combine(filePathFolderSaveInfo, "BanWordList.txt");
-
-    public static string GetPreset()
-    {
-        if (!GameStates.IsHost && GameStates.IsInGame)
-        {
-            return "Host";
-        }
-        else
-        {
-            return Main.Preset.Value.ToString();
-        }
-    }
+    public static Dictionary<int, string> HostSettings = [];
 
     public static string GetFilePath(string name)
     {
@@ -113,14 +102,14 @@ class BetterDataManager
         }
     }
 
-    public static void ClearAndCreateSettings()
-    {
-        string filePath = SettingsFile;
-        File.WriteAllText(filePath, "{}");
-    }
-
     public static void SaveSetting(int id, string input)
     {
+        if (GameStates.IsInGame && !GameStates.IsHost)
+        {
+            HostSettings[id] = input;
+            return;
+        }
+
         string filePath = SettingsFile;
 
         string json = File.ReadAllText(filePath);
@@ -133,6 +122,18 @@ class BetterDataManager
 
     public static bool CanLoadSetting(int id)
     {
+        if (GameStates.IsInGame && !GameStates.IsHost)
+        {
+            if (HostSettings.ContainsKey(id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         string filePath = SettingsFile;
         string json = File.ReadAllText(filePath);
         var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
@@ -150,6 +151,19 @@ class BetterDataManager
 
     public static bool LoadBoolSetting(int id, bool Default = false)
     {
+        if (GameStates.IsInGame && !GameStates.IsHost)
+        {
+            if (HostSettings.TryGetValue(id, out var setting) && bool.TryParse(setting, out var @bool))
+            {
+                return @bool;
+            }
+            else
+            {
+                SaveSetting(id, Default.ToString());
+                return Default;
+            }
+        }
+
         string filePath = SettingsFile;
         string json = File.ReadAllText(filePath);
         var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
@@ -171,6 +185,19 @@ class BetterDataManager
 
     public static float LoadFloatSetting(int id, float Default = 0f)
     {
+        if (GameStates.IsInGame && !GameStates.IsHost)
+        {
+            if (HostSettings.TryGetValue(id, out var setting) && float.TryParse(setting, out var @float))
+            {
+                return @float;
+            }
+            else
+            {
+                SaveSetting(id, Default.ToString());
+                return Default;
+            }
+        }
+
         string filePath = SettingsFile;
         string json = File.ReadAllText(filePath);
         var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
@@ -192,6 +219,19 @@ class BetterDataManager
 
     public static int LoadIntSetting(int id, int Default = 0)
     {
+        if (GameStates.IsInGame && !GameStates.IsHost)
+        {
+            if (HostSettings.TryGetValue(id, out var setting) && int.TryParse(setting, out var @int))
+            {
+                return @int;
+            }
+            else
+            {
+                SaveSetting(id, Default.ToString());
+                return Default;
+            }
+        }
+
         string filePath = SettingsFile;
         string json = File.ReadAllText(filePath);
         var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();

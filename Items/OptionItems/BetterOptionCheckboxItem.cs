@@ -90,6 +90,9 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
         if (!GameStates.IsHost)
         {
+            optionBehaviour.CheckMark.transform.parent.Find("ActiveSprite").gameObject.SetActive(false);
+            optionBehaviour.CheckMark.transform.parent.Find("InactiveSprite").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+            optionBehaviour.CheckMark.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
             optionBehaviour.transform.Find("Toggle").GetComponent<PassiveButton>().enabled = false;
         }
 

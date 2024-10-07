@@ -149,7 +149,7 @@ static class ActionRPCs
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecks(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player))
+        if (!CustomRoleManager.RoleChecksAny(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player))
         {
             Logger.Log($"Host Canceled Murder Action: Invalid");
             return false;
