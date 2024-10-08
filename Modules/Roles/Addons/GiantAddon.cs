@@ -8,10 +8,6 @@ namespace TheBetterRoles;
 public class GiantAddon : CustomAddonBehavior
 {
     // Role Info
-    public override Func<CustomRoles, bool> AssignmentCondition => (CustomRoles role) => 
-    {
-        return true;
-    };
     public override string RoleColor => "#745354";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Giant;

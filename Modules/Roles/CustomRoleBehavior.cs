@@ -370,8 +370,8 @@ public abstract class CustomRoleBehavior
     {
         RoleOptionItem = new BetterOptionPercentItem().Create(RoleId, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
         AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
-        if (RoleTeam == CustomRoleTeam.Neutral && !VentReliantRole)
-            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem);
+        if (!IsCrewmate && !VentReliantRole)
+            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), IsImpostor, RoleOptionItem);
         if (TaskReliantRole)
         {
             OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
@@ -617,17 +617,6 @@ public abstract class CustomRoleBehavior
     public virtual void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
 
     /// <summary>
-    /// Provides additional data related to the ability when sending it over the network.
-    /// This method is meant to be overridden in subclasses to add custom ability-specific information.
-    /// </summary>
-    public virtual void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer) { }
-
-    /// <summary>
-    /// Called when the duration of an ability ends, typically to clean up or reset states related to the ability.
-    /// </summary>
-    public virtual void OnAbilityDurationEnd(int id) { }
-
-    /// <summary>
     /// Host-side check when another player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
     public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
@@ -648,16 +637,6 @@ public abstract class CustomRoleBehavior
     public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
 
     /// <summary>
-    /// Called after a meeting has ended, determining what happens after the discussion or vote.
-    /// </summary>
-    public virtual void OnMeetingEnd(PlayerControl? exiled, bool tie) { }
-
-    /// <summary>
-    /// Called after an exile has concluded, handling the logic for the player who was exiled.
-    /// </summary>
-    public virtual void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData) { }
-
-    /// <summary>
     /// Host-side check when another player attempts to use or exit a vent. This checks if the action is allowed before execution.
     /// </summary>
     public virtual bool CheckVentOther(PlayerControl venter, int ventId, bool Exit) => true;
@@ -676,6 +655,27 @@ public abstract class CustomRoleBehavior
     /// Called after the host has allowed the local player to vent. This handles the logic once the vent action is approved.
     /// </summary>
     public virtual void OnVent(PlayerControl venter, int ventId, bool Exit) { }
+
+    /// <summary>
+    /// Provides additional data related to the ability when sending it over the network.
+    /// This method is meant to be overridden in subclasses to add custom ability-specific information.
+    /// </summary>
+    public virtual void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer) { }
+
+    /// <summary>
+    /// Called when the duration of an ability ends, typically to clean up or reset states related to the ability.
+    /// </summary>
+    public virtual void OnAbilityDurationEnd(int id) { }
+
+    /// <summary>
+    /// Called after a meeting has ended, determining what happens after the discussion or vote.
+    /// </summary>
+    public virtual void OnMeetingEnd(PlayerControl? exiled, bool tie) { }
+
+    /// <summary>
+    /// Called after an exile has concluded, handling the logic for the player who was exiled.
+    /// </summary>
+    public virtual void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData) { }
 
     /// <summary>
     /// Called when a player disguises, handling the logic of what happens when the player changes their appearance.
@@ -708,6 +708,30 @@ public abstract class CustomRoleBehavior
     /// Called when the local player interacts or gets interaction with a Target button.
     /// </summary>
     public virtual void OnPlayerInteracted(PlayerControl player, PlayerControl target) { }
+
+    /// <summary>
+    /// Called when another player completes a task.
+    /// </summary>
+    public virtual void OnTaskCompleteOther(PlayerControl player, uint taskId) { }
+
+    /// <summary>
+    /// Called when the local player completes a task.
+    /// </summary>
+    public virtual void OnTaskComplete(PlayerControl player, uint taskId) { }
+
+    /// <summary>
+    /// Determines whether a player's role should be revealed to this role.
+    /// </summary>
+    /// <param name="target">The player whose role is being checked for reveal.</param>
+    /// <returns>A boolean value indicating whether the role should be revealed (true) or not (false).</returns>
+    public virtual bool RevealPlayerRole(PlayerControl target) => false;
+
+    /// <summary>
+    /// Determines whether a player's addons should be revealed to this role.
+    /// </summary>
+    /// <param name="target">The player whose role is being checked for reveal.</param>
+    /// <returns>A boolean value indicating whether the role should be revealed (true) or not (false).</returns>
+    public virtual bool RevealPlayerAddons(PlayerControl target) => false;
 
     /// <summary>
     /// Resets the state of any ability-related cooldowns or flags for this role.

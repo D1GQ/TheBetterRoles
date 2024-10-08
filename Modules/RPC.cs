@@ -297,8 +297,14 @@ internal static class RPC
 
         MessageReader reader = MessageReader.Get(oldReader);
 
-        switch (callId)
+        switch ((RpcCalls)callId)
         {
+            case RpcCalls.CompleteTask:
+                {
+                    uint Id = reader.ReadUInt32();
+                    CustomRoleManager.RoleListenerOther(role => role.OnTaskCompleteOther(player, Id));
+                }
+                break;
         }
     }
 

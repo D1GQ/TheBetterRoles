@@ -190,11 +190,11 @@ static class ExtendedPlayerControl
         return false;
     }
     // Check if player can vent
-    public static bool CanVent(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanVent == true;
+    public static bool CanVent(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanKill, false) == true;
     // Check if player can kill
-    public static bool CanKill(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanKill == true;
+    public static bool CanKill(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanKill, false) == true;
     // Check if player can sabotage
-    public static bool CanSabotage(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role?.CanSabotage == true;
+    public static bool CanSabotage(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanSabotage, false) == true;
     public static bool RoleAssigned(this PlayerControl player) => player != null && player?.BetterData()?.RoleInfo != null && player?.BetterData()?.RoleInfo?.RoleAssigned == true;
     // Get hex color for team
     public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam);

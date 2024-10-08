@@ -14,8 +14,6 @@ public class ImpostorRoleTBR : CustomRoleBehavior
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool CanKill => true;
     public override bool CanSabotage => true;
-    public override bool CanVent => true;
-
     public override BetterOptionItem[]? OptionItems
     {
         get

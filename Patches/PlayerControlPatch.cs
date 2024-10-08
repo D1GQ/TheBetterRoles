@@ -85,7 +85,8 @@ class PlayerControlPatch
     {
         try
         {
-            if (player == null || player.Data == null) return;
+            if (player == null || player.Data == null || GameStates.IsMeeting) return;
+
 
             var sbTag = new StringBuilder();
             var sbTagTop = new StringBuilder();
@@ -114,7 +115,7 @@ class PlayerControlPatch
                     }
                 }
             }
-            else if (GameStates.IsInGamePlay)
+            else
             {
                 if (player.BetterData().NameColor != string.Empty)
                 {
@@ -125,10 +126,13 @@ class PlayerControlPatch
                     player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
                 }
 
-                if (player.IsLocalPlayer() || player.IsImpostorTeammate())
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
                 {
                     sbTag.Append($"{player.GetRoleNameAndColor()}---");
+                }
 
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+                {
                     foreach (var addon in player.BetterData().RoleInfo.Addons)
                     {
                         sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
@@ -136,9 +140,9 @@ class PlayerControlPatch
                 }
             }
 
-            sbTag = Utils.FormatStringBuilder(sbTag);
-            sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-            sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
+            if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
+            if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+            if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
 
             player.SetPlayerTextInfo(sbTagTop.ToString());
             player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);

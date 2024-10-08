@@ -2,7 +2,6 @@
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using TheBetterRoles;
 
 namespace TheBetterRoles.Patches;
 

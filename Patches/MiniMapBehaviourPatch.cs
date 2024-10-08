@@ -14,9 +14,9 @@ public class MiniMapBehaviourPatch
         [HarmonyPrefix]
         public static void Show_Prefix(/*MapBehaviour __instance,*/ ref MapOptions opts)
         {
-            if (opts != null)
+            if (opts != null && !GameStates.IsMeeting && !GameStates.IsExilling)
             {
-                if (PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleAssigned)
+                if (PlayerControl.LocalPlayer.RoleAssigned())
                 {
                     if (PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.CanSabotage && opts.Mode != MapOptions.Modes.CountOverlay)
                     {

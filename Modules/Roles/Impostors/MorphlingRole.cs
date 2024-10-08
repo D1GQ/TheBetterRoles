@@ -13,13 +13,11 @@ public class MorphlingRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
     public override bool CanSabotage => true;
-    public override bool CanVent => AllowVenting.GetBool();
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? SampleCooldown;
     public BetterOptionItem? TransformCooldown;
     public BetterOptionItem? TransformDuration;
-    public BetterOptionItem? AllowVenting;
 
     public override BetterOptionItem[]? OptionItems
     {
@@ -30,7 +28,6 @@ public class MorphlingRole : CustomRoleBehavior
                 SampleCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Morphling.Option.SampleCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
                 TransformCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
                 TransformDuration = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
-                AllowVenting = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
             ];
         }
     }

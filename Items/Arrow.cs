@@ -7,7 +7,9 @@ namespace TheBetterRoles;
 
 class ArrowLocator
 {
-    public static List<ArrowLocator> allArrows { get; set; } = new List<ArrowLocator>(); // Corrected initialization
+    public static List<ArrowLocator> allArrows { get; set; } = [];
+    public bool HasPlayerTarget { get; set; }
+    public PlayerControl? PlayerTarget { get; set; }
     public ArrowBehaviour? Arrow { get; set; }
     public SpriteRenderer? SpriteRenderer { get; set; }
 
@@ -42,6 +44,12 @@ class ArrowLocator
         return this;
     }
 
+    public void SetPlayer(PlayerControl player)
+    {
+        HasPlayerTarget = true;
+        PlayerTarget = player;
+    }
+
     public void Remove()
     {
         allArrows.Remove(this);
@@ -57,8 +65,19 @@ class ArrowLocator
         {
             if (allArrows.Select(a => a.Arrow).Contains(__instance))
             {
+                foreach (var arrow in allArrows)
+                {
+                    if (arrow.PlayerTarget != null && arrow.HasPlayerTarget && arrow.PlayerTarget.IsAlive())
+                    {
+                        arrow.Arrow.target = arrow.PlayerTarget.GetTruePosition();
+                    }
+                    else if (arrow.HasPlayerTarget)
+                    {
+                        arrow.Remove();
+                    }
+                }
                 __instance.gameObject.transform.position = new Vector3(__instance.gameObject.transform.position.x, __instance.gameObject.transform.position.y, -100f);
             }
         }
     }
-    }
+}

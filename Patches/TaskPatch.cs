@@ -1,81 +1,103 @@
 ﻿using HarmonyLib;
 using System.Text;
 using Il2CppSystem.Text;
+using UnityEngine;
 namespace TheBetterRoles;
 
 public class TaskPatch
 {
-    private static float Timer = 0f;
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManager_RecomputeTaskList
     {
-        public static void Postfix(HudManager __instance)
+        public static bool Prefix(HudManager __instance)
         {
             try
             {
-                Il2CppSystem.Text.StringBuilder sb = new();
+                if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
+                {
+                    Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;
+                    localPosition.x = __instance.consoleUIHorizontalShift;
+                    __instance.consoleUIRoot.transform.localPosition = localPosition;
+                }
+                if (__instance.joystickR != null && LobbyBehaviour.Instance != null)
+                {
+                    __instance.joystickR.ToggleVisuals(false);
+                }
 
-                if (PlayerControl.LocalPlayer.BetterData()?.RoleInfo?.RoleAssigned == true)
+                __instance.taskDirtyTimer += Time.deltaTime;
+                if (__instance.taskDirtyTimer > 0.25f)
                 {
-                    System.Text.StringBuilder sb2 = new();
-                    var allRoles = PlayerControl.LocalPlayer.BetterData().RoleInfo.AllRoles;
-                    for (int i = allRoles.Count - 1; i >= 0; i--)
-                    {
-                        var role = allRoles[i];
-                        sb2.Append($"<color={role.RoleColor}>{role.RoleName}</color>+++");
-                    }
-                    sb2 = Utils.FormatStringBuilder(sb2);
-                    sb.Append($"Role: {sb2}\n");
-                    sb.Append($"Team: <color={PlayerControl.LocalPlayer.GetTeamHexColor()}>{PlayerControl.LocalPlayer.GetRoleTeamName()}</color>\n");
-                    sb.Append($"Objective:\n<color={PlayerControl.LocalPlayer.Role().RoleColor}>{PlayerControl.LocalPlayer.GetRoleInfo()}</color>\n\n");
-                }
-                sb.Append(PlayerControl.LocalPlayer.Role().HasTask == true
-                    || PlayerControl.LocalPlayer.Role().HasSelfTask == true
-                    ? $"Tasks" + ":\n" : $"<color={PlayerControl.LocalPlayer.Role().RoleColor}>" + "Fake Tasks" + "</color>:\n");
+                    __instance.taskDirtyTimer = 0f;
+                    Il2CppSystem.Text.StringBuilder sb = new();
 
-                float num = __instance.taskDirtyTimer;
-                if (!PlayerControl.LocalPlayer)
-                {
-                    __instance.TaskPanel.SetTaskText(string.Empty);
-                    return;
-                }
-                NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
-                if (data == null)
-                {
-                    return;
-                }
-                bool flag = data.Role != null && data.Role.IsImpostor;
-                if (PlayerControl.LocalPlayer.myTasks == null || PlayerControl.LocalPlayer.myTasks.Count == 0)
-                {
-                    sb.Append("None");
-                }
-                else
-                {
-                    for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+                    if (PlayerControl.LocalPlayer.BetterData()?.RoleInfo?.RoleAssigned == true)
                     {
-                        PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
-                        if (playerTask)
+                        System.Text.StringBuilder sb2 = new();
+                        var allRoles = PlayerControl.LocalPlayer.BetterData().RoleInfo.AllRoles;
+                        for (int i = allRoles.Count - 1; i >= 0; i--)
                         {
-                            if (playerTask.TaskType == TaskTypes.FixComms && !flag)
-                            {
-                                playerTask.AppendTaskText(sb);
-                                break;
-                            }
-                            playerTask.AppendTaskText(sb);
+                            var role = allRoles[i];
+                            sb2.Append($"<color={role.RoleColor}>{role.RoleName}</color>+++");
                         }
+                        sb2 = Utils.FormatStringBuilder(sb2);
+                        sb.Append($"Role: {sb2}\n");
+                        sb.Append($"Team: <color={PlayerControl.LocalPlayer.GetTeamHexColor()}>{PlayerControl.LocalPlayer.GetRoleTeamName()}</color>\n");
+                        sb.Append($"Objective:\n<color={PlayerControl.LocalPlayer.Role().RoleColor}>{PlayerControl.LocalPlayer.GetRoleInfo()}</color>\n\n");
                     }
-                    /*
-                    if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek && ShipStatus.Instance.HideCountdown > 0f)
+                    sb.Append(PlayerControl.LocalPlayer.Role().HasTask == true
+                        || PlayerControl.LocalPlayer.Role().HasSelfTask == true
+                        ? $"Tasks" + ":\n" : $"<color={PlayerControl.LocalPlayer.Role().RoleColor}>" + "Fake Tasks" + "</color>:\n");
+
+                    // float num = __instance.taskDirtyTimer;
+                    if (!PlayerControl.LocalPlayer)
                     {
-                        ShipStatus.Instance.HideCountdown -= num;
-                        sb.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
+                        __instance.TaskPanel.SetTaskText(string.Empty);
+                        return false;
                     }
-                    */
-                    sb.TrimEnd();
+                    NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
+                    if (data == null)
+                    {
+                        return false;
+                    }
+                    bool flag = data.BetterData().RoleInfo.Role.IsImpostor;
+                    if (PlayerControl.LocalPlayer.myTasks == null || PlayerControl.LocalPlayer.myTasks.Count == 0)
+                    {
+                        sb.Append("None");
+                    }
+                    else
+                    {
+                        for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+                        {
+                            PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
+                            if (playerTask)
+                            {
+                                if (playerTask.TaskType == TaskTypes.FixComms && !flag)
+                                {
+                                    sb.Clear();
+                                    playerTask.AppendTaskText(sb);
+                                    break;
+                                }
+                                playerTask.AppendTaskText(sb);
+                            }
+                        }
+                        /*
+                        if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek && ShipStatus.Instance.HideCountdown > 0f)
+                        {
+                            ShipStatus.Instance.HideCountdown -= num;
+                            sb.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
+                        }
+                        */
+                        sb.TrimEnd();
+                    }
+                    __instance.TaskPanel.SetTaskText(sb.ToString());
                 }
-                __instance.TaskPanel.SetTaskText(sb.ToString());
+
+                return false;
             }
-            catch { }
+            catch
+            {
+                return true;
+            }
         }
     }
 
@@ -100,6 +122,21 @@ public class TaskPatch
             }
 
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.NextStep))]
+    public class NormalPlayerTask_NextStep
+    {
+        public static void Postfix(NormalPlayerTask __instance)
+        {
+            if (__instance.taskStep >= __instance.MaxStep)
+            {
+                if (PlayerControl.LocalPlayer)
+                {
+                    CustomRoleManager.RoleListener(__instance.Owner, role => role.OnTaskComplete(__instance.Owner, __instance.Id));
+                }
+            }
         }
     }
 

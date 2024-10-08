@@ -264,13 +264,16 @@ static class OptionsConsolePatch
     [HarmonyPrefix]
     public static bool CanUse_Prefix(OptionsConsole __instance, ref bool canUse, ref bool couldUse, ref float __result)
     {
-        __instance.HostOnly = false;
-        if (!PlayerControl.LocalPlayer.BetterData().HasMod && !GameStates.IsHost)
+        if (__instance != null)
         {
-            couldUse = false;
-            canUse = false;
-            __result = float.MaxValue;
-            return false;
+            __instance.HostOnly = false;
+            if (PlayerControl.LocalPlayer?.BetterData()?.HasMod == false && !GameStates.IsHost)
+            {
+                couldUse = false;
+                canUse = false;
+                __result = float.MaxValue;
+                return false;
+            }
         }
 
         return true;

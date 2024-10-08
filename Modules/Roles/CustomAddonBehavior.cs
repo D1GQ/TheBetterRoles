@@ -3,7 +3,7 @@ namespace TheBetterRoles;
 
 public abstract class CustomAddonBehavior : CustomRoleBehavior
 {
-    public virtual Func<CustomRoles, bool> AssignmentCondition => (CustomRoles role) => true;
+    public virtual Func<CustomRoleBehavior, bool> AssignmentCondition => (CustomRoleBehavior role) => true;
     public override bool IsAddon => true;
     public override bool CanMoveInVents => true;
 

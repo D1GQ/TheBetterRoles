@@ -17,14 +17,14 @@ class MeetingHudStartPatch
             TextTopMeeting.gameObject.name = "TextTop";
             TextTopMeeting.DestroyChildren();
             TextTopMeeting.transform.position = pva.NameText.transform.position;
-            TextTopMeeting.transform.position += new Vector3(0f, 0.15f);
+            TextTopMeeting.transform.position += new Vector3(0f, 0.16f);
             TextTopMeeting.GetComponent<TextMeshPro>().text = "";
 
             var TextInfoMeeting = UnityEngine.Object.Instantiate(pva.NameText, pva.NameText.transform);
             TextInfoMeeting.gameObject.name = "TextInfo";
             TextInfoMeeting.DestroyChildren();
             TextInfoMeeting.transform.position = pva.NameText.transform.position;
-            TextInfoMeeting.transform.position += new Vector3(0f, 0.28f);
+            TextInfoMeeting.transform.position += new Vector3(0f, -0.16f);
             TextInfoMeeting.GetComponent<TextMeshPro>().text = "";
 
             var PlayerLevel = pva.transform.Find("PlayerLevel");
@@ -71,6 +71,7 @@ class MeetingHudUpdatePatch
             TextMeshPro InfoText = pva.NameText.transform.Find("TextInfo").gameObject.GetComponent<TextMeshPro>();
 
             bool flag = Main.AllPlayerControls.Any(player => player.PlayerId == pva.TargetPlayerId);
+            PlayerControl? player = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
 
             if (!flag)
             {
@@ -107,32 +108,33 @@ class MeetingHudUpdatePatch
                 var sbTagTop = new StringBuilder();
                 var sbTag = new StringBuilder();
 
-                // Put +++ at the end of each tag
-                static StringBuilder FormatInfo(StringBuilder source)
+                if (player.BetterData().NameColor != string.Empty)
                 {
-                    var sb = new StringBuilder();
-                    if (source.Length > 0)
-                    {
-                        string text = source.ToString();
-                        string[] parts = text.Split("+++");
-                        for (int i = 0; i < parts.Length; i++)
-                        {
-                            if (!string.IsNullOrEmpty(Utils.RemoveHtmlText(parts[i])))
-                            {
-                                sb.Append(parts[i]);
-                                if (i != parts.Length - 2)
-                                {
-                                    sb.Append(" - ");
-                                }
-                            }
-                        }
-                    }
-
-                    return sb;
+                    pva.NameText.color = Utils.HexToColor32(player.BetterData().NameColor);
+                }
+                else
+                {
+                    pva.NameText.color = new Color(1f, 1f, 1f, 1f);
                 }
 
-                sbTagTop = FormatInfo(sbTagTop);
-                sbTag = FormatInfo(sbTag);
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+                {
+                    sbTag.Append($"{player.GetRoleNameAndColor()}---");
+                }
+
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+                {
+                    foreach (var addon in player.BetterData().RoleInfo.Addons)
+                    {
+                        sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                    }
+                }
+
+                sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+                sbTag = Utils.FormatStringBuilder(sbTag);
+
+                SetPlayerTextInfoMeeting(pva, sbTagTop.ToString(), true);
+                SetPlayerTextInfoMeeting(pva, sbTag.ToString());
             }
         }
     }
@@ -143,14 +145,6 @@ class MeetingHudUpdatePatch
         if (isInfo)
         {
             InfoType = "TextInfo";
-            GameObject TopText = pva.NameText.transform.Find("TextTop").gameObject;
-            if (TopText != null)
-            {
-                if (TopText.GetComponent<TextMeshPro>()?.text.Replace("<size=65%>", string.Empty).Replace("</size>", string.Empty).Length < 1)
-                {
-                    text = "<voffset=-2em>" + text + "</voffset>";
-                }
-            }
         }
 
         text = "<size=65%>" + text + "</size>";

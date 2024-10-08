@@ -62,6 +62,21 @@ public class MoleRole : CustomRoleBehavior
     }
 
     private List<Vent> Vents = [];
+
+    public override void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton)
+    {
+        List<Vent> ventsToRemove = [];
+        foreach (Vent vent in Vents)
+        {
+            ventsToRemove.Add(vent);
+        }
+        foreach (Vent vent in ventsToRemove)
+        {
+            RemoveVent(vent, false);
+            DigButton.AddUse();
+        }
+    }
+
     private void SpawnVent(Vector2 Pos)
     {
         if (Vents.Count >= MaximumVents.GetInt())
@@ -136,11 +151,18 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    private void RemoveVent(Vent vent)
+    private void RemoveVent(Vent vent, bool fade = true)
     {
         vent.enabled = false;
         Vents.Remove(vent);
-        _player.StartCoroutine(FadeVentOut(vent));
+        if (fade)
+        {
+            _player.StartCoroutine(FadeVentOut(vent));
+        }
+        else
+        {
+            UnityEngine.Object.Destroy(vent.gameObject);
+        }
     }
 
     private IEnumerator FadeVentOut(Vent vent)

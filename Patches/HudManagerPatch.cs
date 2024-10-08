@@ -82,7 +82,7 @@ public class HudManagerPatch
         }
         catch { }
 
-        __instance.Chat.gameObject.SetActive(true);
+        // __instance.Chat.gameObject.SetActive(true);
     }
 }
 

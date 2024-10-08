@@ -73,7 +73,6 @@ public static class CustomRoleManager
         }
     }
 
-    // fix null errors with settings
     public static void AssignRoles()
     {
         if (!GameStates.IsHost) return;
@@ -252,10 +251,10 @@ public static class CustomRoleManager
                             if (roleData.Amount <= 0) continue;
                             if (roleData._role is CustomAddonBehavior addon)
                             {
+                                if (!addon.AssignmentCondition(playerRoleAssignments[player]._role)) continue;
                                 if (!addon.CanBeAssignedWithTeam(playerRoleAssignments[player]._role.RoleTeam)) continue;
-                                if (addon.RoleCategory == CustomRoleCategory.EvilAddon && !playerRoleAssignments[player]._role.CanKill) continue;
-                                if (addon.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.HasTask
-                                    && !playerRoleAssignments[player]._role.HasSelfTask) continue;
+                                if (addon.RoleCategory == CustomRoleCategory.EvilAddon && playerRoleAssignments[player]._role.IsCrewmate) continue;
+                                if (addon.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.IsCrewmate) continue;
 
                                 int rng = IRandom.Instance.Next(100);
                                 if (!selectedAddons.Contains(roleData) && roleData.Amount > 0 && rng <= addon.GetChance())

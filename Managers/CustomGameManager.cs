@@ -495,6 +495,7 @@ public class CustomGameManager
         GameHasEnded = false;
         CustomRoleBehavior.SubTeam.Clear();
         PlayerControlDataExtension.ClearAllData();
+        HudManager.Instance.MapButton.gameObject.SetActive(true);
     }
 
     public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)

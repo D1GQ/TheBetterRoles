@@ -16,13 +16,11 @@ public class JanitorRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override bool CanKill => true;
     public override bool CanSabotage => true;
-    public override bool CanVent => AllowVenting.GetBool();
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? CleanCooldown;
     public BetterOptionItem? KillCooldownClean;
     public BetterOptionItem? SetKillCooldown;
-    public BetterOptionItem? AllowVenting;
 
     public override BetterOptionItem[]? OptionItems
     {
@@ -33,7 +31,6 @@ public class JanitorRole : CustomRoleBehavior
                 CleanCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Janitor.Option.CleanCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
                 KillCooldownClean = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldownOnClean"), true, RoleOptionItem),
                 SetKillCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldown"), [0f, 180f, 2.5f], 35f, "", "s", KillCooldownClean),
-                AllowVenting = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem),
             ];
         }
     }

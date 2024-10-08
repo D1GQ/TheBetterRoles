@@ -16,12 +16,10 @@ public class SwooperRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
     public override bool CanSabotage => true;
-    public override bool CanVent => AllowVenting.GetBool();
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? InvisibilityCooldown;
     public BetterOptionItem? InvisibilityDuration;
-    public BetterOptionItem? AllowVenting;
 
     public override BetterOptionItem[]? OptionItems
     {
@@ -31,7 +29,6 @@ public class SwooperRole : CustomRoleBehavior
             [
                 InvisibilityCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityCooldow"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
                 InvisibilityDuration = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
-                AllowVenting = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), false, RoleOptionItem)
             ];
         }
     }
