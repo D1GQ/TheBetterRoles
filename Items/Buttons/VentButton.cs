@@ -81,7 +81,14 @@ public class VentButton : BaseButton
                     }
                     else
                     {
-                        Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
+                        if (State == 0)
+                        {
+                            Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
+                        }
+                        else if (State == 1)
+                        {
+                            ResetState();
+                        }
                     }
                 }
             }));
@@ -113,7 +120,7 @@ public class VentButton : BaseButton
 
     public List<Vent> GetVentsInAbilityRangeSorted(List<Vent> outputList, bool ignoreColliders)
     {
-        if (!_player.CanMove && !_player.IsInVent() || ShipStatus.Instance == null)
+        if (!_player.CanMove && !_player.IsInVent() || ShipStatus.Instance == null || Uses <= 0 && !InfiniteUses || State > 0)
         {
             return [];
         }
@@ -153,17 +160,9 @@ public class VentButton : BaseButton
 
     public override void Update()
     {
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        base.Update();
 
-        if (TempCooldown > 0)
-        {
-            if (BaseCooldown()) TempCooldown -= Time.deltaTime;
-            ActionButton.SetCoolDown(TempCooldown, Cooldown);
-        }
-        else
-        {
-            ActionButton.SetCoolDown(-1, 0);
-        }
+        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         Vent? targetVent = null;
         closestDistance = float.MaxValue;
@@ -197,7 +196,7 @@ public class VentButton : BaseButton
 
         bool flag = Uses != 0 || InfiniteUses;
 
-        if (ventFlag2 && flag && !ActionButton.isCoolingDown && !_player.walkingToVent && BaseInteractable())
+        if (ventFlag2 && flag && !_player.walkingToVent && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }

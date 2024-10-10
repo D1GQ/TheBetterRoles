@@ -61,7 +61,7 @@ public static class CustomRoleManager
         return null;
     }
 
-    public static int GetAmount(int min, int max)
+    public static int GetRNGAmount(int min, int max)
     {
         if (min >= max || max <= min)
         {
@@ -83,8 +83,8 @@ public static class CustomRoleManager
 
             // Define role amounts
             int ImposterAmount = BetterGameSettings.ImposterAmount.GetInt();
-            int BenignNeutralAmount = GetAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
-            int KillingNeutralAmount = GetAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
+            int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
+            int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
 
             var impostorLimits = new Dictionary<int, int>
             {
@@ -241,7 +241,7 @@ public static class CustomRoleManager
                 // Set Addons
                 {
                     int safeAttempts = 0;
-                    int addonAmount = GetAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
+                    int addonAmount = GetRNGAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
                     List<RoleAssignmentData> selectedAddons = [];
 
                     while (addonAmount > 0 && safeAttempts < 50)
@@ -335,6 +335,28 @@ public static class CustomRoleManager
                 }
             }
         }
+    }
+
+    public static string GetRoleMarks(PlayerControl target)
+    {
+        string Marks = "";
+
+        if (target != null)
+        {
+            foreach (var player in Main.AllPlayerControls)
+            {
+                if (player == null) continue;
+
+                foreach (var role in player.BetterData().RoleInfo.AllRoles)
+                {
+                    if (role == null || role.SetNameMark(target) == string.Empty) continue;
+
+                    Marks += role.SetNameMark(target);
+                }
+            }
+        }
+
+        return Marks;
     }
 
     public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, CustomRoleBehavior? targetRole = null)
@@ -487,7 +509,7 @@ public static class CustomRoleManager
     {
         if (!DestroyableSingleton<TutorialManager>.InstanceExists)
         {
-            if (Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
+            if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
             {
                 Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);
                 PlayerControl.LocalPlayer.StopAllCoroutines();
@@ -533,30 +555,32 @@ public static class CustomRoleManager
 public enum CustomRoles
 {
     // Crewmates
+    Altruist,
     Crewmate,
+    Medic,
     Sheriff,
     Snitch,
 
     // Impostors
     Impostor,
-    Morphling,
-    Swooper,
     Janitor,
     Miner,
+    Morphling,
+    Swooper,
 
     // Neutrals
     Jester,
     Mole,
     Opportunist,
-    Plaguebearer,
     Pestillence,
+    Plaguebearer,
 
     // Addons
-    ButtonBerry,
-    Swift,
-    Giant,
     Bait,
+    ButtonBerry,
+    Giant,
     NoiseMaker,
+    Swift,
 }
 
 public enum CustomRoleTeam

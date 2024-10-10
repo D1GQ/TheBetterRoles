@@ -4,47 +4,19 @@ namespace TheBetterRoles;
 
 static class ExtendedInnerNetClient
 {
-    public static MessageWriter StartActionRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null, bool sync = false)
+    public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
 
-        MessageWriter writer;
-        if (sync)
-        {
-            writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
-            writer.Write(Main.modSignature);
-            writer.Write((int)action);
-            writer.WriteNetObject(LocalPlayer);
-        }
-        else if (GameStates.IsHost)
-        {
-            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.Action, SendOption.Reliable, -1);
-            writer.Write(Main.modSignature);
-            writer.Write((int)action);
-            writer.WriteNetObject(asPlayer ?? LocalPlayer);
-        }
-        else
-        {
-            writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.CheckAction, SendOption.Reliable, AmongUsClient.Instance.GetHost().Id);
-            writer.Write(Main.modSignature);
-            writer.Write((int)action);
-            writer.WriteNetObject(LocalPlayer);
-        }
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
+        writer.Write(Main.modSignature);
+        writer.Write((int)action);
+        writer.WriteNetObject(asPlayer ?? LocalPlayer);
 
         return writer;
     }
 
-    public static void EndActionRpc(this InnerNetClient client, MessageWriter writer, bool sync = false)
-    {
-        if (!sync)
-        {
-            client.FinishRpcImmediately(writer);
-        }
-        else
-        {
-            writer.EndMessage();
-        }
-    }
+    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
 
     /// <summary>
     /// Starts the RPC desynchronization process for the given player, call ID, and send option.

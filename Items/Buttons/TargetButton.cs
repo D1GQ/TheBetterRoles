@@ -53,7 +53,14 @@ public class TargetButton : BaseButton
             {
                 if (CanInteractOnPress())
                 {
-                    Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
+                    if (State == 0)
+                    {
+                        Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
+                    }
+                    else if (State == 1)
+                    {
+                        ResetState();
+                    }
                 }
             }));
         }
@@ -82,7 +89,7 @@ public class TargetButton : BaseButton
 
     public List<PlayerControl> GetPlayersInAbilityRangeSorted(List<PlayerControl> outputList, bool ignoreColliders)
     {
-        if (!_player.CanMove)
+        if (!_player.CanMove || Uses <= 0 && !InfiniteUses || State > 0)
         {
             return [];
         }
@@ -128,17 +135,9 @@ public class TargetButton : BaseButton
 
     public override void Update()
     {
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        base.Update();
 
-        if (TempCooldown > 0)
-        {
-            if (BaseCooldown()) TempCooldown -= Time.deltaTime;
-            ActionButton.SetCoolDown(TempCooldown, Cooldown);
-        }
-        else
-        {
-            ActionButton.SetCoolDown(-1, 0);
-        }
+        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         bool flag1 = true;
 
@@ -173,7 +172,7 @@ public class TargetButton : BaseButton
 
         bool flag2 = Uses != 0 || InfiniteUses;
 
-        if (flag1 && flag2 && !ActionButton.isCoolingDown && BaseInteractable())
+        if (flag1 && flag2 && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }

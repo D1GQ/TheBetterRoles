@@ -35,7 +35,7 @@ public class MinerRole : CustomRoleBehavior
     public AbilityButton? DigButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true)) as AbilityButton;
+        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
         DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 

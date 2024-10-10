@@ -26,7 +26,7 @@ public class ButtonBerryAddon : CustomAddonBehavior
     public AbilityButton? MeetingButton;
     public override void OnSetUpRole()
     {
-        MeetingButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false)) as AbilityButton;
+        MeetingButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

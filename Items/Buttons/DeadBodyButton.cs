@@ -10,13 +10,14 @@ public class DeadBodyButton : BaseButton
     public float DeadBodyRange {  get; set; }
     public DeadBody? lastDeadBody {  get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (DeadBody body) => true;
-    public DeadBodyButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
+    public DeadBodyButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
         Id = id;
         DeadBodyRange = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
+        Duration = duration;
         Uses = abilityUses;
         Visible = true;
 
@@ -52,7 +53,14 @@ public class DeadBodyButton : BaseButton
             {
                 if (CanInteractOnPress())
                 {
-                    Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
+                    if (State == 0)
+                    {
+                        Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
+                    }
+                    else if (State == 1)
+                    {
+                        ResetState();
+                    }
                 }
             }));
         }
@@ -81,7 +89,7 @@ public class DeadBodyButton : BaseButton
 
     public List<DeadBody> GetBodysInAbilityRangeSorted(List<DeadBody> outputList, bool ignoreColliders)
     {
-        if (!_player.CanMove && !_player.IsInVent())
+        if (!_player.CanMove && !_player.IsInVent() || Uses <= 0 && !InfiniteUses || State > 0)
         {
             return [];
         }
@@ -120,17 +128,9 @@ public class DeadBodyButton : BaseButton
 
     public override void Update()
     {
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        base.Update();
 
-        if (TempCooldown > 0)
-        {
-            if (BaseCooldown()) TempCooldown -= Time.deltaTime;
-            ActionButton.SetCoolDown(TempCooldown, Cooldown);
-        }
-        else
-        {
-            ActionButton.SetCoolDown(-1, 0);
-        }
+        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         bool flag1 = true;
 
@@ -165,7 +165,7 @@ public class DeadBodyButton : BaseButton
 
         bool flag2 = Uses != 0 || InfiniteUses;
 
-        if (flag1 && flag2 && !ActionButton.isCoolingDown && BaseInteractable())
+        if (flag1 && flag2 && BaseInteractable() || State > 0 && CanCancelDuration)
         {
             ActionButton.SetEnabled();
         }

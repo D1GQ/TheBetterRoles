@@ -54,15 +54,14 @@ class PlayerControlPatch
             __instance.cosmetics.colorBlindText.text = string.Empty;
         }
 
-
-        SetPlayerInfo(__instance);
-
-        // Reset player data in lobby
         time += Time.deltaTime;
         if (time > 0.5f)
         {
-            PlayerControlDataExtension.ResetPlayerData(__instance);
             time = 0f;
+            SetPlayerInfo(__instance);
+
+            // Reset player data in lobby
+            PlayerControlDataExtension.ResetPlayerData(__instance);
         }
 
         if (GameStates.IsHost && GameStates.IsLobby)
@@ -87,7 +86,7 @@ class PlayerControlPatch
         {
             if (player == null || player.Data == null || GameStates.IsMeeting) return;
 
-
+            string marks = "";
             var sbTag = new StringBuilder();
             var sbTagTop = new StringBuilder();
             var sbTagBottom = new StringBuilder();
@@ -117,14 +116,7 @@ class PlayerControlPatch
             }
             else
             {
-                if (player.BetterData().NameColor != string.Empty)
-                {
-                    player.cosmetics.nameText.color = Utils.HexToColor32(player.BetterData().NameColor);
-                }
-                else
-                {
-                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
-                }
+                player.RawSetName(Utils.FormatPlayerName(player.Data));
 
                 if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
                 {

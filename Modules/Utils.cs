@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
+using static Il2CppSystem.Globalization.CultureInfo;
+using System.Collections;
+using BepInEx.Unity.IL2CPP.Utils;
 
 namespace TheBetterRoles;
 
@@ -28,6 +31,40 @@ public static class Utils
     public static PlayerControl? PlayerFromClientId(int clientId) => Main.AllPlayerControls.FirstOrDefault(player => player.GetClientId() == clientId) ?? null;
     // Get player from net id
     public static PlayerControl? PlayerFromNetId(uint netId) => Main.AllPlayerControls.FirstOrDefault(player => player.NetId == netId) ?? null;
+    // Set player name
+    public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
+    {
+        if (player == null || player.BetterData()?.RoleInfo?.RoleAssigned != true) return string.Empty;
+
+        string name = "";
+        NetworkedPlayerInfo target = player;
+
+        if (!bypassDisguise)
+        {
+            if (player.BetterData().RoleInfo.Role?.IsDisguised == true && player.BetterData().RoleInfo.Role?.DisguisedTargetId >= 0)
+            {
+                if (GameData.Instance.AllPlayers.ToArray()
+                    .First(data => data.PlayerId == player.BetterData().RoleInfo.Role?.DisguisedTargetId)
+                    is NetworkedPlayerInfo info && info?.Object != null)
+                {
+                    target = info;
+                }
+            }
+        }
+
+        if (target.BetterData().NameColor == string.Empty)
+        {
+            name += $"{target.PlayerName}";
+        }
+        else
+        {
+            name += $"<{target.BetterData().NameColor}>{target.PlayerName}</color>";
+        }
+
+        name += CustomRoleManager.GetRoleMarks(target.Object);
+
+        return name;
+    }
     // Add msg to chat
     public static void AddChatPrivate(string text, string overrideName = "", bool setRight = false)
     {
@@ -87,6 +124,56 @@ public static class Utils
                 or SystemTypes.MushroomMixupSabotage
                 or SystemTypes.HeliSabotage
                 or SystemTypes.Electrical;
+
+    // Flash screen color with custom fade in, fade out, and total duration (max alpha 50% for transparency)
+    public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f)
+    {
+        var hud = DestroyableSingleton<HudManager>.Instance;
+        if (hud.FullScreen == null) return;
+
+        var obj = hud.transform.FindChild("FlashColor_FullScreen")?.gameObject;
+        if (obj == null)
+        {
+            obj = UnityEngine.Object.Instantiate(hud.FullScreen.gameObject, hud.transform);
+            obj.name = "FlashColor_FullScreen";
+        }
+
+        // Ensure fade in and fade out do not exceed effect duration
+        float totalDuration = fadeInDuration + fadeOutDuration;
+        fadeInDuration = Mathf.Clamp(fadeInDuration, 0, effectDuration);
+        fadeOutDuration = Mathf.Clamp(fadeOutDuration, 0, effectDuration - fadeInDuration);
+
+        hud.StartCoroutine(Effects.Lerp(effectDuration, new Action<float>((t) =>
+        {
+            obj.SetActive(t != 1f);
+
+            float alpha;
+            if (t < fadeInDuration / effectDuration)
+            {
+                // Fade in with max 50% transparency
+                alpha = Mathf.Lerp(0, color.a / 2, t / (fadeInDuration / effectDuration));
+            }
+            else if (t > (effectDuration - fadeOutDuration) / effectDuration)
+            {
+                // Fade out with max 50% transparency
+                alpha = Mathf.Lerp(color.a / 2, 0, (t - (effectDuration - fadeOutDuration) / effectDuration) / (fadeOutDuration / effectDuration));
+            }
+            else
+            {
+                // Maintain 50% transparency during the middle of the effect
+                alpha = color.a / 2;
+            }
+
+            obj.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, alpha);
+        })));
+    }
+
+    // Flash screen hex color with custom fade in, fade out, and total duration (max alpha 50%)
+    public static void FlashScreen(string hex, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f)
+    {
+        Color color = HexToColor32(hex);
+        FlashScreen(color, fadeInDuration, fadeOutDuration, effectDuration);
+    }
 
     // Set Out line on vent
     public static void SetOutline(this Vent vent, Color color, bool showOutline, bool showMain)

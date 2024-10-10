@@ -37,7 +37,7 @@ public class SwooperRole : CustomRoleBehavior
     public AbilityButton? InvisibilityButton = new();
     public override void OnSetUpRole()
     {
-        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true)) as AbilityButton;
+        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true));
         InvisibilityButton.CanCancelDuration = true;
     }
 
@@ -52,7 +52,7 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    public override void OnAbilityDurationEnd(int id)
+    public override void OnAbilityDurationEnd(int id, bool isTimeOut)
     {
         switch (id)
         {
@@ -68,7 +68,7 @@ public class SwooperRole : CustomRoleBehavior
         SetInvisibility(!IsVisible);
     }
 
-    public override void OnResetAbilityState()
+    public override void OnResetAbilityState(bool IsTimeOut)
     {
         InteractableTarget = true;
         IsVisible = true;

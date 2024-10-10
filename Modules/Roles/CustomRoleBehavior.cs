@@ -221,6 +221,16 @@ public abstract class CustomRoleBehavior
     public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
 
     /// <summary>
+    /// Set if player appearance is disguised.
+    /// </summary>
+    public bool IsDisguised { get; set; } = false;
+
+    /// <summary>
+    /// Set target id for disguised player.
+    /// </summary>
+    public int DisguisedTargetId { get; set; } = -1;
+
+    /// <summary>
     /// Sets if the role has tasks assigned. This is typical for Crewmate-aligned roles.
     /// </summary>
     public virtual bool HasTask => RoleTeam == CustomRoleTeam.Crewmate;
@@ -342,17 +352,17 @@ public abstract class CustomRoleBehavior
     {
         if (_player != null)
         {
-            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true)) as SabotageButton;
+            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance)) as TargetButton;
+            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
                 return !target.IsImpostorTeammate();
             };
 
-            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), 0, 0, this, null, false, true)) as VentButton;
+            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), 0, 0, this, null, false, true));
             VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
         }
 
@@ -383,7 +393,7 @@ public abstract class CustomRoleBehavior
         OptionItems.Initialize();
     }
 
-    protected BaseButton AddButton(BaseButton button)
+    protected T AddButton<T>(T button) where T : BaseButton
     {
         Buttons.Add(button);
         return button;
@@ -573,6 +583,11 @@ public abstract class CustomRoleBehavior
     public virtual void OnDeinitialize() { }
 
     /// <summary>
+    /// Returns icon next to player name.
+    /// </summary>
+    public virtual string SetNameMark(PlayerControl target) => string.Empty;
+
+    /// <summary>
     /// Host-side check for the ability to murder another player. Returns false if the murder should be prevented.
     /// The host checks if the action is valid based on the killer and target and if it was triggered by an ability.
     /// </summary>
@@ -665,7 +680,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Called when the duration of an ability ends, typically to clean up or reset states related to the ability.
     /// </summary>
-    public virtual void OnAbilityDurationEnd(int id) { }
+    public virtual void OnAbilityDurationEnd(int id, bool isTimeOut) { }
 
     /// <summary>
     /// Called after a meeting has ended, determining what happens after the discussion or vote.
@@ -736,7 +751,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Resets the state of any ability-related cooldowns or flags for this role.
     /// </summary>
-    public virtual void OnResetAbilityState() { }
+    public virtual void OnResetAbilityState(bool isTimeOut = false) { }
 
     /// <summary>
     /// This method is called at the end of the game to process the winning players.

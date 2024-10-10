@@ -39,10 +39,10 @@ public class MorphlingRole : CustomRoleBehavior
 
     public override void OnSetUpRole()
     {
-        SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f)) as TargetButton;
+        SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f));
         SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData == null; };
 
-        TransformButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true)) as AbilityButton;
+        TransformButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
         TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData != null; };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
@@ -55,6 +55,7 @@ public class MorphlingRole : CustomRoleBehavior
             case 5:
                 if (target?.Data != null)
                 {
+                    DisguisedTargetId = target.Data.PlayerId;
                     SampleData = CopyOutfit(target.Data);
                     TransformButton.SetCooldown();
                 }
@@ -62,23 +63,25 @@ public class MorphlingRole : CustomRoleBehavior
             case 6:
                 if (SampleData != null)
                 {
+                    IsDisguised = true;
                     CustomRoleManager.RoleListener(_player, role => role.OnDisguise(_player));
                     OriginalData = CopyOutfit(_data);
                     SetOutfit(SampleData);
                     TransformButton.SetDuration();
+                    _player.RawSetName(Utils.FormatPlayerName(_player.Data));
                 }
                 break;
         }
     }
 
-    public override void OnAbilityDurationEnd(int id)
+    public override void OnAbilityDurationEnd(int id, bool isTimeOut)
     {
         switch (id)
         {
             case 6:
                 if (OriginalData != null)
                 {
-                    OnResetAbilityState();
+                    OnResetAbilityState(isTimeOut);
                     SampleButton.SetCooldown();
                 }
                 break;
@@ -105,13 +108,18 @@ public class MorphlingRole : CustomRoleBehavior
         _player.SetOutfit(outfit, PlayerOutfitType.Default);
     }
 
-    public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
-        OnResetAbilityState();
+        if (target == _player)
+        {
+            OnResetAbilityState();
+        }
     }
 
-    public override void OnResetAbilityState()
+    public override void OnResetAbilityState(bool IsTimeOut = false)
     {
+        IsDisguised = false;
+        DisguisedTargetId = -1;
         if (SampleData != null)
         {
             if (OriginalData != null)

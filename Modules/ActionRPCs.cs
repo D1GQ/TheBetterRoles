@@ -48,7 +48,7 @@ static class ActionRPCs
         {
             if (GameStates.IsHost)
             {
-                var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.EndGame, PlayerControl.LocalPlayer);
+                var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.EndGame, PlayerControl.LocalPlayer);
                 writer.Write((byte)reason);
                 writer.Write((byte)team);
                 writer.Write(winners.Count);
@@ -56,7 +56,7 @@ static class ActionRPCs
                 {
                     writer.Write(ids);
                 }
-                AmongUsClient.Instance.EndActionRpc(writer);
+                AmongUsClient.Instance.EndActionSyncRpc(writer);
             }
 
             CustomGameManager.EndGame(winners, reason, team);
@@ -64,72 +64,62 @@ static class ActionRPCs
     }
 
     // Set player role
-    public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool RemoveAddon = false, bool bypass = false)
+    public static void SetRoleSync(this PlayerControl player, CustomRoles role, bool RemoveAddon = false, bool IsRPC = false)
     {
-        if (GameStates.IsHost || bypass)
+        if (CheckSetRoleAction(player, role) == true)
         {
-            if (CheckSetRoleAction(player, role) == true || bypass)
+            if (!Utils.GetCustomRoleClass(role).IsAddon)
             {
-                if (!Utils.GetCustomRoleClass(role).IsAddon)
-                {
-                    CustomRoleManager.SetCustomRole(player, role);
-                }
-                else
-                {
-                    if (!RemoveAddon)
-                    {
-                        CustomRoleManager.AddAddon(player, role);
-                    }
-                    else
-                    {
-                        CustomRoleManager.RemoveAddon(player, role);
-                    }
-                }
-
-                if (bypass) return;
+                CustomRoleManager.SetCustomRole(player, role);
             }
             else
             {
-                return;
+                if (!RemoveAddon)
+                {
+                    CustomRoleManager.AddAddon(player, role);
+                }
+                else
+                {
+                    CustomRoleManager.RemoveAddon(player, role);
+                }
             }
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.SetRole, player);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.SetRole, player);
         writer.Write((int)role);
         writer.Write(RemoveAddon);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckSetRoleAction(PlayerControl player, CustomRoles role) => true;
 
     // Make a player kill a target
-    public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool bypass = false)
+    public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool snapToTarget = true,
+        bool spawnBody = true, bool showAnimation = true, bool IsRPC = false)
     {
-        if (GameStates.IsHost || bypass)
+        if (CheckMurderAction(player, target, isAbility) == true)
         {
-            if (CheckMurderAction(player, target, isAbility) == true || bypass)
-            {
-                // Run after checks for roles
-                CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, player == target, isAbility));
-                CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
+            // Run after checks for roles
+            CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, player == target, isAbility));
+            CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
 
-                CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
+            CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
-                player.BetterData().RoleInfo.Kills++;
-                player.MurderPlayer(target, MurderResultFlags.Succeeded);
-
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
+            player.BetterData().RoleInfo.Kills++;
+            player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation);
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Murder, player);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Murder, player);
         writer.WriteNetObject(target);
         writer.Write(isAbility);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        writer.Write(snapToTarget);
+        writer.Write(spawnBody);
+        writer.Write(showAnimation);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckMurderAction(PlayerControl player, PlayerControl target, bool isAbility)
@@ -151,7 +141,7 @@ static class ActionRPCs
 
         if (!CustomRoleManager.RoleChecksAny(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player))
         {
-            Logger.Log($"Host Canceled Murder Action: Invalid");
+            Logger.Log($"Canceled Murder Action: Invalid");
             return false;
         }
 
@@ -159,57 +149,44 @@ static class ActionRPCs
     }
 
     // Revive player
-    public static void ReviveSync(this PlayerControl player, bool bypass = false)
+    public static void ReviveSync(this PlayerControl player, bool IsRPC = false)
     {
-        if (GameStates.IsHost || bypass)
+        if (CheckReviveAction(player) == true)
         {
-            if (CheckReviveAction(player) == true || bypass)
-            {
-                player.Revive();
-                player.RawSetRole(RoleTypes.Crewmate);
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
+            player.Revive();
+            player.RawSetRole(RoleTypes.Crewmate);
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Revive, player);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Revive, player);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckReviveAction(PlayerControl player) => player != null && ValidateSenderCheck(player);
 
     // Make a player start meeting
-    public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool bypass = false)
+    public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool IsRPC = false)
     {
         var isButton = bodyInfo == null;
 
-        if (GameStates.IsHost || bypass)
+        if (CheckReportBodyAction(player, bodyInfo, isButton) == true)
         {
-            if (CheckReportBodyAction(player, bodyInfo, isButton) == true || bypass)
-            {
-                // Run after checks for roles
-                CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState());
-                CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, isButton));
-                CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, isButton));
+            // Run after checks for roles
+            CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState());
+            CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, isButton));
+            CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, isButton));
 
-                // Start Meeting
-                DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
-                player.StartMeeting(bodyInfo);
-
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
+            // Start Meeting
+            DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+            player.StartMeeting(bodyInfo);
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.ReportBody, player);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.ReportBody, player);
         writer.WriteNetObject(bodyInfo);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckReportBodyAction(PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool isButton)
@@ -225,61 +202,47 @@ static class ActionRPCs
             return false;
         }
 
-        if (!GameStates.IsInGamePlay || !ValidateSenderCheck(player))
-        {
-            Logger.Log($"Host Canceled Murder Action: Invalid");
-            return false;
-        }
-
         return true;
     }
 
     // Resync after ability duration
-    public static void ResetAbilityStateSync(this PlayerControl player, int id, bool bypass = false)
+    public static void ResetAbilityStateSync(this PlayerControl player, int id, int roleType, bool isTimeOut, bool IsRPC = false)
     {
-        if (GameStates.IsHost || bypass)
+        if ((CheckResetAbilityStateAction(player, id) == true))
         {
-            if ((CheckResetAbilityStateAction(player, id) == true || bypass) && player.RoleAssigned())
-            {
-                player.BetterData().RoleInfo.Role.OnAbilityDurationEnd(id);
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
+            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
+                player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
+            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
+    player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.ResetAbilityState, player);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.ResetAbilityState, player);
         writer.Write(id);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        writer.Write(roleType);
+        writer.Write(isTimeOut);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckResetAbilityStateAction(PlayerControl player, int id) => true;
 
     // Sync when player is pressed, for certain roles
-    public static void PlayerPressSync(this PlayerControl player, PlayerControl target, bool bypass = false)
+    public static void PlayerPressSync(this PlayerControl player, PlayerControl target, bool IsRPC = false)
     {
-        if (GameStates.IsHost || bypass)
+        if (CheckPlayerPressAction(player, target) == true)
         {
-            if (CheckPlayerPressAction(player, target) == true || bypass)
-            {
-                // Run after checks for roles
-                CustomRoleManager.RoleListener(player, role => role.OnPlayerPress(player, target));
-                CustomRoleManager.RoleListener(target, role => role.OnPlayerPress(player, target));
-                CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(player, target));
-
-                if (bypass) return;
-            }
-            else
-            {
-                return;
-            }
+            // Run after checks for roles
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerPress(player, target));
+            CustomRoleManager.RoleListener(target, role => role.OnPlayerPress(player, target));
+            CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(player, target));
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.PlayerPress, player);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerPress, player);
         writer.WriteNetObject(target);
-        AmongUsClient.Instance.EndActionRpc(writer);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckPlayerPressAction(PlayerControl player, PlayerControl target) => true;
@@ -311,14 +274,14 @@ static class ActionRPCs
                     ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
                 }
             }
-
-            if (IsRPC) return;
         }
 
-        var writer = AmongUsClient.Instance.StartActionRpc(RpcAction.Vent, player, true);
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Vent, player);
         writer.Write(ventId);
         writer.Write(Exit);
-        AmongUsClient.Instance.EndActionRpc(writer, true);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
     private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)

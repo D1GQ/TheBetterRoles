@@ -3,6 +3,7 @@ using Hazel;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
+using static Sentry.MeasurementUnit;
 
 namespace TheBetterRoles;
 
@@ -25,17 +26,46 @@ public class BaseButton
 
     public float Cooldown = 25;
     public float TempCooldown = 0f;
+    public string DurationName = "";
+    public float Duration = 0f;
+    public bool CanCancelDuration = false;
     public bool InfiniteUses = true;
     public int Uses = 0;
+
+    public bool HasDuration => Duration > 0f;
+    public Func<bool> InteractCondition { get; set; } = () => true;
     public virtual bool BaseShow() =>
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
         (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
 
-    public virtual bool CanInteractOnPress() => ActionButton.canInteract;
-    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder();
+    public virtual bool CanInteractOnPress() => ActionButton.canInteract && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
+    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition() || CanCancelDuration && State > 0;
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
-    public virtual void Update() { }
+    public virtual void Update() 
+    {
+        if (TempCooldown > 0)
+        {
+            if (BaseCooldown()) TempCooldown -= Time.deltaTime;
+
+            if (State == 0)
+            {
+                ActionButton.SetCoolDown(TempCooldown, Cooldown);
+            }
+            else if (State == 1)
+            {
+                ActionButton.SetFillUp(TempCooldown, Duration);
+            }
+        }
+        else if (State == 1)
+        {
+            ResetState(true);
+        }
+        else
+        {
+            ActionButton.SetCoolDown(-1, 0);
+        }
+    }
 
     public void RemoveButton()
     {
@@ -56,6 +86,36 @@ public class BaseButton
         else
         {
             TempCooldown = amount;
+        }
+    }
+
+    public void SetDuration(float amount = -1)
+    {
+        if (!_player.IsLocalPlayer()) return;
+
+        if (amount <= -1)
+        {
+            TempCooldown = Duration;
+        }
+        else
+        {
+            TempCooldown = amount;
+        }
+
+        if (DurationName != "") ActionButton.OverrideText(DurationName);
+        State = 1;
+    }
+
+    public void ResetState(bool isTimeOut = false)
+    {
+        if (State == 1)
+        {
+            if (!_player.IsLocalPlayer()) return;
+
+            State = 0;
+            SetCooldown();
+            Text.SetText(Name);
+            _player.ResetAbilityStateSync(Id, (int)Role.RoleType, isTimeOut);
         }
     }
 

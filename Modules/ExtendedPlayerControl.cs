@@ -3,6 +3,8 @@ using TheBetterRoles.Patches;
 using InnerNet;
 using TMPro;
 using UnityEngine;
+using System.Collections;
+using BepInEx.Unity.IL2CPP.Utils;
 
 namespace TheBetterRoles;
 
@@ -44,6 +46,109 @@ static class ExtendedPlayerControl
     public static string GetRoleColorHex(this PlayerControl player) => Utils.GetCustomRoleColorHex(player.BetterData().RoleInfo.RoleType);
     public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.BetterData().RoleInfo.RoleType, longInfo);
     public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.BetterData().RoleInfo.Role.RoleTeam);
+
+    public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true)
+    {
+        if (killer.IsLocalPlayer())
+        {
+            if (GameManager.Instance.IsHideAndSeek())
+            {
+                StatsManager.Instance.IncrementStat(StringNames.StatsImpostorKills_HideAndSeek);
+            }
+            else
+            {
+                StatsManager.Instance.IncrementStat(StringNames.StatsImpostorKills);
+            }
+            if (killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted)
+            {
+                StatsManager.Instance.IncrementStat(StringNames.StatsShapeshifterShiftedKills);
+            }
+            if (Constants.ShouldPlaySfx())
+            {
+                SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f, null);
+            }
+        }
+        if (target.IsLocalPlayer())
+        {
+            StatsManager.Instance.IncrementStat(StringNames.StatsTimesMurdered);
+            if (Minigame.Instance)
+            {
+                try
+                {
+                    Minigame.Instance.Close();
+                    Minigame.Instance.Close();
+                }
+                catch
+                {
+                }
+            }
+            
+            if (showAnimation) DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(killer.Data, target.Data);
+            target.cosmetics.SetNameMask(false);
+            target.RpcSetScanner(false);
+        }
+
+        KillAnimation[] killAnimationsArray = killer.KillAnimations.ToArray();
+        KillAnimation randomKillAnimation = killAnimationsArray[UnityEngine.Random.Range(0, killAnimationsArray.Length)];
+        killer.MyPhysics.StartCoroutine(RetreatMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));
+    }
+    private static IEnumerator RetreatMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
+    {
+        FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
+        bool isParticipant = PlayerControl.LocalPlayer == killer || PlayerControl.LocalPlayer == target;
+        PlayerPhysics sourcePhys = killer.MyPhysics;
+        if (showAnimation)
+        {
+            KillAnimation.SetMovement(killer, false);
+            KillAnimation.SetMovement(target, false);
+        }
+        if (isParticipant)
+        {
+            PlayerControl.LocalPlayer.isKilling = true;
+            killer.isKilling = true;
+        }
+        DeadBody? deadBody = null;
+        if (spawnBody)
+        {
+            deadBody = UnityEngine.Object.Instantiate<DeadBody>(GameManager.Instance.DeadBodyPrefab);
+            deadBody.enabled = false;
+            deadBody.ParentId = target.PlayerId;
+            deadBody.bodyRenderers.ToList().ForEach(target.SetPlayerMaterialColors);
+            target.SetPlayerMaterialColors(deadBody.bloodSplatter);
+            Vector3 vector = target.transform.position + killAnimation.BodyOffset;
+            vector.z = vector.y / 1000f;
+            deadBody.transform.position = vector;
+        }
+        if (isParticipant)
+        {
+            cam.Locked = true;
+            ConsoleJoystick.SetMode_Task();
+            if (PlayerControl.LocalPlayer.AmOwner)
+            {
+                PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled = true;
+            }
+        }
+        target.Die(DeathReason.Kill, true);
+        yield return killer.MyPhysics.Animations.CoPlayCustomAnimation(killAnimation.BlurAnim);
+        if (snapToTarget)
+        {
+            killer.NetTransform.SnapTo(target.transform.position);
+        }
+        sourcePhys.Animations.PlayIdleAnimation();
+        if (showAnimation)
+        {
+            KillAnimation.SetMovement(killer, true);
+            KillAnimation.SetMovement(target, true);
+        }
+        if (deadBody != null) deadBody.enabled = true;
+        if (isParticipant)
+        {
+            cam.Locked = false;
+            PlayerControl.LocalPlayer.isKilling = false;
+            killer.isKilling = false;
+        }
+        yield break;
+    }
 
     // Set players over head text
     public static void SetPlayerTextInfo(this PlayerControl player, string text, bool isBottom = false, bool isInfo = false)

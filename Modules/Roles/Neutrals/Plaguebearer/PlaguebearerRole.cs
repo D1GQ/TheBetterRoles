@@ -36,7 +36,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        InfectButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue())) as TargetButton;
+        InfectButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue()));
         InfectButton.TargetCondition = (PlayerControl target) =>
         {
             return !Infected.Contains(target.Data);

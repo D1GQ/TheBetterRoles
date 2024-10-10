@@ -63,6 +63,19 @@ public class MoleRole : CustomRoleBehavior
 
     private List<Vent> Vents = [];
 
+    public override void OnDeinitialize()
+    {
+        List<Vent> ventsToRemove = [];
+        foreach (Vent vent in Vents)
+        {
+            ventsToRemove.Add(vent);
+        }
+        foreach (Vent vent in ventsToRemove)
+        {
+            RemoveVent(vent, false);
+        }
+    }
+
     public override void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton)
     {
         List<Vent> ventsToRemove = [];

@@ -32,8 +32,6 @@ public enum CustomRPC : int
     SyncSettings,
     SyncOption,
     RoleAction,
-    CheckAction,
-    Action,
     SyncAction,
 }
 
@@ -278,12 +276,6 @@ internal static class RPC
                         }
                     }
                     break;
-                case CustomRPC.CheckAction:
-                    HandleActionRPC(player, oldReader, true);
-                    break;
-                case CustomRPC.Action:
-                    HandleActionRPC(player, oldReader, false);
-                    break;
                 case CustomRPC.SyncAction:
                     HandleSyncActionRPC(player, oldReader, true);
                     break;
@@ -308,10 +300,8 @@ internal static class RPC
         }
     }
 
-    public static void HandleActionRPC(PlayerControl sender, MessageReader oldReader, bool IsCheck)
+    public static void HandleSyncActionRPC(PlayerControl sender, MessageReader oldReader, bool IsRPC = false)
     {
-        if (!IsCheck && GameStates.IsHost || IsCheck && !GameStates.IsHost) return;
-
         MessageReader reader = MessageReader.Get(oldReader);
 
         var signature = reader.ReadString();
@@ -321,8 +311,6 @@ internal static class RPC
         if (Main.modSignature != signature) return;
 
         ActionRPCs.SenderPlayer = sender;
-
-        var hostFlag = sender.IsHost();
 
         switch ((RpcAction)action)
         {
@@ -343,41 +331,40 @@ internal static class RPC
             case RpcAction.ResetAbilityState:
                 {
                     var id = reader.ReadInt32();
-                    player.ResetAbilityStateSync(id, hostFlag);
+                    var roleType = reader.ReadInt32();
+                    var isTimeOut = reader.ReadBoolean();
+                    player.ResetAbilityStateSync(id, roleType, isTimeOut, IsRPC);
                 }
                 break;
             case RpcAction.SetRole:
                 {
                     var role = reader.ReadInt32();
                     var RemoveAddon = reader.ReadBoolean();
-                    player.SetRoleSync((CustomRoles)role, RemoveAddon, hostFlag);
+                    player.SetRoleSync((CustomRoles)role, RemoveAddon, IsRPC);
                 }
                 break;
             case RpcAction.ReportBody:
                 {
                     var bodyInfo = reader.ReadNetObject<NetworkedPlayerInfo>();
-                    player.ReportBodySync(bodyInfo, hostFlag);
-                }
-                break;
-            case RpcAction.Vent:
-                {
-                    var ventId = reader.ReadInt32();
-                    var exit = reader.ReadBoolean();
-                    player.VentSync(ventId, exit);
+                    player.ReportBodySync(bodyInfo, IsRPC);
                 }
                 break;
             case RpcAction.Revive:
                 {
-                    player.ReviveSync(hostFlag);
+                    player.ReviveSync(IsRPC);
                 }
                 break;
             case RpcAction.Murder:
                 {
                     var target = reader.ReadNetObject<PlayerControl>();
                     var isAbility = reader.ReadBoolean();
+                    var snapToTarget = reader.ReadBoolean();
+                    var spawnBody = reader.ReadBoolean();
+                    var showAnimation = reader.ReadBoolean();
+
                     if (target != null)
                     {
-                        player.MurderSync(target, isAbility, hostFlag);
+                        player.MurderSync(target, isAbility, snapToTarget, spawnBody, showAnimation, IsRPC);
                     }
                 }
                 break;
@@ -386,27 +373,10 @@ internal static class RPC
                     var target = reader.ReadNetObject<PlayerControl>();
                     if (target != null)
                     {
-                        player.PlayerPressSync(target, hostFlag);
+                        player.PlayerPressSync(target, IsRPC);
                     }
                 }
                 break;
-        }
-    }
-
-    public static void HandleSyncActionRPC(PlayerControl sender, MessageReader oldReader, bool IsRPC = false)
-    {
-        MessageReader reader = MessageReader.Get(oldReader);
-
-        var signature = reader.ReadString();
-        var action = reader.ReadInt32();
-        var player = reader.ReadNetObject<PlayerControl>();
-
-        if (Main.modSignature != signature) return;
-
-        ActionRPCs.SenderPlayer = sender;
-
-        switch ((RpcAction)action)
-        {
             case RpcAction.Vent:
                 {
                     var ventId = reader.ReadInt32();

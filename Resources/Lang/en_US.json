@@ -12,6 +12,7 @@
   "DC": "D/C",
   "Ping": "Ping",
   "Timer": "Timer",
+  "All": "All",
   "SystemMessage": "System Message",
   "SystemNotification": "System Notification",
 
@@ -72,6 +73,23 @@
   "Role.Snitch.Option.RevealRolesInMeeting": "Reveal Roles In Meeting",
   "Role.Snitch.Option.SnitchSeesNeutralRoles": "Snitch Sees Neutral Roles",
   "Role.Snitch.Option.TasksRemainingWhenRevealed": "Tasks Remaining When Revealed",
+
+  "Role.Medic": "Medic",
+  "Role.Medic.Info": "Info",
+  "Role.Medic.LongInfo": "Long Info",
+  "Role.Medic.Option.ShowShieldedPlayer": "Show Shielded Player",
+  "Role.Medic.Option.Notify": "Notify",
+  "Role.Medic.Option.NotifyKiller": "Notify Killer",
+  "Role.Medic.Option.RemoveShieldOnMedicDeath": "Remove Shield On Medic Death",
+  "Role.Medic.Shielded": "Shielded",
+
+  "Role.Altruist": "Altruist",
+  "Role.Altruist.Info": "Info",
+  "Role.Altruist.LongInfo": "Long Info",
+  "Role.Altruist.Option.ReviveCooldown": "Revive Cooldown",
+  "Role.Altruist.Option.ReviveDuration": "Revive Duration",
+  "Role.Altruist.Option.KillOnRevive": "Kill Altruist On Revive",
+  "Role.Altruist.Ability.1": "Revive",
 
   "Role.Impostor": "Impostor",
   "Role.Impostor.Info": "Info",
