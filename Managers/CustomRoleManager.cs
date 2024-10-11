@@ -15,6 +15,7 @@ public class RoleAssignmentData
     public CustomRoleBehavior? _role;
     public bool CanKill => _role.CanKill;
     public CustomRoleTeam RoleTeam => _role.RoleTeam;
+    public bool IsGhostRole => _role.RoleCategory == CustomRoleCategory.Ghost;
     public bool IsAddon => _role.IsAddon;
     public int Chance => (int)_role.GetChance();
     public int Amount;
@@ -107,7 +108,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableRoles = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.CanBeAssigned)
+                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.RoleCategory != CustomRoleCategory.Ghost && role.CanBeAssigned)
                 {
                     availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -116,7 +117,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableAddons = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && role.IsAddon && role.CanBeAssigned)
+                if (role != null && role.GetChance() > 0 && role.IsAddon && role.RoleCategory != CustomRoleCategory.Ghost && role.CanBeAssigned)
                 {
                     availableAddons.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -289,6 +290,69 @@ public static class CustomRoleManager
         {
             Logger.Error(ex);
         }
+    }
+
+    public static List<RoleAssignmentData> availableGhostRoles = [];
+    public static void AssignGhostRoleOnDeath(PlayerControl player)
+    {
+        if (!GameStates.IsHost) return;
+
+        IRandom.SetInstanceById(0);
+
+        // Gather all available roles dynamically
+        if (!availableGhostRoles.Any())
+        {
+            foreach (var role in allRoles)
+            {
+                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.RoleCategory == CustomRoleCategory.Ghost && role.CanBeAssigned)
+                {
+                    if (role.RoleTeam != CustomRoleTeam.Neutral && role.RoleTeam != player.Role().RoleTeam) continue;
+
+                    availableGhostRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
+                }
+            }
+        }
+
+        int shuffleCount = 25;
+
+        for (int s = 0; s < shuffleCount; s++)
+        {
+            for (int i = availableGhostRoles.Count - 1; i > 0; i--)
+            {
+                int j = IRandom.Instance.Next(i + 1);
+
+                var temp = availableGhostRoles[i];
+                availableGhostRoles[i] = availableGhostRoles[j];
+                availableGhostRoles[j] = temp;
+            }
+        }
+
+        RoleAssignmentData? selectedGhostRole = null;
+
+        // If there are valid roles, randomly select one based on chance
+        if (availableGhostRoles.Count > 0)
+        {
+            foreach (var roleData in availableGhostRoles)
+            {
+                if (roleData.Amount <= 0) return;
+                int rng = IRandom.Instance.Next(100);
+                if (rng <= roleData._role.GetChance())
+                {
+                    selectedGhostRole = roleData;
+                    break;
+                }
+            }
+        }
+
+        _ = new LateTask(() =>
+        {
+            if (selectedGhostRole != null)
+            {
+                selectedGhostRole.Amount--;
+                player.ClearAddonsSync();
+                player.SetRoleSync(selectedGhostRole._role.RoleType);
+            }
+        }, 2.5f, shoudLog: false);
     }
 
     public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)
@@ -482,14 +546,29 @@ public static class CustomRoleManager
         var Addons = player.BetterData().RoleInfo.Addons;
         if (Addons.Count > 0)
         {
-            foreach (var addon in Addons)
+            var addonsCopy = Addons.ToList();
+            foreach (var addon in addonsCopy)
             {
-                if (addon == null) continue;
-
                 addon.Deinitialize();
             }
         }
     }
+
+    public static void ClearAddonsSync(this PlayerControl player)
+    {
+        if (player == null) return;
+
+        var Addons = player.BetterData().RoleInfo.Addons;
+        if (Addons.Count > 0)
+        {
+            var addonsCopy = Addons.ToList();
+            foreach (var addon in addonsCopy)
+            {
+                player.SetRoleSync(addon.RoleType, true);
+            }
+        }
+    }
+
 
     public static void SetCustomRole(PlayerControl player, CustomRoles role)
     {
@@ -574,6 +653,7 @@ public enum CustomRoles
     Opportunist,
     Pestillence,
     Plaguebearer,
+    Phantom,
 
     // Addons
     Bait,

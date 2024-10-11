@@ -97,7 +97,7 @@ static class ActionRPCs
 
     // Make a player kill a target
     public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool snapToTarget = true,
-        bool spawnBody = true, bool showAnimation = true, bool IsRPC = false)
+        bool spawnBody = true, bool showAnimation = true, bool playSound = true, bool IsRPC = false)
     {
         if (CheckMurderAction(player, target, isAbility) == true)
         {
@@ -108,17 +108,20 @@ static class ActionRPCs
             CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
             player.BetterData().RoleInfo.Kills++;
-            player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation);
+            player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation, playSound);
         }
 
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Murder, player);
         writer.WriteNetObject(target);
-        writer.Write(isAbility);
-        writer.Write(snapToTarget);
-        writer.Write(spawnBody);
-        writer.Write(showAnimation);
+        byte flags = 0;
+        flags |= (byte)((isAbility ? 1 : 0) << 0);
+        flags |= (byte)((snapToTarget ? 1 : 0) << 1);
+        flags |= (byte)((spawnBody ? 1 : 0) << 2);
+        flags |= (byte)((showAnimation ? 1 : 0) << 3);
+        flags |= (byte)((playSound ? 1 : 0) << 4);
+        writer.Write(flags);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
@@ -139,7 +142,7 @@ static class ActionRPCs
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecksAny(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive() || !ValidateSenderCheck(player))
+        if (!CustomRoleManager.RoleChecksAny(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive())
         {
             Logger.Log($"Canceled Murder Action: Invalid");
             return false;
@@ -213,7 +216,7 @@ static class ActionRPCs
             CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
                 player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
             CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
-    player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
+                player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
         }
 
         if (IsRPC) return;

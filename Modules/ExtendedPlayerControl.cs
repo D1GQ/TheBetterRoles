@@ -47,7 +47,7 @@ static class ExtendedPlayerControl
     public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.BetterData().RoleInfo.RoleType, longInfo);
     public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.BetterData().RoleInfo.Role.RoleTeam);
 
-    public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true)
+    public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true, bool playSound = true)
     {
         if (killer.IsLocalPlayer())
         {
@@ -63,7 +63,7 @@ static class ExtendedPlayerControl
             {
                 StatsManager.Instance.IncrementStat(StringNames.StatsShapeshifterShiftedKills);
             }
-            if (Constants.ShouldPlaySfx())
+            if (Constants.ShouldPlaySfx() && playSound)
             {
                 SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f, null);
             }

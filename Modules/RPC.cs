@@ -357,14 +357,16 @@ internal static class RPC
             case RpcAction.Murder:
                 {
                     var target = reader.ReadNetObject<PlayerControl>();
-                    var isAbility = reader.ReadBoolean();
-                    var snapToTarget = reader.ReadBoolean();
-                    var spawnBody = reader.ReadBoolean();
-                    var showAnimation = reader.ReadBoolean();
+                    byte flags = reader.ReadByte();
+                    var isAbility = (flags & (1 << 0)) != 0;
+                    var snapToTarget = (flags & (1 << 1)) != 0;
+                    var spawnBody = (flags & (1 << 2)) != 0;
+                    var showAnimation = (flags & (1 << 3)) != 0;
+                    var playSound = (flags & (1 << 4)) != 0;
 
                     if (target != null)
                     {
-                        player.MurderSync(target, isAbility, snapToTarget, spawnBody, showAnimation, IsRPC);
+                        player.MurderSync(target, isAbility, snapToTarget, spawnBody, showAnimation, playSound, IsRPC);
                     }
                 }
                 break;

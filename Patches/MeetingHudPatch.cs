@@ -156,6 +156,15 @@ class MeetingHudUpdatePatch
     }
 }
 
+[HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
+class MeetingHud_VotingComplete
+{
+    public static void Prefix(MeetingHud __instance, [HarmonyArgument(0)] MeetingHud.VoterState[] states, [HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
+    {
+        CustomRoleManager.RoleListenerOther(role => role.OnVotingComplete(states, exiled, tie));
+    }
+}
+
 [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.OnDestroy))]
 class MeetingHud_OnDestroyPatch
 {

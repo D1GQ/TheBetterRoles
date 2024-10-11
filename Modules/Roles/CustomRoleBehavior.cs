@@ -218,7 +218,17 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The base speed modification factor for the player, derived from game settings. This value affects overall movement speed.
     /// </summary>
-    public virtual float BaseSpeedMod => GameOptionsManager.Instance.currentNormalGameOptions.PlayerSpeedMod * 2.5f;
+    public virtual float BaseSpeedMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.PlayerSpeedMod) * 2.5f;
+
+    /// <summary>
+    /// The current vision of the player, which is often influenced by the role's special properties and physics settings.
+    /// </summary>
+    public float PlayerVisionMod { get; set; }
+
+    /// <summary>
+    /// The base vision modification factor for the player, derived from game settings.
+    /// </summary>
+    public float BaseVisionMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(!IsImpostor ? FloatOptionNames.CrewLightMod : FloatOptionNames.ImpostorLightMod);
 
     /// <summary>
     /// Set if player appearance is disguised.
@@ -298,6 +308,7 @@ public abstract class CustomRoleBehavior
     {
         if (player != null)
         {
+            PlayerVisionMod = BaseVisionMod;
             _player = player;
             _data = player.Data;
             if (!IsAddon)
@@ -685,7 +696,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Called after a meeting has ended, determining what happens after the discussion or vote.
     /// </summary>
-    public virtual void OnMeetingEnd(PlayerControl? exiled, bool tie) { }
+    public virtual void OnVotingComplete(MeetingHud.VoterState[] states, NetworkedPlayerInfo? exiled, bool tie) { }
 
     /// <summary>
     /// Called after an exile has concluded, handling the logic for the player who was exiled.

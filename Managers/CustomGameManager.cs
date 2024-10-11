@@ -488,11 +488,12 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
+    public static bool ShouldCheckConditions => false; //!GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
 
     public static void GameStart()
     {
         GameHasEnded = false;
+        CustomRoleManager.availableGhostRoles.Clear();
         CustomRoleBehavior.SubTeam.Clear();
         PlayerControlDataExtension.ClearAllData();
         HudManager.Instance.MapButton.gameObject.SetActive(true);
@@ -633,8 +634,8 @@ public class CustomGameManager
             allPlayers.Add(player);
         }
         var impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor));
-        var crewmates = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Crewmate));
-        var neutralKilling = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Neutral));
+        var nonKillingPlayers = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Crewmate) || CustomRoleManager.RoleChecks(pc, role => !role.CanKill));
+        var neutralKilling = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Neutral) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill));
 
         if (allPlayers.All(pc => pc.Is(CustomRoleTeam.Crewmate)) || !allPlayers.Any())
         {

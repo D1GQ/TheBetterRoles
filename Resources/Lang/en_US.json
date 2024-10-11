@@ -144,7 +144,12 @@
   "Role.Mole.Info": "Info",
   "Role.Mole.LongInfo": "Long Info",
   "Role.Mole.Ability.1": "Dig Hole",
-  "Role.Mole.Option.": "",
+  "Role.Mole.Option.MaxVents": "Max Vents",
+
+  "Role.Phantom": "Phantom",
+  "Role.Phantom.Info": "Info",
+  "Role.Phantom.LongInfo": "Long Info",
+  "Role.Phantom.Option.": "",
 
   "Role.Jester": "Jester",
   "Role.Jester.Info": "Info",

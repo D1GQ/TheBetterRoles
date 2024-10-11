@@ -126,7 +126,8 @@ public static class Utils
                 or SystemTypes.Electrical;
 
     // Flash screen color with custom fade in, fade out, and total duration (max alpha 50% for transparency)
-    public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f)
+    private static Coroutine? activeFadeCoroutine;
+    public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false)
     {
         var hud = DestroyableSingleton<HudManager>.Instance;
         if (hud.FullScreen == null) return;
@@ -143,7 +144,15 @@ public static class Utils
         fadeInDuration = Mathf.Clamp(fadeInDuration, 0, effectDuration);
         fadeOutDuration = Mathf.Clamp(fadeOutDuration, 0, effectDuration - fadeInDuration);
 
-        hud.StartCoroutine(Effects.Lerp(effectDuration, new Action<float>((t) =>
+        // If an override is requested, stop any active fade coroutine
+        if (Override && activeFadeCoroutine != null)
+        {
+            hud.StopCoroutine(activeFadeCoroutine);
+            obj.SetActive(false); // Optionally hide the object immediately when overriding
+        }
+
+        // Start the new fade coroutine
+        activeFadeCoroutine = hud.StartCoroutine(Effects.Lerp(effectDuration, new Action<float>((t) =>
         {
             obj.SetActive(t != 1f);
 
@@ -168,11 +177,12 @@ public static class Utils
         })));
     }
 
+
     // Flash screen hex color with custom fade in, fade out, and total duration (max alpha 50%)
-    public static void FlashScreen(string hex, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f)
+    public static void FlashScreen(string hex, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false)
     {
         Color color = HexToColor32(hex);
-        FlashScreen(color, fadeInDuration, fadeOutDuration, effectDuration);
+        FlashScreen(color, fadeInDuration, fadeOutDuration, effectDuration, Override);
     }
 
     // Set Out line on vent

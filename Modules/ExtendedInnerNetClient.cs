@@ -4,10 +4,64 @@ namespace TheBetterRoles;
 
 static class ExtendedInnerNetClient
 {
+    public static void WriteBooleans(this MessageWriter writer, bool[] @bools)
+    {
+        writer.Write(@bools.Length);
+
+        byte currentByte = 0;
+        int bitIndex = 0;
+
+        foreach (bool b in @bools)
+        {
+            if (b)
+                currentByte |= (byte)(1 << bitIndex);
+
+            bitIndex++;
+
+            if (bitIndex == 8)
+            {
+                writer.Write(currentByte);
+                currentByte = 0;
+                bitIndex = 0;
+            }
+        }
+
+        if (bitIndex > 0)
+        {
+            writer.Write(currentByte);
+        }
+    }
+
+
+    public static void ReadBooleans(this MessageReader reader, ref bool[] @bools)
+    {
+        var length = reader.ReadInt32();
+
+        int bitIndex = 0;
+        byte currentByte = 0;
+
+        for (int i = 0; i < length; i++)
+        {
+            if (bitIndex == 0)
+            {
+                currentByte = reader.ReadByte();
+            }
+
+            @bools[i] = (currentByte & (1 << bitIndex)) != 0;
+
+            bitIndex++;
+
+            if (bitIndex == 8)
+            {
+                bitIndex = 0;
+            }
+        }
+    }
+
+
     public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
-
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
         writer.Write(Main.modSignature);
         writer.Write((int)action);

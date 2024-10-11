@@ -50,8 +50,7 @@ public class RolePatch
             {
                 passiveButton.OnClick.AddListener((Action)(() =>
                 {
-                    CustomRoleManager.RoleListener(__instance, role => role.OnPlayerPress(PlayerControl.LocalPlayer, __instance));
-                    CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(PlayerControl.LocalPlayer, __instance));
+                    PlayerControl.LocalPlayer.PlayerPressSync(__instance);
                 }));
             }
         }

@@ -102,6 +102,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             if (_player.IsLocalPlayer())
             {
+                Utils.FlashScreen(RoleColor, 0f, 0.25f, 0.25f, true);
                 _player.MyPhysics.Animations.PlayScanner(false, false, _player.MyPhysics.FlipX);
                 _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Color.white);
                 SetMovement(_player, true);
@@ -127,13 +128,14 @@ public class AltruistRole : CustomRoleBehavior
     {
         if (_player.IsLocalPlayer())
         {
+            Utils.FlashScreen(RoleColor, 0.25f, 0.25f, ReviveDuration.GetFloat());
             _player.MyPhysics.Animations.PlayScanner(true, false, _player.MyPhysics.FlipX);
             _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Utils.HexToColor32(RoleColor));
             SetMovement(_player, false);
         }
 
         float duration = ReviveDuration.GetFloat();
-        float checkInterval = 0.5f; // Check every 0.1 seconds
+        float checkInterval = 0.5f;
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -163,7 +165,7 @@ public class AltruistRole : CustomRoleBehavior
         isReviving = false;
         if (_player.IsLocalPlayer() && KillOnRevive.GetBool())
         {
-            _player.MurderSync(_player, true, false, true, false);
+            _player.MurderSync(_player, true, false, true, false, false);
         }
         target.Revive();
         UnityEngine.Object.Destroy(body.gameObject);
