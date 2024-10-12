@@ -63,26 +63,35 @@ public static class PlayerControlDataExtension
     // Helper method to initialize and return BetterData
     private static ExtendedPlayerInfo? GetOrCreateBetterData(NetworkedPlayerInfo data)
     {
-        if (data == null) return null;
+        if (data == null) return null; // Check if data is null
+
+        if (playerInfo == null) return null; // Check if playerInfo is initialized
 
         if (!playerInfo.ContainsKey(data))
         {
-            if (playerInfo.Any() && playerInfo.Keys.FirstOrDefault(Data => Data.PlayerId == data.PlayerId) is NetworkedPlayerInfo info && info != null)
+            var existingInfo = playerInfo.Keys.FirstOrDefault(Data => Data.PlayerId == data.PlayerId);
+            if (existingInfo != null)
             {
-                return playerInfo[info];
+                return playerInfo[existingInfo];
             }
             else
             {
-                ExtendedPlayerInfo newData = new ExtendedPlayerInfo
+                ExtendedPlayerInfo newData = new()
                 {
-                    IsSelf = data == PlayerControl.LocalPlayer.Data,
+                    IsSelf = data == PlayerControl.LocalPlayer?.Data,
                     _PlayerId = data.PlayerId,
                     _Data = data,
                     RoleInfo = new ExtendedRoleInfo(),
                 };
+
                 playerInfo[data] = newData;
-                playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR().Initialize(Utils.PlayerFromPlayerId(data.PlayerId));
-                playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
+
+                var player = Utils.PlayerFromPlayerId(data.PlayerId);
+                if (player != null)
+                {
+                    playerInfo[data].RoleInfo.Role = new CrewmateRoleTBR().Initialize(player);
+                    playerInfo[data].RoleInfo.RoleType = playerInfo[data].RoleInfo.Role.RoleType;
+                }
             }
         }
         return playerInfo[data];
@@ -91,7 +100,7 @@ public static class PlayerControlDataExtension
     // Get BetterData from PlayerControl
     public static ExtendedPlayerInfo? BetterData(this PlayerControl player)
     {
-        return player == null ? null : GetOrCreateBetterData(player.Data);
+        return player?.Data == null ? null : GetOrCreateBetterData(player.Data);
     }
 
     // Get BetterData from NetworkedPlayerInfo
@@ -104,6 +113,6 @@ public static class PlayerControlDataExtension
     public static ExtendedPlayerInfo? BetterData(this ClientData data)
     {
         var player = Utils.PlayerFromClientId(data.Id);
-        return player == null ? null : GetOrCreateBetterData(player.Data);
+        return player?.Data == null ? null : GetOrCreateBetterData(player.Data);
     }
 }

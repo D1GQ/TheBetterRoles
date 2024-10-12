@@ -4,52 +4,6 @@ namespace TheBetterRoles;
 
 public class TaskPatch
 {
-    [HarmonyPatch(typeof(ProgressTracker), nameof(ProgressTracker.FixedUpdate))]
-    public class ProgressTracker_FixedUpdate
-    {
-        public static bool Prefix(ProgressTracker __instance)
-        {
-            if (PlayerTask.PlayerHasTaskOfType<IHudOverrideTask>(PlayerControl.LocalPlayer))
-            {
-                __instance.TileParent.enabled = false;
-                return false;
-            }
-            if (!__instance.TileParent.enabled)
-            {
-                __instance.TileParent.enabled = true;
-            }
-            GameData instance = GameData.Instance;
-            if (instance && instance.TotalTasks > 0)
-            {
-                int num = DestroyableSingleton<TutorialManager>.InstanceExists ? 1 :
-                    instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.BetterData()?.RoleInfo?.Role?.HasTask == true);
-                switch (GameManager.Instance.LogicOptions.GetTaskBarMode())
-                {
-                    case TaskBarMode.Normal:
-                        break;
-                    case TaskBarMode.MeetingOnly:
-                        if (!MeetingHud.Instance)
-                        {
-                            goto Skip_Update;
-                        }
-                        break;
-                    case TaskBarMode.Invisible:
-                        __instance.gameObject.SetActive(false);
-                        goto Skip_Update;
-                    default:
-                        goto Skip_Update;
-                }
-                float num2 = (float)instance.CompletedTasks / instance.TotalTasks * num;
-                __instance.curValue = Mathf.Lerp(__instance.curValue, num2, Time.fixedDeltaTime * 2f);
-                Skip_Update:
-                __instance.TileParent.material.SetFloat("_Buckets", num);
-                __instance.TileParent.material.SetFloat("_FullBuckets", __instance.curValue);
-            }
-
-            return false;
-        }
-    }
-
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManager_RecomputeTaskList
     {
@@ -145,28 +99,106 @@ public class TaskPatch
         }
     }
 
+    [HarmonyPatch(typeof(ProgressTracker), nameof(ProgressTracker.FixedUpdate))]
+    public class ProgressTracker_FixedUpdate
+    {
+        public static bool Prefix(ProgressTracker __instance)
+        {
+            if (PlayerTask.PlayerHasTaskOfType<IHudOverrideTask>(PlayerControl.LocalPlayer))
+            {
+                __instance.TileParent.enabled = false;
+                return false;
+            }
+            else if (!__instance.TileParent.enabled)
+            {
+                __instance.TileParent.enabled = true;
+            }
+            GameData instance = GameData.Instance;
+            if (instance && instance.TotalTasks > 0)
+            {
+                int num = DestroyableSingleton<TutorialManager>.InstanceExists ? 1 :
+                    instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.BetterData()?.RoleInfo?.Role?.HasTask == true);
+
+                float totalProgress = 0f;
+                int taskPlayers = 0;
+
+                foreach (var player in instance.AllPlayers)
+                {
+                    if (player?.Disconnected == false && player?.BetterData()?.RoleInfo?.Role?.HasTask == true)
+                    {
+                        var tasks = player?.Tasks;
+                        if (tasks != null)
+                        {
+                            int playerCompletedTasks = tasks.ToArray().Count(task => task.Complete);
+                            int playerTotalTasks = tasks.ToArray().Length;
+
+                            if (playerTotalTasks > 0)
+                            {
+                                totalProgress += (float)playerCompletedTasks / playerTotalTasks;
+                                taskPlayers++;
+                            }
+                        }
+                    }
+                }
+                switch (GameManager.Instance.LogicOptions.GetTaskBarMode())
+                {
+                    case TaskBarMode.Normal:
+                        break;
+                    case TaskBarMode.MeetingOnly:
+                        if (!MeetingHud.Instance)
+                        {
+                            goto Skip_Update;
+                        }
+                        break;
+                    case TaskBarMode.Invisible:
+                        __instance.gameObject.SetActive(false);
+                        goto Skip_Update;
+                    default:
+                        goto Skip_Update;
+                }
+                float num2 = taskPlayers > 0 ? totalProgress / taskPlayers : 0f;
+                __instance.curValue = Mathf.Lerp(__instance.curValue, num2, Time.fixedDeltaTime * 2f);
+                Skip_Update:
+                __instance.TileParent.material.SetFloat("_Buckets", num);
+                __instance.TileParent.material.SetFloat("_FullBuckets", __instance.curValue);
+            }
+
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(GameData), nameof(GameData.RecomputeTaskCounts))]
     public class GameData_RecomputeTaskCounts
     {
         public static bool Prefix(GameData __instance)
         {
-            if (GameManager.Instance == null)
-            {
-                return false;
-            }
-
             __instance.TotalTasks = 0;
             __instance.CompletedTasks = 0;
-            for (var i = 0; i < __instance.AllPlayers.Count; i++)
+
+            var allPlayers = __instance.AllPlayers?.ToArray();
+            if (allPlayers == null) return false;
+
+            for (var i = 0; i < allPlayers.Length; i++)
             {
-                var playerInfo = __instance.AllPlayers[i];
-                if (!playerInfo.Disconnected && playerInfo.Tasks != null && playerInfo.Object &&
-                    !playerInfo.IsDead && playerInfo.Object.BetterData().RoleInfo.Role.HasTask == true)
-                    for (var j = 0; j < playerInfo.Tasks.Count; j++)
+                var playerInfo = allPlayers[i];
+                if (playerInfo == null || playerInfo.Disconnected || playerInfo.Tasks == null || playerInfo.Object == null)
+                    continue;
+
+                var betterData = playerInfo.BetterData();
+                if (betterData == null || betterData.RoleInfo == null || !betterData.RoleInfo.RoleAssigned || !betterData.RoleInfo.Role.HasTask)
+                    continue;
+
+                if (!playerInfo.IsDead)
+                {
+                    var tasks = playerInfo.Tasks?.ToArray();
+                    if (tasks == null) continue;
+
+                    for (var j = 0; j < tasks.Length; j++)
                     {
                         __instance.TotalTasks++;
-                        if (playerInfo.Tasks[j].Complete) __instance.CompletedTasks++;
+                        if (tasks[j].Complete) __instance.CompletedTasks++;
                     }
+                }
             }
 
             return false;

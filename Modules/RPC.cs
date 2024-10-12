@@ -40,7 +40,10 @@ internal class PlayerControlRPCHandlerPatch
 {
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
-        RPC.HandleRPC(__instance, callId, reader);
+        if (RPC.HandleRPC(__instance, callId, reader) == false)
+        {
+            return false;
+        }
 
         return true;
     }
@@ -283,9 +286,9 @@ internal static class RPC
         }
     }
 
-    public static void HandleRPC(PlayerControl player, byte callId, MessageReader oldReader)
+    public static bool HandleRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
-        if (player == null || player.IsLocalPlayer() || player.Data == null) return;
+        if (player == null || player.Data == null) return true;
 
         MessageReader reader = MessageReader.Get(oldReader);
 
@@ -298,6 +301,8 @@ internal static class RPC
                 }
                 break;
         }
+
+        return true;
     }
 
     public static void HandleSyncActionRPC(PlayerControl sender, MessageReader oldReader, bool IsRPC = false)

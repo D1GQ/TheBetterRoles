@@ -1,6 +1,8 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using Hazel;
 using InnerNet;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -12,14 +14,6 @@ static class ActionPatch
         [HarmonyPatch(nameof(PlayerControl.CmdReportDeadBody))]
         [HarmonyPrefix]
         public static bool CmdReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
-        {
-            __instance.ReportBodySync(target);
-            return false;
-        }
-
-        [HarmonyPatch(nameof(PlayerControl.ReportDeadBody))]
-        [HarmonyPrefix]
-        public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
             __instance.ReportBodySync(target);
             return false;
@@ -173,17 +167,18 @@ static class ActionRPCs
     // Make a player start meeting
     public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool IsRPC = false)
     {
-        var isButton = bodyInfo == null;
+        var flag = bodyInfo == null;
 
-        if (CheckReportBodyAction(player, bodyInfo, isButton) == true)
+        if (CheckReportBodyAction(player, bodyInfo, flag) == true)
         {
             // Run after checks for roles
             CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState());
-            CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, isButton));
-            CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, isButton));
+            CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, flag));
+            CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
 
             // Start Meeting
-            DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+            MeetingRoomManager.Instance.AssignSelf(player, bodyInfo);
+            if (GameStates.IsHost) DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
             player.StartMeeting(bodyInfo);
         }
 
@@ -196,12 +191,18 @@ static class ActionRPCs
 
     private static bool CheckReportBodyAction(PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool isButton)
     {
-
+        if (MeetingHud.Instance)
+        {
+            return false;
+        }
+        if (AmongUsClient.Instance.IsGameOver)
+        {
+            return false;
+        }
         if (!CustomRoleManager.RoleChecks(player, role => role.CheckBodyReport(player, bodyInfo, isButton)))
         {
             return false;
         }
-
         if (!CustomRoleManager.RoleChecksOther(role => role.CheckBodyReportOther(player, bodyInfo, isButton)))
         {
             return false;

@@ -12,7 +12,7 @@ public static class Zoom
 
     public static void Postfix()
     {
-        if (GameStates.IsCanMove && !PlayerControl.LocalPlayer.Is(RoleTypes.GuardianAngel) && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive()))
+        if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive()))
         {
             if (Camera.main.orthographicSize > 3.0f)
                 resetButtons = true;

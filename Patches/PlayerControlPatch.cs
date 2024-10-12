@@ -45,8 +45,10 @@ class PlayerControlPatch
     [HarmonyPrefix]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
     {
+        var betterData = __instance?.BetterData();
+
         // Set color blind text on player
-        if (__instance.DataIsCollected() && !__instance.shapeshifting)
+        if (__instance.DataIsCollected())
         {
             __instance.cosmetics.SetColorBlindColor(__instance.CurrentOutfit.ColorId);
         }
@@ -56,23 +58,20 @@ class PlayerControlPatch
         }
 
         time += Time.deltaTime;
-        if (time > 0.25f)
+        if (time > 0.20f)
         {
             time = 0f;
             SetPlayerInfo(__instance);
-
-            // Reset player data in lobby
-            PlayerControlDataExtension.ResetPlayerData(__instance);
         }
 
         if (GameStates.IsHost && GameStates.IsLobby)
         {
             if (!__instance.IsHost())
             {
-                if (__instance.BetterData().HasMod == false || __instance.BetterData().MismatchVersion == true)
+                if (betterData?.HasMod == false || betterData?.MismatchVersion == true)
                 {
-                    __instance.BetterData().KickTimer -= Time.deltaTime;
-                    if (__instance.BetterData().KickTimer <= 0)
+                    betterData.KickTimer -= Time.deltaTime;
+                    if (betterData?.KickTimer <= 0)
                     {
                         __instance.Kick();
                     }
@@ -83,67 +82,61 @@ class PlayerControlPatch
 
     public static void SetPlayerInfo(PlayerControl player)
     {
-        try
+        var betterData = player?.BetterData();
+        if (player == null || player.Data == null || betterData == null) return;
+
+        var sbTag = new StringBuilder();
+        var sbTagTop = new StringBuilder();
+        var sbTagBottom = new StringBuilder();
+
+        if (GameStates.IsLobby && !GameStates.IsFreePlay)
         {
-            if (player == null || player.Data == null || player.BetterData() == null) return;
-
-            var sbTag = new StringBuilder();
-            var sbTagTop = new StringBuilder();
-            var sbTagBottom = new StringBuilder();
-
-            if (GameStates.IsLobby && !GameStates.IsFreePlay)
+            if (betterData.HasMod || player.IsLocalPlayer())
             {
-                if (player.BetterData().HasMod || player.IsLocalPlayer())
-                {
-                    player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
-                }
-                else
-                {
-                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
-                }
-
-                if (player.BetterData().MismatchVersion)
-                {
-                    if (GameStates.IsHost)
-                    {
-                        sbTag.Append($"<color=#FF0800>{player.BetterData().Version} - {(int)player.BetterData().KickTimer}s</color>+++");
-                    }
-                    else
-                    {
-                        sbTag.Append($"<color=#FF0800>{player.BetterData().Version}</color>+++");
-                    }
-                }
+                player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
             }
             else
             {
-                player.RawSetName(Utils.FormatPlayerName(player.Data));
-
-                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
-                {
-                    sbTag.Append($"{player.GetRoleNameAndColor()}---");
-                }
-
-                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
-                {
-                    foreach (var addon in player.BetterData().RoleInfo.Addons)
-                    {
-                        sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
-                    }
-                }
+                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
             }
 
-            if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
-            if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-            if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
-
-            player.SetPlayerTextInfo(sbTagTop.ToString());
-            player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
-            player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
+            if (betterData.MismatchVersion)
+            {
+                if (GameStates.IsHost)
+                {
+                    sbTag.Append($"<color=#FF0800>{betterData.Version} - {(int)betterData.KickTimer}s</color>+++");
+                }
+                else
+                {
+                    sbTag.Append($"<color=#FF0800>{betterData.Version}</color>+++");
+                }
+            }
         }
-        catch (Exception ex)
+        else
         {
-            Logger.Error(ex);
+            player.RawSetName(Utils.FormatPlayerName(player.Data));
+
+            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+            {
+                sbTag.Append($"{player.GetRoleNameAndColor()}---");
+            }
+
+            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+            {
+                foreach (var addon in betterData.RoleInfo.Addons)
+                {
+                    sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                }
+            }
         }
+
+        if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
+        if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+        if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
+
+        player.SetPlayerTextInfo(sbTagTop.ToString());
+        player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
+        player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
     }
 
     [HarmonyPatch(nameof(PlayerControl.MurderPlayer))]

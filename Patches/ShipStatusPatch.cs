@@ -21,7 +21,7 @@ class ShipStatusPatch
         }
         if (player.Is(CustomRoleTeam.Impostor))
         {
-            __result = __instance.MaxLightRadius * PlayerControl.LocalPlayer.Role().PlayerVisionMod;
+            __result = __instance.MaxLightRadius * PlayerControl.LocalPlayer.Role()?.PlayerVisionMod ?? GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
             return false;
         }
         float num = 1f;
@@ -33,7 +33,7 @@ class ShipStatusPatch
                 num = switchSystem.Value / 255f;
             }
         }
-        __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, num) * PlayerControl.LocalPlayer.Role().PlayerVisionMod;
+        __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, num) * PlayerControl.LocalPlayer.Role()?.PlayerVisionMod ?? GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
 
         return false;
     }

@@ -382,22 +382,26 @@ public static class CustomRoleManager
 
     public static void RoleUpdate(PlayerControl player)
     {
-        if (player.BetterData() == null) return;
+        var betterData = player?.BetterData();
+        if (betterData?.RoleInfo == null || betterData.RoleInfo.AllRoles == null) return;
 
-        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        if (betterData.RoleInfo.AllRoles.Any())
         {
-            if (role != null)
+            foreach (var role in betterData.RoleInfo.AllRoles)
             {
-                role.Update();
-            }
+                role?.Update();
 
-            if (player.IsLocalPlayer())
-            {
-                foreach (var button in role.Buttons)
+                if (player.IsLocalPlayer())
                 {
-                    if (button?.ActionButton == null) continue;
+                    if (role?.Buttons != null)
+                    {
+                        foreach (var button in role.Buttons)
+                        {
+                            if (button?.ActionButton == null) continue;
 
-                    button.Update();
+                            button.Update();
+                        }
+                    }
                 }
             }
         }
