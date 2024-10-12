@@ -382,6 +382,8 @@ public static class CustomRoleManager
 
     public static void RoleUpdate(PlayerControl player)
     {
+        if (player.BetterData() == null) return;
+
         foreach (var role in player.BetterData().RoleInfo.AllRoles)
         {
             if (role != null)

@@ -56,19 +56,26 @@ class MeetingHudUpdatePatch
     {
         timeOpen += Time.deltaTime;
 
+        if (__instance.playerStates == null) return;
+
         foreach (var pva in __instance.playerStates)
         {
-            if (pva == null) return;
+            if (pva == null) continue;
 
-            if (pva.ColorBlindName.isActiveAndEnabled)
+            if (pva.ColorBlindName != null && pva.ColorBlindName.isActiveAndEnabled)
             {
                 pva.ColorBlindName.transform.localPosition = new Vector3(-0.91f, -0.19f, -0.05f);
                 pva.ColorBlindName.color = Palette.PlayerColors[pva.PlayerIcon.ColorId];
                 pva.ColorBlindName.outlineWidth = 0.2745f;
             }
 
-            TextMeshPro TopText = pva.NameText.transform.Find("TextTop").gameObject.GetComponent<TextMeshPro>();
-            TextMeshPro InfoText = pva.NameText.transform.Find("TextInfo").gameObject.GetComponent<TextMeshPro>();
+            if (pva.NameText == null) continue;
+
+            TextMeshPro? TopText = pva.NameText.transform.Find("TextTop")?.gameObject?.GetComponent<TextMeshPro>();
+            TextMeshPro? InfoText = pva.NameText.transform.Find("TextInfo")?.gameObject?.GetComponent<TextMeshPro>();
+
+            var playerData = GameData.Instance?.GetPlayerById(pva.TargetPlayerId);
+            if (playerData == null) continue;
 
             bool flag = Main.AllPlayerControls.Any(player => player.PlayerId == pva.TargetPlayerId);
             PlayerControl? player = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
@@ -76,7 +83,6 @@ class MeetingHudUpdatePatch
             if (!flag)
             {
                 string DisconnectText;
-                var playerData = GameData.Instance.GetPlayerById(pva.TargetPlayerId);
                 switch (playerData.BetterData().DisconnectReason)
                 {
                     case DisconnectReasons.ExitGame:
@@ -96,19 +102,21 @@ class MeetingHudUpdatePatch
                         break;
                 }
 
-                SetPlayerTextInfoMeeting(pva, $"<color=#6b6b6b>{DisconnectText}</color>", isInfo: true);
-                SetPlayerTextInfoMeeting(pva, "");
-                pva.transform.Find("votePlayerBase").gameObject.SetActive(false);
-                pva.transform.Find("deadX_border").gameObject.SetActive(false);
+                SetPlayerTextInfoMeeting(pva, "", isInfo: true);
+                SetPlayerTextInfoMeeting(pva, $"<color=#6b6b6b>{DisconnectText}</color>");
+                pva.transform.Find("votePlayerBase")?.gameObject?.SetActive(false);
+                pva.transform.Find("deadX_border")?.gameObject?.SetActive(false);
                 pva.ClearForResults();
                 pva.SetDisabled();
             }
             else if (TopText != null && InfoText != null)
             {
+                if (player == null || player.BetterData() == null) continue;
+
                 var sbTagTop = new StringBuilder();
                 var sbTag = new StringBuilder();
 
-                if (player.BetterData().NameColor != string.Empty)
+                if (!string.IsNullOrEmpty(player.BetterData().NameColor))
                 {
                     pva.NameText.color = Utils.HexToColor32(player.BetterData().NameColor);
                 }
@@ -148,7 +156,7 @@ class MeetingHudUpdatePatch
         }
 
         text = "<size=65%>" + text + "</size>";
-        GameObject TextObj = pva.NameText.transform.Find(InfoType).gameObject; ;
+        GameObject? TextObj = pva.NameText.transform.Find(InfoType)?.gameObject;
         if (TextObj != null)
         {
             TextObj.GetComponent<TextMeshPro>().text = text;

@@ -300,7 +300,17 @@ static class ExtendedPlayerControl
     public static bool CanKill(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanKill, false) == true;
     // Check if player can sabotage
     public static bool CanSabotage(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanSabotage, false) == true;
-    public static bool RoleAssigned(this PlayerControl player) => player != null && player?.BetterData()?.RoleInfo != null && player?.BetterData()?.RoleInfo?.RoleAssigned == true;
+    public static bool RoleAssigned(this PlayerControl player)
+    {
+        if (player == null) return false;
+
+        var betterData = player.BetterData();
+        if (betterData == null || betterData.RoleInfo == null)
+            return false;
+
+        return betterData.RoleInfo.RoleAssigned;
+    }
+
     // Get hex color for team
     public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam);
     public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam));

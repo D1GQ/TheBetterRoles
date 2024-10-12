@@ -85,7 +85,7 @@ class PlayerControlPatch
     {
         try
         {
-            if (player == null || player.Data == null || GameStates.IsMeeting) return;
+            if (player == null || player.Data == null || player.BetterData() == null) return;
 
             var sbTag = new StringBuilder();
             var sbTagTop = new StringBuilder();
