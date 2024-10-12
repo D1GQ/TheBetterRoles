@@ -1,12 +1,55 @@
 ﻿using HarmonyLib;
-using System.Text;
-using Il2CppSystem.Text;
 using UnityEngine;
-using static Rewired.Data.UserDataStore_PlayerPrefs.ControllerAssignmentSaveInfo;
 namespace TheBetterRoles;
 
 public class TaskPatch
 {
+    [HarmonyPatch(typeof(ProgressTracker), nameof(ProgressTracker.FixedUpdate))]
+    public class ProgressTracker_FixedUpdate
+    {
+        public static bool Prefix(ProgressTracker __instance)
+        {
+            if (PlayerTask.PlayerHasTaskOfType<IHudOverrideTask>(PlayerControl.LocalPlayer))
+            {
+                __instance.TileParent.enabled = false;
+                return false;
+            }
+            if (!__instance.TileParent.enabled)
+            {
+                __instance.TileParent.enabled = true;
+            }
+            GameData instance = GameData.Instance;
+            if (instance && instance.TotalTasks > 0)
+            {
+                int num = DestroyableSingleton<TutorialManager>.InstanceExists ? 1 :
+                    instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.BetterData()?.RoleInfo?.Role?.HasTask == true);
+                switch (GameManager.Instance.LogicOptions.GetTaskBarMode())
+                {
+                    case TaskBarMode.Normal:
+                        break;
+                    case TaskBarMode.MeetingOnly:
+                        if (!MeetingHud.Instance)
+                        {
+                            goto Skip_Update;
+                        }
+                        break;
+                    case TaskBarMode.Invisible:
+                        __instance.gameObject.SetActive(false);
+                        goto Skip_Update;
+                    default:
+                        goto Skip_Update;
+                }
+                float num2 = (float)instance.CompletedTasks / instance.TotalTasks * num;
+                __instance.curValue = Mathf.Lerp(__instance.curValue, num2, Time.fixedDeltaTime * 2f);
+                Skip_Update:
+                __instance.TileParent.material.SetFloat("_Buckets", num);
+                __instance.TileParent.material.SetFloat("_FullBuckets", __instance.curValue);
+            }
+
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManager_RecomputeTaskList
     {
