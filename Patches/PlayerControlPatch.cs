@@ -14,36 +14,37 @@ namespace TheBetterRoles.Patches;
 class PlayerControlPatch
 {
     public static float time = 0f;
-    [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
-    [HarmonyPrefix]
-    public static void FixedUpdate_Prefix(PlayerControl __instance)
+    [HarmonyPatch(nameof(PlayerControl.Start))]
+    [HarmonyPostfix]
+    public static void Start_Postfix(PlayerControl __instance)
     {
         // Set up player text info
         var nameTextTransform = __instance.gameObject.transform.Find("Names/NameText_TMP");
         var nameText = nameTextTransform?.gameObject;
-        var infoText = nameTextTransform?.Find("InfoText_T_TMP");
 
-        if (nameText != null && infoText == null)
+        void InstantiatePlayerInfoText(string name, Vector3 positionOffset)
         {
-            void InstantiatePlayerInfoText(string name, Vector3 positionOffset)
+            var newTextObject = UnityEngine.Object.Instantiate(nameText, nameTextTransform);
+            newTextObject.name = name;
+            newTextObject.transform.DestroyChildren();
+            newTextObject.transform.position += positionOffset;
+            var textMesh = newTextObject.GetComponent<TextMeshPro>();
+            if (textMesh != null)
             {
-                var newTextObject = UnityEngine.Object.Instantiate(nameText, nameTextTransform);
-                newTextObject.name = name;
-                newTextObject.transform.DestroyChildren();
-                newTextObject.transform.position += positionOffset;
-                var textMesh = newTextObject.GetComponent<TextMeshPro>();
-                if (textMesh != null)
-                {
-                    textMesh.text = string.Empty;
-                }
-                newTextObject.SetActive(true);
+                textMesh.text = string.Empty;
             }
-
-            InstantiatePlayerInfoText("InfoText_Info_TMP", new Vector3(0f, 0.25f));
-            InstantiatePlayerInfoText("InfoText_T_TMP", new Vector3(0f, 0.15f));
-            InstantiatePlayerInfoText("InfoText_B_TMP", new Vector3(0f, -0.15f));
+            newTextObject.SetActive(true);
         }
 
+        InstantiatePlayerInfoText("InfoText_Info_TMP", new Vector3(0f, 0.25f));
+        InstantiatePlayerInfoText("InfoText_T_TMP", new Vector3(0f, 0.15f));
+        InstantiatePlayerInfoText("InfoText_B_TMP", new Vector3(0f, -0.15f));
+    }
+    
+    [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
+    [HarmonyPrefix]
+    public static void FixedUpdate_Prefix(PlayerControl __instance)
+    {
         // Set color blind text on player
         if (__instance.DataIsCollected() && !__instance.shapeshifting)
         {
@@ -55,7 +56,7 @@ class PlayerControlPatch
         }
 
         time += Time.deltaTime;
-        if (time > 0.5f)
+        if (time > 0.25f)
         {
             time = 0f;
             SetPlayerInfo(__instance);
@@ -86,7 +87,6 @@ class PlayerControlPatch
         {
             if (player == null || player.Data == null || GameStates.IsMeeting) return;
 
-            string marks = "";
             var sbTag = new StringBuilder();
             var sbTagTop = new StringBuilder();
             var sbTagBottom = new StringBuilder();

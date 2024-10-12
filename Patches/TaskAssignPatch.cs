@@ -42,6 +42,7 @@ class RpcSetTasksPatch
     public static void Prefix(NetworkedPlayerInfo __instance, [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
     {
         if (!GameStates.IsHost) return;
+        taskTypeIds = new Il2CppStructArray<byte>(0);
 
         // Default number of tasks
         int NumCommonTasks = BetterGameSettings.CommonTasksNum.GetInt();

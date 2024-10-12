@@ -17,7 +17,7 @@ class GamePlayManager
             _ = new LateTask(() =>
             {
                 RPC.SendModRequest();
-            }, 2f, shoudLog: false);
+            }, 3f, shoudLog: false);
         }
 
         // Disabled annoying music

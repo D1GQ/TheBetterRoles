@@ -69,7 +69,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     private void ResetState()
     {
         InteractableTarget = true;
-        DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
+        if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
         _player.cosmetics.gameObject.SetActive(true);
         SetNameTextAlpha(1f);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
@@ -77,16 +77,17 @@ public class PhantomRoleTBR : CustomRoleBehavior
 
     public override void Update()
     {
-        DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
         if (!HasBeenClicked)
         {
+            if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
+
             if (_player.MyPhysics.Animations.IsPlayingRunAnimation())
             {
-                Alpha += 0.0025f;
+                Alpha += 0.005f;
             }
             else
             {
-                Alpha -= 0.005f;
+                Alpha -= 0.0025f;
             }
 
             Alpha = Math.Clamp(Alpha, 0f, 0.20f);

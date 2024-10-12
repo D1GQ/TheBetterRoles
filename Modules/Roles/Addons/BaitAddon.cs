@@ -39,10 +39,14 @@ public class NoiseMakerAddon : CustomAddonBehavior
             var num = Delay.GetBool() ? IRandom.Instance.Next(MinimumDelay.GetInt(), MaximumDelay.GetInt()) : 0;
             if (Delay.GetBool() && MinimumDelay.GetInt() >= MaximumDelay.GetInt() || MaximumDelay.GetInt() <= MinimumDelay.GetInt())
                 num = 0;
-            _ = new LateTask(() =>
+
+            if (GameStates.IsHost)
             {
-                killer.ReportBodySync(_data);
-            }, num + 0.25f, shoudLog: false);
+                _ = new LateTask(() =>
+                {
+                    killer.ReportBodySync(_data);
+                }, num + 1f, shoudLog: false);
+            }
         }
     }
 }

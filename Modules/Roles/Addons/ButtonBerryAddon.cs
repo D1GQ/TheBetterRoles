@@ -34,7 +34,10 @@ public class ButtonBerryAddon : CustomAddonBehavior
         switch (id)
         {
             case 5:
-                _player.ReportBodySync(null);
+                if (_player.IsLocalPlayer())
+                {
+                    _player.ReportBodySync(null);
+                }
                 RemoveButton(MeetingButton);
                 break;
         }

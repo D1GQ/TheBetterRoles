@@ -325,7 +325,7 @@ internal static class RPC
                         winnersIds.Add(reader.ReadByte());
                     }
 
-                    ActionRPCs.EndGameSync(winnersIds, reason, team);
+                    ActionRPCs.EndGameSync(winnersIds, reason, team, IsRPC);
                 }
                 break;
             case RpcAction.ResetAbilityState:

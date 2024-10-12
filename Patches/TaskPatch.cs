@@ -108,22 +108,37 @@ public class TaskPatch
         {
             __instance.TotalTasks = 0;
             __instance.CompletedTasks = 0;
-            for (var i = 0; i < __instance.AllPlayers.Count; i++)
+
+            var allPlayers = __instance.AllPlayers?.ToArray();
+            if (allPlayers == null) return false;
+
+            for (var i = 0; i < allPlayers.Length; i++)
             {
-                var playerInfo = __instance.AllPlayers.ToArray()[i];
-                if (!playerInfo.Disconnected && playerInfo.Tasks != null && playerInfo.Object &&
-                    (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !playerInfo.IsDead) && playerInfo.Object.BetterData()?.RoleInfo?.RoleAssigned == true
-                    && playerInfo.Object.BetterData().RoleInfo.Role.HasTask == true)
-                    for (var j = 0; j < playerInfo.Tasks.Count; j++)
+                var playerInfo = allPlayers[i];
+                if (playerInfo == null || playerInfo.Disconnected || playerInfo.Tasks == null || playerInfo.Object == null)
+                    continue;
+
+                var betterData = playerInfo.Object.BetterData();
+                if (betterData?.RoleInfo == null || !betterData.RoleInfo.RoleAssigned || !betterData.RoleInfo.Role.HasTask)
+                    continue;
+
+                if (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !playerInfo.IsDead)
+                {
+                    var tasks = playerInfo.Tasks?.ToArray();
+                    if (tasks == null) continue;
+
+                    for (var j = 0; j < tasks.Length; j++)
                     {
                         __instance.TotalTasks++;
-                        if (playerInfo.Tasks.ToArray()[j].Complete) __instance.CompletedTasks++;
+                        if (tasks[j].Complete) __instance.CompletedTasks++;
                     }
+                }
             }
 
             return false;
         }
     }
+
 
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.NextStep))]
     public class NormalPlayerTask_NextStep

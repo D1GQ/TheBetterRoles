@@ -42,8 +42,10 @@ static class ActionRPCs
     private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer || GameStates.IsHost;
 
     // Needs to be fixed, clients do not receive the RPC
-    public static void EndGameSync(List<byte> winners, EndGameReason reason, CustomRoleTeam team)
+    public static void EndGameSync(List<byte> winners, EndGameReason reason, CustomRoleTeam team, bool IsRPC = false)
     {
+        if (!GameStates.IsHost && !IsRPC) return;
+
         if (ValidateHostCheck())
         {
             if (GameStates.IsHost)
@@ -171,6 +173,8 @@ static class ActionRPCs
     // Make a player start meeting
     public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool IsRPC = false)
     {
+        if (CustomGameManager.GameHasEnded && !GameStates.IsFreePlay) return;
+
         var isButton = bodyInfo == null;
 
         if (CheckReportBodyAction(player, bodyInfo, isButton) == true)
