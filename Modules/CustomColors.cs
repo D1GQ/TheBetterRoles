@@ -96,7 +96,7 @@ public class CustomColors
             },
             new CustomColor
             {
-                translatorName = "Hot Pink",
+                translatorName = "HotPink",
                 color = new Color32(255, 51, 102, byte.MaxValue),
                 shadow = new Color32(232, 0, 58, byte.MaxValue),
                 isLighterColor = true

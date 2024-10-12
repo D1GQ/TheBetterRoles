@@ -32,6 +32,7 @@ public class Main : BasePlugin
     public const string ReleaseDate = "10.10.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
+    public static bool IsGuestBuild => true;
 
     public static string modSignature
     {

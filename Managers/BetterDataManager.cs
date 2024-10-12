@@ -308,7 +308,7 @@ class BetterDataManager
 
     public static void LoadData()
     {
-        LoadCheatData();
+        // LoadCheatData();
     }
 
     public static void LoadCheatData()

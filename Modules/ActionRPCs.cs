@@ -173,8 +173,6 @@ static class ActionRPCs
     // Make a player start meeting
     public static void ReportBodySync(this PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool IsRPC = false)
     {
-        if (CustomGameManager.GameHasEnded && !GameStates.IsFreePlay) return;
-
         var isButton = bodyInfo == null;
 
         if (CheckReportBodyAction(player, bodyInfo, isButton) == true)
