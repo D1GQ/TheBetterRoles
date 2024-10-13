@@ -70,9 +70,9 @@ public class PhantomRoleTBR : CustomRoleBehavior
     {
         InteractableTarget = true;
         if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
-        _player.cosmetics.gameObject.SetActive(true);
         SetNameTextAlpha(1f);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
+        _player.cosmetics.gameObject.SetActive(true);
     }
 
     public override void Update()
@@ -100,11 +100,11 @@ public class PhantomRoleTBR : CustomRoleBehavior
     {
         if (Alpha > 0f && target == _player && player != _player)
         {
-            ResetState();
             if (_player.IsLocalPlayer())
             {
                 _player.MurderSync(_player, true, false, false, false, false);
             }
+            ResetState();
             HasBeenClicked = true;
         }
     }

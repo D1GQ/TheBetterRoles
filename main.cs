@@ -32,16 +32,16 @@ public class Main : BasePlugin
     public const string ReleaseDate = "10.12.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
-    public static bool IsGuestBuild => true;
+    public static bool IsGuestBuild => false;
 
     public static string modSignature
     {
         get
         {
-            string GetHash(string puid)
+            string GetHash(string hash)
             {
                 using SHA256 sha256 = SHA256.Create();
-                byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(puid));
+                byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(hash));
                 string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
                 return sha256Hash.Substring(0, 16) + sha256Hash.Substring(sha256Hash.Length - 8);
             }

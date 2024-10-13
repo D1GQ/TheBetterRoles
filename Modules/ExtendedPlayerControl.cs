@@ -160,7 +160,7 @@ static class ExtendedPlayerControl
         if (isInfo)
         {
             infoType = "InfoText_Info_TMP";
-            var topText = player.gameObject.transform.Find("Names/NameText_TMP/InfoText_T_TMP")?.GetComponent<TextMeshPro>();
+            var topText = player.cosmetics.nameText.transform.Find("InfoText_T_TMP")?.GetComponent<TextMeshPro>();
 
             if (topText != null && string.IsNullOrEmpty(Utils.RemoveHtmlText(topText.text)))
             {
@@ -169,7 +169,7 @@ static class ExtendedPlayerControl
         }
 
         text = "<size=65%>" + text + "</size>";
-        var textObj = player.gameObject.transform.Find($"Names/NameText_TMP/{infoType}")?.GetComponent<TextMeshPro>();
+        var textObj = player.cosmetics.nameText.transform.Find($"{infoType}")?.GetComponent<TextMeshPro>();
 
         if (textObj != null)
         {

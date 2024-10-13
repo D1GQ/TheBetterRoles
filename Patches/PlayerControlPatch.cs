@@ -16,6 +16,7 @@ class PlayerControlPatch
     public static float time = 0f;
     [HarmonyPatch(nameof(PlayerControl.Start))]
     [HarmonyPostfix]
+    [HarmonyPriority(Priority.First)]
     public static void Start_Postfix(PlayerControl __instance)
     {
         // Set up player text info
@@ -40,12 +41,20 @@ class PlayerControlPatch
         InstantiatePlayerInfoText("InfoText_T_TMP", new Vector3(0f, 0.15f));
         InstantiatePlayerInfoText("InfoText_B_TMP", new Vector3(0f, -0.15f));
     }
-    
+
     [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
     [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
     {
         var betterData = __instance?.BetterData();
+
+        time += Time.deltaTime;
+        if (time > 0.20f)
+        {
+            time = 0f;
+            SetPlayerInfo(__instance);
+        }
 
         // Set color blind text on player
         if (__instance.DataIsCollected())
@@ -55,13 +64,6 @@ class PlayerControlPatch
         else
         {
             __instance.cosmetics.colorBlindText.text = string.Empty;
-        }
-
-        time += Time.deltaTime;
-        if (time > 0.20f)
-        {
-            time = 0f;
-            SetPlayerInfo(__instance);
         }
 
         if (GameStates.IsHost && GameStates.IsLobby)
@@ -82,61 +84,63 @@ class PlayerControlPatch
 
     public static void SetPlayerInfo(PlayerControl player)
     {
-        var betterData = player?.BetterData();
-        if (player == null || player.Data == null || betterData == null) return;
-
-        var sbTag = new StringBuilder();
-        var sbTagTop = new StringBuilder();
-        var sbTagBottom = new StringBuilder();
-
-        if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        try
         {
-            if (betterData.HasMod || player.IsLocalPlayer())
-            {
-                player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
-            }
-            else
-            {
-                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
-            }
+            var betterData = player?.BetterData();
+            if (player == null || player.Data == null || betterData == null) return;
 
-            if (betterData.MismatchVersion)
+            var sbTag = new StringBuilder();
+            var sbTagTop = new StringBuilder();
+            var sbTagBottom = new StringBuilder();
+
+            if (GameStates.IsLobby && !GameStates.IsFreePlay)
             {
-                if (GameStates.IsHost)
+                if (betterData.HasMod || player.IsLocalPlayer())
                 {
-                    sbTag.Append($"<color=#FF0800>{betterData.Version} - {(int)betterData.KickTimer}s</color>+++");
+                    player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
                 }
                 else
                 {
-                    sbTag.Append($"<color=#FF0800>{betterData.Version}</color>+++");
+                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
                 }
-            }
-        }
-        else
-        {
-            player.RawSetName(Utils.FormatPlayerName(player.Data));
 
-            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
-            {
-                sbTag.Append($"{player.GetRoleNameAndColor()}---");
-            }
-
-            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
-            {
-                foreach (var addon in betterData.RoleInfo.Addons)
+                if (betterData.MismatchVersion)
                 {
-                    sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                    if (GameStates.IsHost)
+                    {
+                        sbTag.Append($"<color=#FF0800>{betterData.Version} - {(int)betterData.KickTimer}s</color>+++");
+                    }
+                    else
+                    {
+                        sbTag.Append($"<color=#FF0800>{betterData.Version}</color>+++");
+                    }
                 }
             }
+            else
+            {
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+                {
+                    sbTag.Append($"{player.GetRoleNameAndColor()}---");
+                }
+
+                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+                {
+                    foreach (var addon in betterData.RoleInfo.Addons)
+                    {
+                        sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                    }
+                }
+            }
+
+            if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
+            if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+            if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
+
+            player.SetPlayerTextInfo(sbTagTop.ToString());
+            player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
+            player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
         }
-
-        if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
-        if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-        if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
-
-        player.SetPlayerTextInfo(sbTagTop.ToString());
-        player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
-        player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
+        catch { }
     }
 
     [HarmonyPatch(nameof(PlayerControl.MurderPlayer))]

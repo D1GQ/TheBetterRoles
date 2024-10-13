@@ -49,7 +49,6 @@ public class MedicRole : CustomRoleBehavior
     {
         if (Shielded != null)
         {
-            Shielded.BetterData().NameColor = string.Empty;
             Shielded = null;
         }
     }
@@ -58,9 +57,8 @@ public class MedicRole : CustomRoleBehavior
     {
         if (killer != _player && target == _player)
         {
-            if (Shielded != null)
+            if (Shielded != null && RemoveShieldOnMedicDeath.GetBool())
             {
-                Shielded.BetterData().NameColor = string.Empty;
                 Shielded = null;
             }
         }
