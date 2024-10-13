@@ -626,28 +626,22 @@ public class CustomGameManager
 
     public static bool CheckPlayerAmount(ref CustomRoleTeam team)
     {
-        List<PlayerControl> allPlayers = [];
-        foreach (var player in Main.AllAlivePlayerControls)
-        {
-            if (!player.Role().CanKill && player.Role().IsNeutral) continue;
+        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.ToList();
+        List<PlayerControl> impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor)).ToList();
+        List<PlayerControl> nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
+        List<PlayerControl> killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
 
-            allPlayers.Add(player);
-        }
-        var impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor));
-        var nonKillingPlayers = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Crewmate) || CustomRoleManager.RoleChecks(pc, role => !role.CanKill));
-        var neutralKilling = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Neutral) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill));
-
-        if (allPlayers.All(pc => pc.Is(CustomRoleTeam.Crewmate)) || !allPlayers.Any())
+        if (allPlayers.All(pc => pc.Is(CustomRoleTeam.Crewmate)))
         {
             team = CustomRoleTeam.Crewmate;
             return true;
         }
-        else if ((impostors.Count() >= allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor)).Count() && !neutralKilling.Any()) || allPlayers.All(pc => pc.Is(CustomRoleTeam.Impostor)))
+        else if (impostors.Count >= nonKillingPlayers.Count && !killingPlayers.Any())
         {
             team = CustomRoleTeam.Impostor;
             return true;
         }
-        else if (allPlayers.Count() == 1 && neutralKilling.Count() == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
+        else if (allPlayers.Count == 1 && killingPlayers.Count == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
         {
             team = CustomRoleTeam.Neutral;
             return true;

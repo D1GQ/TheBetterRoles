@@ -24,12 +24,12 @@ public enum ReleaseTypes : int
 public class Main : BasePlugin
 {
     public static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;
-    public const string BetaNum = "1";
+    public const string BetaNum = "2";
     public const string HotfixNum = "0";
     public const bool IsHotFix = false;
     public const string PluginGuid = "com.d1gq.thebetterroles";
     public const string PluginVersion = "1.0.0";
-    public const string ReleaseDate = "10.10.2024"; // mm/dd/yyyy
+    public const string ReleaseDate = "10.12.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
     public static bool IsGuestBuild => true;
