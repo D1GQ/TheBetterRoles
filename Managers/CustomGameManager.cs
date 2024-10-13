@@ -495,7 +495,6 @@ public class CustomGameManager
         GameHasEnded = false;
         CustomRoleManager.availableGhostRoles.Clear();
         CustomRoleBehavior.SubTeam.Clear();
-        PlayerControlDataExtension.ClearAllData();
         HudManager.Instance.MapButton.gameObject.SetActive(true);
     }
 

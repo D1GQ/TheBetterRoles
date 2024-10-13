@@ -24,7 +24,7 @@ public enum ReleaseTypes : int
 public class Main : BasePlugin
 {
     public static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;
-    public const string BetaNum = "2";
+    public const string BetaNum = "1";
     public const string HotfixNum = "0";
     public const bool IsHotFix = false;
     public const string PluginGuid = "com.d1gq.thebetterroles";
@@ -115,6 +115,11 @@ public class Main : BasePlugin
 
     public override void Load()
     {
+        // Add custom components
+        {
+            AddComponent<ExtendedPlayerInfo>();
+        }
+
         try
         {
             Preset = Config.Bind("Better Settings", "Preset", 1);

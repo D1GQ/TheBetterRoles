@@ -71,7 +71,7 @@ internal class MainMenuPatch
                     "GitHubButton",
                     new(153, 153, 153, byte.MaxValue),
                     new(209, 209, 209, byte.MaxValue),
-                    () => Application.OpenURL(Main.Github),
+                    () => Application.OpenURL(""/*Main.Github*/),
                     "GitHub"); //"GitHub"
             }
 

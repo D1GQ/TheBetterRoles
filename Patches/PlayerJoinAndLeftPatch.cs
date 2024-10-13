@@ -11,8 +11,6 @@ class OnGameJoinedPatch
     {
         try
         {
-            PlayerControlDataExtension.playerInfo.Clear();
-
             // Fix host icon in lobby on modded servers
             if (!GameStates.IsVanillaServer)
             {
@@ -36,11 +34,6 @@ public static class OnPlayerJoinedPatch
             if (GameStates.IsInGame)
             {
                 var player = Utils.PlayerFromClientId(client.Id);
-
-                if (player != null)
-                {
-                    player.BetterData().ClearData();
-                }
 
                 if (GameStates.IsHost) RPC.SendModRequest();
 
