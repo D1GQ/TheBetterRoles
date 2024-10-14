@@ -27,6 +27,7 @@ public class ExtendedRoleInfo
 {
     public bool RoleAssigned => AllRoles.Any();
     public CustomRoleBehavior? Role { get; set; }
+    public CustomRoles RoleTypeWhenAlive { get; set; }
     public CustomRoles RoleType { get; set; }
     public List<CustomAddonBehavior>? Addons { get; set; } = [];
     public int OverrideCommonTasks { get; set; } = -1;

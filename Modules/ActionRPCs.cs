@@ -104,6 +104,7 @@ static class ActionRPCs
             CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
             player.BetterData().RoleInfo.Kills++;
+            target.BetterData().RoleInfo.RoleTypeWhenAlive = target.BetterData().RoleInfo.RoleType;
             player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation, playSound);
         }
 

@@ -661,6 +661,7 @@ public enum CustomRoles
     Pestillence,
     Plaguebearer,
     Phantom,
+    Amnesiac,
 
     // Addons
     Bait,

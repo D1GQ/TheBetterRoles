@@ -139,7 +139,7 @@
 
   "Role.Plaguebearer": "Plaguebearer",
   "Role.Plaguebearer.Info": "Infact all to unrelease Pestillence",
-  "Role.Plaguebearer.LongInfo": "As the Plaguebearer, you are able to infect other players, players can also get infected by interacting with already infected players. Once all alive players are infected the Plaguebearer will turn into the Pestillence!",
+  "Role.Plaguebearer.LongInfo": "As the Plaguebearer, you are able to infect other players, players can also get infected by interacting with already infected players. Once all alive players are infected the Plaguebearer will turn into the Pestillence. Depending on settings when turning into the Pestillence the shapeshift animation will play.",
   "Role.Plaguebearer.Ability.1": "Infect",
   "Role.Plaguebearer.Option.PlayAnimation": "Play Animation",
   "Role.Plaguebearer.Option.InfectCooldown": "Infect Cooldown",
@@ -155,6 +155,12 @@
   "Role.Mole.LongInfo": "As the Mole, you are able to dig a set amount vents wherever you like, note that only you can see and use these vents.",
   "Role.Mole.Ability.1": "Dig Hole",
   "Role.Mole.Option.MaxVents": "Max Vents",
+
+  "Role.Amnesiac": "Amnesiac",
+  "Role.Amnesiac.Info": "Remember an role",
+  "Role.Amnesiac.LongInfo": "As the Amnesiac, you can remember a dead body's role. When remembering, you become that role.",
+  "Role.Amnesiac.Ability.1": "Remember?",
+  "Role.Amnesiac.Option.RememberCooldown": "Remember Cooldown",
 
   "Role.Phantom": "Phantom",
   "Role.Phantom.Info": "Complete all tasks without being seen",

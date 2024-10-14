@@ -58,12 +58,15 @@ public class PhantomRoleTBR : CustomRoleBehavior
         {
             SetNameTextAlpha(0f);
             _player.cosmetics.SetPhantomRoleAlpha(0f);
-            vent.SetButtons(true);
             _player.NetTransform.SnapTo(vent.transform.position);
             _player.inVent = true;
             _player.Visible = false;
             _player.moveable = false;
             VentilationSystem.Update(VentilationSystem.Operation.Move, vent.Id);
+            if (_player.IsLocalPlayer())
+            {
+                vent.SetButtons(true);
+            }
         }
     }
 
