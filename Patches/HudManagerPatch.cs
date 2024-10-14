@@ -82,7 +82,8 @@ public class HudManagerPatch
         }
         catch { }
 
-        // __instance.Chat.gameObject.SetActive(true);
+        if (GameStates.IsFreePlay)
+            __instance.Chat.gameObject.SetActive(true);
     }
 }
 

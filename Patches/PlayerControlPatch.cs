@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
 using HarmonyLib;
+using Il2CppSystem.IO;
 using Il2CppSystem.Linq;
 using LibCpp2IL;
 using System.Text;
@@ -47,14 +48,7 @@ class PlayerControlPatch
     [HarmonyPriority(Priority.First)]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
     {
-        var betterData = __instance?.BetterData();
-
-        time += Time.deltaTime;
-        if (time > 0.20f)
-        {
-            time = 0f;
-            SetPlayerInfo(__instance);
-        }
+        SetPlayerInfo(__instance);
 
         // Set color blind text on player
         if (__instance.DataIsCollected())
@@ -68,6 +62,8 @@ class PlayerControlPatch
 
         if (GameStates.IsHost && GameStates.IsLobby)
         {
+            ExtendedPlayerInfo? betterData = __instance?.BetterData();
+
             if (!__instance.IsHost())
             {
                 if (betterData?.HasMod == false || betterData?.MismatchVersion == true)
@@ -84,63 +80,58 @@ class PlayerControlPatch
 
     public static void SetPlayerInfo(PlayerControl player)
     {
-        try
+        if (player == null || player.Data == null) return;
+
+        var sbTag = new StringBuilder();
+        var sbTagTop = new StringBuilder();
+        var sbTagBottom = new StringBuilder();
+
+        if (GameStates.IsLobby && !GameStates.IsFreePlay)
         {
-            var betterData = player?.BetterData();
-            if (player == null || player.Data == null || betterData == null) return;
-
-            var sbTag = new StringBuilder();
-            var sbTagTop = new StringBuilder();
-            var sbTagBottom = new StringBuilder();
-
-            if (GameStates.IsLobby && !GameStates.IsFreePlay)
+            if (player.BetterData().HasMod || player.IsLocalPlayer())
             {
-                if (betterData.HasMod || player.IsLocalPlayer())
-                {
-                    player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
-                }
-                else
-                {
-                    player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
-                }
-
-                if (betterData.MismatchVersion)
-                {
-                    if (GameStates.IsHost)
-                    {
-                        sbTag.Append($"<color=#FF0800>{betterData.Version} - {(int)betterData.KickTimer}s</color>+++");
-                    }
-                    else
-                    {
-                        sbTag.Append($"<color=#FF0800>{betterData.Version}</color>+++");
-                    }
-                }
+                player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
             }
             else
             {
-                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
-                {
-                    sbTag.Append($"{player.GetRoleNameAndColor()}---");
-                }
-
-                if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
-                {
-                    foreach (var addon in betterData.RoleInfo.Addons)
-                    {
-                        sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
-                    }
-                }
+                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
             }
 
-            if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
-            if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-            if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
-
-            player.SetPlayerTextInfo(sbTagTop.ToString());
-            player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
-            player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
+            if (player.BetterData().MismatchVersion)
+            {
+                if (GameStates.IsHost)
+                {
+                    sbTag.Append($"<color=#FF0800>{player.BetterData().Version} - {(int)player.BetterData().KickTimer}s</color>+++");
+                }
+                else
+                {
+                    sbTag.Append($"<color=#FF0800>{player.BetterData().Version}</color>+++");
+                }
+            }
         }
-        catch { }
+        else
+        {
+            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+            {
+                sbTag.Append($"{player.GetRoleNameAndColor()}---");
+            }
+
+            if (player.IsLocalPlayer() || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+            {
+                foreach (var addon in player.BetterData().RoleInfo.Addons)
+                {
+                    sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                }
+            }
+        }
+
+        if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
+        if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
+        if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
+
+        player.SetPlayerTextInfo(sbTagTop.ToString());
+        player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
+        player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
     }
 
     [HarmonyPatch(nameof(PlayerControl.MurderPlayer))]

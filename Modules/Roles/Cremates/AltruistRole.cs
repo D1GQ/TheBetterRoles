@@ -163,6 +163,7 @@ public class AltruistRole : CustomRoleBehavior
     private void Revive(PlayerControl target, DeadBody body)
     {
         isReviving = false;
+        target.NetTransform.SnapTo(body.transform.position);
         if (_player.IsLocalPlayer() && KillOnRevive.GetBool())
         {
             _player.MurderSync(_player, true, false, true, false, false);

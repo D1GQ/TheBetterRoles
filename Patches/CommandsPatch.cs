@@ -83,10 +83,6 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
-                foreach(var player in Main.AllPlayerControls)
-                {
-                    RPC.SyncSettings(player);
-                }
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(

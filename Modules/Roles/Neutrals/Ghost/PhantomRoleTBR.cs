@@ -31,6 +31,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     public override void OnSetUpRole()
     {
         _player.Revive();
+        _player.Data.IsDead = true;
         _player.cosmetics.gameObject.SetActive(false);
         InteractableTarget = false;
         SetNameTextAlpha(0f);

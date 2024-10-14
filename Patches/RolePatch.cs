@@ -23,6 +23,7 @@ public class RolePatch
         [HarmonyPrefix]
         public static void FixedUpdate_Prefix(PlayerControl __instance)
         {
+
             CustomRoleManager.RoleUpdate(__instance);
 
             var box = __instance.gameObject.GetComponent<BoxCollider2D>();

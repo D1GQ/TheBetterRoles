@@ -67,6 +67,16 @@
   "Role.Sheriff.Option.CanShootImposters": "Can Shoot Imposters",
   "Role.Sheriff.Option.CanShootNeutralKilling": "Can Shoot Neutral Killing",
 
+  "Role.Veteran": "Veteran",
+  "Role.Veteran.Info": "Go on Alert!",
+  "Role.Veteran.LongInfo": "The Veteran can go on alert mode. When the Veteran is on alert, anyone—whether crew, neutral, or impostor—who interacts with the Veteran will die.",
+  "Role.Veteran.Ability.1": "Alert",
+  "Role.Veteran.Option.CanBeKilledOnAlert": "Can Be Killed on Alert",
+  "Role.Veteran.Option.AlertCooldown": "Alert Cooldown",
+  "Role.Veteran.Option.AlertDuration": "Alert Duration",
+  "Role.Veteran.Option.MaximumNumberOfAlerts": "Maximum Number of Alerts",
+  "Role.Veteran.Option.AlertsGainFromTask": "Alerts Gained from Tasks",
+
   "Role.Snitch": "Snitch",
   "Role.Snitch.Info": "Finish your tasks to find the Impostors",
   "Role.Snitch.LongInfo": "After the Snitch completes all tasks, they can see the Impostor's roles and have a arrow putting towards them. When the Snitch has only one task left, the Impostors will see a arrow pointing towards the Snitch.",

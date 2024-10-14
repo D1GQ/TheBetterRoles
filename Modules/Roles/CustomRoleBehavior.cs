@@ -3,7 +3,6 @@ using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace TheBetterRoles;
 
@@ -396,9 +395,9 @@ public abstract class CustomRoleBehavior
         if (TaskReliantRole)
         {
             OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
-            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 5, 1], 2, "", "", OverrideTasksOptionItem);
-            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 5, 1], 2, "", "", OverrideTasksOptionItem);
-            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 5, 1], 4, "", "", OverrideTasksOptionItem);
+            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
 
         OptionItems.Initialize();
