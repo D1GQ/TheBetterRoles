@@ -200,6 +200,10 @@ static class ActionRPCs
         {
             return false;
         }
+        if (player == null)
+        {
+            return false;
+        }
         if (!CustomRoleManager.RoleChecks(player, role => role.CheckBodyReport(player, bodyInfo, isButton)))
         {
             return false;

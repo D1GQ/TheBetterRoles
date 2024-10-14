@@ -357,6 +357,8 @@ public static class CustomRoleManager
 
     public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)
     {
+        if (!GameStates.IsHost) return;
+
         if (player != null)
         {
             if (player?.BetterData()?.RoleInfo != null)
@@ -365,7 +367,6 @@ public static class CustomRoleManager
                 player.BetterData().RoleInfo.OverrideShortTasks = shortTasks;
                 player.BetterData().RoleInfo.OverrideCommonTasks = commonTasks;
             }
-            player.ClearTasks();
             player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0));
         }
     }
@@ -596,6 +597,7 @@ public static class CustomRoleManager
         {
             if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
             {
+                if (GameStates.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
                 Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);
                 PlayerControl.LocalPlayer.StopAllCoroutines();
                 DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());

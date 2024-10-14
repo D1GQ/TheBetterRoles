@@ -13,7 +13,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public string Version { get; set; } = "";
     public bool MismatchVersion { get; set; }
 
-    public bool IsSelf { get; set; }
+    public bool IsSelf => _Data?.AmOwner ?? false;
     public byte _PlayerId { get; set; }
     public NetworkedPlayerInfo? _Data { get; set; }
     public string? NameColor { get; set; } = string.Empty;
@@ -65,7 +65,6 @@ public static class PlayerControlDataExtension
             {
                 ExtendedPlayerInfo newBetterData = data.gameObject.AddComponent<ExtendedPlayerInfo>();
 
-                newBetterData.IsSelf = data == data.AmOwner;
                 newBetterData._PlayerId = data.PlayerId;
                 newBetterData._Data = data;
                 newBetterData.RoleInfo = new()

@@ -10,7 +10,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     // Role Info
     public override bool TaskReliantRole => true;
     public override bool HasSelfTask => !HasBeenClicked;
-    public override string RoleColor => "#AB00BF";
+    public override string RoleColor => "#A04D8A";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Phantom;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
@@ -31,7 +31,6 @@ public class PhantomRoleTBR : CustomRoleBehavior
     public override void OnSetUpRole()
     {
         _player.Revive();
-        _player.Data.IsDead = true;
         _player.cosmetics.gameObject.SetActive(false);
         InteractableTarget = false;
         SetNameTextAlpha(0f);
@@ -121,5 +120,5 @@ public class PhantomRoleTBR : CustomRoleBehavior
         }
     }
 
-    public override bool WinCondition() => _player.Data.Tasks.ToArray().All(task => task.Complete);
+    public override bool WinCondition() => _player.Data.Tasks.ToArray().All(task => task.Complete) && _player.Data.Tasks.ToArray().Length > 0;
 }

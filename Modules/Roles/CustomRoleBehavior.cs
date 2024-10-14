@@ -542,7 +542,7 @@ public abstract class CustomRoleBehavior
 
     public void TryOverrideTasks()
     {
-        if (TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
+        if (GameStates.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
         {
             _player.SetNewTasks(LongTasksOptionItem.GetInt(), ShortTasksOptionItem.GetInt(), CommonTasksOptionItem.GetInt());
         }

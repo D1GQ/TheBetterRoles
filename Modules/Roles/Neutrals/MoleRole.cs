@@ -76,7 +76,7 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    public override void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton)
+    public override void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData)
     {
         List<Vent> ventsToRemove = [];
         foreach (Vent vent in Vents)

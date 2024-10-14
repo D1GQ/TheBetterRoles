@@ -14,7 +14,7 @@ public class AmnesiacRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Amnesiac;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
     public BetterOptionItem? RememberCooldown;
     public DeadBodyButton? RememberButton;

@@ -7,7 +7,7 @@ namespace TheBetterRoles;
 public class VeteranRole : CustomRoleBehavior
 {
     // Role Info
-    public override string RoleColor => "#007A00";
+    public override string RoleColor => "#BB9B4F";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Veteran;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
