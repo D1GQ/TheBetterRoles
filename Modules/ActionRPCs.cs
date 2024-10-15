@@ -186,8 +186,11 @@ static class ActionRPCs
             CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
 
             // Start Meeting
-            MeetingRoomManager.Instance.AssignSelf(player, bodyInfo);
-            if (GameStates.IsHost) DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+            if (GameStates.IsHost)
+            {
+                MeetingRoomManager.Instance.AssignSelf(player, bodyInfo);
+                DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+            }
             player.StartMeeting(bodyInfo);
         }
 

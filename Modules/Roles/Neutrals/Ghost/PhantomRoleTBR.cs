@@ -93,7 +93,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
             }
             else
             {
-                Alpha -= 0.0025f;
+                Alpha -= 0.0038f;
             }
 
             Alpha = Math.Clamp(Alpha, 0f, 0.20f);
