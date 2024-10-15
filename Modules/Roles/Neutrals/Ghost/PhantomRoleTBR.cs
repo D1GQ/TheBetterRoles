@@ -105,10 +105,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     {
         if (Alpha > 0f && target == _player && player != _player)
         {
-            if (_player.IsLocalPlayer())
-            {
-                _player.MurderSync(_player, true, false, false, false, false);
-            }
+            _player.Exiled();
             ResetState();
             HasBeenClicked = true;
         }
@@ -119,6 +116,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);
+            _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
         }
     }
 

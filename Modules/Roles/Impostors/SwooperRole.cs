@@ -115,6 +115,7 @@ public class SwooperRole : CustomRoleBehavior
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);
+            _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
         }
     }
 }

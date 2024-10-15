@@ -18,6 +18,14 @@ static class ActionPatch
             __instance.ReportBodySync(target);
             return false;
         }
+
+        [HarmonyPatch(nameof(PlayerControl.ReportDeadBody))]
+        [HarmonyPrefix]
+        public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+        {
+            __instance.ReportBodySync(target);
+            return false;
+        }
     }
 }
 
