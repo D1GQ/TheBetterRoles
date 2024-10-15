@@ -34,6 +34,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         VentButton.VisibleCondition = _player.IsInVent;
         _player.Revive();
         _player.cosmetics.gameObject.SetActive(false);
+        _player.cosmetics.colorBlindText.gameObject.SetActive(false);
         InteractableTarget = false;
         SetNameTextAlpha(0f);
         TryOverrideTasks();
@@ -78,6 +79,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         SetNameTextAlpha(1f);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
+        _player.cosmetics.colorBlindText.gameObject.SetActive(true);
     }
 
     public override void Update()
@@ -116,7 +118,6 @@ public class PhantomRoleTBR : CustomRoleBehavior
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);
-            _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
         }
     }
 
