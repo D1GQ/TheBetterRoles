@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class PhantomRoleTBR : CustomRoleBehavior
 {
     // Role Info
+    public override bool IsGhostRole => true;
     public override bool TaskReliantRole => true;
     public override bool HasSelfTask => !HasBeenClicked;
     public override string RoleColor => "#A04D8A";
@@ -30,6 +31,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     public bool HasBeenClicked = false;
     public override void OnSetUpRole()
     {
+        VentButton.VisibleCondition = _player.IsInVent;
         _player.Revive();
         _player.cosmetics.gameObject.SetActive(false);
         InteractableTarget = false;

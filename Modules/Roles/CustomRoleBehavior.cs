@@ -119,6 +119,11 @@ public abstract class CustomRoleBehavior
     public virtual bool IsAddon => false;
 
     /// <summary>
+    /// Check if the role is an ghost role.
+    /// </summary>
+    public virtual bool IsGhostRole => false;
+
+    /// <summary>
     /// Get the role class. This is an abstract method that will return the custom behavior associated with this role.
     /// </summary>
     public abstract CustomRoleBehavior Role { get; }

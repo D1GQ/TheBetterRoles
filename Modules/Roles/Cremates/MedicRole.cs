@@ -92,10 +92,7 @@ public class MedicRole : CustomRoleBehavior
 
             if (killer.IsLocalPlayer() && NotifyKiller.GetBool())
             {
-                RoleEffectAnimation roleEffectAnimation = UnityEngine.Object.Instantiate(DestroyableSingleton<RoleManager>.Instance.protectAnim, target.gameObject.transform);
-                roleEffectAnimation.SetMaskLayerBasedOnWhoShouldSee(true);
-                roleEffectAnimation.Renderer.color = Utils.HexToColor32(RoleColor);
-                roleEffectAnimation.Play(target, null, target.cosmetics.FlipX, RoleEffectAnimation.SoundType.Global, 0f, true, 0f);
+                target.ShieldBreakAnimation(RoleColor);
             }
             killer.Role().KillButton.SetCooldown();
 

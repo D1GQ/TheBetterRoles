@@ -36,7 +36,7 @@ public class AltruistRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        ReviveButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), 0, ReviveDuration.GetFloat(), 0, null, this, true, 1));
+        ReviveButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 1));
         ReviveButton.CanCancelDuration = true;
         ReviveButton.DeadBodyCondition = (DeadBody body) =>
         {
@@ -57,8 +57,17 @@ public class AltruistRole : CustomRoleBehavior
                 {
                     if (body != null)
                     {
-                        ReviveButton.SetDuration();
-                        CheckRevive(body);
+                        if (CheckRevive(body) == true)
+                        {
+                            ReviveButton.SetDuration();
+                        }
+                        else
+                        {
+                            if (_player.IsLocalPlayer())
+                            {
+                                _player.ShieldBreakAnimation(RoleColor);
+                            }
+                        }
                     }
                 }
                 break;
@@ -113,15 +122,18 @@ public class AltruistRole : CustomRoleBehavior
         }
     }
 
-    private void CheckRevive(DeadBody? body)
+    private bool CheckRevive(DeadBody? body)
     {
         PlayerControl? target = Utils.PlayerFromPlayerId(body.ParentId);
 
-        if (target != null && body != null)
+        if (target != null && body != null && !target.BetterData().RoleInfo.Role.IsGhostRole)
         {
             isReviving = true;
             reviveCoroutine = _player.StartCoroutine(StartRevive(target, body));
+            return true;
         }
+
+        return false;
     }
 
     private IEnumerator StartRevive(PlayerControl target, DeadBody body)
@@ -162,11 +174,13 @@ public class AltruistRole : CustomRoleBehavior
 
     private void Revive(PlayerControl target, DeadBody body)
     {
+        if (target == null) return;
+
         isReviving = false;
         target.NetTransform.SnapTo(body.transform.position);
         if (_player.IsLocalPlayer() && KillOnRevive.GetBool())
         {
-            _player.MurderSync(_player, true, false, true, false, false);
+            _player.MurderSync(_player, true, false, true, false, true);
         }
         target.Revive();
         UnityEngine.Object.Destroy(body.gameObject);

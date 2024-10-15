@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using BepInEx.Unity.IL2CPP.Utils;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -90,9 +91,9 @@ static class ExtendedPlayerControl
 
         KillAnimation[] killAnimationsArray = killer.KillAnimations.ToArray();
         KillAnimation randomKillAnimation = killAnimationsArray[UnityEngine.Random.Range(0, killAnimationsArray.Length)];
-        killer.MyPhysics.StartCoroutine(RetreatMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));
+        killer.MyPhysics.StartCoroutine(NewMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));
     }
-    private static IEnumerator RetreatMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
+    private static IEnumerator NewMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
     {
         FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
         bool isParticipant = PlayerControl.LocalPlayer == killer || PlayerControl.LocalPlayer == target;
@@ -148,6 +149,22 @@ static class ExtendedPlayerControl
             killer.isKilling = false;
         }
         yield break;
+    }
+
+    public static void ShieldBreakAnimation(this PlayerControl player, Color? color = null)
+    {
+        RoleEffectAnimation roleEffectAnimation = UnityEngine.Object.Instantiate(DestroyableSingleton<RoleManager>.Instance.protectAnim, player.gameObject.transform);
+        roleEffectAnimation.SetMaskLayerBasedOnWhoShouldSee(true);
+        if (color != null)
+        {
+            roleEffectAnimation.Renderer.color = (Color)color;
+        }
+        roleEffectAnimation.Play(player, null, player.cosmetics.FlipX, RoleEffectAnimation.SoundType.Global, 0f, true, 0f);
+    }
+
+    public static void ShieldBreakAnimation(this PlayerControl player, string color)
+    {
+        ShieldBreakAnimation(player, Utils.HexToColor32(color));
     }
 
     // Set players over head text

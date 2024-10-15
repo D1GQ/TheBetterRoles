@@ -108,7 +108,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableRoles = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.RoleCategory != CustomRoleCategory.Ghost && role.CanBeAssigned)
+                if (role != null && role.GetChance() > 0 && !role.IsAddon && !role.IsGhostRole && role.CanBeAssigned)
                 {
                     availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -117,7 +117,7 @@ public static class CustomRoleManager
             List<RoleAssignmentData> availableAddons = [];
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && role.IsAddon && role.RoleCategory != CustomRoleCategory.Ghost && role.CanBeAssigned)
+                if (role != null && role.GetChance() > 0 && role.IsAddon && !role.IsGhostRole && role.CanBeAssigned)
                 {
                     availableAddons.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
                 }
@@ -295,7 +295,7 @@ public static class CustomRoleManager
     public static List<RoleAssignmentData> availableGhostRoles = [];
     public static void AssignGhostRoleOnDeath(PlayerControl player)
     {
-        if (!GameStates.IsHost) return;
+        if (!GameStates.IsHost || GameStates.IsFreePlay) return;
 
         IRandom.SetInstanceById(0);
 
@@ -304,7 +304,7 @@ public static class CustomRoleManager
         {
             foreach (var role in allRoles)
             {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.RoleCategory == CustomRoleCategory.Ghost && role.CanBeAssigned)
+                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.IsGhostRole && role.CanBeAssigned)
                 {
                     if (role.RoleTeam != CustomRoleTeam.Neutral && role.RoleTeam != player.Role().RoleTeam) continue;
 
