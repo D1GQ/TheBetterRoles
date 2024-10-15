@@ -36,7 +36,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         _player.cosmetics.gameObject.SetActive(false);
         _player.cosmetics.colorBlindText.gameObject.SetActive(false);
         InteractableTarget = false;
-        SetNameTextAlpha(0f);
+        _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks();
         SpawnInRandomVent();
     }
@@ -58,7 +58,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
 
         if (vent != null)
         {
-            SetNameTextAlpha(0f);
+            _player.transform.Find("Names").gameObject.SetActive(false);
             _player.cosmetics.SetPhantomRoleAlpha(0f);
             _player.NetTransform.SnapTo(vent.transform.position);
             _player.inVent = true;
@@ -76,10 +76,9 @@ public class PhantomRoleTBR : CustomRoleBehavior
     {
         InteractableTarget = true;
         if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
-        SetNameTextAlpha(1f);
+        _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
-        _player.cosmetics.colorBlindText.gameObject.SetActive(true);
     }
 
     public override void Update()
@@ -110,14 +109,6 @@ public class PhantomRoleTBR : CustomRoleBehavior
             _player.Exiled();
             ResetState();
             HasBeenClicked = true;
-        }
-    }
-
-    private void SetNameTextAlpha(float alpha)
-    {
-        foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
-        {
-            text.color = new Color(1f, 1f, 1f, alpha);
         }
     }
 
