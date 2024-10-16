@@ -38,7 +38,14 @@ public class InvestigatorRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        Footprints = new GameObject("Footprints");
+        if (GameObject.Find("Footprints") == null)
+        {
+            Footprints = new GameObject("Footprints");
+        }
+        else
+        {
+            Footprints = GameObject.Find("Footprints");
+        }
     }
     private GameObject? Footprints;
     private Dictionary<byte, float> Timer = [];
@@ -48,7 +55,7 @@ public class InvestigatorRole : CustomRoleBehavior
         {
             foreach (var player in Main.AllPlayerControls)
             {
-                if (!player.Visible || !player.CanMove || player.inMovingPlat || player == _player) continue;
+                if (!player.Visible || player.inMovingPlat || player.invisibilityAlpha <= 0f || player == _player) continue;
 
                 if (player.MyPhysics.Animations.IsPlayingRunAnimation())
                 {

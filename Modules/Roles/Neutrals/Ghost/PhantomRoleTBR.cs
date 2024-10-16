@@ -35,6 +35,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         _player.Revive();
         _player.cosmetics.gameObject.SetActive(false);
         _player.cosmetics.colorBlindText.gameObject.SetActive(false);
+        _player.cosmetics.CurrentPet?.gameObject.SetActive(false);
         InteractableTarget = false;
         _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks();
@@ -79,6 +80,8 @@ public class PhantomRoleTBR : CustomRoleBehavior
         _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
+        _player.cosmetics.colorBlindText.gameObject.SetActive(true);
+        _player.cosmetics.CurrentPet?.gameObject.SetActive(true);
     }
 
     public override void Update()

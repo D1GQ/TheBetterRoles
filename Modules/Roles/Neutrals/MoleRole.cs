@@ -4,6 +4,7 @@ using Hazel;
 using System.Collections;
 using TheBetterRoles.Patches;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 namespace TheBetterRoles;
 
@@ -163,17 +164,21 @@ public class MoleRole : CustomRoleBehavior
             id++;
         }
     }
-
+    // Fix meeting breaking
     private void RemoveVent(Vent vent, bool fade = true)
     {
         vent.enabled = false;
         Vents.Remove(vent);
+
         if (fade)
         {
             _player.BetterData().StartCoroutine(FadeVentOut(vent));
         }
         else
         {
+            var allVents = ShipStatus.Instance.AllVents.ToList();
+            allVents.Remove(vent);
+            ShipStatus.Instance.AllVents = allVents.ToArray();
             UnityEngine.Object.Destroy(vent.gameObject);
         }
     }
@@ -209,6 +214,9 @@ public class MoleRole : CustomRoleBehavior
             DigButton.AddUse();
         }
 
+        var allVents = ShipStatus.Instance.AllVents.ToList();
+        allVents.Remove(vent);
+        ShipStatus.Instance.AllVents = allVents.ToArray();
         UnityEngine.Object.Destroy(vent.gameObject);
     }
 }
