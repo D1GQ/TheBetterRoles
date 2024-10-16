@@ -170,7 +170,7 @@ public class MoleRole : CustomRoleBehavior
         Vents.Remove(vent);
         if (fade)
         {
-            _player.StartCoroutine(FadeVentOut(vent));
+            _player.BetterData().StartCoroutine(FadeVentOut(vent));
         }
         else
         {

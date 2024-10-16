@@ -648,6 +648,7 @@ public enum CustomRoles
     Sheriff,
     Snitch,
     Veteran,
+    Investigator,
 
     // Impostors
     Impostor,

@@ -154,6 +154,7 @@ public class BetterOptionFloatItem : BetterOptionItem
             CurrentValue = floatRange.max;
         }
 
+        CurrentValue = (float)Math.Round(CurrentValue, 5);
         AdjustButtonsActiveState();
         RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
     }
@@ -175,6 +176,7 @@ public class BetterOptionFloatItem : BetterOptionItem
             CurrentValue = floatRange.min;
         }
 
+        CurrentValue = (float)Math.Round(CurrentValue, 5);
         AdjustButtonsActiveState();
         RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
     }

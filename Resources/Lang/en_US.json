@@ -93,6 +93,13 @@
   "Role.Medic.Option.RemoveShieldOnMedicDeath": "Remove Shield On Medic Death",
   "Role.Medic.Shielded": "Shielded",
 
+  "Role.Investigator": "Investigator",
+  "Role.Investigator.Info": "Investigate players footprints",
+  "Role.Investigator.LongInfo": "As the Investigator, players leave behind footprints for a set amount of time.",
+  "Role.Investigator.Option.FootprintInterval": "Footprint Interval",
+  "Role.Investigator.Option.FootprintDuration": "Footprint Duration",
+  "Role.Investigator.Option.AnonymousFootprint": "Anonymous Footprint",
+
   "Role.Altruist": "Altruist",
   "Role.Altruist.Info": "Revive a player",
   "Role.Altruist.LongInfo": "As the Altruist, you can sacrifice yourself to revive a dead body.",
