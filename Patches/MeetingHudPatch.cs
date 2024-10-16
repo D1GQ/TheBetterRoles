@@ -1,5 +1,4 @@
 using HarmonyLib;
-using Hazel;
 using System.Text;
 using TMPro;
 using UnityEngine;

@@ -1,6 +1,4 @@
-﻿
-using System.Numerics;
-using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Patches;
 using UnityEngine;
 
 namespace TheBetterRoles;

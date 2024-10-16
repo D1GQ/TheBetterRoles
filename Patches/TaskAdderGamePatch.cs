@@ -43,7 +43,7 @@ class TaskAdderGamePatch
             else taskAddButton.Text.text = roleBehaviour.RoleName + "\n.Addon";
             __instance.AddFileAsChild(__instance.Root, taskAddButton, ref num, ref num2, ref num3);
 
-            taskAddButton.FileImage.color =Utils.GetCustomRoleColor(roleBehaviour.RoleType);
+            taskAddButton.FileImage.color = Utils.GetCustomRoleColor(roleBehaviour.RoleType);
             taskAddButton.RolloverHandler.OverColor = Utils.GetCustomRoleColor(roleBehaviour.RoleType) + new Color(0.35f, 0.35f, 0.35f);
             taskAddButton.RolloverHandler.OutColor = Utils.GetCustomRoleColor(roleBehaviour.RoleType);
             taskAddButton.Button.OnClick.RemoveAllListeners();

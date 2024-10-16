@@ -1,6 +1,4 @@
-﻿
-using Rewired.Utils.Classes.Data;
-using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Patches;
 using UnityEngine;
 
 namespace TheBetterRoles;

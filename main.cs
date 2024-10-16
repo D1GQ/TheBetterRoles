@@ -2,12 +2,11 @@
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
-using TheBetterRoles.Patches;
 using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
 using Innersloth.IO;
 using System.Security.Cryptography;
 using System.Text;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
 namespace TheBetterRoles;

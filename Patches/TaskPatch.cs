@@ -158,7 +158,7 @@ public class TaskPatch
                 }
                 float num2 = taskPlayers > 0 ? totalProgress / taskPlayers : 0f;
                 __instance.curValue = Mathf.Lerp(__instance.curValue, num2, Time.fixedDeltaTime * 2f);
-                Skip_Update:
+            Skip_Update:
                 __instance.TileParent.material.SetFloat("_Buckets", num);
                 __instance.TileParent.material.SetFloat("_FullBuckets", __instance.curValue);
             }

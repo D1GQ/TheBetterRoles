@@ -2,7 +2,6 @@
 using Hazel;
 using TheBetterRoles.Patches;
 using static TheBetterRoles.Translator;
-using UnityEngine;
 
 namespace TheBetterRoles;
 

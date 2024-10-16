@@ -338,7 +338,7 @@ public abstract class CustomRoleBehavior
 
         return this;
     }
-    
+
     public void Deinitialize()
     {
         OnDeinitialize();
@@ -420,7 +420,7 @@ public abstract class CustomRoleBehavior
         Buttons.Remove(button);
     }
 
-    public void CheckAndUseAbility(int id, int targetId, TargetType type) 
+    public void CheckAndUseAbility(int id, int targetId, TargetType type)
     {
         if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
                         type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
@@ -453,7 +453,7 @@ public abstract class CustomRoleBehavior
         Buttons.FirstOrDefault(b => b.Id == id)?.RemoveUse();
     }
 
-    public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender) 
+    public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender)
     {
         _ = reader.ReadNetObject<PlayerControl>();
         _ = reader.ReadInt32();
@@ -508,7 +508,7 @@ public abstract class CustomRoleBehavior
                     CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, reader, this, target, vent, body), this);
                     CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, reader, this, target, vent, body));
                 }
-                 break;
+                break;
         }
     }
 
@@ -528,7 +528,7 @@ public abstract class CustomRoleBehavior
                 break;
             case 3:
                 break;
-                default:
+            default:
                 {
                     if (CustomRoleManager.RoleChecks(_player, role => role.CheckAbility(id, this, target, vent, body), targetRole: this) == false)
                     {

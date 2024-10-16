@@ -1,17 +1,11 @@
 ﻿using AmongUs.Data;
-using AmongUs.GameOptions;
-using TheBetterRoles.Patches;
 using InnerNet;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TheBetterRoles.Patches;
 using UnityEngine;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
-using static Il2CppSystem.Globalization.CultureInfo;
-using System.Collections;
-using BepInEx.Unity.IL2CPP.Utils;
 
 namespace TheBetterRoles;
 

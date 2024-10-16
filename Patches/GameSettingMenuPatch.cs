@@ -1,7 +1,5 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace TheBetterRoles.Patches;
 

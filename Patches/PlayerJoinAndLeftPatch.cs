@@ -1,6 +1,6 @@
-using TheBetterRoles.Patches;
 using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
 

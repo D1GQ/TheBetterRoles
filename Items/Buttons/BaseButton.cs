@@ -1,9 +1,5 @@
-﻿
-using Hazel;
-using TheBetterRoles.Patches;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using static Sentry.MeasurementUnit;
 
 namespace TheBetterRoles;
 
@@ -42,7 +38,7 @@ public class BaseButton
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition() || CanCancelDuration && State > 0;
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
-    public virtual void Update() 
+    public virtual void Update()
     {
         if (TempCooldown > 0)
         {

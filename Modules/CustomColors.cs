@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using AmongUs.Data.Legacy;
 using HarmonyLib;
-using AmongUs.Data.Legacy;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -18,9 +18,48 @@ public class CustomColors
 
     private static readonly List<int> Order =
     [
-        7, 37, 14, 5, 33, 41, 25, 4, 30, 0, 35, 3, 27, 17,
-        13, 23, 8, 32, 38, 1, 21, 40, 31, 10, 34, 22, 28, 36,
-        2, 11, 26, 29, 20, 19, 18, 12, 9, 24, 16, 15, 6, 39
+        7,
+        37,
+        14,
+        5,
+        33,
+        41,
+        25,
+        4,
+        30,
+        0,
+        35,
+        3,
+        27,
+        17,
+        13,
+        23,
+        8,
+        32,
+        38,
+        1,
+        21,
+        40,
+        31,
+        10,
+        34,
+        22,
+        28,
+        36,
+        2,
+        11,
+        26,
+        29,
+        20,
+        19,
+        18,
+        12,
+        9,
+        24,
+        16,
+        15,
+        6,
+        39
     ];
 
     public static void Load()

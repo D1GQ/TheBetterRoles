@@ -1,12 +1,8 @@
 ﻿
 using AmongUs.GameOptions;
-using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using System.Linq;
 using System.Reflection;
 using TheBetterRoles.Patches;
-using TMPro;
-using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -180,12 +176,12 @@ public static class CustomRoleManager
                         {
                             if (ImposterAmount <= 0) continue;
                         }
-                        
+
                         if (role._role.IsNeutral && !role._role.CanKill)
                         {
                             if (BenignNeutralAmount <= 0) continue;
                         }
-                        
+
                         if (role._role.IsNeutral && role._role.CanKill)
                         {
                             if (KillingNeutralAmount <= 0) continue;

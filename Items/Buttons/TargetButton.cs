@@ -1,14 +1,13 @@
 ﻿
 using TheBetterRoles.Patches;
-using TMPro;
 using UnityEngine;
 
 namespace TheBetterRoles;
 
 public class TargetButton : BaseButton
 {
-    public float TargetRange {  get; set; }
-    public PlayerControl? lastTarget {  get; set; }
+    public float TargetRange { get; set; }
+    public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
     public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public TargetButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)

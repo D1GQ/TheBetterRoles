@@ -1,9 +1,5 @@
-﻿
-using Steamworks;
-using TheBetterRoles.Patches;
-using TMPro;
+﻿using TheBetterRoles.Patches;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace TheBetterRoles;
 
@@ -99,7 +95,7 @@ public class VentButton : BaseButton
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
-        ActionButton.buttonLabelText.SetOutlineColor(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)));
+        ActionButton.buttonLabelText.SetOutlineColor(Utils.HexToColor32(!isAbility ? Utils.GetCustomRoleTeamColor(Role.RoleTeam) : Role.RoleColor));
 
         if (abilityUses <= 0)
         {
@@ -147,7 +143,7 @@ public class VentButton : BaseButton
                 }
             }
         }
-        
+
         outputList.Sort((Vent a, Vent b) =>
         {
             float distA = ((Vector2)a.transform.position - myPos).magnitude;

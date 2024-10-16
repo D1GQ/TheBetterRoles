@@ -1,9 +1,5 @@
-﻿using AmongUs.GameOptions;
-using Assets.CoreScripts;
-using HarmonyLib;
-using Hazel;
+﻿using HarmonyLib;
 using System.Text;
-using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 

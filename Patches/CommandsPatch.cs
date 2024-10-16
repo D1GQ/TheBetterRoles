@@ -1,5 +1,4 @@
 ﻿using AmongUs.Data;
-using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using Il2CppSystem.Text;

@@ -1,11 +1,9 @@
 ﻿using AmongUs.GameOptions;
-using TheBetterRoles.Patches;
+using BepInEx.Unity.IL2CPP.Utils;
 using InnerNet;
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using System.Collections;
-using BepInEx.Unity.IL2CPP.Utils;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -83,7 +81,7 @@ static class ExtendedPlayerControl
                 {
                 }
             }
-            
+
             if (showAnimation) DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(killer.Data, target.Data);
             target.cosmetics.SetNameMask(false);
             target.RpcSetScanner(false);

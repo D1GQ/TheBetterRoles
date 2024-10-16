@@ -1,7 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using HarmonyLib;
-using System.Linq;
+﻿using HarmonyLib;
+using UnityEngine;
 
 namespace TheBetterRoles;
 

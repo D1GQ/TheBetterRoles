@@ -1,6 +1,5 @@
 ﻿
 using BepInEx.Unity.IL2CPP.Utils;
-using Steamworks;
 using TheBetterRoles.Patches;
 using UnityEngine;
 

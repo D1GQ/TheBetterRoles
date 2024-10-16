@@ -1,9 +1,4 @@
-﻿
-using BepInEx.Unity.IL2CPP.Utils;
-using System.Collections;
-using System.Linq;
-using TheBetterRoles.Patches;
-using UnityEngine;
+﻿using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
 

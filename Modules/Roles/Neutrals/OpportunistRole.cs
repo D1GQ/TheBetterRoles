@@ -1,6 +1,4 @@
-﻿
-using Rewired;
-using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
 

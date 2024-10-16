@@ -1,5 +1,3 @@
-using System;
-
 namespace TheBetterRoles;
 
 public class Xorshift(uint seed) : IRandom

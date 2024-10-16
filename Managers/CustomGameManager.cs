@@ -1,19 +1,11 @@
-﻿using AmongUs.Data;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
-using Sentry.Internal.Extensions;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static Sentry.MeasurementUnit;
 
 namespace TheBetterRoles;
 
@@ -84,7 +76,7 @@ public class CustomGameManager
         {
             List<PlayerControl> teamToShow = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) ? Main.AllPlayerControls.ToList() : Main.AllPlayerControls.Where(p => p.IsTeammate()).ToList();
 
-            foreach (PlayerControl player in teamToShow) 
+            foreach (PlayerControl player in teamToShow)
             {
                 if (CustomRoleBehavior.SubTeam.ContainsKey(player.Data.PlayerId))
                 {
@@ -448,7 +440,8 @@ public class CustomGameManager
                 SummaryText.text = $"{SummaryHeader}\n\n<size=58%>{sb}</size>";
                 Logger.LogHeader("Game Summary End", "GameSummary");
             }
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             Logger.Error(ex);
         }

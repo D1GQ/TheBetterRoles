@@ -1,8 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
-using Hazel;
 using InnerNet;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 

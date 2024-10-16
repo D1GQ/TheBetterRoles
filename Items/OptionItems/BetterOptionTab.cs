@@ -1,7 +1,6 @@
 ﻿using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace TheBetterRoles;
 
@@ -51,7 +50,7 @@ public class BetterOptionTab
         BetterSettingsButton.inactiveSprites.GetComponent<SpriteRenderer>().color = Color;
         BetterSettingsButton.selectedSprites.GetComponent<SpriteRenderer>().color = Color;
 
-        BetterSettingsButton.gameObject.GetComponent<BoxCollider2D>().size = new Vector2 (2.5f, 0.6176f);
+        BetterSettingsButton.gameObject.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.6176f);
 
         BetterSettingsButton.OnClick.AddListener(new Action(() =>
         {

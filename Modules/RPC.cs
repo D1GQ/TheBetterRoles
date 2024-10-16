@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Hazel;
-using Il2CppSystem.Linq;
 using InnerNet;
 using TheBetterRoles.Patches;
 
@@ -91,8 +90,8 @@ internal static class RPC
         AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
     }
 
-    public enum SettingType 
-    { 
+    public enum SettingType
+    {
         Bool,
         Float,
         Int

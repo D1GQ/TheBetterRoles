@@ -1,6 +1,4 @@
-﻿using TheBetterRoles.Patches;
-using Cpp2IL.Core.Extensions;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace TheBetterRoles;

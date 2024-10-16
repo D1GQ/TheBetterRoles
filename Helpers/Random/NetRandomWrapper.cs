@@ -1,5 +1,3 @@
-using System;
-
 namespace TheBetterRoles;
 
 public class NetRandomWrapper(Random instance) : IRandom

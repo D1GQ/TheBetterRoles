@@ -1,5 +1,4 @@
-﻿using Epic.OnlineServices.Presence;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace TheBetterRoles;
 

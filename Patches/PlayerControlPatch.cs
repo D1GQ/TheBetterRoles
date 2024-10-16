@@ -1,11 +1,5 @@
-﻿using AmongUs.Data;
-using AmongUs.GameOptions;
-using HarmonyLib;
-using Il2CppSystem.IO;
-using Il2CppSystem.Linq;
-using LibCpp2IL;
+﻿using HarmonyLib;
 using System.Text;
-using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 

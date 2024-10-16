@@ -1,6 +1,4 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
-using Hazel;
+﻿using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace TheBetterRoles.Patches;

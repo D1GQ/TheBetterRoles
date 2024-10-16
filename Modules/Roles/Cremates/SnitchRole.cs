@@ -42,7 +42,7 @@ public class SnitchRole : CustomRoleBehavior
     public override void OnDeinitialize()
     {
         List<ArrowLocator> arrowsToRemove = [];
-        foreach (var arrow in arrows) 
+        foreach (var arrow in arrows)
         {
             arrowsToRemove.Add(arrow);
         }

@@ -1,14 +1,13 @@
 ﻿
 using TheBetterRoles.Patches;
-using TMPro;
 using UnityEngine;
 
 namespace TheBetterRoles;
 
 public class DeadBodyButton : BaseButton
 {
-    public float DeadBodyRange {  get; set; }
-    public DeadBody? lastDeadBody {  get; set; }
+    public float DeadBodyRange { get; set; }
+    public DeadBody? lastDeadBody { get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (DeadBody body) => true;
     public DeadBodyButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {

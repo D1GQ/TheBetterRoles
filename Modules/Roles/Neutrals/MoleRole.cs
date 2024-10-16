@@ -4,7 +4,6 @@ using Hazel;
 using System.Collections;
 using TheBetterRoles.Patches;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 namespace TheBetterRoles;
 
@@ -39,7 +38,7 @@ public class MoleRole : CustomRoleBehavior
     public VentButton? BurrowButton = new();
     public override void OnSetUpRole()
     {
-        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, this, null, false, true));
+        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, this, null, true, true));
         BurrowButton.VentCondition = (Vent vent) =>
         {
             return Vents.Select(vents => vents.Id).Contains(vent.Id);
@@ -53,6 +52,21 @@ public class MoleRole : CustomRoleBehavior
     {
         switch (id)
         {
+            case 5:
+                {
+                    if (_player.IsLocalPlayer())
+                    {
+                        if (!_player.inVent)
+                        {
+                            _player.VentSync(vent.Id, false);
+                        }
+                        else
+                        {
+                            _player.VentSync(vent.Id, true);
+                        }
+                    }
+                }
+                break;
             case 6:
                 Vector2 pos = reader != null ? NetHelpers.ReadVector2(reader) : _player.GetTruePosition();
                 SpawnVent(pos);
