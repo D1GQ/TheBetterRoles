@@ -668,6 +668,7 @@ public enum CustomRoles
     Giant,
     NoiseMaker,
     Swift,
+    Tracker,
 }
 
 public enum CustomRoleTeam

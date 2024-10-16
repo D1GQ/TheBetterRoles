@@ -2,7 +2,7 @@
 
 namespace TheBetterRoles;
 
-public class NoiseMakerAddon : CustomAddonBehavior
+public class BaitAddon : CustomAddonBehavior
 {
     // Role Info
     public override string RoleColor => "#00BDA4";

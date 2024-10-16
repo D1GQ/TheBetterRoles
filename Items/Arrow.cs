@@ -67,7 +67,7 @@ class ArrowLocator
                 {
                     if (arrow.PlayerTarget != null && arrow.HasPlayerTarget && arrow.PlayerTarget.IsAlive())
                     {
-                        arrow.Arrow.target = arrow.PlayerTarget.GetTruePosition();
+                        arrow.Arrow.target = arrow.PlayerTarget.GetTruePosition() + new Vector2(0f, 0.25f);
                     }
                     else if (arrow.HasPlayerTarget)
                     {

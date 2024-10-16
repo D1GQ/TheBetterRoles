@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TheBetterRoles;
 
-public class BaitAddon : CustomAddonBehavior
+public class NoiseMakerAddon : CustomAddonBehavior
 {
     // Role Info
     public override string RoleColor => "#920086";

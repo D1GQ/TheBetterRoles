@@ -209,6 +209,10 @@
   "Role.Bait.Option.MaximumDelay": "Maximum Delay",
   "Role.Bait.Option.MinimumDelay": "Minimum Delay",
 
+  "Role.Tracker": "Tracker",
+  "Role.Tracker.Info": "Track players around you",
+  "Role.Tracker.LongInfo": "As the Tracker, you will always have an arrow pointing to the closest player.",
+
   "Role.None": "None",
   "Role.None.Info": "None",
   "Role.None.LongInfo": "None",
