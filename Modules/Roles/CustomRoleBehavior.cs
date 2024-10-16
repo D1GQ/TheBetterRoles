@@ -713,15 +713,19 @@ public abstract class CustomRoleBehavior
 
     /// <summary>
     /// Called when another player presses an action button by directly clicking on a player with the mouse.
-    /// This method runs after host approval and processes the action taken by another player.
     /// </summary>
     public virtual void OnPlayerPressOther(PlayerControl player, PlayerControl target) { }
 
     /// <summary>
     /// Called when the local player presses an action button by directly clicking on another player with the mouse.
-    /// This runs after the host has approved the action, and handles any logic tied to the local player's click interaction.
     /// </summary>
     public virtual void OnPlayerPress(PlayerControl player, PlayerControl target) { }
+
+    /// <summary>
+    /// Called when the player chooses an target in player list menu.
+    /// Menu will be null if not ran by local player!
+    /// </summary>
+    public virtual void OnTargetSetPlayerMenu(PlayerControl? target, NetworkedPlayerInfo? targetData, ShapeshifterMinigame? menu) { }
 
     /// <summary>
     /// Called when another player interacts or gets interaction with a Target button.

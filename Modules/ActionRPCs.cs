@@ -248,6 +248,23 @@ static class ActionRPCs
     private static bool CheckResetAbilityStateAction(PlayerControl player, int id) => true;
 
     // Sync when player is pressed, for certain roles
+    public static void PlayerMenuSync(this PlayerControl player, PlayerControl target, ShapeshifterMinigame? menu, bool IsRPC = false)
+    {
+        if (CheckPlayerMenuAction(player, target) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnTargetSetPlayerMenu(target, target.Data, menu));
+        }
+
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerMenu, player);
+        writer.WriteNetObject(target);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
+    }
+
+    private static bool CheckPlayerMenuAction(PlayerControl player, PlayerControl target) => true;
+
+    // Sync when player is pressed, for certain roles
     public static void PlayerPressSync(this PlayerControl player, PlayerControl target, bool IsRPC = false)
     {
         if (CheckPlayerPressAction(player, target) == true)
