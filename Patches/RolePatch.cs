@@ -51,5 +51,16 @@ public class RolePatch
         }
     }
 
+    [HarmonyPatch(typeof(PlayerPhysics))]
+    class PlayerPhysicsPatch
+    {
+        [HarmonyPatch(nameof(PlayerPhysics.HandleAnimation))]
+        [HarmonyPrefix]
+        public static void HandleAnimation_Prefix(PlayerPhysics __instance, ref bool amDead)
+        {
+            amDead = amDead && !__instance.myPlayer.BetterData().IsFakeAlive;
+        }
+    }
+
     public static void ClearRoleData(PlayerControl player) => player.ClearRoles();
 }

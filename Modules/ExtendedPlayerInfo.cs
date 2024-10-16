@@ -13,9 +13,12 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public string Version { get; set; } = "";
     public bool MismatchVersion { get; set; }
 
+    public bool IsFakeAlive { get; set; } = false;
     public bool IsSelf => _Data?.AmOwner ?? false;
     public byte _PlayerId { get; set; }
     public NetworkedPlayerInfo? _Data { get; set; }
+    public float PlayerVisionMod => RoleInfo?.Role?.BaseVisionMod != null ? RoleInfo.Role.BaseVisionMod : 1f;
+    public float PlayerVisionModPlus { get; set; } = 1f;
     public string? NameColor { get; set; } = string.Empty;
     public string? RealName => _Data.PlayerName;
     public bool HasShowDcMsg { get; set; } = false;
@@ -72,7 +75,6 @@ public static class PlayerControlDataExtension
                     Role = new CrewmateRoleTBR(),
                     RoleType = CustomRoles.Crewmate
                 };
-                newBetterData.RoleInfo.Role.PlayerVisionMod = newBetterData.RoleInfo.Role.BaseVisionMod;
             }
         }
     }

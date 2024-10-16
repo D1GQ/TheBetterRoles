@@ -225,11 +225,6 @@ public abstract class CustomRoleBehavior
     public virtual float BaseSpeedMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.PlayerSpeedMod) * 2.5f;
 
     /// <summary>
-    /// The current vision of the player, which is often influenced by the role's special properties and physics settings.
-    /// </summary>
-    public float PlayerVisionMod { get; set; }
-
-    /// <summary>
     /// The base vision modification factor for the player, derived from game settings.
     /// </summary>
     public float BaseVisionMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(!IsImpostor ? FloatOptionNames.CrewLightMod : FloatOptionNames.ImpostorLightMod);
@@ -312,7 +307,6 @@ public abstract class CustomRoleBehavior
     {
         if (player != null)
         {
-            PlayerVisionMod = BaseVisionMod;
             _player = player;
             _data = player.Data;
             if (!IsAddon)

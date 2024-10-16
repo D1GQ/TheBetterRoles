@@ -29,8 +29,12 @@ public class PhantomRoleTBR : CustomRoleBehavior
     public bool HasBeenClicked = false;
     public override void OnSetUpRole()
     {
+        _player.BetterData().PlayerVisionModPlus += 10;
         VentButton.VisibleCondition = _player.IsInVent;
-        _player.Revive();
+        VentButton.UseAsDead = true;
+        _player.BetterData().IsFakeAlive = true;
+        _player.Data.IsDead = true;
+        _player.CustomRevive(false);
         _player.cosmetics.gameObject.SetActive(false);
         _player.cosmetics.colorBlindText.gameObject.SetActive(false);
         _player.cosmetics.CurrentPet?.gameObject.SetActive(false);
@@ -53,20 +57,20 @@ public class PhantomRoleTBR : CustomRoleBehavior
     private void SpawnInRandomVent()
     {
         if (HasBeenClicked) return;
-        var vent = Main.AllVents[UnityEngine.Random.Range(0, Main.AllVents.Count())];
+        var vent = Main.AllVents[UnityEngine.Random.Range(0, Main.AllVents.Length)];
 
         if (vent != null)
         {
             _player.transform.Find("Names").gameObject.SetActive(false);
             _player.cosmetics.SetPhantomRoleAlpha(0f);
-            _player.NetTransform.SnapTo(vent.transform.position);
             _player.inVent = true;
             _player.Visible = false;
             _player.moveable = false;
-            VentilationSystem.Update(VentilationSystem.Operation.Move, vent.Id);
             if (_player.IsLocalPlayer())
             {
-                vent.SetButtons(true);
+                vent.TryMoveToVent(vent, out string _);
+                // vent.SetButtons(true);
+                vent.SetButtons(false);
             }
         }
     }
@@ -74,7 +78,9 @@ public class PhantomRoleTBR : CustomRoleBehavior
     private void ResetState()
     {
         InteractableTarget = true;
+        _player.BetterData().IsFakeAlive = false;
         if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
+        _player.BetterData().PlayerVisionModPlus -= 10;
         _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);

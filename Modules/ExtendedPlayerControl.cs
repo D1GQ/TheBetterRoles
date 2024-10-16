@@ -46,6 +46,26 @@ static class ExtendedPlayerControl
     public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.BetterData().RoleInfo.RoleType, longInfo);
     public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.BetterData().RoleInfo.Role.RoleTeam);
 
+    public static void CustomRevive(this PlayerControl player, bool SetData = true)
+    {
+        if (SetData)player.Data.IsDead = false;
+        player.gameObject.layer = LayerMask.NameToLayer("Players");
+        player.MyPhysics.ResetMoveState(true);
+        player.clickKillCollider.enabled = true;
+        player.cosmetics.SetPetSource(player);
+        player.cosmetics.SetNameMask(true);
+        if (player.IsLocalPlayer())
+        {
+            DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(true);
+            // DestroyableSingleton<HudManager>.Instance.KillButton.ToggleVisible(player.Data.Role.IsImpostor);
+            // DestroyableSingleton<HudManager>.Instance.AdminButton.ToggleVisible(player.Data.Role.IsImpostor);
+            // DestroyableSingleton<HudManager>.Instance.SabotageButton.ToggleVisible(player.Data.Role.IsImpostor);
+            // DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.ToggleVisible(player.Data.Role.IsImpostor);
+            DestroyableSingleton<HudManager>.Instance.Chat.ForceClosed();
+            DestroyableSingleton<HudManager>.Instance.Chat.SetVisible(false);
+        }
+    }
+
     public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true, bool playSound = true)
     {
         if (killer.IsLocalPlayer())
@@ -295,7 +315,7 @@ static class ExtendedPlayerControl
     // Check if player is a dev
     public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{Utils.GetHashPuid(player)}+{player.Data.FriendCode}");
     // Check if player is alive
-    public static bool IsAlive(this PlayerControl player) => player?.Data != null && !player.Data.IsDead;
+    public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data != null && !player.Data.IsDead || CheckFakeAlive && player.BetterData().IsFakeAlive;
     // Check if player is in a vent
     public static bool IsInVent(this PlayerControl player) => player != null && (player.inVent || player.walkingToVent || player.MyPhysics?.Animations?.IsPlayingEnterVentAnimation() == true);
     // Check if player is Shapeshifting

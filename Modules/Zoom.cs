@@ -11,7 +11,8 @@ public static class Zoom
 
     public static void Postfix()
     {
-        if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive()))
+        if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
+            && !PlayerControl.LocalPlayer.BetterData().IsFakeAlive))
         {
             if (Camera.main.orthographicSize > 3.0f)
                 resetButtons = true;
@@ -52,17 +53,12 @@ public static class Zoom
             HudManager.Instance.UICamera.orthographicSize *= size;
         }
 
-        DestroyableSingleton<HudManager>.Instance?.ShadowQuad?.gameObject?.SetActive((reset || Camera.main.orthographicSize == 3.0f) && PlayerControl.LocalPlayer.IsAlive());
-
         if (resetButtons)
         {
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
             resetButtons = false;
         }
     }
-
-    public static void OnFixedUpdate() =>
-        DestroyableSingleton<HudManager>.Instance?.ShadowQuad?.gameObject?.SetActive((Camera.main.orthographicSize == 3.0f) && PlayerControl.LocalPlayer.IsAlive());
 }
 
 public static class Flag

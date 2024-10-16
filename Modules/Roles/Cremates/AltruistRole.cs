@@ -182,7 +182,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             _player.MurderSync(_player, true, false, true, false, true);
         }
-        target.Revive();
+        target.CustomRevive();
         UnityEngine.Object.Destroy(body.gameObject);
     }
 
