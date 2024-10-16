@@ -12,6 +12,7 @@ public class MoleRole : CustomRoleBehavior
 {
     // Role Info
     public override bool VentReliantRole => true;
+    public override bool CanVent => false;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mole;
@@ -35,10 +36,17 @@ public class MoleRole : CustomRoleBehavior
 
     private bool IsVisible { get; set; } = true;
     public AbilityButton? DigButton = new();
+    public VentButton? BurrowButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.1"), 0, 0, MaximumVents.GetInt() + 1, null, this, true)) as AbilityButton;
-        DigButton.InteractCondition = () => VentButton.closestDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
+        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, this, null, false, true));
+        BurrowButton.VentCondition = (Vent vent) =>
+        {
+            return Vents.Select(vents => vents.Id).Contains(vent.Id);
+        };
+
+        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
+        DigButton.InteractCondition = () => BurrowButton.closestDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -177,7 +185,7 @@ public class MoleRole : CustomRoleBehavior
         else
         {
             var allVents = ShipStatus.Instance.AllVents.ToList();
-            allVents.Remove(vent);
+            allVents.RemoveAll(v => v.Id == vent.Id);
             ShipStatus.Instance.AllVents = allVents.ToArray();
             UnityEngine.Object.Destroy(vent.gameObject);
         }
@@ -215,7 +223,7 @@ public class MoleRole : CustomRoleBehavior
         }
 
         var allVents = ShipStatus.Instance.AllVents.ToList();
-        allVents.Remove(vent);
+        allVents.RemoveAll(v => v.Id == vent.Id);
         ShipStatus.Instance.AllVents = allVents.ToArray();
         UnityEngine.Object.Destroy(vent.gameObject);
     }

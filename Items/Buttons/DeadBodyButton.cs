@@ -98,7 +98,7 @@ public class DeadBodyButton : BaseButton
         float closeDistanceThreshold = DeadBodyRange;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<DeadBody> allBodys = Main.AllDeadBodys.ToList();
+        List<DeadBody> allBodys = Main.AllDeadBodys.Where(body => DeadBodyCondition(body)).ToList();
 
         for (int i = 0; i < allBodys.Count; i++)
         {

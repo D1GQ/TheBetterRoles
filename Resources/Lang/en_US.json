@@ -160,7 +160,8 @@
   "Role.Mole": "Mole",
   "Role.Mole.Info": "Dig vents",
   "Role.Mole.LongInfo": "As the Mole, you are able to dig a set amount vents wherever you like, note that only you can see and use these vents.",
-  "Role.Mole.Ability.1": "Dig Hole",
+  "Role.Mole.Ability.1": "Burrow",
+  "Role.Mole.Ability.2": "Dig Hole",
   "Role.Mole.Option.MaxVents": "Max Vents",
 
   "Role.Amnesiac": "Amnesiac",

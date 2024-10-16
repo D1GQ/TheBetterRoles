@@ -14,6 +14,7 @@ public class VentButton : BaseButton
     public float HighlightDistance { get; set; } = 3.5f;
     public float Distance { get; set; } = 0.8f;
     public bool IsAbility { get; set; }
+    public Func<Vent, bool> VentCondition { get; set; } = (Vent target) => true;
     public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public VentButton Create(int id, string name, float cooldown, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
@@ -129,7 +130,7 @@ public class VentButton : BaseButton
         float closeDistanceThreshold = 0.335f;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<Vent> allVents = Main.AllVents.ToList();
+        List<Vent> allVents = Main.AllVents.Where(vent => VentCondition(vent)).ToList();
 
         for (int i = 0; i < allVents.Count; i++)
         {
