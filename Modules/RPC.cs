@@ -377,10 +377,12 @@ internal static class RPC
                 break;
             case RpcAction.PlayerMenu:
                 {
-                    var target = reader.ReadNetObject<PlayerControl>();
+                    var Id = reader.ReadInt32();
+                    var roleType = reader.ReadInt32();
+                    var target = reader.ReadNetObject<NetworkedPlayerInfo>();
                     if (target != null)
                     {
-                        player.PlayerMenuSync(target, null, IsRPC);
+                        player.PlayerMenuSync(Id, roleType, target, null, null, IsRPC);
                     }
                 }
                 break;

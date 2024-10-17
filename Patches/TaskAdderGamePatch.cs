@@ -17,7 +17,7 @@ class TaskAdderGamePatch
         float num2 = 0f;
         float num3 = 0f;
 
-        TaskAddButton ghostAddButton = UnityEngine.Object.Instantiate<TaskAddButton>(__instance.RoleButton);
+        TaskAddButton ghostAddButton = UnityEngine.Object.Instantiate(__instance.RoleButton);
         ghostAddButton.SafePositionWorld = __instance.SafePositionWorld;
         ghostAddButton.Text.text = "Set_Dead\n.exe";
         __instance.AddFileAsChild(__instance.Root, ghostAddButton, ref num, ref num2, ref num3);

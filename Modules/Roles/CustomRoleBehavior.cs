@@ -725,7 +725,7 @@ public abstract class CustomRoleBehavior
     /// Called when the player chooses an target in player list menu.
     /// Menu will be null if not ran by local player!
     /// </summary>
-    public virtual void OnTargetSetPlayerMenu(PlayerControl? target, NetworkedPlayerInfo? targetData, ShapeshifterMinigame? menu) { }
+    public virtual void OnTargetSetPlayerMenu(int Id, CustomRoles role, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel) { }
 
     /// <summary>
     /// Called when another player interacts or gets interaction with a Target button.
