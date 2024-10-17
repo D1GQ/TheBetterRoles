@@ -109,8 +109,8 @@
   "Role.Altruist.Ability.1": "Revive",
 
   "Role.Transporter": "Transporter",
-  "Role.Transporter.Info": "Info",
-  "Role.Transporter.LongInfo": "Long Info",
+  "Role.Transporter.Info": "Transport players around the map",
+  "Role.Transporter.LongInfo": "As the Transporter, You can choose two players to swap positions on the map including yourself.",
   "Role.Transporter.Option.TransportCooldown": "Transport Cooldown",
   "Role.Transporter.Option.MaximumNumberOfTransports": "Maximum Number Of Transports",
   "Role.Transporter.Option.TransportsGainFromTask": "Transports Gain From Task",
