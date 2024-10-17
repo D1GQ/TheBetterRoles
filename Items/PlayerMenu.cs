@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Drawing;
 using UnityEngine;
 
 namespace TheBetterRoles;
@@ -24,6 +25,19 @@ public class PlayerMenu
         PlayerMinigame = UnityEngine.Object.Instantiate(GamePrefabHelper.GetRolePrefab<ShapeshifterRole>(AmongUs.GameOptions.RoleTypes.Shapeshifter).ShapeshifterMenu);
         PlayerMinigame.transform.SetParent(Camera.main.transform, false);
         PlayerMinigame.transform.localPosition = new Vector3(0f, 0f, -50f);
+
+        var Phone = PlayerMinigame.transform.Find("PhoneUI/Background").GetComponent<SpriteRenderer>();
+        if (Phone != null)
+        {
+            Phone.material?.SetColor(PlayerMaterial.BodyColor, Utils.HexToColor32(Role.RoleColor));
+            Phone.material?.SetColor(PlayerMaterial.BackColor, Utils.HexToColor32(Role.RoleColor) - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+        }
+        var PhoneButton = PlayerMinigame.transform.Find("PhoneUI/UI_Phone_Button").GetComponent<SpriteRenderer>();
+        if (PhoneButton != null)
+        {
+            PhoneButton.material?.SetColor(PlayerMaterial.BodyColor, Utils.HexToColor32(Role.RoleColor));
+            PhoneButton.material?.SetColor(PlayerMaterial.BackColor, Utils.HexToColor32(Role.RoleColor) - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+        }
 
         PlayerMinigame.StartCoroutine(PlayerMinigame.CoAnimateOpen());
         List<byte> dead = Main.AllDeadBodys.Select(d => d.ParentId).ToList();

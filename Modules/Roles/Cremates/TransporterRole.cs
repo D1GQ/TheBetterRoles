@@ -47,7 +47,8 @@ public class TransporterRole : CustomRoleBehavior
                 {
                     TransportButton.AddUse();
                     TransportButton.SetCooldown(0);
-                    Menu = new PlayerMenu().Create(id, this, false, false, true);
+                    if (_player.IsLocalPlayer())
+                        Menu = new PlayerMenu().Create(id, this, false, false, true);
                 }
                 break;
         }
