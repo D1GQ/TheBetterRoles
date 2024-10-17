@@ -97,6 +97,7 @@ namespace TheBetterRoles
                             break;
                     }
 
+                    pva.NameText.text = playerData.PlayerName;
                     SetPlayerTextInfoMeeting(pva, "", isInfo: true);
                     SetPlayerTextInfoMeeting(pva, $"<color=#6b6b6b>{DisconnectText}</color>");
                     pva.transform.Find("votePlayerBase")?.gameObject?.SetActive(false);
@@ -136,6 +137,7 @@ namespace TheBetterRoles
                     sbTagTop = Utils.FormatStringBuilder(sbTagTop);
                     sbTag = Utils.FormatStringBuilder(sbTag);
 
+                    pva.NameText.text = Utils.FormatPlayerName(player.Data);
                     SetPlayerTextInfoMeeting(pva, sbTagTop.ToString(), true);
                     SetPlayerTextInfoMeeting(pva, sbTag.ToString());
                 }

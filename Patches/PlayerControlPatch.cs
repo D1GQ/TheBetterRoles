@@ -105,6 +105,15 @@ class PlayerControlPatch
         }
         else
         {
+            if (!string.IsNullOrEmpty(player.BetterData().NameColor))
+            {
+                player.cosmetics.nameText.color = Utils.HexToColor32(player.BetterData().NameColor);
+            }
+            else
+            {
+                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
+            }
+
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
             {
                 sbTag.Append($"{player.GetRoleNameAndColor()}---");
@@ -123,6 +132,7 @@ class PlayerControlPatch
         if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
         if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
 
+        player.RawSetName(Utils.FormatPlayerName(player.Data));
         player.SetPlayerTextInfo(sbTagTop.ToString());
         player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
         player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
