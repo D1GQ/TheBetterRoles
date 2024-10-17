@@ -230,10 +230,8 @@ static class ActionRPCs
     {
         if ((CheckResetAbilityStateAction(player, id) == true))
         {
-            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
-                player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
-            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut),
-                player.BetterData().RoleInfo.AllRoles.FirstOrDefault(role => role.RoleType == (CustomRoles)roleType));
+            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleType == (CustomRoles)roleType);
+            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleType == (CustomRoles)roleType);
         }
 
         if (IsRPC) return;
@@ -252,7 +250,7 @@ static class ActionRPCs
     {
         if (CheckPlayerMenuAction(player, target) == true)
         {
-            CustomRoleManager.RoleListener(player, role => role.OnTargetSetPlayerMenu(Id, (CustomRoles)roleType, target.Object, target, menu, playerPanel));
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target.Object, target, menu, playerPanel), role => role.RoleType == (CustomRoles)roleType);
         }
 
         if (IsRPC) return;

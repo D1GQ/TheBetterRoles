@@ -473,8 +473,8 @@ public abstract class CustomRoleBehavior
     {
         if (target != null && type == TargetType.Player)
         {
-            CustomRoleManager.RoleListener(_player, role => role.OnPlayerInteracted(_player, target), this);
-            CustomRoleManager.RoleListener(target, role => role.OnPlayerInteracted(_player, target), this);
+            CustomRoleManager.RoleListener(_player, role => role.OnPlayerInteracted(_player, target), role => role == this);
+            CustomRoleManager.RoleListener(target, role => role.OnPlayerInteracted(_player, target), role => role == this);
             CustomRoleManager.RoleListenerOther(role => role.OnPlayerInteractedOther(_player, target));
         }
 
@@ -499,7 +499,7 @@ public abstract class CustomRoleBehavior
                 break;
             default:
                 {
-                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, reader, this, target, vent, body), this);
+                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, reader, this, target, vent, body), role => role == this);
                     CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, reader, this, target, vent, body));
                 }
                 break;
@@ -725,7 +725,7 @@ public abstract class CustomRoleBehavior
     /// Called when the player chooses an target in player list menu.
     /// Menu will be null if not ran by local player!
     /// </summary>
-    public virtual void OnTargetSetPlayerMenu(int Id, CustomRoles role, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel) { }
+    public virtual void OnPlayerMenu(int Id, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel) { }
 
     /// <summary>
     /// Called when another player interacts or gets interaction with a Target button.

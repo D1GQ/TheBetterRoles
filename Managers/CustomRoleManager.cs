@@ -426,17 +426,17 @@ public static class CustomRoleManager
         return Marks;
     }
 
-    public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, CustomRoleBehavior? targetRole = null)
+    public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, Func<CustomRoleBehavior, bool>? filter = null)
     {
         foreach (var role in player.BetterData().RoleInfo.AllRoles)
         {
-            if (role == null || targetRole != null && targetRole != role) continue;
+            if (role == null || filter != null && !filter(role)) continue;
 
             action(role);
         }
     }
 
-    public static void RoleListenerOther(Action<CustomRoleBehavior> action)
+    public static void RoleListenerOther(Action<CustomRoleBehavior> action, Func<CustomRoleBehavior, bool>? filter = null)
     {
         foreach (var player in Main.AllPlayerControls)
         {
@@ -444,7 +444,7 @@ public static class CustomRoleManager
 
             foreach (var role in player.BetterData().RoleInfo.AllRoles)
             {
-                if (role == null) continue;
+                if (role == null || filter != null && !filter(role)) continue;
 
                 action(role);
             }
