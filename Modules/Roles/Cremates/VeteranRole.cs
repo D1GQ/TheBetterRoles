@@ -86,9 +86,9 @@ public class VeteranRole : CustomRoleBehavior
     public override void OnTaskComplete(PlayerControl player, uint taskId)
     {
         int currentUses = AlertButton.Uses;
-        int gainedAlerts = AlertsGainFromTask.GetInt();
+        int gainedUses = AlertsGainFromTask.GetInt();
         int maxAlerts = MaximumNumberOfAlerts.GetInt();
-        int newUses = Math.Clamp(currentUses + gainedAlerts, 0, maxAlerts);
+        int newUses = Math.Clamp(currentUses + gainedUses, 0, maxAlerts);
         AlertButton.SetUses(newUses);
     }
 }

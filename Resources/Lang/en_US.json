@@ -108,6 +108,14 @@
   "Role.Altruist.Option.KillOnRevive": "Kill Altruist On Revive",
   "Role.Altruist.Ability.1": "Revive",
 
+  "Role.Transporter": "Transporter",
+  "Role.Transporter.Info": "Info",
+  "Role.Transporter.LongInfo": "Long Info",
+  "Role.Transporter.Option.TransportCooldown": "Transport Cooldown",
+  "Role.Transporter.Option.MaximumNumberOfTransports": "Maximum Number Of Transports",
+  "Role.Transporter.Option.TransportsGainFromTask": "Transports Gain From Task",
+  "Role.Transporter.Ability.1": "Transport",
+
   "Role.Impostor": "Impostor",
   "Role.Impostor.Info": "Kill and sabotage Crewmates",
   "Role.Impostor.LongInfo": "As an Impostor, you're able to kill and sabotage.",

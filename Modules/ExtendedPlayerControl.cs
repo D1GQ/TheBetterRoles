@@ -185,6 +185,22 @@ static class ExtendedPlayerControl
         ShieldBreakAnimation(player, Utils.HexToColor32(color));
     }
 
+    public static bool CanBeTeleported(this PlayerControl player)
+    {
+        if (player.Data == null
+            || GameStates.IsMeeting
+            || !player.IsAlive()
+            || player.inVent
+            || player.walkingToVent
+            || player.inMovingPlat // Moving Platform on Airhip and Zipline on Fungle
+            || player.MyPhysics.Animations.IsPlayingEnterVentAnimation()
+            || player.onLadder || player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
+        {
+            return false;
+        }
+        return true;
+    }
+
     // Set players over head text
     public static void SetPlayerTextInfo(this PlayerControl player, string text, bool isBottom = false, bool isInfo = false)
     {

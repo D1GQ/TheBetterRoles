@@ -426,10 +426,10 @@ public abstract class CustomRoleBehavior
 
     private void UseAbility(int id, int targetId, TargetType type)
     {
+        SetCooldownAndUse(id);
         OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
                         type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
                         type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, null, type);
-        SetCooldownAndUse(id);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
         writer.WriteNetObject(_player);
@@ -725,7 +725,7 @@ public abstract class CustomRoleBehavior
     /// Called when the player chooses an target in player list menu.
     /// Menu will be null if not ran by local player!
     /// </summary>
-    public virtual void OnPlayerMenu(int Id, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel) { }
+    public virtual void OnPlayerMenu(int id, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool close) { }
 
     /// <summary>
     /// Called when another player interacts or gets interaction with a Target button.

@@ -1,5 +1,4 @@
-﻿using BepInEx.Unity.IL2CPP.Utils;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace TheBetterRoles;
@@ -9,7 +8,7 @@ public class PlayerMenu
 {
     public static List<PlayerMenu> AllPlayerMenus { get; set; } = new();
     public ShapeshifterMinigame? PlayerMinigame { get; set; }
-    private int Id { get; set; }
+    public int Id { get; private set; }
     public CustomRoleBehavior? Role { get; set; }
     public bool ShowDeadWithBodys { get; set; } = false;
     public bool ShowDead { get; set; } = false;
@@ -46,7 +45,7 @@ public class PlayerMenu
             shapeshifterPanel.transform.localPosition = new Vector3(PlayerMinigame.XStart + num * PlayerMinigame.XOffset, PlayerMinigame.YStart + num2 * PlayerMinigame.YOffset, -1f);
             shapeshifterPanel.SetPlayer(i, player, (Action)(() =>
             {
-                PlayerControl.LocalPlayer.PlayerMenuSync(Id, (int)Role.RoleType, player, this, shapeshifterPanel);
+                PlayerControl.LocalPlayer.PlayerMenuSync(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
             }));
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
             shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Utils.HexToColor32(Role.RoleColor);
@@ -59,12 +58,6 @@ public class PlayerMenu
         return this;
     }
 
-    public void Remove()
-    {
-        AllPlayerMenus.Remove(this);
-        UnityEngine.Object.Destroy(PlayerMinigame.gameObject);
-    }
-
     [HarmonyPatch(nameof(ShapeshifterMinigame.Begin))]
     [HarmonyPrefix]
     public static bool Begin_Prefix(ShapeshifterMinigame __instance)
@@ -72,3 +65,24 @@ public class PlayerMenu
         return false;
     }
 }
+
+[HarmonyPatch(typeof(Minigame))]
+[HarmonyPatch(MethodType.Normal)]
+[HarmonyPatch("Close", new Type[] { })]  // No parameters
+public class MinigamePatch
+{
+    [HarmonyPostfix]
+    public static void Close_Postfix(Minigame __instance)
+    {
+        if (__instance is ShapeshifterMinigame shapeshifterInstance)
+        {
+            var menu = PlayerMenu.AllPlayerMenus.FirstOrDefault(m => m.PlayerMinigame == shapeshifterInstance);
+            if (menu != null)
+            {
+                PlayerControl.LocalPlayer.PlayerMenuSync(menu.Id, (int)menu.Role.RoleType, null, menu, null, true);
+                PlayerMenu.AllPlayerMenus.Remove(menu);
+            }
+        }
+    }
+}
+

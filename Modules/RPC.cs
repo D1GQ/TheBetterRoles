@@ -379,10 +379,11 @@ internal static class RPC
                 {
                     var Id = reader.ReadInt32();
                     var roleType = reader.ReadInt32();
+                    var close = reader.ReadBoolean();
                     var target = reader.ReadNetObject<NetworkedPlayerInfo>();
                     if (target != null)
                     {
-                        player.PlayerMenuSync(Id, roleType, target, null, null, IsRPC);
+                        player.PlayerMenuSync(Id, roleType, target, null, null, close, IsRPC);
                     }
                 }
                 break;

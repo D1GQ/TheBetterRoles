@@ -246,11 +246,11 @@ static class ActionRPCs
     private static bool CheckResetAbilityStateAction(PlayerControl player, int id) => true;
 
     // Sync when player is pressed, for certain roles
-    public static void PlayerMenuSync(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo target, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool IsRPC = false)
+    public static void PlayerMenuSync(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo? target, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool close, bool IsRPC = false)
     {
         if (CheckPlayerMenuAction(player, target) == true)
         {
-            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target.Object, target, menu, playerPanel), role => role.RoleType == (CustomRoles)roleType);
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, menu, playerPanel, close), role => role.RoleType == (CustomRoles)roleType);
         }
 
         if (IsRPC) return;
@@ -258,11 +258,12 @@ static class ActionRPCs
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerMenu, player);
         writer.Write(Id);
         writer.Write(roleType);
-        writer.WriteNetObject(target);
+        writer.Write(close);
+        writer.WriteNetObject(target ?? null);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
-    private static bool CheckPlayerMenuAction(PlayerControl player, NetworkedPlayerInfo target) => true;
+    private static bool CheckPlayerMenuAction(PlayerControl player, NetworkedPlayerInfo? target) => true;
 
     // Sync when player is pressed, for certain roles
     public static void PlayerPressSync(this PlayerControl player, PlayerControl target, bool IsRPC = false)
