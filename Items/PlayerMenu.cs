@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Drawing;
 using UnityEngine;
+using UnityEditor;
 
 namespace TheBetterRoles;
 
@@ -61,6 +62,7 @@ public class PlayerMenu
             {
                 PlayerControl.LocalPlayer.PlayerMenuSync(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
             }));
+            shapeshifterPanel.NameText.color = (player.IsLocalData() ? Utils.HexToColor32(player.BetterData().RoleInfo.Role.RoleColor) : UnityEngine.Color.white);
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
             shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Utils.HexToColor32(Role.RoleColor);
             shapeshifterPanel.Background.transform.Find("Highlight/ShapeshifterIcon").gameObject.SetActive(false);

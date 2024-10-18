@@ -313,6 +313,7 @@ static class ExtendedPlayerControl
     }
     // Check if player controller is self client
     public static bool IsLocalPlayer(this PlayerControl player) => player != null && PlayerControl.LocalPlayer != null && player == PlayerControl.LocalPlayer;
+    public static bool IsLocalData(this NetworkedPlayerInfo data) => data != null && PlayerControl.LocalPlayer != null && data.PlayerId == PlayerControl.LocalPlayer.PlayerId;
     public static bool IsOnLadder(this PlayerControl player) => player.onLadder || player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
 
     // Get vent Id that the player is in.

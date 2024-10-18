@@ -31,50 +31,26 @@ public class NoiseMakerAddon : CustomAddonBehavior
     {
         if (target == _player)
         {
-            _player.StartCoroutine(PlayNoiseNotification(ArrowDuration.GetFloat()));
+            PlayNoiseNotification(ArrowDuration.GetFloat());
         }
     }
 
-    private IEnumerator PlayNoiseNotification(float duration = 15f, float flashInterval = 0.5f)
+    private void PlayNoiseNotification(float duration)
     {
-        var arrow = new ArrowLocator().Create(_player.transform.position, Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.NoiseMaker-Arrow.png", 250f), minDistance: 0.25f);
-        var spriteRenderer = arrow.SpriteRenderer;
-        spriteRenderer.color = Color.white;
-
-        int flashCount = Mathf.FloorToInt(duration / flashInterval);
-
-        for (int i = 0; i < flashCount; i++)
+        var role = GamePrefabHelper.GetRolePrefab<NoisemakerRole>(AmongUs.GameOptions.RoleTypes.Noisemaker);
+        if (Constants.ShouldPlaySfx())
         {
-            Color startColor = (i % 2 == 0) ? new Color(1f, 0f, 0f) : new Color(0.5f, 0f, 0f);
-            Color endColor = (i % 2 == 0) ? new Color(0.5f, 0f, 0f) : new Color(1f, 0f, 0f);
-
-            float elapsedTime = 0f;
-
-            while (elapsedTime < flashInterval)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / flashInterval;
-
-                spriteRenderer.color = Color.Lerp(startColor, endColor, t);
-
-                yield return null;
-            }
+            SoundManager.Instance.PlaySound(role.deathSound, false);
+            VibrationManager.Vibrate(1f, PlayerControl.LocalPlayer.GetTruePosition(), 7f, 1.2f, VibrationManager.VibrationFalloff.None, null, false);
         }
-
-        float fadeDuration = 1f;
-        float fadeElapsedTime = 0f;
-        Color initialColor = spriteRenderer.color;
-
-        while (fadeElapsedTime < fadeDuration)
+        GameObject gameObject = UnityEngine.Object.Instantiate(role.deathArrowPrefab, _player.transform.position, Quaternion.identity);
+        role.deathArrow = gameObject.GetComponent<NoisemakerArrow>();
+        role.deathArrow.SetDuration(duration);
+        if (_player.IsLocalPlayer())
         {
-            fadeElapsedTime += Time.deltaTime;
-            float t = fadeElapsedTime / fadeDuration;
-
-            spriteRenderer.color = Color.Lerp(initialColor, new Color(initialColor.r, initialColor.g, initialColor.b, 0f), t);
-
-            yield return null;
+            role.deathArrow.alwaysMaxSize = true;
         }
-
-        arrow.Remove();
+        role.deathArrow.gameObject.SetActive(true);
+        role.deathArrow.target = _player.GetTruePosition();
     }
 }
