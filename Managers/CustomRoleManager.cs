@@ -670,6 +670,7 @@ public enum CustomRoles
     NoiseMaker,
     Swift,
     Tracker,
+    Lantern,
 }
 
 public enum CustomRoleTeam

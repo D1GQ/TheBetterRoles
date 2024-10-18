@@ -221,6 +221,11 @@
   "Role.Tracker.Info": "Track players around you",
   "Role.Tracker.LongInfo": "As the Tracker, you will always have an arrow pointing to the closest player.",
 
+  "Role.Lantern": "Lantern",
+  "Role.Lantern.Info": "Place down lanterns for vision",
+  "Role.Lantern.LongInfo": "As the Lantern, your vision no longer follows you, place down an lantern for vision, only one lantern can be on the map at the time.",
+  "Role.Lantern.Ability.1": "Place Lantern",
+
   "Role.None": "None",
   "Role.None.Info": "None",
   "Role.None.LongInfo": "None",
