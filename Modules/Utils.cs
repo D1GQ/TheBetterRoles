@@ -306,6 +306,7 @@ public static class Utils
         }
     }
     public static string GetCustomRoleTeamName(CustomRoleTeam roleTeam) => Translator.GetString($"Role.Team.{Enum.GetName(roleTeam)}");
+    public static string GetCustomRoleCategoryName(CustomRoleCategory roleCategory) => Translator.GetString($"Role.Category.{Enum.GetName(roleCategory)}");
     public static string GetCustomRoleInfo(CustomRoles role, bool longInfo = false)
     {
         if (!longInfo)

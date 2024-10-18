@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -69,10 +70,41 @@ public class HudManagerPatch
             }
         }, 1f, "HudManagerPatch Start");
     }
+    private static int AddonIndex = 0;
     [HarmonyPatch(nameof(HudManager.Update))]
     [HarmonyPostfix]
     public static void Update_Postfix(HudManager __instance)
     {
+        if (Input.GetKeyDown(KeyCode.F1) && PlayerControl.LocalPlayer.Role() != null)
+        {
+            var role = PlayerControl.LocalPlayer.Role();
+            StringBuilder sb = new();
+            sb.Append($"<size=75%>{string.Format(Translator.GetString("Role"), Utils.GetCustomRoleNameAndColor(role.RoleType))}\n");
+            sb.Append($"{string.Format(Translator.GetString("Role.Team"), $"<{Utils.GetCustomRoleTeamColor(role.RoleTeam)}>{Utils.GetCustomRoleTeamName(role.RoleTeam)}</color>")}\n");
+            sb.Append(string.Format(Translator.GetString("Role.Category"), $"{Utils.GetCustomRoleCategoryName(role.RoleCategory)}\n\n"));
+            sb.Append($"{Utils.GetCustomRoleInfo(role.RoleType, true)}</size>");
+            __instance.ShowPopUp(sb.ToString());
+        }
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            var addons = PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons.ToList();
+            if (addons.Any())
+            {
+                if (AddonIndex >= addons.Count) AddonIndex = 0;
+                var addon = addons[AddonIndex];
+                AddonIndex++;
+
+                if (addon != null)
+                {
+                    StringBuilder sb = new();
+                    sb.Append($"<size=75%>{string.Format(Translator.GetString("Role.Addon"), Utils.GetCustomRoleNameAndColor(addon.RoleType))}\n");
+                    sb.Append(string.Format(Translator.GetString("Role.Category"), $"{Utils.GetCustomRoleCategoryName(addon.RoleCategory)}\n\n"));
+                    sb.Append($"{Utils.GetCustomRoleInfo(addon.RoleType, true)}</size>");
+                    __instance.ShowPopUp(sb.ToString());
+                }
+            }
+        }
 
         try
         {
