@@ -335,8 +335,8 @@ public abstract class CustomRoleBehavior
 
     public void Deinitialize()
     {
+        OnResetAbilityState(false);
         OnDeinitialize();
-        OnResetAbilityState();
 
         // Remove Buttons
         foreach (var button in Buttons)
@@ -764,7 +764,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Resets the state of any ability-related cooldowns or flags for this role.
     /// </summary>
-    public virtual void OnResetAbilityState(bool isTimeOut = false) { }
+    public virtual void OnResetAbilityState(bool isTimeOut) { }
 
     /// <summary>
     /// This method is called at the end of the game to process the winning players.

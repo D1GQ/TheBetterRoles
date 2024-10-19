@@ -239,8 +239,8 @@
 
   "Role.Lantern": "Lantern",
   "Role.Lantern.Info": "Place down lanterns for vision",
-  "Role.Lantern.LongInfo": "As the Lantern, your vision no longer follows you, place down an lantern for vision, only one lantern can be on the map at the time.",
-  "Role.Lantern.Ability.1": "Place Lantern",
+  "Role.Lantern.LongInfo": "As the Lantern, your vision no longer follows you. Place a lantern for vision, only one lantern can be on the map at a time.",
+  "Role.Lantern.Ability.1": "Lantern",
 
   "Role.None": "None",
   "Role.None.Info": "None",

@@ -54,7 +54,7 @@ public class InvestigatorRole : CustomRoleBehavior
         {
             foreach (var player in Main.AllPlayerControls)
             {
-                if (!player.Visible || player.inMovingPlat || player.invisibilityAlpha <= 0f || player == _player) continue;
+                if (!player.Visible || player.inMovingPlat || player.invisibilityAlpha <= 0f || player.IsLocalPlayer()) continue;
 
                 if (player.MyPhysics.Animations.IsPlayingRunAnimation())
                 {

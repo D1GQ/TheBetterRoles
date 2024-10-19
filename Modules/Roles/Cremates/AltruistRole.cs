@@ -90,11 +90,11 @@ public class AltruistRole : CustomRoleBehavior
     {
         if (target == _player)
         {
-            OnResetAbilityState();
+            OnResetAbilityState(false);
         }
     }
 
-    public override void OnResetAbilityState(bool isTimeOut = false)
+    public override void OnResetAbilityState(bool isTimeOut)
     {
         if (!isTimeOut)
         {

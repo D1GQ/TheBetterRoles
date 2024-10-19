@@ -88,7 +88,7 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    private NetworkedPlayerInfo.PlayerOutfit CopyOutfit(NetworkedPlayerInfo data)
+    private static NetworkedPlayerInfo.PlayerOutfit CopyOutfit(NetworkedPlayerInfo data)
     {
         var outfit = data.DefaultOutfit;
         return new NetworkedPlayerInfo.PlayerOutfit()
@@ -112,11 +112,11 @@ public class MorphlingRole : CustomRoleBehavior
     {
         if (target == _player)
         {
-            OnResetAbilityState();
+            OnResetAbilityState(false);
         }
     }
 
-    public override void OnResetAbilityState(bool IsTimeOut = false)
+    public override void OnResetAbilityState(bool IsTimeOut)
     {
         IsDisguised = false;
         DisguisedTargetId = -1;

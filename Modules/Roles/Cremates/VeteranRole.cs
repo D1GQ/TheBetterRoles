@@ -67,7 +67,7 @@ public class VeteranRole : CustomRoleBehavior
         }
     }
 
-    public override void OnResetAbilityState(bool isTimeOut = false)
+    public override void OnResetAbilityState(bool isTimeOut)
     {
         OnAlert = false;
     }

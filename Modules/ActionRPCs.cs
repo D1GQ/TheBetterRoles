@@ -179,7 +179,7 @@ static class ActionRPCs
         if (CheckReportBodyAction(player, bodyInfo, flag) == true)
         {
             // Run after checks for roles
-            CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState());
+            CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState(false));
             CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, flag));
             CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
 
