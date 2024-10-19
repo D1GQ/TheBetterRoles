@@ -47,7 +47,7 @@ public class SwooperRole : CustomRoleBehavior
         {
             case 5:
                 IsVisible = false;
-                SetInvisibility(true);
+                SetInvisibility(true, false);
                 InvisibilityButton.SetDuration();
                 break;
         }
@@ -63,20 +63,20 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
+    public override void Update()
+    {
+        SetInvisibility(!IsVisible, true);
+    }
+
     public override void OnResetAbilityState(bool IsTimeOut)
     {
         IsVisible = true;
         InteractableTarget = true;
-        SetInvisibility(false);
+        SetInvisibility(false, false);
     }
 
-    private void SetInvisibility(bool isActive)
+    private void SetInvisibility(bool isActive, bool isUpdate)
     {
-        if (!_player.IsLocalPlayer())
-        {
-            SetTrueVisibility(!isActive);
-        }
-
         if (_player.IsLocalPlayer() || localPlayer.IsImpostorTeammate() || !localPlayer.IsAlive())
         {
             _player.invisibilityAlpha = isActive ? 0.5f : 1f;
@@ -92,6 +92,11 @@ public class SwooperRole : CustomRoleBehavior
         if (isActive && (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Role.IsImpostor))
         {
             return;
+        }
+
+        if (!_player.IsLocalPlayer() && !isUpdate)
+        {
+            SetTrueVisibility(!isActive);
         }
     }
 
