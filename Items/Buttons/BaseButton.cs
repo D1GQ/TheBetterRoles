@@ -34,8 +34,8 @@ public class BaseButton
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
         (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
 
-    public virtual bool CanInteractOnPress() => ActionButton.canInteract && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
-    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition() || CanCancelDuration && State > 0;
+    public virtual bool CanInteractOnPress() => ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() || CanCancelDuration && State > 0 && BaseInteractable();
+    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition();
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public virtual void Update()
