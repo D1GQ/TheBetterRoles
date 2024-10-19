@@ -182,4 +182,9 @@ public class TargetButton : BaseButton
 
         ActionButton.gameObject.SetActive(Visible);
     }
+
+    public override void OnRemoveButton()
+    {
+        lastTarget?.SetOutline(false);
+    }
 }

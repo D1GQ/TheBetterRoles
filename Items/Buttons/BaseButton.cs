@@ -69,7 +69,11 @@ public class BaseButton
         {
             UnityEngine.Object.Destroy(Button.gameObject);
         }
+
+        OnRemoveButton();
     }
+
+    public virtual void OnRemoveButton() { }
 
     public virtual void SetCooldown(float amount = -1, int state = -1)
     {

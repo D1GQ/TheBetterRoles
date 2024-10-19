@@ -114,11 +114,12 @@ namespace TheBetterRoles
 
                     if (!string.IsNullOrEmpty(player.BetterData().NameColor))
                     {
-                        pva.NameText.color = Utils.HexToColor32(player.BetterData().NameColor);
+                        var color = Utils.HexToColor32(player.BetterData().NameColor);
+                        pva.NameText.color = new Color(color.r, color.g, color.b, pva.NameText.color.a);
                     }
                     else
                     {
-                        pva.NameText.color = new Color(1f, 1f, 1f, 1f);
+                        pva.NameText.color = new Color(1f, 1f, 1f, pva.NameText.color.a);
                     }
 
                     if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))

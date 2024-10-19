@@ -175,4 +175,9 @@ public class DeadBodyButton : BaseButton
 
         ActionButton.gameObject.SetActive(Visible);
     }
+
+    public override void OnRemoveButton()
+    {
+        lastDeadBody?.SetOutline(false, Color.clear);
+    }
 }

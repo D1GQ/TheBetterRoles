@@ -117,11 +117,12 @@ class PlayerControlPatch
         {
             if (!string.IsNullOrEmpty(player.BetterData().NameColor))
             {
-                player.cosmetics.nameText.color = Utils.HexToColor32(player.BetterData().NameColor);
+                var color = Utils.HexToColor32(player.BetterData().NameColor);
+                player.cosmetics.nameText.color = new Color(color.r, color.g, color.b, player.cosmetics.nameText.color.a);
             }
             else
             {
-                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
+                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, player.cosmetics.nameText.color.a);
             }
 
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))

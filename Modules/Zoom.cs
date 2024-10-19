@@ -11,27 +11,30 @@ public static class Zoom
 
     public static void Postfix()
     {
-        if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
-            && !PlayerControl.LocalPlayer.BetterData().IsFakeAlive))
+        if (PlayerControl.LocalPlayer.Role() != null)
         {
-            if (Camera.main.orthographicSize > 3.0f)
-                resetButtons = true;
-
-            if (Input.mouseScrollDelta.y > 0 && Camera.main.orthographicSize > 3.0f)
+            if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
+                && !PlayerControl.LocalPlayer.BetterData().IsFakeAlive))
             {
-                SetZoomSize(times: false);
-            }
-            else if (Input.mouseScrollDelta.y < 0 && (GameStates.IsDead || GameStates.IsFreePlay || GameStates.IsLobby) &&
-                        Camera.main.orthographicSize < 18.0f)
-            {
-                SetZoomSize(times: true);
-            }
+                if (Camera.main.orthographicSize > 3.0f)
+                    resetButtons = true;
 
-            Flag.NewFlag("Zoom");
-        }
-        else
-        {
-            Flag.Run(() => SetZoomSize(reset: true), "Zoom");
+                if (Input.mouseScrollDelta.y > 0 && Camera.main.orthographicSize > 3.0f)
+                {
+                    SetZoomSize(times: false);
+                }
+                else if (Input.mouseScrollDelta.y < 0 && (GameStates.IsDead || GameStates.IsFreePlay || GameStates.IsLobby) &&
+                            Camera.main.orthographicSize < 18.0f)
+                {
+                    SetZoomSize(times: true);
+                }
+
+                Flag.NewFlag("Zoom");
+            }
+            else
+            {
+                Flag.Run(() => SetZoomSize(reset: true), "Zoom");
+            }
         }
     }
 

@@ -47,6 +47,7 @@ public class SwooperRole : CustomRoleBehavior
         {
             case 5:
                 IsVisible = false;
+                SetInvisibility(true);
                 InvisibilityButton.SetDuration();
                 break;
         }
@@ -57,31 +58,25 @@ public class SwooperRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                IsVisible = true;
+                OnResetAbilityState(isTimeOut);
                 break;
         }
     }
 
-    public override void Update()
-    {
-        InteractableTarget = IsVisible;
-        SetInvisibility(!IsVisible);
-    }
-
     public override void OnResetAbilityState(bool IsTimeOut)
     {
-        InteractableTarget = true;
         IsVisible = true;
-        SetInvisibility(!IsVisible);
+        InteractableTarget = true;
+        SetInvisibility(false);
     }
 
     private void SetInvisibility(bool isActive)
     {
-        if (!isActive)
+        if (!_player.IsLocalPlayer())
         {
-            _player.shouldAppearInvisible = false;
-            _player.Visible = true;
+            SetTrueVisibility(!isActive);
         }
+
         if (_player.IsLocalPlayer() || localPlayer.IsImpostorTeammate() || !localPlayer.IsAlive())
         {
             _player.invisibilityAlpha = isActive ? 0.5f : 1f;
@@ -98,16 +93,12 @@ public class SwooperRole : CustomRoleBehavior
         {
             return;
         }
-        if (!_player.IsLocalPlayer())
-        {
-            _player.shouldAppearInvisible = isActive;
-            if (_player.inVent)
-            {
-                _player.Visible = false;
-                return;
-            }
-            _player.Visible = !isActive;
-        }
+    }
+
+    private void SetTrueVisibility(bool @bool)
+    {
+        _player.Visible = @bool && !_player.inVent;
+        _player.shouldAppearInvisible = !@bool;
     }
 
     private void SetNameTextAlpha(float alpha)
@@ -115,7 +106,7 @@ public class SwooperRole : CustomRoleBehavior
         foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
         {
             text.color = new Color(1f, 1f, 1f, alpha);
-            _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
         }
+        _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
     }
 }

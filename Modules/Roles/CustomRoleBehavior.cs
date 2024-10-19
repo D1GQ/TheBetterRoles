@@ -347,11 +347,6 @@ public abstract class CustomRoleBehavior
             }
         }
 
-        foreach (var vent in Main.AllEnabledVents)
-        {
-            Utils.SetOutline(vent, Color.white, false, false);
-        }
-
         if (IsAddon)
         {
             _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);

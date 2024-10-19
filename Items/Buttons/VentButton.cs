@@ -204,4 +204,9 @@ public class VentButton : BaseButton
 
         ActionButton.gameObject.SetActive(Visible);
     }
+
+    public override void OnRemoveButton()
+    {
+        lastTargetVent?.SetOutline(Color.white, false, false);
+    }
 }
