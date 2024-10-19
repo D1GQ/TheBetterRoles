@@ -108,7 +108,8 @@ public class Main : BasePlugin
 
     public static PlayerControl[] AllAlivePlayerControls => AllPlayerControls.ToArray().Where(pc => pc.IsAlive()).ToArray();
     public static DeadBody[] AllDeadBodys => UnityEngine.Object.FindObjectsOfType<DeadBody>().ToArray();
-    public static Vent[] AllVents => UnityEngine.Object.FindObjectsOfType<Vent>().Where(vent => vent.enabled).ToArray();
+    public static Vent[] AllVents => UnityEngine.Object.FindObjectsOfType<Vent>();
+    public static Vent[] AllEnabledVents => UnityEngine.Object.FindObjectsOfType<Vent>().Where(vent => vent.enabled).ToArray();
 
     public static ManualLogSource Logger;
 

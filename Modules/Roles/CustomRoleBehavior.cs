@@ -347,6 +347,11 @@ public abstract class CustomRoleBehavior
             }
         }
 
+        foreach (var vent in Main.AllEnabledVents)
+        {
+            Utils.SetOutline(vent, Color.white, false, false);
+        }
+
         if (IsAddon)
         {
             _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
@@ -539,11 +544,15 @@ public abstract class CustomRoleBehavior
         return true;
     }
 
-    public void TryOverrideTasks()
+    public void TryOverrideTasks(bool overideOldTask = false)
     {
         if (GameStates.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
         {
             _player.SetNewTasks(LongTasksOptionItem.GetInt(), ShortTasksOptionItem.GetInt(), CommonTasksOptionItem.GetInt());
+        }
+        else if (GameStates.IsHost && overideOldTask)
+        {
+            _player.SetNewTasks();
         }
     }
 

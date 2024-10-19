@@ -126,7 +126,7 @@ public class VentButton : BaseButton
         float closeDistanceThreshold = 0.335f;
         Vector2 myPos = _player.GetTruePosition();
 
-        List<Vent> allVents = Main.AllVents.Where(vent => VentCondition(vent)).ToList();
+        List<Vent> allVents = Main.AllEnabledVents.Where(vent => VentCondition(vent)).ToList();
 
         for (int i = 0; i < allVents.Count; i++)
         {

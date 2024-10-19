@@ -40,7 +40,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         _player.cosmetics.CurrentPet?.gameObject.SetActive(false);
         InteractableTarget = false;
         _player.transform.Find("Names").gameObject.SetActive(false);
-        TryOverrideTasks();
+        TryOverrideTasks(true);
         SpawnInRandomVent();
     }
 
@@ -57,7 +57,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     private void SpawnInRandomVent()
     {
         if (HasBeenClicked) return;
-        var vent = Main.AllVents[UnityEngine.Random.Range(0, Main.AllVents.Length)];
+        var vent = Main.AllEnabledVents[UnityEngine.Random.Range(0, Main.AllEnabledVents.Length)];
 
         if (vent != null)
         {
