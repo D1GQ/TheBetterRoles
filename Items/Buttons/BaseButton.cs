@@ -38,7 +38,7 @@ public class BaseButton
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition();
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
-    public List<T> GetObjectsInAbilityRange<T>(List<T> List, bool ignoreColliders, Func<T, Vector3> selector, bool checkVent = true)
+    public List<T> GetObjectsInAbilityRange<T>(List<T> List, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
         if ((!checkVent && !_player.CanMove && !_player.IsInVent()) || (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0)
         {
@@ -56,9 +56,9 @@ public class BaseButton
             T obj = allObjects[i];
             if (obj != null)
             {
-                Vector3 ventPos3D = selector((T)obj);
-                Vector2 ventPos = new Vector2(ventPos3D.x, ventPos3D.y);  // Convert to Vector2
-                Vector2 vectorToVent = ventPos - myPos;  // Correct calculation in 2D space
+                Vector3 ventPos3D = posSelector(obj);
+                Vector2 ventPos = new (ventPos3D.x, ventPos3D.y);
+                Vector2 vectorToVent = ventPos - myPos;
                 float magnitude = vectorToVent.magnitude;
 
                 if (magnitude <= closeDistanceThreshold || ignoreColliders ||
@@ -69,13 +69,12 @@ public class BaseButton
             }
         }
 
-        // Sort the objects based on their distance from the player in 2D space
         outputList.Sort((T a, T b) =>
         {
-            Vector3 posA3D = selector(a);
-            Vector3 posB3D = selector(b);
-            float distA = ((Vector2)new Vector2(posA3D.x, posA3D.y) - myPos).magnitude;
-            float distB = ((Vector2)new Vector2(posB3D.x, posB3D.y) - myPos).magnitude;
+            Vector3 posA3D = posSelector(a);
+            Vector3 posB3D = posSelector(b);
+            float distA = (new Vector2(posA3D.x, posA3D.y) - myPos).magnitude;
+            float distB = (new Vector2(posB3D.x, posB3D.y) - myPos).magnitude;
             return distA.CompareTo(distB);
         });
 
