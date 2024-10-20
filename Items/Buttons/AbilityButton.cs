@@ -87,9 +87,9 @@ public class AbilityButton : BaseButton
 
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
-        bool flag1 = Uses != 0 || InfiniteUses;
+        bool flag = Uses != 0 || InfiniteUses;
 
-        if (flag1 && BaseInteractable())
+        if (flag && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }

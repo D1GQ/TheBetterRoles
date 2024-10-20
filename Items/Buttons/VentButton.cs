@@ -6,14 +6,13 @@ namespace TheBetterRoles;
 public class VentButton : BaseButton
 {
     public Vent? lastTargetVent { get; set; }
-    public float closestDistance = float.MaxValue;
     public float HighlightDistance { get; set; } = 3.5f;
-    public float Distance { get; set; } = 0.8f;
     public bool IsAbility { get; set; }
     public Func<Vent, bool> VentCondition { get; set; } = (Vent target) => true;
     public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public VentButton Create(int id, string name, float cooldown, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
+        Distance = 0.8f;
         Role = role;
         Id = id;
         Name = name;
@@ -122,7 +121,6 @@ public class VentButton : BaseButton
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
         Vent? targetVent = null;
-        closestDistance = float.MaxValue;
 
         if (Visible)
         {
@@ -134,25 +132,14 @@ public class VentButton : BaseButton
                 vent => vent.transform.position,
                 false);
 
-            foreach (var vent in validVents)
-            {
-                float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), vent.transform.position);
-                if (distance < closestDistance && distance <= HighlightDistance)
-                {
-                    closestDistance = distance;
-                    targetVent = vent;
-                }
-            }
+            targetVent = validVents.FirstOrDefault();
         }
 
-        bool ventFlag1 = closestDistance <= HighlightDistance;
-        bool ventFlag2 = closestDistance <= Distance;
+        bool distanceFlag1 = ClosestObjDistance <= HighlightDistance;
+        bool distanceFlag2 = ClosestObjDistance <= Distance;
 
-        if (lastTargetVent != null)
-        {
-            lastTargetVent.SetOutline(Color.white, false, false);
-        }
-        targetVent.SetOutline(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)), ventFlag1, ventFlag2);
+        lastTargetVent?.SetOutline(Color.white, false, false);
+        targetVent?.SetOutline(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)), distanceFlag1, distanceFlag2);
 
         if (Visible)
         {
@@ -161,7 +148,7 @@ public class VentButton : BaseButton
 
         bool flag = Uses != 0 || InfiniteUses;
 
-        if (ventFlag2 && flag && !_player.walkingToVent && BaseInteractable())
+        if (distanceFlag2 && flag && !_player.walkingToVent && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }

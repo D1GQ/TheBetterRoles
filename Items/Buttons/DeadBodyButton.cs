@@ -6,14 +6,13 @@ namespace TheBetterRoles;
 
 public class DeadBodyButton : BaseButton
 {
-    public float DeadBodyRange { get; set; }
     public DeadBody? lastDeadBody { get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (DeadBody body) => true;
     public DeadBodyButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
         Id = id;
-        DeadBodyRange = range * 0.5f + 1f;
+        Distance = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
         Duration = duration;
@@ -92,10 +91,7 @@ public class DeadBodyButton : BaseButton
 
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
-        bool flag1 = true;
-
         DeadBody? target = null;
-        float closestDistance = float.MaxValue;
 
         if (Visible)
         {
@@ -106,33 +102,22 @@ public class DeadBodyButton : BaseButton
                 false,
                 b => b.transform.position);
 
-            foreach (var deadBody in bodies)
-            {
-                float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), deadBody.transform.position);
-                if (distance < closestDistance && distance <= DeadBodyRange)
-                {
-                    closestDistance = distance;
-                    target = deadBody;
-                }
-            }
+            target = bodies.FirstOrDefault();
         }
 
-        flag1 = target != null;
+        bool distanceFlag = ClosestObjDistance <= Distance;
+        target = distanceFlag ? target : null;
 
-        if (lastDeadBody != null)
-        {
-            lastDeadBody.SetOutline(false, Color.clear);
-        }
-
+        lastDeadBody?.SetOutline(false, Color.clear);
         if (target != null && Visible)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
             lastDeadBody = target;
         }
 
-        bool flag2 = Uses != 0 || InfiniteUses;
+        bool flag = Uses != 0 || InfiniteUses;
 
-        if (flag1 && flag2 && BaseInteractable() || State > 0 && CanCancelDuration)
+        if (distanceFlag && flag && BaseInteractable() || State > 0 && CanCancelDuration)
         {
             ActionButton.SetEnabled();
         }

@@ -15,6 +15,8 @@ public class BaseButton
     public int Id { get; set; }
     public bool UseAsDead { get; set; }
     public bool Visible { get; set; } = false;
+    public float ClosestObjDistance { get; set; } = float.MaxValue;
+    public float Distance { get; set; } = 0.8f;
 
     public string? Name { get; set; } = "Ability";
     public IntRange Range = new(0, 100);
@@ -40,24 +42,25 @@ public class BaseButton
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
+        // Early exit conditions
         if ((!checkVent && !_player.CanMove && !_player.IsInVent()) || (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0)
         {
             return [];
         }
 
         List<T> allObjects = List;
-
         List<T> outputList = [];
         float closeDistanceThreshold = 0.335f;
         Vector2 myPos = _player.GetTruePosition();
 
+        // Filtering objects based on conditions
         for (int i = 0; i < allObjects.Count; i++)
         {
             T obj = allObjects[i];
             if (obj != null)
             {
                 Vector3 ventPos3D = posSelector(obj);
-                Vector2 ventPos = new (ventPos3D.x, ventPos3D.y);
+                Vector2 ventPos = new(ventPos3D.x, ventPos3D.y);
                 Vector2 vectorToVent = ventPos - myPos;
                 float magnitude = vectorToVent.magnitude;
 
@@ -69,17 +72,30 @@ public class BaseButton
             }
         }
 
-        outputList.Sort((T a, T b) =>
+        ClosestObjDistance = float.MaxValue;
+
+        if (outputList.Count == 1)
         {
-            Vector3 posA3D = posSelector(a);
-            Vector3 posB3D = posSelector(b);
-            float distA = (new Vector2(posA3D.x, posA3D.y) - myPos).magnitude;
-            float distB = (new Vector2(posB3D.x, posB3D.y) - myPos).magnitude;
-            return distA.CompareTo(distB);
-        });
+            Vector3 pos3D = posSelector(outputList[0]);
+            float dist = (new Vector2(pos3D.x, pos3D.y) - myPos).magnitude;
+            ClosestObjDistance = dist;
+        }
+        else
+        {
+            outputList.Sort((T a, T b) =>
+            {
+                Vector3 posA3D = posSelector(a);
+                Vector3 posB3D = posSelector(b);
+                float distA = (new Vector2(posA3D.x, posA3D.y) - myPos).magnitude;
+                float distB = (new Vector2(posB3D.x, posB3D.y) - myPos).magnitude;
+                ClosestObjDistance = Mathf.Min(ClosestObjDistance, distA, distB);
+                return distA.CompareTo(distB);
+            });
+        }
 
         return outputList;
     }
+
 
     public virtual void FixedUpdate()
     {

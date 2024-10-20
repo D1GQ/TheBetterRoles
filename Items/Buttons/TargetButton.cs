@@ -6,7 +6,6 @@ namespace TheBetterRoles;
 
 public class TargetButton : BaseButton
 {
-    public float TargetRange { get; set; }
     public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
     public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
@@ -14,7 +13,7 @@ public class TargetButton : BaseButton
     {
         Role = role;
         Id = id;
-        TargetRange = range * 0.5f + 1f;
+        Distance = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
         Uses = abilityUses;
@@ -92,10 +91,7 @@ public class TargetButton : BaseButton
 
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
-        bool flag1 = true;
-
         PlayerControl? target = null;
-        float closestDistance = float.MaxValue;
 
         if (Visible)
         {
@@ -106,33 +102,22 @@ public class TargetButton : BaseButton
                 false,
                 target => target.GetCustomPosition());
 
-            foreach (var player in targets)
-            {
-                float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), player.GetCustomPosition());
-                if (distance < closestDistance && distance <= TargetRange)
-                {
-                    closestDistance = distance;
-                    target = player;
-                }
-            }
+            target = targets.FirstOrDefault();
         }
 
-        flag1 = target != null;
+        bool distanceFlag = ClosestObjDistance <= Distance;
+        target = distanceFlag ? target : null;
 
-        if (lastTarget != null)
-        {
-            lastTarget.SetOutline(false);
-        }
-
+        lastTarget?.SetOutline(false);
         if (target != null && Visible)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
             lastTarget = target;
         }
 
-        bool flag2 = Uses != 0 || InfiniteUses;
+        bool flag = Uses != 0 || InfiniteUses;
 
-        if (flag1 && flag2 && BaseInteractable())
+        if (distanceFlag && flag && BaseInteractable())
         {
             ActionButton.SetEnabled();
         }
