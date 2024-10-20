@@ -1,5 +1,6 @@
 ﻿using Hazel;
 using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -90,7 +91,12 @@ public class TransporterRole : CustomRoleBehavior
     {
         if (target1.CanBeTeleported() && target2.CanBeTeleported() && target1 != null && target2 != null)
         {
-            if (target1.IsLocalPlayer() || target2.IsLocalPlayer() || _player.IsLocalPlayer())
+            if (target1.IsLocalPlayer() || target2.IsLocalPlayer())
+            {
+                CustomSoundsManager.Play("Teleport", 2f);
+                Utils.FlashScreen(RoleColor);
+            }
+            else if (_player.IsLocalPlayer())
             {
                 Utils.FlashScreen(RoleColor);
             }

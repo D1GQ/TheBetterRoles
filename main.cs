@@ -136,6 +136,7 @@ public class Main : BasePlugin
             Harmony.PatchAll();
             GameSettingMenuPatch.SetupSettings(true);
             CustomColors.Load();
+            CustomSoundsManager.Load();
             SubmergedCompatibility.Initialize();
 
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)
