@@ -86,45 +86,6 @@ public class DeadBodyButton : BaseButton
         return this;
     }
 
-    public List<DeadBody> GetBodysInAbilityRangeSorted(List<DeadBody> outputList, bool ignoreColliders)
-    {
-        if (!_player.CanMove && !_player.IsInVent() || Uses <= 0 && !InfiniteUses || State > 0)
-        {
-            return [];
-        }
-
-        outputList.Clear();
-        float closeDistanceThreshold = DeadBodyRange;
-        Vector2 myPos = _player.GetTruePosition();
-
-        List<DeadBody> allBodys = Main.AllDeadBodys.Where(body => DeadBodyCondition(body)).ToList();
-
-        for (int i = 0; i < allBodys.Count; i++)
-        {
-            DeadBody body = allBodys[i];
-            if (body != null)
-            {
-                Vector2 vectorToVent = (Vector2)body.transform.position - myPos;
-                float magnitude = vectorToVent.magnitude;
-
-                if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToVent.normalized, magnitude, Constants.ShipAndObjectsMask))
-                {
-                    outputList.Add(body);
-                }
-            }
-        }
-
-        outputList.Sort((DeadBody a, DeadBody b) =>
-        {
-            float distA = ((Vector2)a.transform.position - myPos).magnitude;
-            float distB = ((Vector2)b.transform.position - myPos).magnitude;
-            return distA.CompareTo(distB);
-        });
-
-        return outputList;
-    }
-
     public override void Update()
     {
         base.Update();
@@ -138,7 +99,8 @@ public class DeadBodyButton : BaseButton
 
         if (Visible)
         {
-            foreach (var deadBody in GetBodysInAbilityRangeSorted([], false))
+            var Bodys = GetObjectsInAbilityRange(Main.AllDeadBodys.Where(b => DeadBodyCondition(b)).ToList(), false, b => b.transform.position);
+            foreach (var deadBody in Bodys)
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), deadBody.transform.position);
                 if (distance < closestDistance && distance <= DeadBodyRange)

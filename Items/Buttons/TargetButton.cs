@@ -86,52 +86,6 @@ public class TargetButton : BaseButton
         return this;
     }
 
-    public List<PlayerControl> GetPlayersInAbilityRangeSorted(List<PlayerControl> outputList, bool ignoreColliders)
-    {
-        if (!_player.CanMove || Uses <= 0 && !InfiniteUses || State > 0)
-        {
-            return [];
-        }
-
-        outputList.Clear();
-        float abilityDistance = TargetRange;
-        float closeDistanceThreshold = 0.15f;
-        Vector2 myPos = _player.GetTruePosition();
-
-        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.Where(pc => !pc.IsLocalPlayer() && TargetCondition(pc) && pc.BetterData().RoleInfo.Role.InteractableTarget).ToList();
-
-        for (int i = 0; i < allPlayers.Count; i++)
-        {
-            PlayerControl PlayerInfo = allPlayers[i];
-            PlayerControl targetPlayer = PlayerInfo;
-
-            if (targetPlayer && targetPlayer.Collider.enabled)
-            {
-                Vector2 vectorToPlayer = targetPlayer.GetCustomPosition() - myPos;
-                float magnitude = vectorToPlayer.magnitude;
-
-                if (magnitude <= abilityDistance)
-                {
-                    if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                        !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToPlayer.normalized, magnitude, Constants.ShipAndObjectsMask))
-                    {
-                        outputList.Add(targetPlayer);
-                    }
-                }
-            }
-        }
-
-        outputList.Sort((PlayerControl a, PlayerControl b) =>
-        {
-            float distA = (a.GetTruePosition() - myPos).magnitude;
-            float distB = (b.GetTruePosition() - myPos).magnitude;
-            return distA.CompareTo(distB);
-        });
-
-        return outputList;
-    }
-
-
     public override void Update()
     {
         base.Update();
@@ -145,7 +99,8 @@ public class TargetButton : BaseButton
 
         if (Visible)
         {
-            foreach (var player in GetPlayersInAbilityRangeSorted([], false))
+            var targets = GetObjectsInAbilityRange(Main.AllPlayerControls.Where(target => !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget)).ToList(), false, target => target.GetCustomPosition());
+            foreach (var player in targets)
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), player.GetCustomPosition());
                 if (distance < closestDistance && distance <= TargetRange)

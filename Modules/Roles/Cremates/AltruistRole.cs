@@ -186,12 +186,12 @@ public class AltruistRole : CustomRoleBehavior
         UnityEngine.Object.Destroy(body.gameObject);
     }
 
-    private void SetMovement(PlayerControl source, bool canMove)
+    private void SetMovement(PlayerControl player, bool canMove)
     {
-        source.moveable = canMove;
-        source.MyPhysics.ResetMoveState(false);
-        source.NetTransform.enabled = canMove;
-        source.MyPhysics.enabled = canMove;
-        source.NetTransform.Halt();
+        player.moveable = canMove;
+        player.MyPhysics.ResetMoveState(false);
+        player.NetTransform.enabled = canMove;
+        player.MyPhysics.enabled = canMove;
+        player.NetTransform.Halt();
     }
 }

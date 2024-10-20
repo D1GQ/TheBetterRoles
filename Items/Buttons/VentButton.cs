@@ -115,46 +115,6 @@ public class VentButton : BaseButton
 
     public override bool BaseInteractable() => !_player.inMovingPlat && !_player.IsOnLadder();
 
-    public List<Vent> GetVentsInAbilityRangeSorted(List<Vent> outputList, bool ignoreColliders)
-    {
-        if (!_player.CanMove && !_player.IsInVent() || ShipStatus.Instance == null || Uses <= 0 && !InfiniteUses || State > 0)
-        {
-            return [];
-        }
-
-        outputList.Clear();
-        float closeDistanceThreshold = 0.335f;
-        Vector2 myPos = _player.GetTruePosition();
-
-        List<Vent> allVents = Main.AllEnabledVents.Where(vent => VentCondition(vent)).ToList();
-
-        for (int i = 0; i < allVents.Count; i++)
-        {
-            Vent vent = allVents[i];
-            if (vent != null)
-            {
-                Vector2 vectorToVent = (Vector2)vent.transform.position - myPos;
-                float magnitude = vectorToVent.magnitude;
-
-                if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToVent.normalized, magnitude, Constants.ShipAndObjectsMask))
-                {
-                    outputList.Add(vent);
-                }
-            }
-        }
-
-        outputList.Sort((Vent a, Vent b) =>
-        {
-            float distA = ((Vector2)a.transform.position - myPos).magnitude;
-            float distB = ((Vector2)b.transform.position - myPos).magnitude;
-            return distA.CompareTo(distB);
-        });
-
-        return outputList;
-    }
-
-
     public override void Update()
     {
         base.Update();
@@ -166,7 +126,9 @@ public class VentButton : BaseButton
 
         if (Visible)
         {
-            foreach (var vent in GetVentsInAbilityRangeSorted([], _player.inVent))
+            foreach (var vent in GetObjectsInAbilityRange<Vent>(Main.AllEnabledVents.Where(vent => VentCondition(vent)).ToList(),
+                _player.inVent,
+                vent => vent.transform.position, false))
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), vent.transform.position);
                 if (distance < closestDistance && distance <= HighlightDistance)
