@@ -5,14 +5,6 @@ namespace TheBetterRoles.Patches;
 
 public class RolePatch
 {
-    public static void Update()
-    {
-        if (!GameStates.IsInGamePlay && CustomRoleBehavior.SubTeam.Count > 0)
-        {
-            CustomRoleBehavior.SubTeam.Clear();
-        }
-    }
-
     [HarmonyPatch(typeof(PlayerControl))]
     class PlayerControlPatch
     {
@@ -20,9 +12,6 @@ public class RolePatch
         [HarmonyPrefix]
         public static void FixedUpdate_Prefix(PlayerControl __instance)
         {
-
-            CustomRoleManager.RoleUpdate(__instance);
-
             var box = __instance.gameObject.GetComponent<BoxCollider2D>();
             if (box != null)
             {

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace TheBetterRoles;
 
@@ -24,6 +25,53 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public bool HasShowDcMsg { get; set; } = false;
     public DisconnectReasons? DisconnectReason { get; set; }
     public ExtendedRoleInfo? RoleInfo { get; set; }
+
+    public void Update()
+    {
+        var pc = _Data?.Object;
+        if (pc != null)
+        {
+            if (RoleInfo?.AllRoles == null) return;
+
+            if (RoleInfo.AllRoles.Any())
+            {
+                foreach (var role in RoleInfo.AllRoles)
+                {
+                    role?.Update();
+                }
+            }
+        }
+    }
+
+    public void FixedUpdate()
+    {
+        var pc = _Data?.Object;
+        if (pc != null)
+        {
+            if (RoleInfo?.AllRoles == null) return;
+
+            if (RoleInfo.AllRoles.Any())
+            {
+                foreach (var role in RoleInfo.AllRoles)
+                {
+                    role?.FixedUpdate();
+
+                    if (pc.IsLocalPlayer())
+                    {
+                        if (role?.Buttons != null)
+                        {
+                            foreach (var button in role.Buttons)
+                            {
+                                if (button?.ActionButton == null) continue;
+
+                                button?.FixedUpdate();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 public class ExtendedRoleInfo

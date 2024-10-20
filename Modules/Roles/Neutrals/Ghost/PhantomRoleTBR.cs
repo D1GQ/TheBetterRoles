@@ -86,7 +86,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         }
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         if (!HasBeenClicked)
         {

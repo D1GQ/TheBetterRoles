@@ -30,7 +30,7 @@ public class TrackerAddon : CustomAddonBehavior
     {
         if (_player.IsLocalPlayer()) TrackerArrowLocator.Remove();
     }
-    public override void Update()
+    public override void FixedUpdate()
     {
         if (TrackerArrowLocator != null)
         {

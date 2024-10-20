@@ -81,7 +81,7 @@ public class BaseButton
         return outputList;
     }
 
-    public virtual void Update()
+    public virtual void FixedUpdate()
     {
         if (TempCooldown > 0)
         {

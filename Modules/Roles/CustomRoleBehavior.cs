@@ -572,12 +572,17 @@ public abstract class CustomRoleBehavior
     /// <returns>A <see cref="Sprite"/> representing the ability icon, or null if the sprite could not be loaded.</returns>
     public Sprite? LoadAbilitySprite(string name, float size = 115) => Utils.LoadSprite($"TheBetterRoles.Resources.Images.Ability.{name}.png", size);
 
-
     /// <summary>
     /// Called once per frame to update the state of the role or perform actions.
     /// Override this method to implement any per-frame logic, such as checking conditions, updating timers, or managing abilities.
     /// </summary>
     public virtual void Update() { }
+
+    /// <summary>
+    /// Called once every frame to update the state of the role or perform actions.
+    /// Override this method to implement any per-frame logic, such as checking conditions, updating timers, or managing abilities.
+    /// </summary>
+    public virtual void FixedUpdate() { }
 
     /// <summary>
     /// Determines the win condition for the role. This can be overridden by roles that have special win conditions.

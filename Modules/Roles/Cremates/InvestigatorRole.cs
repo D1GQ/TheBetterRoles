@@ -48,7 +48,7 @@ public class InvestigatorRole : CustomRoleBehavior
     }
     private GameObject? Footprints;
     private Dictionary<byte, float> Timer = [];
-    public override void Update()
+    public override void FixedUpdate()
     {
         if (_player.IsLocalPlayer())
         {

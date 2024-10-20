@@ -95,7 +95,7 @@
 
   "Role.Snitch": "Snitch",
   "Role.Snitch.Info": "Finish your tasks to find the Impostors",
-  "Role.Snitch.LongInfo": "After the Snitch completes all tasks, they can see the Impostor's roles and have a arrow putting towards them. When the Snitch has only one task left, the Impostors will see a arrow pointing towards the Snitch.",
+  "Role.Snitch.LongInfo": "After the Snitch completes all tasks, they can see the Impostor's roles and have a arrow pointing towards them. When the Snitch has only a set amount of tasks left, the Impostors will see a arrow pointing towards the Snitch.",
   "Role.Snitch.Option.RevealRolesInMeeting": "Reveal Roles In Meeting",
   "Role.Snitch.Option.SnitchSeesNeutralRoles": "Snitch Sees Neutral Roles",
   "Role.Snitch.Option.TasksRemainingWhenRevealed": "Tasks Remaining When Revealed",

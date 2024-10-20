@@ -15,6 +15,5 @@ public class ModManagerPatch
         FileChecker.UpdateUnauthorizedFiles();
         LateTask.Update(Time.deltaTime);
         BetterNotificationManager.Update();
-        RolePatch.Update();
     }
 }

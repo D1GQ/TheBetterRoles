@@ -63,7 +63,7 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         SetInvisibility(!IsVisible, true);
     }

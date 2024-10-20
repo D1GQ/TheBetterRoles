@@ -60,7 +60,7 @@ public class SabotageButton : BaseButton
         return this;
     }
 
-    public override void Update()
+    public override void FixedUpdate()
     {
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 

@@ -376,34 +376,6 @@ public static class CustomRoleManager
         return random.Next(0, list.Count); // Returns a random index from 0 to list.Count - 1
     }
 
-
-    public static void RoleUpdate(PlayerControl player)
-    {
-        var betterData = player?.BetterData();
-        if (betterData?.RoleInfo == null || betterData.RoleInfo.AllRoles == null) return;
-
-        if (betterData.RoleInfo.AllRoles.Any())
-        {
-            foreach (var role in betterData.RoleInfo.AllRoles)
-            {
-                role?.Update();
-
-                if (player.IsLocalPlayer())
-                {
-                    if (role?.Buttons != null)
-                    {
-                        foreach (var button in role.Buttons)
-                        {
-                            if (button?.ActionButton == null) continue;
-
-                            button.Update();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public static string GetRoleMarks(PlayerControl target)
     {
         string Marks = "";

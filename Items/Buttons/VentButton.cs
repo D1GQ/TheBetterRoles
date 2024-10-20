@@ -115,9 +115,9 @@ public class VentButton : BaseButton
 
     public override bool BaseInteractable() => !_player.inMovingPlat && !_player.IsOnLadder();
 
-    public override void Update()
+    public override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
 
         Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
 
