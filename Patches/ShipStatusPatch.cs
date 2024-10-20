@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TheBetterRoles.Patches;
 
@@ -39,5 +40,19 @@ class ShipStatusPatch
             GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
 
         return false;
+    }
+
+    [HarmonyPatch(nameof(ShipStatus.Awake))]
+    [HarmonyPostfix]
+    public static void Awake_Postfix(ShipStatus __instance)
+    {
+        SubmergedCompatibility.SetupMap(__instance);
+    }
+
+    [HarmonyPatch(nameof(ShipStatus.OnDestroy))]
+    [HarmonyPostfix]
+    public static void OnDestroy_Postfix(/*ShipStatus __instance*/)
+    {
+        SubmergedCompatibility.SetupMap(null);
     }
 }

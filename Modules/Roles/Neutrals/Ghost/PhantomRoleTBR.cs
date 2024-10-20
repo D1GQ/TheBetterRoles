@@ -36,12 +36,23 @@ public class PhantomRoleTBR : CustomRoleBehavior
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
         _player.cosmetics.gameObject.SetActive(false);
-        _player.cosmetics.colorBlindText.gameObject.SetActive(false);
         _player.cosmetics.CurrentPet?.gameObject.SetActive(false);
         InteractableTarget = false;
         _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks(true);
         SpawnInRandomVent();
+    }
+
+    private void ResetState()
+    {
+        InteractableTarget = true;
+        _player.BetterData().IsFakeAlive = false;
+        if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
+        _player.BetterData().PlayerVisionModPlus -= 10;
+        _player.transform.Find("Names").gameObject.SetActive(true);
+        _player.cosmetics.SetPhantomRoleAlpha(1f);
+        _player.cosmetics.gameObject.SetActive(true);
+        _player.cosmetics.CurrentPet?.gameObject.SetActive(true);
     }
 
     public override void OnDeinitialize()
@@ -73,19 +84,6 @@ public class PhantomRoleTBR : CustomRoleBehavior
                 vent.SetButtons(false);
             }
         }
-    }
-
-    private void ResetState()
-    {
-        InteractableTarget = true;
-        _player.BetterData().IsFakeAlive = false;
-        if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
-        _player.BetterData().PlayerVisionModPlus -= 10;
-        _player.transform.Find("Names").gameObject.SetActive(true);
-        _player.cosmetics.SetPhantomRoleAlpha(1f);
-        _player.cosmetics.gameObject.SetActive(true);
-        _player.cosmetics.colorBlindText.gameObject.SetActive(true);
-        _player.cosmetics.CurrentPet?.gameObject.SetActive(true);
     }
 
     public override void Update()

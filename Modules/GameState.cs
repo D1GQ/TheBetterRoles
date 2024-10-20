@@ -17,6 +17,7 @@ public static class GameStates
     public static bool DleksIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Dleks;
     public static bool AirshipIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Airship;
     public static bool FungleIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Fungle;
+    public static bool SubmergedIsActive => SubmergedCompatibility.IsSubmerged;
     public static byte GetActiveMapId => GameOptionsManager.Instance.CurrentGameOptions.MapId;
     public static bool IsSystemActive(SystemTypes type)
     {

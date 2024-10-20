@@ -79,21 +79,24 @@ class GamePlayManager
         [HarmonyPostfix]
         private static void Update_Postfix(GameStartManager __instance)
         {
-            if (!GameStates.IsHost)
+            if (GameStates.IsLobby)
             {
-                __instance.StartButton.gameObject.SetActive(false);
-                return;
+                if (!GameStates.IsHost)
+                {
+                    __instance.StartButton.gameObject.SetActive(false);
+                    return;
 
-            }
-            __instance.GameStartTextParent.SetActive(false);
-            __instance.StartButton.gameObject.SetActive(true);
-            if (__instance.startState == GameStartManager.StartingStates.Countdown)
-            {
-                __instance.StartButton.buttonText.text = string.Format("{0}: {1}", Translator.GetString(StringNames.Cancel), (int)__instance.countDownTimer + 1);
-            }
-            else
-            {
-                __instance.StartButton.buttonText.text = Translator.GetString(StringNames.StartLabel);
+                }
+                __instance.GameStartTextParent.SetActive(false);
+                __instance.StartButton.gameObject.SetActive(true);
+                if (__instance.startState == GameStartManager.StartingStates.Countdown)
+                {
+                    __instance.StartButton.buttonText.text = string.Format("{0}: {1}", Translator.GetString(StringNames.Cancel), (int)__instance.countDownTimer + 1);
+                }
+                else
+                {
+                    __instance.StartButton.buttonText.text = Translator.GetString(StringNames.StartLabel);
+                }
             }
         }
         [HarmonyPatch(nameof(GameStartManager.BeginGame))]

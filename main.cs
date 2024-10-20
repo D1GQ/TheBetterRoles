@@ -136,6 +136,7 @@ public class Main : BasePlugin
             Harmony.PatchAll();
             GameSettingMenuPatch.SetupSettings(true);
             CustomColors.Load();
+            SubmergedCompatibility.Initialize();
 
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)
                 File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "steam_appid.txt"), "945360");
