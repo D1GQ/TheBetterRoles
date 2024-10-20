@@ -99,8 +99,14 @@ public class DeadBodyButton : BaseButton
 
         if (Visible)
         {
-            var Bodys = GetObjectsInAbilityRange(Main.AllDeadBodys.Where(b => DeadBodyCondition(b)).ToList(), false, b => b.transform.position);
-            foreach (var deadBody in Bodys)
+            var bodies = GetObjectsInAbilityRange(
+                Main.AllDeadBodys
+                    .Where(b => DeadBodyCondition(b))
+                    .ToList(),
+                false,
+                b => b.transform.position);
+
+            foreach (var deadBody in bodies)
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), deadBody.transform.position);
                 if (distance < closestDistance && distance <= DeadBodyRange)

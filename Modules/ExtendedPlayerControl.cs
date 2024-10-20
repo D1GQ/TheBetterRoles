@@ -48,7 +48,7 @@ static class ExtendedPlayerControl
 
     public static void CustomRevive(this PlayerControl player, bool SetData = true)
     {
-        if (SetData)player.Data.IsDead = false;
+        if (SetData) player.Data.IsDead = false;
         player.gameObject.layer = LayerMask.NameToLayer("Players");
         player.MyPhysics.ResetMoveState(true);
         player.clickKillCollider.enabled = true;

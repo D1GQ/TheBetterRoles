@@ -126,9 +126,15 @@ public class VentButton : BaseButton
 
         if (Visible)
         {
-            foreach (var vent in GetObjectsInAbilityRange<Vent>(Main.AllEnabledVents.Where(vent => VentCondition(vent)).ToList(),
+            List<Vent> validVents = GetObjectsInAbilityRange(
+                Main.AllEnabledVents
+                    .Where(vent => VentCondition(vent))
+                    .ToList(),
                 _player.inVent,
-                vent => vent.transform.position, false))
+                vent => vent.transform.position,
+                false);
+
+            foreach (var vent in validVents)
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), vent.transform.position);
                 if (distance < closestDistance && distance <= HighlightDistance)

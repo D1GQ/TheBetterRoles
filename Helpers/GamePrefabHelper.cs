@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
+using UnityEngine;
 
 namespace TheBetterRoles;
 

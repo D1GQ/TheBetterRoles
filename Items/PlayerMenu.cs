@@ -1,7 +1,5 @@
 ﻿using HarmonyLib;
-using System.Drawing;
 using UnityEngine;
-using UnityEditor;
 
 namespace TheBetterRoles;
 

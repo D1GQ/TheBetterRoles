@@ -99,7 +99,13 @@ public class TargetButton : BaseButton
 
         if (Visible)
         {
-            var targets = GetObjectsInAbilityRange(Main.AllPlayerControls.Where(target => !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget)).ToList(), false, target => target.GetCustomPosition());
+            var targets = GetObjectsInAbilityRange(
+                Main.AllPlayerControls
+                    .Where(target => !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget))
+                    .ToList(),
+                false,
+                target => target.GetCustomPosition());
+
             foreach (var player in targets)
             {
                 float distance = Vector2.Distance(PlayerControl.LocalPlayer.GetCustomPosition(), player.GetCustomPosition());
