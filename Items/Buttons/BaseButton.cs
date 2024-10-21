@@ -62,8 +62,8 @@ public class BaseButton
                 Vector2 vectorToObj = objPos - myPos;
                 float magnitude = vectorToObj.magnitude;
 
-                if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToObj.normalized, magnitude, Constants.ShipAndObjectsMask))
+                if (magnitude <= closeDistanceThreshold && (ignoreColliders ||
+                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToObj.normalized, magnitude, Constants.ShipAndObjectsMask)))
                 {
                     outputList.Add(obj);
                 }
@@ -93,7 +93,6 @@ public class BaseButton
 
         return outputList;
     }
-
 
     public virtual void FixedUpdate()
     {

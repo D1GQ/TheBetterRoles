@@ -101,7 +101,7 @@ public class TargetButton : BaseButton
                     .ToList(),
                 Distance,
                 false,
-                target => target.GetCustomPosition());
+                target => target.GetTruePosition());
 
             target = targets.FirstOrDefault();
         }

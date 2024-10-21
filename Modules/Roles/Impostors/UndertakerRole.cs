@@ -153,8 +153,7 @@ public class UndertakerRole : CustomRoleBehavior
 
         if (difference.magnitude > snapThreshold)
         {
-            rigidbody.position = targetPosition;
-            rigidbody.velocity = Vector2.zero;
+            OnResetAbilityState(false);
         }
         else
         {
