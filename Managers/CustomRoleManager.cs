@@ -622,6 +622,7 @@ public enum CustomRoles
     // Impostors
     Impostor,
     Janitor,
+    Undertaker,
     Miner,
     Morphling,
     Swooper,

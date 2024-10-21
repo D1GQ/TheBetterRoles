@@ -14,8 +14,8 @@ public class GiantAddon : CustomAddonBehavior
     public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
 
     public CircleCollider2D? CircleCollider;
-    public UnityEngine.Vector3 Size;
-    public UnityEngine.Vector2 Offset;
+    public Vector3 Size;
+    public Vector2 Offset;
     public float Radius;
     public override BetterOptionItem[]? OptionItems
     {

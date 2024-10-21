@@ -183,6 +183,28 @@ class PlayerControlPatch
 [HarmonyPatch(typeof(PlayerPhysics))]
 public class PlayerPhysicsPatch
 {
+    [HarmonyPatch("get_SpeedMod")]
+    [HarmonyPrefix]
+    private static bool SpeedMod_Prefix(PlayerPhysics __instance, ref float __result)
+    {
+        if (GameManager.Instance == null)
+        {
+            __result = 1f;
+            return false;
+        }
+
+        float playerSpeedMod = GameManager.Instance.LogicOptions.GetPlayerSpeedMod(__instance.myPlayer);
+
+        if (__instance.myPlayer != null && __instance.myPlayer.Data != null && !__instance.myPlayer.IsAlive(true))
+        {
+            __result = playerSpeedMod * __instance.GhostSpeed / __instance.Speed;
+            return false;
+        }
+
+        __result = playerSpeedMod;
+        return false;
+    }
+
     [HarmonyPatch(nameof(PlayerPhysics.BootFromVent))]
     [HarmonyPostfix]
     private static void BootFromVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)

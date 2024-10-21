@@ -99,6 +99,7 @@ public class TargetButton : BaseButton
                 Main.AllPlayerControls
                     .Where(target => !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget))
                     .ToList(),
+                Distance,
                 false,
                 target => target.GetCustomPosition());
 

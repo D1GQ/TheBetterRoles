@@ -99,6 +99,7 @@ public class DeadBodyButton : BaseButton
                 Main.AllDeadBodys
                     .Where(b => DeadBodyCondition(b))
                     .ToList(),
+                Distance,
                 false,
                 b => b.transform.position);
 

@@ -128,6 +128,7 @@ public class VentButton : BaseButton
                 Main.AllEnabledVents
                     .Where(vent => VentCondition(vent))
                     .ToList(),
+                HighlightDistance,
                 _player.inVent,
                 vent => vent.transform.position,
                 false);

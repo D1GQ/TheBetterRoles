@@ -161,6 +161,13 @@
   "Role.Janitor.Option.SetKillCooldownOnClean": "Set Kill Cooldown On Clean",
   "Role.Janitor.Option.SetKillCooldown": "Set Kill Cooldown",
 
+  "Role.Undertaker": "Undertaker",
+  "Role.Undertaker.Info": "Drag dead bodies",
+  "Role.Undertaker.LongInfo": "As the Undertaker, you can remove evidence by dragging bodies. When dragging the Undertaker speed is reduced by a set amount, the Undertaker is also able to hide bodies inside vents.",
+  "Role.Undertaker.Ability.1": "Drag Body",
+  "Role.Undertaker.Ability.2": "Drop Body",
+  "Role.Undertaker.Option.DragSlowdown": "Drag Slowdown",
+
   "Role.Miner": "Miner",
   "Role.Miner.Info": "Dig up vents",
   "Role.Miner.LongInfo": "As the Miner, you are able to dig up vents wherever you like, note that everyone can see and use these vents.",

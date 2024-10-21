@@ -40,9 +40,8 @@ public class BaseButton
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition();
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
-    public List<T> GetObjectsInAbilityRange<T>(List<T> List, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
+    public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
-        // Early exit conditions
         if ((!checkVent && !_player.CanMove && !_player.IsInVent()) || (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0)
         {
             return [];
@@ -50,22 +49,21 @@ public class BaseButton
 
         List<T> allObjects = List;
         List<T> outputList = [];
-        float closeDistanceThreshold = 0.335f;
+        float closeDistanceThreshold = maxDistance;
         Vector2 myPos = _player.GetTruePosition();
 
-        // Filtering objects based on conditions
         for (int i = 0; i < allObjects.Count; i++)
         {
             T obj = allObjects[i];
             if (obj != null)
             {
-                Vector3 ventPos3D = posSelector(obj);
-                Vector2 ventPos = new(ventPos3D.x, ventPos3D.y);
-                Vector2 vectorToVent = ventPos - myPos;
-                float magnitude = vectorToVent.magnitude;
+                Vector3 objPos3D = posSelector(obj);
+                Vector2 objPos = new(objPos3D.x, objPos3D.y);
+                Vector2 vectorToObj = objPos - myPos;
+                float magnitude = vectorToObj.magnitude;
 
                 if (magnitude <= closeDistanceThreshold || ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToVent.normalized, magnitude, Constants.ShipAndObjectsMask))
+                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToObj.normalized, magnitude, Constants.ShipAndObjectsMask))
                 {
                     outputList.Add(obj);
                 }
