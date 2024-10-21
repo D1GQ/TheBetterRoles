@@ -776,6 +776,11 @@ public abstract class CustomRoleBehavior
     public virtual void OnResetAbilityState(bool isTimeOut) { }
 
     /// <summary>
+    /// This method is called at the end of the intro cutscene.
+    /// </summary>
+    public virtual void OnIntroCutsceneEnd() { }
+
+    /// <summary>
     /// This method is called at the end of the game to process the winning players.
     /// </summary>
     /// <param name="WinnerIds">A reference to the list containing the IDs of the winning players.</param>

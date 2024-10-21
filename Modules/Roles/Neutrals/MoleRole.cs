@@ -125,7 +125,7 @@ public class MoleRole : CustomRoleBehavior
         vent.name = "Vent(Mole)";
 
         // Set usable for local player
-        vent.enabled = _player.IsLocalPlayer();
+        vent.SetEnabled(_player.IsLocalPlayer());
         float Alpha = _player.IsLocalPlayer() ? 1 : 0;
         if (vent.transform.Find("Sprite") == null)
         {
@@ -189,7 +189,7 @@ public class MoleRole : CustomRoleBehavior
     // Fix meeting breaking
     private void RemoveVent(Vent vent, bool fade = true)
     {
-        vent.enabled = false;
+        vent.SetEnabled(false);
         Vents.Remove(vent);
 
         if (fade)

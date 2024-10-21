@@ -1,5 +1,8 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace TheBetterRoles.Patches;
 
@@ -48,6 +51,75 @@ public class RolePatch
         public static void HandleAnimation_Prefix(PlayerPhysics __instance, ref bool amDead)
         {
             amDead = amDead && !__instance.myPlayer.BetterData().IsFakeAlive;
+        }
+
+        [HarmonyPatch(nameof(PlayerPhysics.ResetAnimState))]
+        [HarmonyPrefix]
+        public static bool ResetAnimState_Prefix(PlayerPhysics __instance)
+        {
+            __instance.myPlayer.FootSteps.Stop();
+            __instance.myPlayer.FootSteps.loop = false;
+            __instance.myPlayer.cosmetics.SetHatAndVisorIdle(__instance.myPlayer.CurrentOutfit.ColorId);
+            NetworkedPlayerInfo data = __instance.myPlayer.Data;
+            if (data == null || !data.IsDead || data.BetterData().IsFakeAlive)
+            {
+                __instance.myPlayer.cosmetics.AnimateSkinIdle();
+                __instance.Animations.PlayIdleAnimation();
+                __instance.myPlayer.Visible = true;
+                __instance.myPlayer.SetHatAndVisorAlpha(1f);
+                return false;
+            }
+            __instance.myPlayer.cosmetics.SetGhost();
+            if (data.Role != null)
+            {
+                if (data.Role.Role == RoleTypes.GuardianAngel)
+                {
+                    __instance.Animations.PlayGuardianAngelIdleAnimation();
+                }
+                else
+                {
+                    __instance.Animations.PlayGhostIdleAnimation();
+                }
+            }
+            __instance.myPlayer.SetHatAndVisorAlpha(0.5f);
+
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Vent))]
+    class VentPatch
+    {
+        [HarmonyPatch(nameof(Vent.SetButtons))]
+        [HarmonyPostfix]
+        public static void SetButtons_Postfix(Vent __instance)
+        {
+            Vent[] nearbyVents = __instance.NearbyVents;
+            for (int i = 0; i < __instance.Buttons.Length; i++)
+            {
+                ButtonBehavior buttonBehavior = __instance.Buttons[i];
+                Vent vent = nearbyVents[i];
+                if (vent)
+                {
+                    __instance.ToggleNeighborVentBeingCleaned(!vent.IsEnabled(), buttonBehavior, __instance.CleaningIndicators[i]);
+                }
+            }
+        }
+
+        [HarmonyPatch(nameof(Vent.UpdateArrows))]
+        [HarmonyPostfix]
+        public static void UpdateArrows_Postfix(Vent __instance)
+        {
+            Vent[] nearbyVents = __instance.NearbyVents;
+            for (int i = 0; i < __instance.Buttons.Length; i++)
+            {
+                ButtonBehavior buttonBehavior = __instance.Buttons[i];
+                Vent vent = nearbyVents[i];
+                if (vent)
+                {
+                    __instance.ToggleNeighborVentBeingCleaned(!vent.IsEnabled(), buttonBehavior, __instance.CleaningIndicators[i]);
+                }
+            }
         }
     }
 

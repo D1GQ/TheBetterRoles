@@ -93,7 +93,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
         {
             if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
 
-            if (_player.MyPhysics.Animations.IsPlayingRunAnimation())
+            if (_player.MyPhysics.Animations.IsPlayingRunAnimation() || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || _player.inMovingPlat)
             {
                 Alpha += 0.005f;
             }

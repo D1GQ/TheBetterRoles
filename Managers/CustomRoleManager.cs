@@ -60,7 +60,7 @@ public static class CustomRoleManager
 
     public static int GetRNGAmount(int min, int max)
     {
-        if (min >= max || max <= min)
+        if (min >= max)
         {
             return max;
         }
@@ -70,6 +70,7 @@ public static class CustomRoleManager
         }
     }
 
+
     public static void AssignRoles()
     {
         if (!GameStates.IsHost) return;
@@ -78,215 +79,234 @@ public static class CustomRoleManager
         {
             IRandom.SetInstanceById(0);
 
-            // Define role amounts
             int ImposterAmount = BetterGameSettings.ImposterAmount.GetInt();
             int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
             int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
 
-            var impostorLimits = new Dictionary<int, int>
-            {
-                { 3, 1 },
-                { 5, 2 },
-                { 7, 3 }
-            };
-
             // Adjust ImposterAmount based on player count
-            foreach (var limit in impostorLimits)
-            {
-                if (Main.AllPlayerControls.Length <= limit.Key)
-                {
-                    ImposterAmount = Math.Min(ImposterAmount, limit.Value);
-                    break;
-                }
-            }
+            AdjustImposterAmount(ref ImposterAmount);
 
-            // Gather all available roles dynamically
-            List<RoleAssignmentData> availableRoles = [];
-            foreach (var role in allRoles)
-            {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon && !role.IsGhostRole && role.CanBeAssigned)
-                {
-                    availableRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
-                }
-            }
+            // Gather all available roles
+            var availableRoles = GatherRoles(false);
+            var availableAddons = GatherRoles(true);
 
-            List<RoleAssignmentData> availableAddons = [];
-            foreach (var role in allRoles)
-            {
-                if (role != null && role.GetChance() > 0 && role.IsAddon && !role.IsGhostRole && role.CanBeAssigned)
-                {
-                    availableAddons.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
-                }
-            }
+            List<PlayerControl> players = Main.AllPlayerControls.Shuffle().ToList();
 
-            int shuffleCount = 25;
-
-            // Shuffle the available roles to randomize selection multiple times
-            for (int s = 0; s < shuffleCount; s++)
-            {
-                for (int i = availableAddons.Count - 1; i > 0; i--)
-                {
-                    int j = IRandom.Instance.Next(i + 1);
-
-                    var temp = availableAddons[i];
-                    availableAddons[i] = availableAddons[j];
-                    availableAddons[j] = temp;
-                }
-            }
-
-            for (int s = 0; s < shuffleCount; s++)
-            {
-                for (int i = availableRoles.Count - 1; i > 0; i--)
-                {
-                    int j = IRandom.Instance.Next(i + 1);
-
-                    var temp = availableRoles[i];
-                    availableRoles[i] = availableRoles[j];
-                    availableRoles[j] = temp;
-                }
-            }
-
-
-            // Shuffle players multiple times
-            List<PlayerControl> players = new(Main.AllPlayerControls);
-            for (int s = 0; s < shuffleCount; s++)
-            {
-                for (int i = players.Count - 1; i > 0; i--)
-                {
-                    int j = IRandom.Instance.Next(i + 1);
-                    (players[i], players[j]) = (players[j], players[i]);
-                }
-            }
-
-            // Prepare a dictionary to store player-to-role assignments
+            // Prepare assignments
             Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];
 
             foreach (var player in players)
             {
                 if (player == null) continue;
 
-                List<RoleAssignmentData> validRoles = [];
-
-                // Filter valid roles based on multiple conditions in one loop
-                foreach (var role in availableRoles)
-                {
-                    if (role.Amount > 0)
-                    {
-                        if (role._role.IsImpostor)
-                        {
-                            if (ImposterAmount <= 0) continue;
-                        }
-
-                        if (role._role.IsNeutral && !role._role.CanKill)
-                        {
-                            if (BenignNeutralAmount <= 0) continue;
-                        }
-
-                        if (role._role.IsNeutral && role._role.CanKill)
-                        {
-                            if (KillingNeutralAmount <= 0) continue;
-                        }
-
-                        validRoles.Add(role);
-                    }
-                }
-
-                RoleAssignmentData? selectedRole = null;
-
-                // If there are valid roles, randomly select one based on chance
-                if (validRoles.Count > 0)
-                {
-                    foreach (var roleData in validRoles)
-                    {
-                        int rng = IRandom.Instance.Next(100);
-                        if (rng <= roleData._role.GetChance())
-                        {
-                            selectedRole = roleData;
-                            break;
-                        }
-                    }
-                }
-
-                // If no role could be selected, fallback to default roles (Impostor or Crewmate)
-                if (selectedRole == null)
-                {
-                    if (ImposterAmount > 0)
-                    {
-                        selectedRole = new RoleAssignmentData
-                        {
-                            _role = Utils.GetCustomRoleClass(CustomRoles.Impostor),
-                            Amount = 1
-                        };
-                    }
-                    else
-                    {
-                        selectedRole = new RoleAssignmentData
-                        {
-                            _role = Utils.GetCustomRoleClass(CustomRoles.Crewmate),
-                            Amount = 1
-                        };
-                    }
-                }
-
+                var selectedRole = SelectRole(availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
                 playerRoleAssignments[player] = selectedRole;
-                selectedRole.Amount--;
 
-                if (selectedRole._role.IsImpostor) ImposterAmount--;
-                if (selectedRole._role.IsNeutral && selectedRole.CanKill) KillingNeutralAmount--;
-                if (selectedRole._role.IsNeutral && !selectedRole.CanKill) BenignNeutralAmount--;
+                var selectedAddons = AssignAddons(availableAddons, selectedRole, player);
 
-                // Set Addons
-                {
-                    int safeAttempts = 0;
-                    int addonAmount = GetRNGAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
-                    List<RoleAssignmentData> selectedAddons = [];
-
-                    while (addonAmount > 0 && safeAttempts < 50)
-                    {
-                        foreach (var roleData in availableAddons)
-                        {
-                            if (roleData.Amount <= 0) continue;
-                            if (roleData._role is CustomAddonBehavior addon)
-                            {
-                                if (!addon.AssignmentCondition(playerRoleAssignments[player]._role)) continue;
-                                if (!addon.CanBeAssignedWithTeam(playerRoleAssignments[player]._role.RoleTeam)) continue;
-                                if (addon.RoleCategory == CustomRoleCategory.EvilAddon && playerRoleAssignments[player]._role.IsCrewmate) continue;
-                                if (addon.RoleCategory == CustomRoleCategory.GoodAddon && !playerRoleAssignments[player]._role.IsCrewmate) continue;
-
-                                int rng = IRandom.Instance.Next(100);
-                                if (!selectedAddons.Contains(roleData) && roleData.Amount > 0 && rng <= addon.GetChance())
-                                {
-                                    selectedAddons.Add(roleData);
-                                    addonAmount--;
-                                    roleData.Amount--;
-                                    safeAttempts = 0;
-                                    break;
-                                }
-                            }
-                        }
-
-                        safeAttempts++;
-                    }
-
-                    foreach (var roleData in selectedAddons)
-                    {
-                        Logger.Log($"{player.Data.PlayerName} -> {roleData._role.RoleName}");
-                        player.SetRoleSync(roleData._role.RoleType);
-                    }
-                }
+                SyncPlayerRole(player, selectedRole, selectedAddons);
             }
 
-            foreach (var assignment in playerRoleAssignments)
-            {
-                Logger.Log($"{assignment.Key.Data.PlayerName} -> {assignment.Value._role.RoleName}");
-                assignment.Key.SetRoleSync(assignment.Value._role.RoleType);
-            }
+            // Log all assignments
+            LogAllAssignments(playerRoleAssignments);
         }
         catch (Exception ex)
         {
             Logger.Error(ex);
         }
     }
+
+    private static void AdjustImposterAmount(ref int ImposterAmount)
+    {
+        var impostorLimits = new Dictionary<int, int>
+        {
+            { 3, 1 },
+            { 5, 2 },
+            { 7, 3 }
+        };
+
+        foreach (var limit in impostorLimits)
+        {
+            if (Main.AllPlayerControls.Length <= limit.Key)
+            {
+                ImposterAmount = Math.Min(ImposterAmount, limit.Value);
+                break;
+            }
+        }
+    }
+
+    private static List<RoleAssignmentData> GatherRoles(bool includeAddons)
+    {
+        List<RoleAssignmentData> roles = [];
+
+        foreach (var role in allRoles)
+        {
+            if (role != null && role.GetChance() > 0 && role.CanBeAssigned)
+            {
+                if (role.IsAddon == includeAddons && !role.IsGhostRole)
+                {
+                    roles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
+                }
+            }
+        }
+
+        return roles.Shuffle().ToList();
+    }
+
+    private static RoleAssignmentData? SelectRole(List<RoleAssignmentData> availableRoles, ref int ImposterAmount, ref int BenignNeutralAmount, ref int KillingNeutralAmount)
+    {
+        List<RoleAssignmentData> validRoles = [];
+        RoleAssignmentData? lowestRngRole = null;
+        int lowestRngValue = int.MaxValue;
+
+        // Filter valid roles and track roles that fail RNG but are close
+        foreach (var role in availableRoles)
+        {
+            if (ImposterAmount > 0)
+            {
+                if (role._role.IsImpostor)
+                {
+                    validRoles.Add(role);
+                }
+
+                continue;
+            }
+
+            if (role._role.IsNeutral)
+            {
+                if (role._role.CanKill && KillingNeutralAmount <= 0) continue;
+                if (!role._role.CanKill && BenignNeutralAmount <= 0) continue;
+            }
+
+            validRoles.Add(role);
+        }
+
+        // If no valid roles, return fallback
+        if (validRoles.Count == 0) return GetFallbackRole(ref ImposterAmount);
+
+        // Go through all valid roles and either assign or track the lowest RNG fail
+        foreach (var roleData in validRoles)
+        {
+            int rng = IRandom.Instance.Next(100);
+
+            if (rng <= roleData._role.GetChance())
+            {
+                // If the RNG condition is met, assign the role immediately
+                roleData.Amount--;
+                UpdateRoleAmounts(roleData, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+                return roleData;
+            }
+
+            // Track the role with the lowest RNG that failed
+            if (rng < lowestRngValue)
+            {
+                lowestRngRole = roleData;
+                lowestRngValue = rng;
+            }
+        }
+
+        // Step 3: If no role met the RNG condition, assign the one with the lowest RNG
+        if (lowestRngRole != null)
+        {
+            lowestRngRole.Amount--;
+            UpdateRoleAmounts(lowestRngRole, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+            return lowestRngRole;
+        }
+
+        // If no role is selected, return fallback
+        return GetFallbackRole(ref ImposterAmount);
+    }
+
+    private static void UpdateRoleAmounts(RoleAssignmentData roleData, ref int ImposterAmount, ref int BenignNeutralAmount, ref int KillingNeutralAmount)
+    {
+        if (roleData._role.IsImpostor) ImposterAmount--;
+        else if (roleData._role.IsNeutral)
+        {
+            if (roleData._role.CanKill) KillingNeutralAmount--;
+            else BenignNeutralAmount--;
+        }
+    }
+
+
+    private static RoleAssignmentData? GetFallbackRole(ref int ImposterAmount)
+    {
+        if (ImposterAmount > 0)
+        {
+            ImposterAmount--;
+            return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoles.Impostor), Amount = 1, };
+        }
+
+        return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoles.Crewmate), Amount = 1 };
+    }
+
+    private static List<RoleAssignmentData> AssignAddons(List<RoleAssignmentData> availableAddons, RoleAssignmentData? assignedRole, PlayerControl player)
+    {
+        List<RoleAssignmentData> selectedAddons = [];
+        int addonAmount = GetRNGAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
+        int safeAttempts = 0;
+
+        List<RoleAssignmentData> validAddons = availableAddons
+            .Where(addonData => addonData.Amount > 0
+                && addonData._role is CustomAddonBehavior addon
+                && addon.AssignmentCondition(assignedRole._role)
+                && addon.CanBeAssignedWithTeam(assignedRole._role.RoleTeam)
+                && addon.GetChance() > 0)
+            .Shuffle().ToList();
+
+        
+        if (validAddons.Count < addonAmount)
+        {
+            addonAmount = validAddons.Count;
+        }
+
+        while (selectedAddons.Count < addonAmount && safeAttempts < 50)
+        {
+            foreach (var addonData in validAddons)
+            {
+                if (!selectedAddons.Contains(addonData))
+                {
+                    int rng = IRandom.Instance.Next(100);
+                    if (rng <= addonData._role.GetChance())
+                    {
+                        selectedAddons.Add(addonData);
+                        addonData.Amount--;
+                        safeAttempts = 0; // Reset attempts if we successfully assign an addon
+                        if (selectedAddons.Count >= addonAmount)
+                        {
+                            break; // Stop once we have enough addons
+                        }
+                    }
+                }
+            }
+            safeAttempts++;
+        }
+
+        return selectedAddons;
+    }
+
+    private static void SyncPlayerRole(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
+    {
+        Logger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
+
+        // Sync main role
+        player.SetRoleSync(selectedRole._role.RoleType);
+
+        // Sync addons
+        foreach (var addon in selectedAddons)
+        {
+            Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
+            player.SetRoleSync(addon._role.RoleType);
+        }
+    }
+
+    private static void LogAllAssignments(Dictionary<PlayerControl, RoleAssignmentData?> assignments)
+    {
+        foreach (var assignment in assignments)
+        {
+            Logger.Log($"{assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
+        }
+    }
+
 
     public static List<RoleAssignmentData> availableGhostRoles = [];
     public static void AssignGhostRoleOnDeath(PlayerControl player)

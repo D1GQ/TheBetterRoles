@@ -332,7 +332,7 @@ static class ExtendedPlayerControl
     // Check if player is a dev
     public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{Utils.GetHashPuid(player)}+{player.Data.FriendCode}");
     // Check if player is alive
-    public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data != null && !player.Data.IsDead || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
+    public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
     // Check if player is in a vent
     public static bool IsInVent(this PlayerControl player) => player != null && (player.inVent || player.walkingToVent || player.MyPhysics?.Animations?.IsPlayingEnterVentAnimation() == true);
     // Check if player is Shapeshifting

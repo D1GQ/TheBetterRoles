@@ -49,7 +49,7 @@ class PlayerControlPatch
         }
 
         Times[__instance.PlayerId] += Time.deltaTime;
-        if (Times[__instance.PlayerId] > 0.5f)
+        if (Times[__instance.PlayerId] > 0.65f)
         {
             SetPlayerInfo(__instance);
         }
@@ -86,53 +86,45 @@ class PlayerControlPatch
     {
         if (player == null || player.Data == null) return;
 
+        var playerData = player.BetterData();
+        var cosmetics = player.cosmetics;
         var sbTag = new StringBuilder();
         var sbTagTop = new StringBuilder();
         var sbTagBottom = new StringBuilder();
 
         if (GameStates.IsLobby && !GameStates.IsFreePlay)
         {
-            if (player.BetterData().HasMod || player.IsLocalPlayer())
-            {
-                player.cosmetics.nameText.color = new Color(0.47f, 1f, 0.95f, 1f);
-            }
-            else
-            {
-                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, 1f);
-            }
+            cosmetics.nameText.color = playerData.HasMod || player.IsLocalPlayer()
+                ? new Color(0.47f, 1f, 0.95f, 1f)
+                : Color.white;
 
-            if (player.BetterData().MismatchVersion)
+            if (playerData.MismatchVersion)
             {
-                if (GameStates.IsHost)
-                {
-                    sbTag.Append($"<color=#FF0800>{player.BetterData().Version} - {(int)player.BetterData().KickTimer}s</color>+++");
-                }
-                else
-                {
-                    sbTag.Append($"<color=#FF0800>{player.BetterData().Version}</color>+++");
-                }
+                sbTag.Append($"<color=#FF0800>{playerData.Version} {(GameStates.IsHost ? $"- {(int)playerData.KickTimer}s" : string.Empty)}</color>+++");
             }
         }
         else
         {
-            if (!string.IsNullOrEmpty(player.BetterData().NameColor))
+            if (!string.IsNullOrEmpty(playerData.NameColor))
             {
-                var color = Utils.HexToColor32(player.BetterData().NameColor);
-                player.cosmetics.nameText.color = new Color(color.r, color.g, color.b, player.cosmetics.nameText.color.a);
+                var color = Utils.HexToColor32(playerData.NameColor);
+                cosmetics.nameText.color = new Color(color.r, color.g, color.b, cosmetics.nameText.color.a);
             }
             else
             {
-                player.cosmetics.nameText.color = new Color(1f, 1f, 1f, player.cosmetics.nameText.color.a);
+                cosmetics.nameText.color = new Color(1f, 1f, 1f, cosmetics.nameText.color.a);
             }
 
-            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
+                player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
             {
                 sbTag.Append($"{player.GetRoleNameAndColor()}---");
             }
 
-            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
+                player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
             {
-                foreach (var addon in player.BetterData().RoleInfo.Addons)
+                foreach (var addon in playerData.RoleInfo.Addons)
                 {
                     sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
                 }

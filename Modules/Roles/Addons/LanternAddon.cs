@@ -33,6 +33,11 @@ public class LanternAddon : CustomAddonBehavior
         LanternButton.SetCooldown();
     }
 
+    public override void OnIntroCutsceneEnd()
+    {
+        CreateLantern();
+    }
+
     public override void OnDeinitialize()
     {
         _player.lightSource.enabled = true;

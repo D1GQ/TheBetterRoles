@@ -48,6 +48,13 @@ public class CustomGameManager
     [HarmonyPatch(typeof(IntroCutscene))]
     public class IntroCutscenePatch
     {
+        [HarmonyPatch(nameof(IntroCutscene.OnDestroy))]
+        [HarmonyPrefix]
+        private static void OnDestroy_Prefix(/*IntroCutscene __instance*/)
+        {
+            CustomRoleManager.RoleListenerOther(role => role.OnIntroCutsceneEnd());
+        }
+
         [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate))]
         [HarmonyPrefix]
         private static bool BeginCrewmate_Prefix(IntroCutscene __instance)

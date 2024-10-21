@@ -28,36 +28,41 @@ public static class Utils
     // Set player name
     public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
     {
-        if (player == null || player.BetterData()?.RoleInfo?.RoleAssigned != true) return string.Empty;
+        if (player == null || !player.BetterData()?.RoleInfo?.RoleAssigned == true)
+            return string.Empty;
 
-        string name = "";
+        var playerData = player.BetterData();
+        var roleInfo = playerData.RoleInfo;
+        var role = roleInfo?.Role;
+
         NetworkedPlayerInfo target = player;
-
-        if (!bypassDisguise)
+        if (!bypassDisguise && role?.IsDisguised == true && role.DisguisedTargetId >= 0)
         {
-            if (player.BetterData().RoleInfo.Role?.IsDisguised == true && player.BetterData().RoleInfo.Role?.DisguisedTargetId >= 0)
+            foreach (var data in GameData.Instance.AllPlayers)
             {
-                if (GameData.Instance.AllPlayers.ToArray()
-                    .First(data => data.PlayerId == player.BetterData().RoleInfo.Role?.DisguisedTargetId)
-                    is NetworkedPlayerInfo info && info?.Object != null)
+                if (data.PlayerId == role.DisguisedTargetId && data.Object != null)
                 {
-                    target = info;
+                    target = data;
+                    break;
                 }
             }
         }
 
-        if (target.BetterData().NameColor == string.Empty)
+        StringBuilder nameBuilder = new();
+
+        string? nameColor = target.BetterData().NameColor;
+        if (string.IsNullOrEmpty(nameColor))
         {
-            name += $"{target.PlayerName}";
+            nameBuilder.Append(target.PlayerName);
         }
         else
         {
-            name += $"<{target.BetterData().NameColor}>{target.PlayerName}</color>";
+            nameBuilder.Append($"<{nameColor}>{target.PlayerName}</color>");
         }
 
-        name += CustomRoleManager.GetRoleMarks(target.Object);
+        nameBuilder.Append(CustomRoleManager.GetRoleMarks(target.Object));
 
-        return name;
+        return nameBuilder.ToString();
     }
     // Add msg to chat
     public static void AddChatPrivate(string text, string overrideName = "", bool setRight = false)
@@ -186,6 +191,26 @@ public static class Utils
         vent.myRend.material.SetFloat("_Outline", (showOutline ? 1 : 0));
         vent.myRend.material.SetColor("_OutlineColor", color);
         vent.myRend.material.SetColor("_AddColor", showMain ? color : Color.clear);
+    }
+
+    public static bool IsEnabled(this Vent vent) => vent?.GetComponent<BoxCollider2D>()?.enabled == true;
+
+    public static void SetEnabled(this Vent vent, bool @bool)
+    {
+        if (vent != null)
+        {
+            var ventCollider2D = vent?.GetComponent<BoxCollider2D>();
+            if (ventCollider2D != null)
+            {
+                ventCollider2D.enabled = @bool;
+
+                if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out var system))
+                {
+                    VentilationSystem ventilationSystem = system.Cast<VentilationSystem>();
+                    ventilationSystem?.UpdateVentArrows();
+                }
+            }
+        }
     }
 
     public static void SetOutline(this DeadBody body, bool show, Color color)

@@ -98,8 +98,11 @@ public class UndertakerRole : CustomRoleBehavior
     {
         IsDragging = false;
         Dragging = null;
-        rigidbody.velocity = Vector2.zero;
-        UnityEngine.Object.Destroy(rigidbody);
+        if (rigidbody != null)
+        {
+            rigidbody.velocity = Vector2.zero;
+            UnityEngine.Object.Destroy(rigidbody);
+        }
         UnityEngine.Object.Destroy(boxCollider);
         ResetSpeed();
     }
@@ -117,23 +120,13 @@ public class UndertakerRole : CustomRoleBehavior
             return;
         }
 
-        bool SnapToPlayer = !_player.inMovingPlat && !_player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
-        boxCollider.enabled = SnapToPlayer;
+        bool SnapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
+        boxCollider.enabled = !SnapToPlayer;
 
         // Hide body in vent
-        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f)
+        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f && !SnapToPlayer)
         {
-            Dragging.transform.position = new Vector2(1000f, 1000f);
-            rigidbody.velocity = Vector2.zero;
-            UnityEngine.Object.Destroy(rigidbody);
-            UnityEngine.Object.Destroy(boxCollider);
-            ResetSpeed();
-            Dragging = null;
-            IsDragging = false;
-
-            Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
-            vent.myAnim?.Play(vent.EnterVentAnim, 1);
-            if (_player.IsLocalPlayer()) vent.SetButtons(CustomRoleManager.RoleChecks(_player, role => role.CanMoveInVents));
+            HideBody();
             return;
         }
 
@@ -141,23 +134,47 @@ public class UndertakerRole : CustomRoleBehavior
         Vector2 objectPosition = Dragging.transform.position;
 
         float offsetX = _player.MyPhysics.FlipX ? +0.4f : -0.15f;
-        if (_player.IsInVent() || !SnapToPlayer) offsetX = 0f;
-        Vector2 offset = new(offsetX, SnapToPlayer ? +0.18f : 0.05f);
+        if (_player.IsInVent() || SnapToPlayer) offsetX = 0f;
+        Vector2 offset = new(offsetX, !SnapToPlayer ? +0.18f : 0.05f);
 
         Vector2 targetPosition = truePosition + offset;
         Vector2 difference = targetPosition - objectPosition;
 
-        float followSpeed = SnapToPlayer ? 3f * _player.MyPhysics.SpeedMod : 100f;
-        float smoothFactor = 0.2f;
+        float followSpeed = 3f * _player.MyPhysics.SpeedMod;
+        float smoothFactor = 1f;
         float snapThreshold = 1.25f + (_player.MyPhysics.SpeedMod * 0.5f);
 
         if (difference.magnitude > snapThreshold)
         {
             OnResetAbilityState(false);
         }
-        else
+        else if (!SnapToPlayer)
         {
             rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, difference * followSpeed, smoothFactor);
+        }
+        else
+        {
+            rigidbody.position = targetPosition;
+            rigidbody.velocity = Vector2.zero;
+        }
+    }
+
+    private void HideBody()
+    {
+        Dragging.transform.position = new Vector2(1000f, 1000f);
+        rigidbody.velocity = Vector2.zero;
+        UnityEngine.Object.Destroy(rigidbody);
+        UnityEngine.Object.Destroy(boxCollider);
+        ResetSpeed();
+        Dragging = null;
+        IsDragging = false;
+
+        Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
+        vent?.myAnim?.Play(vent.EnterVentAnim, 1);
+
+        if (_player.IsLocalPlayer())
+        {
+            vent?.SetButtons(CustomRoleManager.RoleChecks(_player, role => role.CanMoveInVents));
         }
     }
 }
