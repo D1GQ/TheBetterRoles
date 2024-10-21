@@ -1,11 +1,7 @@
-﻿
-using BepInEx.Unity.IL2CPP.Utils;
-using Hazel;
-using System.Collections;
-using System.Drawing;
+﻿using Hazel;
+using PowerTools;
 using TheBetterRoles.Patches;
 using UnityEngine;
-using static Il2CppSystem.Uri;
 
 namespace TheBetterRoles;
 
@@ -19,6 +15,7 @@ public class UndertakerRole : CustomRoleBehavior
     public override bool CanKill => true;
     public override bool CanSabotage => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override bool CanMoveInVents => !IsDragging;
 
     public BetterOptionItem? DragSlowdown;
 
@@ -33,6 +30,7 @@ public class UndertakerRole : CustomRoleBehavior
         }
     }
 
+    private bool IsDragging = false;
     private DeadBody? Dragging;
     private Rigidbody2D? rigidbody;
     private bool hasSpeed = false;
@@ -41,8 +39,9 @@ public class UndertakerRole : CustomRoleBehavior
     public AbilityButton? DropButton = new();
     public override void OnSetUpRole()
     {
-        DragButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 1f));
+        DragButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
         DragButton.VisibleCondition = () => Dragging == null;
+        DragButton.DeadBodyCondition = (DeadBody body) => body.GetComponentInChildren<SpriteAnim>().FrameTime >= 32;
 
         DropButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
         DropButton.VisibleCondition = () => Dragging != null;
@@ -56,15 +55,14 @@ public class UndertakerRole : CustomRoleBehavior
                 {
                     if (body != null)
                     {
+                        IsDragging = true;
                         Dragging = body;
                         boxCollider = body.gameObject.AddComponent<CircleCollider2D>();
                         boxCollider.radius = 0.3f;
                         boxCollider.offset = new Vector2(-0.18f, -0.13f);
-                        Dragging = body;
                         rigidbody = body.gameObject.AddComponent<Rigidbody2D>();
                         rigidbody.gravityScale = 0f;
                         rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-
                         SetSpeed();
                     }
 
@@ -98,24 +96,32 @@ public class UndertakerRole : CustomRoleBehavior
 
     public override void OnResetAbilityState(bool isTimeOut)
     {
-        if (Dragging != null)
-        {
-            Dragging = null;
-            rigidbody.velocity = Vector2.zero;
-            UnityEngine.Object.Destroy(rigidbody);
-            UnityEngine.Object.Destroy(boxCollider);
-            ResetSpeed();
-        }
+        IsDragging = false;
+        Dragging = null;
+        rigidbody.velocity = Vector2.zero;
+        UnityEngine.Object.Destroy(rigidbody);
+        UnityEngine.Object.Destroy(boxCollider);
+        ResetSpeed();
     }
 
     public override void Update()
     {
-        if (Dragging == null || rigidbody == null)
+        if (Dragging == null && IsDragging)
+        {
+            ResetSpeed();
+            return;
+        }
+
+        if (rigidbody == null || boxCollider == null)
         {
             return;
         }
 
-        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation())
+        bool SnapToPlayer = !_player.inMovingPlat && !_player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
+        boxCollider.enabled = SnapToPlayer;
+
+        // Hide body in vent
+        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f)
         {
             Dragging.transform.position = new Vector2(1000f, 1000f);
             rigidbody.velocity = Vector2.zero;
@@ -123,6 +129,11 @@ public class UndertakerRole : CustomRoleBehavior
             UnityEngine.Object.Destroy(boxCollider);
             ResetSpeed();
             Dragging = null;
+            IsDragging = false;
+
+            Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
+            vent.myAnim?.Play(vent.EnterVentAnim, 1);
+            if (_player.IsLocalPlayer()) vent.SetButtons(CustomRoleManager.RoleChecks(_player, role => role.CanMoveInVents));
             return;
         }
 
@@ -130,12 +141,13 @@ public class UndertakerRole : CustomRoleBehavior
         Vector2 objectPosition = Dragging.transform.position;
 
         float offsetX = _player.MyPhysics.FlipX ? +0.4f : -0.15f;
-        Vector2 offset = new(offsetX, +0.18f);
+        if (_player.IsInVent() || !SnapToPlayer) offsetX = 0f;
+        Vector2 offset = new(offsetX, SnapToPlayer ? +0.18f : 0.05f);
 
         Vector2 targetPosition = truePosition + offset;
         Vector2 difference = targetPosition - objectPosition;
 
-        float followSpeed = 3f * _player.MyPhysics.SpeedMod;
+        float followSpeed = SnapToPlayer ? 3f * _player.MyPhysics.SpeedMod : 100f;
         float smoothFactor = 0.2f;
         float snapThreshold = 1.25f + (_player.MyPhysics.SpeedMod * 0.5f);
 

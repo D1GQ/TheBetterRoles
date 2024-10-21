@@ -29,6 +29,7 @@ public class PhantomRoleTBR : CustomRoleBehavior
     public bool HasBeenClicked = false;
     public override void OnSetUpRole()
     {
+        _player.ClearAddons();
         _player.BetterData().PlayerVisionModPlus += 10;
         VentButton.VisibleCondition = _player.IsInVent;
         VentButton.UseAsDead = true;

@@ -36,7 +36,7 @@ public class AltruistRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        ReviveButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 1));
+        ReviveButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 0f));
         ReviveButton.CanCancelDuration = true;
         ReviveButton.DeadBodyCondition = (DeadBody body) =>
         {

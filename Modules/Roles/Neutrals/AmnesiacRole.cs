@@ -28,7 +28,7 @@ public class AmnesiacRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        RememberButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 1));
+        RememberButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 0f));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

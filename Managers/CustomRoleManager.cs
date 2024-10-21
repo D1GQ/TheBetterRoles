@@ -544,6 +544,20 @@ public static class CustomRoleManager
         }
     }
 
+    public static void ClearAddons(this PlayerControl player)
+    {
+        if (player == null) return;
+
+        var Addons = player.BetterData().RoleInfo.Addons;
+        if (Addons.Count > 0)
+        {
+            var addonsCopy = Addons.ToList();
+            foreach (var addon in addonsCopy)
+            {
+                RemoveAddon(player, addon.RoleType);
+            }
+        }
+    }
 
     public static void SetCustomRole(PlayerControl player, CustomRoles role)
     {
@@ -557,21 +571,6 @@ public static class CustomRoleManager
         newRole?.Initialize(player);
 
         PlayIntro();
-    }
-
-    public static void PlayIntro()
-    {
-        if (!DestroyableSingleton<TutorialManager>.InstanceExists)
-        {
-            if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
-            {
-                if (GameStates.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
-                Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);
-                PlayerControl.LocalPlayer.StopAllCoroutines();
-                DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
-                DestroyableSingleton<HudManager>.Instance.HideGameLoader();
-            }
-        }
     }
 
     public static void AddAddon(PlayerControl player, CustomRoles role)
@@ -600,6 +599,21 @@ public static class CustomRoleManager
             if (Role != null)
             {
                 Role.Deinitialize();
+            }
+        }
+    }
+
+    public static void PlayIntro()
+    {
+        if (!DestroyableSingleton<TutorialManager>.InstanceExists)
+        {
+            if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
+            {
+                if (GameStates.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
+                Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);
+                PlayerControl.LocalPlayer.StopAllCoroutines();
+                DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+                DestroyableSingleton<HudManager>.Instance.HideGameLoader();
             }
         }
     }
