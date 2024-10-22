@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using TMPro;
 using UnityEngine;
+using static TheBetterRoles.Patches.UsablePatch;
 
 namespace TheBetterRoles.Patches;
 

@@ -87,7 +87,7 @@ public class Main : BasePlugin
 
         return text;
     }
-    public Harmony Harmony { get; } = new Harmony(PluginGuid);
+    public static Harmony Harmony { get; } = new Harmony(PluginGuid);
 
     public static string TheBetterRolesVersion => PluginVersion;
     public static string AmongUsVersion => Application.version;
@@ -158,7 +158,6 @@ public class Main : BasePlugin
             TheBetterRoles.Logger.Error(ex);
         }
     }
-
 
     public static ConfigEntry<int> Preset { get; private set; }
     public static ConfigEntry<bool> ForceOwnLanguage { get; private set; }
