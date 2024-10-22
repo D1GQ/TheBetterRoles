@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -471,6 +472,12 @@ public abstract class CustomRoleBehavior
                     SetCooldownAndUse(id);
                 }
                 break;
+            case CustomRPC.SyncRole:
+                {
+                    var syncNum = reader.ReadInt32();
+                    OnReceiveRoleSync(syncNum, reader, realSender);
+                }
+                break;
         }
     }
 
@@ -543,6 +550,37 @@ public abstract class CustomRoleBehavior
 
         return true;
     }
+
+    /// <summary>
+    /// Sends a synchronization message for role abilities.
+    /// </summary>
+    /// <param name="syncId">The synchronization identifier for the ability.</param>
+    /// <param name="additionalParams">Optional additional parameters for the ability.</param>
+    protected void SendRoleSync(int syncId, object[]? additionalParams = null)
+    {
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncRole, SendOption.Reliable, -1);
+        writer.WriteNetObject(_player);
+        writer.Write((int)RoleType);
+        writer.Write(syncId);
+        OnSendRoleSync(syncId, writer, additionalParams);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+
+    /// <summary>
+    /// Called when sending role ability synchronization data.
+    /// </summary>
+    /// <param name="syncId">The synchronization identifier for the ability.</param>
+    /// <param name="writer">The message writer used to send data.</param>
+    /// <param name="additionalParams">Optional additional parameters for the ability.</param>
+    public virtual void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams) { }
+
+    /// <summary>
+    /// Called upon receiving role ability synchronization data.
+    /// </summary>
+    /// <param name="syncId">The synchronization identifier for the ability.</param>
+    /// <param name="reader">The message reader containing the received data.</param>
+    /// <param name="sender">The player who sent the synchronization message.</param>
+    public virtual void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender) { }
 
     public void TryOverrideTasks(bool overideOldTask = false)
     {

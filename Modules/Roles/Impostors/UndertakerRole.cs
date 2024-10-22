@@ -76,6 +76,37 @@ public class UndertakerRole : CustomRoleBehavior
         }
     }
 
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    NetHelpers.WriteVector2(rigidbody.position, writer);
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    Vector2 pos = NetHelpers.ReadVector2(reader);
+                    Dragging.transform.position = pos;
+                    OnResetAbilityState(false);
+                }
+                break;
+            case 1:
+                {
+                    HideBody();
+                }
+                break;
+        }
+    }
+
     private void SetSpeed()
     {
         if (!hasSpeed)
@@ -126,7 +157,11 @@ public class UndertakerRole : CustomRoleBehavior
         // Hide body in vent
         if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f && !SnapToPlayer)
         {
-            HideBody();
+            if (_player.IsLocalPlayer())
+            {
+                HideBody();
+                SendRoleSync(1);
+            }
             return;
         }
 
@@ -146,7 +181,16 @@ public class UndertakerRole : CustomRoleBehavior
 
         if (difference.magnitude > snapThreshold)
         {
-            OnResetAbilityState(false);
+            if (_player.IsLocalPlayer())
+            {
+                OnResetAbilityState(false);
+                SendRoleSync(0);
+            }
+            else
+            {
+                rigidbody.position = targetPosition;
+                rigidbody.velocity = Vector2.zero;
+            }
         }
         else if (!SnapToPlayer)
         {

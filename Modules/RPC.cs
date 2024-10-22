@@ -33,6 +33,7 @@ public enum CustomRPC : int
     SyncOption,
     RoleAction,
     SyncAction,
+    SyncRole,
 }
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -267,15 +268,13 @@ internal static class RPC
                     }
                     break;
                 case CustomRPC.RoleAction:
+                case CustomRPC.SyncRole:
                     {
                         var User = reader.ReadNetObject<PlayerControl>();
-                        var RoleType = (CustomRoles)reader.ReadInt32();
+                        var roleType = (CustomRoles)reader.ReadInt32();
                         if (User != null)
                         {
-                            if (User.BetterData().RoleInfo.RoleAssigned && User.BetterData().RoleInfo.Role.RoleType == RoleType)
-                            {
-                                User.BetterData().RoleInfo.Role.HandleRpc(oldReader, callId, User, player);
-                            }
+                            CustomRoleManager.RoleListener(User, role => role.HandleRpc(oldReader, callId, User, player), role => role.RoleType == roleType);
                         }
                     }
                     break;
