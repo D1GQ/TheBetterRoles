@@ -97,7 +97,7 @@ public class TargetButton : BaseButton
         {
             var targets = GetObjectsInAbilityRange(
                 Main.AllPlayerControls
-                    .Where(target => !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget))
+                    .Where(target => target.IsAlive() && !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget))
                     .ToList(),
                 Distance,
                 false,

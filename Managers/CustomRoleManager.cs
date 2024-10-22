@@ -10,6 +10,7 @@ public class RoleAssignmentData
 {
     public CustomRoleBehavior? _role;
     public bool CanKill => _role.CanKill;
+    public CustomRoles RoleType => _role.RoleType;
     public CustomRoleTeam RoleTeam => _role.RoleTeam;
     public bool IsGhostRole => _role.RoleCategory == CustomRoleCategory.Ghost;
     public bool IsAddon => _role.IsAddon;
@@ -99,10 +100,10 @@ public static class CustomRoleManager
             {
                 if (player == null) continue;
 
-                var selectedRole = SelectRole(availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+                var selectedRole = SelectRole(ref availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
                 playerRoleAssignments[player] = selectedRole;
 
-                var selectedAddons = AssignAddons(availableAddons, selectedRole, player);
+                var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
 
                 SyncPlayerRole(player, selectedRole, selectedAddons);
             }
@@ -153,20 +154,22 @@ public static class CustomRoleManager
         return roles.Shuffle().ToList();
     }
 
-    private static RoleAssignmentData? SelectRole(List<RoleAssignmentData> availableRoles, ref int ImposterAmount, ref int BenignNeutralAmount, ref int KillingNeutralAmount)
+    private static RoleAssignmentData? SelectRole(ref List<RoleAssignmentData> availableRoles, ref int ImposterAmount, ref int BenignNeutralAmount, ref int KillingNeutralAmount)
     {
-        List<RoleAssignmentData> validRoles = [];
+        List<CustomRoles> validRoleTypes = [];
         RoleAssignmentData? lowestRngRole = null;
         int lowestRngValue = int.MaxValue;
 
         // Filter valid roles and track roles that fail RNG but are close
         foreach (var role in availableRoles)
         {
+            if (role.Amount <= 0) continue;
+
             if (ImposterAmount > 0)
             {
                 if (role._role.IsImpostor)
                 {
-                    validRoles.Add(role);
+                    validRoleTypes.Add(role.RoleType);
                 }
 
                 continue;
@@ -178,26 +181,22 @@ public static class CustomRoleManager
                 if (!role._role.CanKill && BenignNeutralAmount <= 0) continue;
             }
 
-            validRoles.Add(role);
+            validRoleTypes.Add(role.RoleType);
         }
 
-        // If no valid roles, return fallback
-        if (validRoles.Count == 0) return GetFallbackRole(ref ImposterAmount);
+        if (validRoleTypes.Count == 0) return GetFallbackRole(ref ImposterAmount);
 
-        // Go through all valid roles and either assign or track the lowest RNG fail
-        foreach (var roleData in validRoles)
+        foreach (var roleData in availableRoles.Where(role => validRoleTypes.Contains(role.RoleType)))
         {
             int rng = IRandom.Instance.Next(100);
 
             if (rng <= roleData._role.GetChance())
             {
-                // If the RNG condition is met, assign the role immediately
                 roleData.Amount--;
                 UpdateRoleAmounts(roleData, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
                 return roleData;
             }
 
-            // Track the role with the lowest RNG that failed
             if (rng < lowestRngValue)
             {
                 lowestRngRole = roleData;
@@ -239,19 +238,19 @@ public static class CustomRoleManager
         return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoles.Crewmate), Amount = 1 };
     }
 
-    private static List<RoleAssignmentData> AssignAddons(List<RoleAssignmentData> availableAddons, RoleAssignmentData? assignedRole, PlayerControl player)
+    private static List<RoleAssignmentData> AssignAddons(ref List<RoleAssignmentData> availableAddons, RoleAssignmentData? assignedRole, PlayerControl player)
     {
-        List<RoleAssignmentData> selectedAddons = [];
+        List<CustomRoles> selectedAddons = [];
         int addonAmount = GetRNGAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
         int safeAttempts = 0;
 
-        List<RoleAssignmentData> validAddons = availableAddons
+        List<CustomRoles> validAddons = availableAddons
             .Where(addonData => addonData.Amount > 0
                 && addonData._role is CustomAddonBehavior addon
                 && addon.AssignmentCondition(assignedRole._role)
                 && addon.CanBeAssignedWithTeam(assignedRole._role.RoleTeam)
                 && addon.GetChance() > 0)
-            .Shuffle().ToList();
+            .Shuffle().Select(data => data.RoleType).ToList();
 
         
         if (validAddons.Count < addonAmount)
@@ -261,19 +260,19 @@ public static class CustomRoleManager
 
         while (selectedAddons.Count < addonAmount && safeAttempts < 50)
         {
-            foreach (var addonData in validAddons)
+            foreach (var addonData in availableAddons.Where(role => validAddons.Contains(role.RoleType)))
             {
-                if (!selectedAddons.Contains(addonData))
+                if (!selectedAddons.Contains(addonData.RoleType))
                 {
                     int rng = IRandom.Instance.Next(100);
                     if (rng <= addonData._role.GetChance())
                     {
-                        selectedAddons.Add(addonData);
+                        selectedAddons.Add(addonData.RoleType);
                         addonData.Amount--;
-                        safeAttempts = 0; // Reset attempts if we successfully assign an addon
+                        safeAttempts = 0;
                         if (selectedAddons.Count >= addonAmount)
                         {
-                            break; // Stop once we have enough addons
+                            break;
                         }
                     }
                 }
@@ -281,7 +280,7 @@ public static class CustomRoleManager
             safeAttempts++;
         }
 
-        return selectedAddons;
+        return availableAddons.Where(role => selectedAddons.Contains(role.RoleType)).ToList();
     }
 
     private static void SyncPlayerRole(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
