@@ -19,7 +19,7 @@ public class NoiseMakerAddon : CustomAddonBehavior
         {
             return
             [
-                ArrowDuration = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.NoiseMaker.Option.ArrowDuration"), [5f, 15f, 2.5f], 10f, "", "s", RoleOptionItem),
+                ArrowDuration = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.NoiseMaker.Option.ArrowDuration"), [5f, 15f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }

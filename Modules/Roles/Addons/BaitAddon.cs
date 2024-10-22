@@ -20,9 +20,9 @@ public class BaitAddon : CustomAddonBehavior
         {
             return
             [
-                Delay = new BetterOptionCheckboxItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Bait.Option.Delay"), false, RoleOptionItem),
-                MaximumDelay = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Bait.Option.MaximumDelay"), [0, 10, 1], 5, "", "s", Delay),
-                MinimumDelay = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Bait.Option.MinimumDelay"), [0, 10, 1], 0, "", "s", Delay),
+                Delay = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Bait.Option.Delay"), false, RoleOptionItem),
+                MaximumDelay = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MaximumDelay"), [0, 10, 1], 5, "", "s", Delay),
+                MinimumDelay = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MinimumDelay"), [0, 10, 1], 0, "", "s", Delay),
             ];
         }
     }

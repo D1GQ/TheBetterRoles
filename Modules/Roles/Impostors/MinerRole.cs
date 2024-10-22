@@ -24,8 +24,8 @@ public class MinerRole : CustomRoleBehavior
         {
             return
             [
-                DigCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Miner.Option.DigCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                DigAmount = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Miner.Option.DigAmount"), [0, 100, 1], 0, "", "", RoleOptionItem),
+                DigCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Miner.Option.DigCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                DigAmount = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Miner.Option.DigAmount"), [0, 100, 1], 0, "", "", RoleOptionItem),
             ];
         }
     }

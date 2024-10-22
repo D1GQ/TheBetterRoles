@@ -24,9 +24,9 @@ public class TransporterRole : CustomRoleBehavior
         {
             return
             [
-                TransportCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
-                MaximumNumberOfTransports = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Transporter.Option.MaximumNumberOfTransports"), [1, 100, 1], 5, "", "", RoleOptionItem),
-                TransportsGainFromTask = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
+                TransportCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
+                MaximumNumberOfTransports = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.MaximumNumberOfTransports"), [1, 100, 1], 5, "", "", RoleOptionItem),
+                TransportsGainFromTask = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
             ];
         }
     }

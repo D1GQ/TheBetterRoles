@@ -106,7 +106,12 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
     /// </summary>
-    public int RoleId => 100000 + 200 * (int)RoleType;
+    public int RoleId => (int)RoleType;
+
+    /// <summary>
+    /// Get automatically generated role UID based on the role type. Each role is assigned a unique identifier derived from its type.
+    /// </summary>
+    public int RoleUID => 100000 + 200 * (int)RoleType;
 
     /// <summary>
     /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 
@@ -287,20 +292,20 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual bool CanMove => true;
 
-    public float GetChance() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleId) : 0f;
-    public int GetAmount() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleId + 1) : 0;
+    public float GetChance() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleUID) : 0f;
+    public int GetAmount() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleUID + 1) : 0;
 
-    private int TempOptionNum = 0;
-    public int GenerateOptionId(bool firstOption = false)
+    private int tempOptionNum = 0;
+    protected int GetOptionUID(bool firstOption = false)
     {
         if (firstOption)
         {
-            TempOptionNum = 1;
+            tempOptionNum = 1;
         }
 
-        var num = TempOptionNum;
-        TempOptionNum++;
-        return RoleId + 10 + 5 * num;
+        var num = tempOptionNum;
+        tempOptionNum++;
+        return RoleUID + 10 + 5 * num;
     }
 
     public CustomRoleBehavior Initialize(PlayerControl player)
@@ -387,16 +392,16 @@ public abstract class CustomRoleBehavior
 
     protected virtual void SetUpSettings()
     {
-        RoleOptionItem = new BetterOptionPercentItem().Create(RoleId, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
-        AmountOptionItem = new BetterOptionIntItem().Create(RoleId + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+        RoleOptionItem = new BetterOptionPercentItem().Create(RoleUID, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
+        AmountOptionItem = new BetterOptionIntItem().Create(RoleUID + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
         if (!IsCrewmate && !VentReliantRole)
-            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), IsImpostor, RoleOptionItem);
+            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), IsImpostor, RoleOptionItem);
         if (TaskReliantRole)
         {
-            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleId + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
-            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleId + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
+            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
+            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
 
         OptionItems.Initialize();

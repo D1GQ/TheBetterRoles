@@ -23,9 +23,9 @@ public class SnitchRole : CustomRoleBehavior
         {
             return
             [
-                RevealRolesInMeeting = new BetterOptionCheckboxItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Snitch.Option.RevealRolesInMeeting"), true, RoleOptionItem),
-                SnitchSeesNeutralRoles = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Snitch.Option.SnitchSeesNeutralRoles"), false, RoleOptionItem),
-                TasksRemainingWhenRevealed = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Snitch.Option.TasksRemainingWhenRevealed"), [0, 4, 1], 2, "", "", RoleOptionItem)
+                RevealRolesInMeeting = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Snitch.Option.RevealRolesInMeeting"), true, RoleOptionItem),
+                SnitchSeesNeutralRoles = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.SnitchSeesNeutralRoles"), false, RoleOptionItem),
+                TasksRemainingWhenRevealed = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.TasksRemainingWhenRevealed"), [0, 4, 1], 2, "", "", RoleOptionItem)
             ];
         }
     }

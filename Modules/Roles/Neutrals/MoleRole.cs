@@ -28,7 +28,7 @@ public class MoleRole : CustomRoleBehavior
         {
             return
             [
-                MaximumVents = new BetterOptionIntItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 3, "", "", RoleOptionItem),
+                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 3, "", "", RoleOptionItem),
             ];
         }
     }

@@ -28,9 +28,9 @@ public class JanitorRole : CustomRoleBehavior
         {
             return
             [
-                CleanCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Janitor.Option.CleanCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                KillCooldownClean = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldownOnClean"), true, RoleOptionItem),
-                SetKillCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldown"), [0f, 180f, 2.5f], 35f, "", "s", KillCooldownClean),
+                CleanCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Janitor.Option.CleanCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                KillCooldownClean = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldownOnClean"), true, RoleOptionItem),
+                SetKillCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Janitor.Option.SetKillCooldown"), [0f, 180f, 2.5f], 35f, "", "s", KillCooldownClean),
             ];
         }
     }

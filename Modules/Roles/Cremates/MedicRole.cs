@@ -27,14 +27,14 @@ public class MedicRole : CustomRoleBehavior
         {
             return
             [
-                ShowShieldedPlayer = new BetterOptionStringItem().Create(GenerateOptionId(true), SettingsTab, GetString("Role.Medic.Option.ShowShieldedPlayer"),
+                ShowShieldedPlayer = new BetterOptionStringItem().Create(GetOptionUID(true), SettingsTab, GetString("Role.Medic.Option.ShowShieldedPlayer"),
                 [$"{Utils.GetCustomRoleNameAndColor(RoleType)}", $"{Utils.GetCustomRoleNameAndColor(RoleType)}+<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>", $"{GetString("All")}"], 0, RoleOptionItem),
 
-                Notify = new BetterOptionStringItem().Create(GenerateOptionId(), SettingsTab, GetString("Role.Medic.Option.Notify"),
+                Notify = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.Notify"),
                 [$"{Utils.GetCustomRoleNameAndColor(RoleType)}", $"<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>", $"{Utils.GetCustomRoleNameAndColor(RoleType)}+<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>"], 0, RoleOptionItem),
 
-                NotifyKiller = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, GetString("Role.Medic.Option.NotifyKiller"), true, RoleOptionItem),
-                RemoveShieldOnMedicDeath = new BetterOptionCheckboxItem().Create(GenerateOptionId(), SettingsTab, GetString("Role.Medic.Option.RemoveShieldOnMedicDeath"), false, RoleOptionItem),
+                NotifyKiller = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.NotifyKiller"), true, RoleOptionItem),
+                RemoveShieldOnMedicDeath = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.RemoveShieldOnMedicDeath"), false, RoleOptionItem),
             ];
         }
     }

@@ -25,7 +25,7 @@ public class UndertakerRole : CustomRoleBehavior
         {
             return
             [
-                DragSlowdown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Undertaker.Option.DragSlowdown"), [0.1f, 1f, 0.1f], 0.5f, "", "x", RoleOptionItem),
+                DragSlowdown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Undertaker.Option.DragSlowdown"), [0.1f, 1f, 0.1f], 0.5f, "", "x", RoleOptionItem),
             ];
         }
     }

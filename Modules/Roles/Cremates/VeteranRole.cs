@@ -27,11 +27,11 @@ public class VeteranRole : CustomRoleBehavior
         {
             return
             [
-                CanBeKilledOnAlert = new BetterOptionCheckboxItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Veteran.Option.CanBeKilledOnAlert"), false, RoleOptionItem),
-                AlertCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertCooldown"), [0f, 180f, 2.5f], 20, "", "s", RoleOptionItem),
-                AlertDuration = new BetterOptionFloatItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertDuration"), [0f, 180f, 2.5f], 12, "", "s", RoleOptionItem),
-                MaximumNumberOfAlerts = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Veteran.Option.MaximumNumberOfAlerts"), [1, 100, 1], 3, "", "", RoleOptionItem),
-                AlertsGainFromTask = new BetterOptionIntItem().Create(GenerateOptionId(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
+                CanBeKilledOnAlert = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Veteran.Option.CanBeKilledOnAlert"), false, RoleOptionItem),
+                AlertCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertCooldown"), [0f, 180f, 2.5f], 20, "", "s", RoleOptionItem),
+                AlertDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertDuration"), [0f, 180f, 2.5f], 12, "", "s", RoleOptionItem),
+                MaximumNumberOfAlerts = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.MaximumNumberOfAlerts"), [1, 100, 1], 3, "", "", RoleOptionItem),
+                AlertsGainFromTask = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
             ];
         }
     }

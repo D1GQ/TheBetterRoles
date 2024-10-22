@@ -22,7 +22,7 @@ public class AmnesiacRole : CustomRoleBehavior
         {
             return
             [
-                RememberCooldown = new BetterOptionFloatItem().Create(GenerateOptionId(true), SettingsTab, Translator.GetString("Role.Amnesiac.Option.RememberCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
+                RememberCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Amnesiac.Option.RememberCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
             ];
         }
     }
