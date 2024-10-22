@@ -133,4 +133,9 @@ public class BetterOptionItem
     {
         throw new NotImplementedException();
     }
+
+    public virtual string FormatValueAsText()
+    {
+        return string.Empty;
+    }
 }

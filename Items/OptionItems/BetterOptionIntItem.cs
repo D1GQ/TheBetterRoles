@@ -155,7 +155,7 @@ public class BetterOptionIntItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
+        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
     public void Decrease()
@@ -176,7 +176,7 @@ public class BetterOptionIntItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), $"{PreFix}{CurrentValue}{PostFix}");
+        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
     public void Load(int DefaultValue)
@@ -243,5 +243,10 @@ public class BetterOptionIntItem : BetterOptionItem
             }
             UpdatePositions();
         }
+    }
+
+    public override string FormatValueAsText()
+    {
+        return $"{PreFix}{CurrentValue}{PostFix}";
     }
 }

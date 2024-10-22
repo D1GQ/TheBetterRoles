@@ -138,7 +138,7 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue++;
             AdjustButtonsActiveState();
-            RPC.SyncOption(Id, CurrentValue.ToString(), Values[CurrentValue]);
+            RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
         }
     }
 
@@ -148,7 +148,7 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue--;
             AdjustButtonsActiveState();
-            RPC.SyncOption(Id, CurrentValue.ToString(), Values[CurrentValue]);
+            RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
         }
     }
 
@@ -204,5 +204,10 @@ public class BetterOptionStringItem : BetterOptionItem
             }
             UpdatePositions();
         }
+    }
+
+    public override string FormatValueAsText()
+    {
+        return Values[CurrentValue];
     }
 }

@@ -139,8 +139,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     {
         IsChecked = !IsChecked;
         BetterDataManager.SaveSetting(Id, IsChecked.ToString());
-        Color color = IsChecked ?? false ? Color.green : Color.red;
-        RPC.SyncOption(id, IsChecked.ToString(), $"<color={Utils.Color32ToHex(color)}>{IsChecked}</color>");
+        RPC.SyncOption(id, IsChecked.ToString(), FormatValueAsText());
 
         if (IsParent || IsChild)
         {
@@ -151,5 +150,11 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             }
             UpdatePositions();
         }
+    }
+
+    public override string FormatValueAsText()
+    {
+        Color color = IsChecked ?? false ? Color.green : Color.red;
+        return $"<color={Utils.Color32ToHex(color)}>{IsChecked}</color>";
     }
 }

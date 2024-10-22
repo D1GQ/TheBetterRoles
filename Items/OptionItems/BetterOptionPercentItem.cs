@@ -164,7 +164,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>");
+        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
     public void Decrease()
@@ -185,7 +185,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>");
+        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
     public void Load(float DefaultValue)
@@ -252,5 +252,10 @@ public class BetterOptionPercentItem : BetterOptionItem
             }
             UpdatePositions();
         }
+    }
+
+    public override string FormatValueAsText()
+    {
+        return $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
     }
 }
