@@ -176,6 +176,11 @@ public abstract class CustomRoleBehavior
     public BetterOptionItem? CanVentOptionItem { get; set; }
 
     /// <summary>
+    /// The option that determines whether players can use vents while playing this role. 
+    /// </summary>
+    public virtual bool DefaultVentOption => IsImpostor;
+
+    /// <summary>
     /// The option that determines if the normal task amount is overrated.
     /// </summary>
     public BetterOptionItem? OverrideTasksOptionItem { get; set; }
@@ -258,7 +263,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Checks if the role can perform kills. This is typically overridden by roles that are allowed to kill, such as Impostors.
     /// </summary>
-    public virtual bool CanKill => false;
+    public virtual bool CanKill => IsImpostor;
 
     /// <summary>
     /// Indicates whether this role is reliant on using vents. 
@@ -286,7 +291,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Checks if the role can perform sabotage actions. This is typically overridden by roles that have the ability to sabotage, such as Impostors.
     /// </summary>
-    public virtual bool CanSabotage => false;
+    public virtual bool CanSabotage => IsImpostor;
 
     /// <summary>
     /// Set if the role is allowed to move, for example, if a certain condition freezes movement.
@@ -395,8 +400,8 @@ public abstract class CustomRoleBehavior
     {
         RoleOptionItem = new BetterOptionPercentItem().Create(RoleUID, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
         AmountOptionItem = new BetterOptionIntItem().Create(RoleUID + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
-        if (!IsCrewmate && !VentReliantRole)
-            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), IsImpostor, RoleOptionItem);
+        if (!IsCrewmate && !VentReliantRole && !IsGhostRole)
+            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), DefaultVentOption, RoleOptionItem);
         if (TaskReliantRole)
         {
             OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);

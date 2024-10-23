@@ -79,7 +79,7 @@ public class TransporterRole : CustomRoleBehavior
                     else
                     {
                         TryToTransport(firstTarget, target);
-                        this.menu.PlayerMinigame.Close();
+                        menu?.PlayerMinigame?.Close();
                     }
                 }
                 break;

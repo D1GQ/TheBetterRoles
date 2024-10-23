@@ -12,8 +12,7 @@ public class MinerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Miner;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override bool CanKill => true;
-    public override bool CanSabotage => true;
+    public override bool VentReliantRole => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? DigCooldown;

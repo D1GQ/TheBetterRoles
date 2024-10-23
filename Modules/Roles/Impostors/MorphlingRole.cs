@@ -11,8 +11,6 @@ public class MorphlingRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Morphling;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override bool CanKill => true;
-    public override bool CanSabotage => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? SampleCooldown;

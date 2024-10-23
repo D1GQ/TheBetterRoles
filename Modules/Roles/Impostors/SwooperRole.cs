@@ -14,8 +14,7 @@ public class SwooperRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Swooper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override bool CanKill => true;
-    public override bool CanSabotage => true;
+    public override bool DefaultVentOption => false;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
     public BetterOptionItem? InvisibilityCooldown;

@@ -10,14 +10,13 @@ namespace TheBetterRoles;
 public class MoleRole : CustomRoleBehavior
 {
     // Role Info
-    public override bool VentReliantRole => true;
-    public override bool CanVent => false;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mole;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
+    public override bool CanVent => false;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
     public BetterOptionItem? MaximumVents;
@@ -28,7 +27,7 @@ public class MoleRole : CustomRoleBehavior
         {
             return
             [
-                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 3, "", "", RoleOptionItem),
+                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 2, "", "", RoleOptionItem),
             ];
         }
     }
@@ -40,7 +39,7 @@ public class MoleRole : CustomRoleBehavior
         BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, this, null, true, true));
         BurrowButton.VentCondition = (Vent vent) =>
         {
-            return Vents.Select(vents => vents.Id).Contains(vent.Id);
+            return CanVentOptionItem.GetBool() || Vents.Select(vents => vents.Id).Contains(vent.Id);
         };
 
         DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));

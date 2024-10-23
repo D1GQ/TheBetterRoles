@@ -81,7 +81,6 @@ public class PhantomRoleTBR : CustomRoleBehavior
             if (_player.IsLocalPlayer())
             {
                 vent.TryMoveToVent(vent, out string _);
-                // vent.SetButtons(true);
                 vent.SetButtons(false);
             }
         }

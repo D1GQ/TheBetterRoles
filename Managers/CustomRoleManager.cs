@@ -165,13 +165,13 @@ public static class CustomRoleManager
         {
             if (role.Amount <= 0) continue;
 
-            if (ImposterAmount > 0)
+            if (role._role.IsImpostor && ImposterAmount <= 0)
             {
-                if (role._role.IsImpostor)
-                {
-                    validRoleTypes.Add(role.RoleType);
-                }
-
+                continue;
+            }
+            else if (role._role.IsImpostor)
+            {
+                validRoleTypes.Add(role.RoleType);
                 continue;
             }
 
@@ -302,7 +302,7 @@ public static class CustomRoleManager
     {
         foreach (var assignment in assignments)
         {
-            Logger.Log($"{assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
+            Logger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
         }
     }
 
@@ -366,6 +366,7 @@ public static class CustomRoleManager
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
                 player.SetRoleSync(selectedGhostRole._role.RoleType);
+                Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
     }
@@ -391,7 +392,7 @@ public static class CustomRoleManager
         if (list == null || list.Count == 0)
             throw new ArgumentException("List is null or empty!");
 
-        System.Random random = new System.Random();
+        Random random = new();
         return random.Next(0, list.Count); // Returns a random index from 0 to list.Count - 1
     }
 

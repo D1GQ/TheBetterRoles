@@ -630,12 +630,12 @@ public class CustomGameManager
         List<PlayerControl> nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
         List<PlayerControl> killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
 
-        if (allPlayers.All(pc => pc.Is(CustomRoleTeam.Crewmate)))
+        if (impostors.Count <= 0 && killingPlayers.Count <= 0)
         {
             team = CustomRoleTeam.Crewmate;
             return true;
         }
-        else if (impostors.Count >= nonKillingPlayers.Count && !killingPlayers.Any())
+        else if (impostors.Count >= nonKillingPlayers.Count && killingPlayers.Count <= 0)
         {
             team = CustomRoleTeam.Impostor;
             return true;

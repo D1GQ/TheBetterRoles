@@ -112,7 +112,7 @@ public class Main : BasePlugin
 
     public static PlayerControl[] AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(pc => pc != null).ToArray();
 
-    public static PlayerControl[] AllAlivePlayerControls => AllPlayerControls.ToArray().Where(pc => pc.IsAlive()).ToArray();
+    public static PlayerControl[] AllAlivePlayerControls => AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead).ToArray();
     public static DeadBody[] AllDeadBodys => UnityEngine.Object.FindObjectsOfType<DeadBody>().ToArray();
     public static Vent[] AllVents => UnityEngine.Object.FindObjectsOfType<Vent>();
     public static Vent[] AllEnabledVents => UnityEngine.Object.FindObjectsOfType<Vent>().Where(vent => vent.IsEnabled()).ToArray();

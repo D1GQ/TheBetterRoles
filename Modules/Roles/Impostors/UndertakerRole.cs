@@ -12,9 +12,8 @@ public class UndertakerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Undertaker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override bool CanKill => true;
-    public override bool CanSabotage => true;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override bool VentReliantRole => true;
     public override bool CanMoveInVents => !IsDragging;
 
     public BetterOptionItem? DragSlowdown;

@@ -12,8 +12,6 @@ public class ImpostorRoleTBR : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Vanilla;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
-    public override bool CanKill => true;
-    public override bool CanSabotage => true;
     public override BetterOptionItem[]? OptionItems
     {
         get
