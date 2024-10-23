@@ -1,7 +1,5 @@
 ﻿
-using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
-using System.Collections;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
@@ -53,7 +51,7 @@ public class GlitchRole : CustomRoleBehavior
     public override void OnSetUpRole()
     {
         HackButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, null, this, true, HackDistance.GetValue()));
-        MimicButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, true));
+        MimicButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -98,6 +96,7 @@ public class GlitchRole : CustomRoleBehavior
 
     private void AddHack(PlayerControl target)
     {
+        if (_player.IsLocalPlayer()) target.ShieldBreakAnimation(RoleColor);
         hacked = target.Data;
         tempHackDuration = HackDuration.GetFloat();
         if (target.IsLocalPlayer())
