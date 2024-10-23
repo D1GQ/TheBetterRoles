@@ -33,7 +33,6 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    private bool IsVisible { get; set; } = true;
     public AbilityButton? DigButton = new();
     public VentButton? BurrowButton = new();
     public override void OnSetUpRole()
@@ -45,7 +44,8 @@ public class MoleRole : CustomRoleBehavior
         };
 
         DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
-        DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent();
+        DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
+        && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

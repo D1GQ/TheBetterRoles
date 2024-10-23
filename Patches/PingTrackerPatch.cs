@@ -14,8 +14,6 @@ public class PingTrackerPatch
     {
         try
         {
-            PlayerControl Host = AmongUsClient.Instance.GetHost().Character;
-
             if (GameStates.IsFreePlay)
             {
                 __instance.gameObject.SetActive(false);
@@ -31,19 +29,13 @@ public class PingTrackerPatch
             }
 
             sb.Append($"<color=#00dbdb><size=75%>TheBetterRoles {Main.GetVersionText(true)}</size></color>\n");
-            // sb.Append("<size=68%><color=#8040bf>By</color> <color=#bc4345>The Enhanced Network</color></size>\n");
+            sb.Append("<size=68%><color=#8040bf>By</color> <color=#bc4345>The Enhanced Network</color></size>\n");
             // sb.Append($"<size=50%><color=#b5b5b5>{Main.Github}</color></size>\n");
 
             if (Main.ShowFPS.Value)
             {
                 float FPSNum = 1.0f / Time.deltaTime;
                 sb.AppendFormat("<color=#0dff00><size=75%>FPS: <b>{0}</b></size></color>\n", (int)FPSNum);
-            }
-
-            // Add Host Info if not in lobby
-            if (GameStates.IsInGamePlay && Host != null)
-            {
-                sb.AppendFormat("<size=75%>{0}: {1}</size>\n", Translator.GetString("Host"), Host.GetPlayerNameAndColor());
             }
 
             __instance.aspectPosition.DistanceFromEdge = new Vector3(4f, 0.1f, -5);

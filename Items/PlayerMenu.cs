@@ -44,7 +44,7 @@ public class PlayerMenu
             .Where(d =>
                 (d.IsDead == ShowDead) ||
                 (ShowDeadWithBodys && d.IsDead && dead.Contains(d.PlayerId)) ||
-                (!d.IsDead && ShowSelf == d.AmOwner && !d.Disconnected)
+                (!d.IsDead && ShowSelf == d.IsLocalData() && !d.Disconnected)
             ).ToList();
 
         PlayerMinigame.potentialVictims = new Il2CppSystem.Collections.Generic.List<ShapeshifterPanel>();

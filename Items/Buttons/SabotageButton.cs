@@ -57,6 +57,7 @@ public class SabotageButton : BaseButton
 
         ActionButton.SetInfiniteUses();
 
+        allButtons.Add(this);
         return this;
     }
 

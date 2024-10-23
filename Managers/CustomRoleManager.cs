@@ -663,6 +663,7 @@ public enum CustomRoles
     // Neutrals
     Jester,
     Mole,
+    Glitch,
     Opportunist,
     Pestillence,
     Plaguebearer,

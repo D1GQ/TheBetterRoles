@@ -31,8 +31,8 @@ public class TransporterRole : CustomRoleBehavior
         }
     }
 
-    private PlayerMenu? Menu;
-    private PlayerControl? FirstTarget;
+    private PlayerMenu? menu;
+    private PlayerControl? firstTarget;
 
     public override void OnSetUpRole()
     {
@@ -48,7 +48,7 @@ public class TransporterRole : CustomRoleBehavior
                     TransportButton.AddUse();
                     TransportButton.SetCooldown(0);
                     if (_player.IsLocalPlayer())
-                        Menu = new PlayerMenu().Create(id, this, false, false, true);
+                        menu = new PlayerMenu().Create(id, this, false, false, true);
                 }
                 break;
         }
@@ -62,7 +62,7 @@ public class TransporterRole : CustomRoleBehavior
                 {
                     if (close)
                     {
-                        FirstTarget = null;
+                        firstTarget = null;
                         break;
                     }
 
@@ -72,14 +72,14 @@ public class TransporterRole : CustomRoleBehavior
                         playerPanel.Button.enabled = false;
                     }
 
-                    if (FirstTarget == null)
+                    if (firstTarget == null)
                     {
-                        FirstTarget = target;
+                        firstTarget = target;
                     }
                     else
                     {
-                        TryToTransport(FirstTarget, target);
-                        Menu.PlayerMinigame.Close();
+                        TryToTransport(firstTarget, target);
+                        this.menu.PlayerMinigame.Close();
                     }
                 }
                 break;
@@ -117,7 +117,7 @@ public class TransporterRole : CustomRoleBehavior
             }
         }
 
-        FirstTarget = null;
+        firstTarget = null;
     }
 
     public override void OnTaskComplete(PlayerControl player, uint taskId)

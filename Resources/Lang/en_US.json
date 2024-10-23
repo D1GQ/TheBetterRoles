@@ -201,10 +201,20 @@
   "Role.Amnesiac.Ability.1": "Remember?",
   "Role.Amnesiac.Option.RememberCooldown": "Remember Cooldown",
 
+  "Role.Glitch": "Glitch",
+  "Role.Glitch.Info": "Hack and mimic crewmates",
+  "Role.Glitch.LongInfo": "As the Glitch, you have two abilities: Hack, which allows you to hack a player and temporarily disable all of their interaction and ability buttons, and Mimic, which allows you to temporarily appear as a chosen player.",
+  "Role.Glitch.Ability.1": "Hack!",
+  "Role.Glitch.Ability.2": "Mimic",
+  "Role.Glitch.Option.HackCooldown": "Hack Cooldown",
+  "Role.Glitch.Option.HackDuration": "Hack Duration",
+  "Role.Glitch.Option.HackDistance": "Hack Distance",
+  "Role.Glitch.Option.MimicCooldown": "Mimic Cooldown",
+  "Role.Glitch.Option.MimicDuration": "Mimic Duration",
+
   "Role.Phantom": "Phantom",
   "Role.Phantom.Info": "Complete all tasks without being seen",
   "Role.Phantom.LongInfo": "As the Phantom, to win, complete all tasks without being clicked on by another player. The Phantom will become more visible the more they move.",
-  "Role.Phantom.Option.": "",
 
   "Role.Jester": "Jester",
   "Role.Jester.Info": "Get voted out",

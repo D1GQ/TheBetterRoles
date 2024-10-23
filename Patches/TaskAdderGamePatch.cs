@@ -1,11 +1,14 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TheBetterRoles.Patches;
 
 [HarmonyPatch(typeof(TaskAdderGame))]
 class TaskAdderGamePatch
 {
+    public static Scroller? Scroller;
+
     public static Dictionary<TaskAddButton, CustomRoleBehavior> rolesForButtons = [];
     [HarmonyPatch(nameof(TaskAdderGame.ShowFolder))]
     [HarmonyPrefix]
@@ -16,6 +19,26 @@ class TaskAdderGamePatch
         float num = 0f;
         float num2 = 0f;
         float num3 = 0f;
+
+        if (Scroller == null)
+        {
+            Scroller = __instance.gameObject.AddComponent<Scroller>();
+            Scroller.Inner = __instance.TaskParent.transform;
+            Scroller.MouseMustBeOverToScroll = true;
+            var box = __instance.TaskParent.gameObject.AddComponent<BoxCollider2D>();
+            box.size = new Vector2(100f, 100f);
+            Scroller.ClickMask = box;
+            Scroller.ScrollWheelSpeed = 0.7f;
+            Scroller.SetYBoundsMin(1.7f);
+            Scroller.SetYBoundsMax(10f);
+            Scroller.allowY = true;
+
+            __instance.FolderBackButton.gameObject.SetActive(false);
+            __instance.PathText.gameObject.SetActive(false);
+            __instance.transform.Find("TitleText_TMP").gameObject.SetActive(false);
+            __instance.transform.Find("HomeButton").gameObject.SetActive(false);
+            __instance.transform.Find("Background").localScale = new Vector3(1f, 5f, 1f);
+        }
 
         TaskAddButton ghostAddButton = UnityEngine.Object.Instantiate(__instance.RoleButton);
         ghostAddButton.SafePositionWorld = __instance.SafePositionWorld;

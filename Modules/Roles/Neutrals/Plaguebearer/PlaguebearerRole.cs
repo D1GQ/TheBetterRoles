@@ -39,15 +39,13 @@ public class PlaguebearerRole : CustomRoleBehavior
         InfectButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue()));
         InfectButton.TargetCondition = (PlayerControl target) =>
         {
-            return !Infected.Contains(target.Data);
+            return !infected.Contains(target.Data);
         };
     }
 
-    private List<NetworkedPlayerInfo> Infected = [];
+    private List<NetworkedPlayerInfo> infected = [];
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
-        if (role != this) return;
-
         switch (id)
         {
             case 5:
@@ -65,7 +63,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     {
         if (_player.IsLocalPlayer())
         {
-            foreach (var data in Infected)
+            foreach (var data in infected)
             {
                 var player = data.Object;
                 if (player != null)
@@ -80,11 +78,11 @@ public class PlaguebearerRole : CustomRoleBehavior
     // Infact player on interactions
     public override void OnPlayerInteractedOther(PlayerControl player, PlayerControl target)
     {
-        if (target == _player && !Infected.Contains(player.Data))
+        if (target == _player && !infected.Contains(player.Data))
         {
             InfectPlayer(player);
         }
-        else if (Infected.Contains(player.Data) && !Infected.Contains(target.Data))
+        else if (infected.Contains(player.Data) && !infected.Contains(target.Data))
         {
             InfectPlayer(target);
         }
@@ -97,7 +95,7 @@ public class PlaguebearerRole : CustomRoleBehavior
 
     private void InfectPlayer(PlayerControl player)
     {
-        Infected.Add(player.Data);
+        infected.Add(player.Data);
         if (_player.IsLocalPlayer())
         {
             player.SetTrueVisorColor(Utils.HexToColor32(RoleColor));
@@ -109,7 +107,7 @@ public class PlaguebearerRole : CustomRoleBehavior
 
     private void CheckPestillenceCondition()
     {
-        if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(Infected.Contains))
+        if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(infected.Contains))
         {
             if (playAnimation.GetBool())
             {

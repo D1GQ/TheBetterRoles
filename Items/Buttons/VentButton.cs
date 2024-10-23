@@ -9,7 +9,6 @@ public class VentButton : BaseButton
     public float HighlightDistance { get; set; } = 3.5f;
     public bool IsAbility { get; set; }
     public Func<Vent, bool> VentCondition { get; set; } = (Vent target) => true;
-    public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public VentButton Create(int id, string name, float cooldown, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
         Distance = 0.8f;
@@ -109,6 +108,7 @@ public class VentButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
+        allButtons.Add(this);
         return this;
     }
 

@@ -5,6 +5,7 @@ namespace TheBetterRoles;
 
 public class BaseButton
 {
+    public static List<BaseButton> allButtons = [];
     public CustomRoleBehavior? Role { get; set; }
     public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
     public PlayerControl? _player => Role._player;
@@ -14,9 +15,11 @@ public class BaseButton
     public Func<bool> VisibleCondition = () => true;
     public int Id { get; set; }
     public bool UseAsDead { get; set; }
-    public bool Visible { get; set; } = false;
+    public bool Visible { get; set; }
     public float ClosestObjDistance { get; set; } = float.MaxValue;
     public float Distance { get; set; } = 0.8f;
+
+    public bool Hacked { get; set; }
 
     public string? Name { get; set; } = "Ability";
     public IntRange Range = new(0, 100);
@@ -36,13 +39,16 @@ public class BaseButton
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
         (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
 
-    public virtual bool CanInteractOnPress() => ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() || CanCancelDuration && State > 0 && BaseInteractable();
-    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() && InteractCondition();
+    public virtual bool CanInteractOnPress() => (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() || CanCancelDuration && State > 0) && !Hacked;
+    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder()
+        && InteractCondition() && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
-        if ((!checkVent && !_player.CanMove && !_player.IsInVent()) || (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0)
+        if ((!checkVent && !_player.CanMove && !_player.IsInVent()) ||
+            (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0
+            || !BaseInteractable())
         {
             return [];
         }
@@ -96,6 +102,8 @@ public class BaseButton
 
     public virtual void FixedUpdate()
     {
+        if (Hacked) return;
+
         if (TempCooldown > 0)
         {
             if (BaseCooldown()) TempCooldown -= Time.deltaTime;
@@ -121,6 +129,7 @@ public class BaseButton
 
     public void RemoveButton()
     {
+        allButtons.Remove(this);
         if (_player.IsLocalPlayer())
         {
             UnityEngine.Object.Destroy(Button.gameObject);

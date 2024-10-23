@@ -8,7 +8,6 @@ public class TargetButton : BaseButton
 {
     public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
-    public override bool CanInteractOnPress() => base.CanInteractOnPress() && !ActionButton.isCoolingDown;
     public TargetButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
@@ -82,6 +81,7 @@ public class TargetButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
+        allButtons.Add(this);
         return this;
     }
 

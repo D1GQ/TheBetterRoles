@@ -32,18 +32,18 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    private NetworkedPlayerInfo.PlayerOutfit? OriginalData { get; set; }
-    private NetworkedPlayerInfo.PlayerOutfit? SampleData { get; set; }
+    private NetworkedPlayerInfo.PlayerOutfit? originalData;
+    private NetworkedPlayerInfo.PlayerOutfit? sampleData;
     public TargetButton? SampleButton;
     public AbilityButton? TransformButton;
 
     public override void OnSetUpRole()
     {
         SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f));
-        SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData == null; };
+        SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData == null; };
 
         TransformButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
-        TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.SampleData != null; };
+        TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
@@ -56,17 +56,17 @@ public class MorphlingRole : CustomRoleBehavior
                 if (target?.Data != null)
                 {
                     DisguisedTargetId = target.Data.PlayerId;
-                    SampleData = CopyOutfit(target.Data);
+                    sampleData = CopyOutfit(target.Data);
                     TransformButton.SetCooldown();
                 }
                 break;
             case 6:
-                if (SampleData != null)
+                if (sampleData != null)
                 {
                     IsDisguised = true;
                     CustomRoleManager.RoleListener(_player, role => role.OnDisguise(_player));
-                    OriginalData = CopyOutfit(_data);
-                    SetOutfit(SampleData);
+                    originalData = CopyOutfit(_data);
+                    SetOutfit(sampleData);
                     TransformButton.SetDuration();
                     _player.RawSetName(Utils.FormatPlayerName(_player.Data));
                 }
@@ -79,7 +79,7 @@ public class MorphlingRole : CustomRoleBehavior
         switch (id)
         {
             case 6:
-                if (OriginalData != null)
+                if (originalData != null)
                 {
                     OnResetAbilityState(isTimeOut);
                     SampleButton.SetCooldown();
@@ -120,15 +120,15 @@ public class MorphlingRole : CustomRoleBehavior
     {
         IsDisguised = false;
         DisguisedTargetId = -1;
-        if (SampleData != null)
+        if (sampleData != null)
         {
-            if (OriginalData != null)
+            if (originalData != null)
             {
                 CustomRoleManager.RoleListener(_player, role => role.OnUndisguise(_player));
-                SetOutfit(OriginalData);
+                SetOutfit(originalData);
             }
-            SampleData = null;
-            OriginalData = null;
+            sampleData = null;
+            originalData = null;
         }
     }
 }

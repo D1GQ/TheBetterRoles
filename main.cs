@@ -26,7 +26,7 @@ public class Main : BasePlugin
     public const string BetaNum = "1";
     public const string HotfixNum = "0";
     public const bool IsHotFix = false;
-    public const string PluginGuid = "com.d1gq.thebetterroles";
+    public const string PluginGuid = "com.ten.thebetterroles";
     public const string PluginVersion = "1.0.0";
     public const string ReleaseDate = "10.12.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
@@ -42,7 +42,7 @@ public class Main : BasePlugin
                 using SHA256 sha256 = SHA256.Create();
                 byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(hash));
                 string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
-                return sha256Hash.Substring(0, 16) + sha256Hash.Substring(sha256Hash.Length - 8);
+                return sha256Hash[..8];
             }
 
             var versionData = new StringBuilder()
@@ -54,7 +54,12 @@ public class Main : BasePlugin
                 .Append(ReleaseDate)
                 .Append(Github)
                 .Append(Discord)
+                .Append(string.Join(".", CustomRoleManager.allRoles.Select(role => role.GetType().Name)))
+                .Append(string.Join(".", CustomRoleManager.allRoles.Select(role => role.RoleUID)))
+                .Append(string.Join(".", Enum.GetNames(typeof(TargetType))))
                 .Append(string.Join(".", Enum.GetNames(typeof(CustomRPC))))
+                .Append(string.Join(".", Enum.GetNames(typeof(RpcAction))))
+                .Append(string.Join(".", Enum.GetNames(typeof(CustomRoles))))
                 .ToString();
 
             return GetHash(versionData);
@@ -96,6 +101,7 @@ public class Main : BasePlugin
 
     public static List<string> SupportedAmongUsVersions =
     [
+        "2024.10.29",
         "2024.9.4",
     ];
 

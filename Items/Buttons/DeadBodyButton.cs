@@ -82,6 +82,7 @@ public class DeadBodyButton : BaseButton
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
+        allButtons.Add(this);
         return this;
     }
 

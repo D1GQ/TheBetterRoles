@@ -33,7 +33,7 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    private bool IsVisible { get; set; } = true;
+    private bool isVisible = true;
     public AbilityButton? InvisibilityButton = new();
     public override void OnSetUpRole()
     {
@@ -46,7 +46,7 @@ public class SwooperRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                IsVisible = false;
+                isVisible = false;
                 SetInvisibility(true, false);
                 InvisibilityButton.SetDuration();
                 break;
@@ -65,12 +65,12 @@ public class SwooperRole : CustomRoleBehavior
 
     public override void FixedUpdate()
     {
-        SetInvisibility(!IsVisible, true);
+        SetInvisibility(!isVisible, true);
     }
 
     public override void OnResetAbilityState(bool IsTimeOut)
     {
-        IsVisible = true;
+        isVisible = true;
         InteractableTarget = true;
         SetInvisibility(false, false);
     }
