@@ -100,7 +100,7 @@ public class GlitchRole : CustomRoleBehavior
     {
         hacked = target.Data;
         tempHackDuration = HackDuration.GetFloat();
-        if (_player.IsLocalPlayer())
+        if (target.IsLocalPlayer())
         {
             List<BaseButton> buttons = BaseButton.allButtons.ToList();
             foreach (var button in buttons)
