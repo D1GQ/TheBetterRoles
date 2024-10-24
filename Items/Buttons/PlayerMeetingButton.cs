@@ -7,8 +7,9 @@ public class PlayerMeetingButton
     public static List<PlayerMeetingButton> AllButtons = [];
     public Dictionary<PassiveButton, PlayerVoteArea> Buttons = [];
     public Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) => { };
-    public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return true; };
+    public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead; };
     public CustomRoleBehavior? Role;
+    public bool CanUseAsDead = false;
     public bool Enabled = true;
 
     public PlayerMeetingButton? Create(string name, CustomRoleBehavior? role = null, Sprite? sprite = null)
@@ -26,7 +27,7 @@ public class PlayerMeetingButton
             Button.transform.position -= new Vector3(1.8f, 0.1f, 2f);
             Button.transform.position += new Vector3(0.35f * AllButtons.Count, 0f, 0f);
             Button.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
-            Button.name = name;
+            Button.name = $"Button({name})";
             Button.OnClick = new();
             var target = Utils.PlayerDataFromPlayerId(pva.TargetPlayerId);
             Button.OnClick.AddListener((Action)(() => { ClickAction.Invoke(Button, pva, target); }));
@@ -52,7 +53,7 @@ public class PlayerMeetingButton
                 continue;
 
             var target = Utils.PlayerDataFromPlayerId(kvp.Value.TargetPlayerId);
-            kvp.Key.gameObject.SetActive(ShowCondition(kvp.Value, target) && Enabled);
+            kvp.Key.gameObject.SetActive(ShowCondition(kvp.Value, target) && (PlayerControl.LocalPlayer.IsAlive() || CanUseAsDead) && Enabled);
         }
     }
 
