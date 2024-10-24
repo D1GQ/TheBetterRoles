@@ -100,10 +100,10 @@ namespace TheBetterRoles
             UnityEngine.Object.Destroy(audioSource);
         }
 
-        public static void Play(string path, float volume = 1f, bool loop = false)
+        public static void Play(string name, float volume = 1f, bool loop = false)
         {
-            AudioClip? clipToPlay = Pet(path);
-            Stop(path);
+            AudioClip? clipToPlay = Pet(name);
+            Stop(name);
             if (Constants.ShouldPlaySfx() && clipToPlay != null)
             {
                 AudioSource? source = PlaySound(clipToPlay, loop, volume);

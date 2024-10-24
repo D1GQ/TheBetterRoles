@@ -649,6 +649,11 @@ public abstract class CustomRoleBehavior
     public virtual void OnDeinitialize() { }
 
     /// <summary>
+    /// Called when a meeting is called. Only really used to create meeting ability buttons.
+    /// </summary>
+    public virtual void OnMeetingStart(MeetingHud meetingHud) { }
+
+    /// <summary>
     /// Returns icon next to player name.
     /// </summary>
     public virtual string SetNameMark(PlayerControl target) => string.Empty;

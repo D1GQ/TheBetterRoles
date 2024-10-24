@@ -26,10 +26,13 @@ public class HudManagerPatch
         // Set up buttons
         GameObject leftButton = UnityEngine.Object.Instantiate(__instance.UseButton.gameObject.transform.parent.gameObject, __instance.UseButton.gameObject.transform.parent.transform.parent);
         ButtonsRight = __instance.UseButton.gameObject.transform.parent.gameObject;
+        ButtonsRight.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(0.7f, 0.7f, -9f);
+        ButtonsRight.GetComponent<AspectPosition>().AdjustPosition();
         ButtonsLeft = leftButton;
         leftButton.name = "BottomLeft";
         leftButton.transform.DestroyChildren();
-        leftButton.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(10f, 0.7f, -9f);
+        leftButton.GetComponent<AspectPosition>().Alignment = AspectPosition.EdgeAlignments.LeftBottom;
+        leftButton.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(0.7f, 0.7f, -9f);
         leftButton.GetComponent<AspectPosition>().AdjustPosition();
         var Grid = leftButton.GetComponent<GridArrange>();
         if (Grid != null)

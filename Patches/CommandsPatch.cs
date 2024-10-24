@@ -82,6 +82,7 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
+                new PlayerMeetingButton().Create("TEST");
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(

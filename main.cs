@@ -124,6 +124,7 @@ public class Main : BasePlugin
         // Add custom components
         {
             AddComponent<ExtendedPlayerInfo>();
+            AddComponent<GuessManager>();
         }
 
         try

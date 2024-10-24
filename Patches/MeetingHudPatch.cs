@@ -1,4 +1,5 @@
 using HarmonyLib;
+using System.Drawing;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -12,6 +13,18 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void StartPostfix(MeetingHud __instance)
         {
+            PlayerMeetingButton.AllButtons.Clear();
+
+            var Guess = new PlayerMeetingButton().Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
+            Guess.ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) => 
+            {
+                CustomSoundsManager.Play("Gunload", 2f);
+                var guessManager = HudManager.Instance.gameObject.AddComponent<GuessManager>();
+                guessManager.TargetId = pva.TargetPlayerId;
+            };
+
+            CustomRoleManager.RoleListenerOther(role => role.OnMeetingStart(__instance));
+
             foreach (var pva in __instance.playerStates)
             {
                 var TextTopMeeting = UnityEngine.Object.Instantiate(pva.NameText, pva.NameText.transform);
@@ -33,7 +46,7 @@ namespace TheBetterRoles
                 var LevelDisplay = UnityEngine.Object.Instantiate(PlayerLevel, pva.transform);
                 LevelDisplay.transform.SetSiblingIndex(pva.transform.Find("PlayerLevel").GetSiblingIndex() + 1);
                 LevelDisplay.gameObject.name = "PlayerId";
-                LevelDisplay.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 1f, 1f);
+                LevelDisplay.GetComponent<SpriteRenderer>().color = new UnityEngine.Color(1f, 0f, 1f, 1f);
                 var IdLabel = LevelDisplay.transform.Find("LevelLabel");
                 var IdNumber = LevelDisplay.transform.Find("LevelNumber");
                 UnityEngine.Object.Destroy(IdLabel.GetComponent<TextTranslatorTMP>());
@@ -51,6 +64,13 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void UpdatePostfix(MeetingHud __instance)
         {
+            var buttons = PlayerMeetingButton.AllButtons;
+            foreach (var button in buttons)
+            {
+                if (button == null) continue;
+                button.Update();
+            }
+
             if (__instance.playerStates == null) return;
 
             foreach (var pva in __instance.playerStates)
@@ -115,11 +135,11 @@ namespace TheBetterRoles
                     if (!string.IsNullOrEmpty(player.BetterData().NameColor))
                     {
                         var color = Utils.HexToColor32(player.BetterData().NameColor);
-                        pva.NameText.color = new Color(color.r, color.g, color.b, pva.NameText.color.a);
+                        pva.NameText.color = new UnityEngine.Color(color.r, color.g, color.b, pva.NameText.color.a);
                     }
                     else
                     {
-                        pva.NameText.color = new Color(1f, 1f, 1f, pva.NameText.color.a);
+                        pva.NameText.color = new UnityEngine.Color(1f, 1f, 1f, pva.NameText.color.a);
                     }
 
                     if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
