@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
-using MS.Internal.Xml.XPath;
 
 namespace TheBetterRoles;
 

@@ -252,7 +252,7 @@ public static class CustomRoleManager
                 && addon.GetChance() > 0)
             .Shuffle().Select(data => data.RoleType).ToList();
 
-        
+
         if (validAddons.Count < addonAmount)
         {
             addonAmount = validAddons.Count;

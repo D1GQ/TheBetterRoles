@@ -6,7 +6,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TheBetterRoles.Patches;
 using UnityEngine;
-using static Il2CppSystem.Net.Mail.SmtpClient;
 
 namespace TheBetterRoles;
 

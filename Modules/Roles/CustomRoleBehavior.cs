@@ -3,7 +3,6 @@ using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 

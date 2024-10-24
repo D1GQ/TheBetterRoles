@@ -1,9 +1,6 @@
-﻿using MS.Internal.Xml.XPath;
-using System.Resources;
-using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles;
 
@@ -123,7 +120,7 @@ public class GuessManager : MonoBehaviour
 
         var roles = CustomRoleManager.allRoles;
 
-        if (roles.Where(r => r.IsCrewmate).Any()) 
+        if (roles.Where(r => r.IsCrewmate).Any())
             TabCrewmates = new GuessTab().Create(0, Translator.GetString("BetterSetting.Tab.CrewmateRoles"), this, CustomRoleTeam.Crewmate);
         if (roles.Where(r => r.IsImpostor).Any())
             TabImpostors = new GuessTab().Create(1, Translator.GetString("BetterSetting.Tab.ImpostorRoles"), this, CustomRoleTeam.Impostor);
@@ -154,14 +151,14 @@ public class GuessManager : MonoBehaviour
                 continue;
             }
 
-            skip:
+        skip:
 
             if (role.IsCrewmate)
             {
                 TabCrewmates?.AddRole(role);
             }
-            else if (role.IsImpostor) 
-            { 
+            else if (role.IsImpostor)
+            {
                 TabImpostors?.AddRole(role);
             }
             else if (role.IsNeutral)

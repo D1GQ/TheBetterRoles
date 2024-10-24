@@ -1,5 +1,4 @@
 using HarmonyLib;
-using System.Drawing;
 using System.Text;
 using TheBetterRoles.Patches;
 using TMPro;
@@ -17,7 +16,7 @@ namespace TheBetterRoles
             PlayerMeetingButton.AllButtons.Clear();
 
             var Guess = new PlayerMeetingButton().Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
-            Guess.ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) => 
+            Guess.ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) =>
             {
                 CustomSoundsManager.Play("Gunload", 2f);
                 var guessManager = HudManager.Instance.gameObject.AddComponent<GuessManager>();
