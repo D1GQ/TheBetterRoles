@@ -350,6 +350,13 @@
   "BetterSetting.Title.AddonSettings": "Add-on Settings",
   "BetterSetting.MaximumAddonAmount": "Maximum Add-ons",
   "BetterSetting.MinimumAddonAmount": "Minimum Add-ons",
+  "BetterSetting.Title.GuessSettings": "Guess Settings",
+  "BetterSetting.OnlyShowEnabledRoles": "Only Show Enabled Roles",
+  "BetterSetting.CrewmatesCanGuess": "Crewmates Can Guess",
+  "BetterSetting.ImpostersCanGuess": "Imposters Can Guess",
+  "BetterSetting.BenignNeutralsCanGuess": "Benign Neutrals Can Guess",
+  "BetterSetting.KillingNeutralsCanGuess": "Killing Neutrals Can Guess",
+  "BetterSetting.CanGuessAddons": "Can Guess Add-ons",
 
   "Color.Tamarind": "Tamarind",
   "Color.Army": "Army",

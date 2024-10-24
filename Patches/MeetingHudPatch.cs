@@ -1,6 +1,7 @@
 using HarmonyLib;
 using System.Drawing;
 using System.Text;
+using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
 
@@ -22,6 +23,12 @@ namespace TheBetterRoles
                 var guessManager = HudManager.Instance.gameObject.AddComponent<GuessManager>();
                 guessManager.TargetId = pva.TargetPlayerId;
             };
+            var role = PlayerControl.LocalPlayer.BetterData().RoleInfo.Role;
+            Guess.Enabled = (BetterGameSettings.CrewmatesCanGuess.GetBool() && role.IsCrewmate)
+                || (BetterGameSettings.ImpostersCanGuess.GetBool() && role.IsImpostor)
+                || (BetterGameSettings.KillingNeutralsCanGuess.GetBool() && role.IsNeutral && role.CanKill)
+                || (BetterGameSettings.BenignNeutralsCanGuess.GetBool() && role.IsNeutral && !role.CanKill)
+                || role.GuessReliantRole;
 
             CustomRoleManager.RoleListenerOther(role => role.OnMeetingStart(__instance));
 
@@ -71,7 +78,7 @@ namespace TheBetterRoles
                 button.Update();
             }
 
-            if (__instance.playerStates == null) return;
+            if (__instance.playerStates == null || !GameStates.IsInGame) return;
 
             foreach (var pva in __instance.playerStates)
             {

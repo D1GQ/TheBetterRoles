@@ -16,7 +16,8 @@ public enum RpcAction : int
     Revive,
     Murder,
     PlayerPress,
-    PlayerMenu
+    PlayerMenu,
+    GuessPlayer
 }
 
 public enum CustomRPC : int
@@ -400,6 +401,16 @@ internal static class RPC
                     var ventId = reader.ReadInt32();
                     var exit = reader.ReadBoolean();
                     player.VentSync(ventId, exit, IsRPC);
+                }
+                break;
+            case RpcAction.GuessPlayer:
+                {
+                    var target = reader.ReadNetObject<PlayerControl>();
+                    var roleType = (CustomRoles)reader.ReadInt32();
+                    if (target != null)
+                    {
+                        player.GuessPlayerSync(target, roleType, IsRPC);
+                    }
                 }
                 break;
         }

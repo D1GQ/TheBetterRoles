@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
+using MS.Internal.Xml.XPath;
 
 namespace TheBetterRoles;
 
@@ -337,6 +338,70 @@ static class ActionRPCs
         if (ShipStatus.Instance == null)
         {
             Logger.Log($"Canceled Vent Action: ShipStatus Null");
+        }
+
+        return true;
+    }
+
+    // Sync when player is guessed
+    public static void GuessPlayerSync(this PlayerControl player, PlayerControl target, CustomRoles roleType, bool IsRPC = false)
+    {
+        if (CheckGuessPlayerAction(player, target, roleType) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnGuess(player, target, roleType));
+            CustomRoleManager.RoleListener(target, role => role.OnGuess(player, target, roleType));
+            CustomRoleManager.RoleListenerOther(role => role.OnGuessOther(player, target, roleType));
+
+            CustomSoundsManager.Play("Gunfire", 3.5f);
+            MeetingHud.Instance.ButtonParent.gameObject.SetActive(false);
+            _ = new LateTask(() =>
+            {
+                if (!DestroyableSingleton<HudManager>.Instance.KillOverlay.IsOpen)
+                {
+                    MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
+                }
+            }, 2.5f, shoudLog: false);
+            if (CustomRoleManager.RoleChecksAny(target, role => role.RoleType == roleType, false))
+            {
+                DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
+                target.Exiled();
+                if (target.IsLocalPlayer())
+                {
+                    HudManager.Instance.AbilityButton.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
+                player.Exiled();
+                if (player.IsLocalPlayer())
+                {
+                    HudManager.Instance.AbilityButton.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerPress, player);
+        writer.WriteNetObject(target);
+        writer.Write((int)roleType);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
+    }
+
+    private static bool CheckGuessPlayerAction(PlayerControl player, PlayerControl target, CustomRoles roleType)
+    {
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckGuess(player, target, roleType)))
+        {
+            return false;
+        }
+        if (!CustomRoleManager.RoleChecks(target, role => role.CheckGuess(player, target, roleType)))
+        {
+            return false;
+        }
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckGuessOther(player, target, roleType)))
+        {
+            return false;
         }
 
         return true;

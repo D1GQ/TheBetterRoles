@@ -278,6 +278,12 @@ public abstract class CustomRoleBehavior
     public virtual bool TaskReliantRole => false;
 
     /// <summary>
+    /// Indicates whether this role is reliant on guessing. 
+    /// This property can be overridden by specific roles that require guessing, 
+    /// </summary>
+    public virtual bool GuessReliantRole => false;
+
+    /// <summary>
     /// Checks if the role can use vents. This is typically overridden by roles like Impostors or other vent-using roles.
     /// </summary>
     public virtual bool CanVent => CanVentOptionItem?.GetBool() == true || VentReliantRole;
@@ -659,13 +665,37 @@ public abstract class CustomRoleBehavior
     public virtual string SetNameMark(PlayerControl target) => string.Empty;
 
     /// <summary>
-    /// Host-side check for the ability to murder another player. Returns false if the murder should be prevented.
+    /// Check for a player guessing another player's role.
+    /// This method can handle special conditions or roles.
+    /// </summary>
+    public virtual bool CheckGuessOther(PlayerControl guesser, PlayerControl target, CustomRoles role) => true;
+
+    /// <summary>
+    /// Check for the local player attempting to guess another player's role.
+    /// If the guess is invalid, the action will be canceled.
+    /// </summary>
+    public virtual bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoles role) => true;
+
+    /// <summary>
+    /// Executes when a player has made a guess about another player's role.
+    /// Custom logic for handling the result of a guess can be added here.
+    /// </summary>
+    public virtual void OnGuess(PlayerControl guesser, PlayerControl target, CustomRoles role) { }
+
+    /// <summary>
+    /// Executes when a player has made a guess about another player's role using a method intended for handling special cases or conditions.
+    /// Custom logic for processing the result of such guesses can be added here.
+    /// </summary>
+    public virtual void OnGuessOther(PlayerControl guesser, PlayerControl target, CustomRoles role) { }
+
+    /// <summary>
+    /// Check for the ability to murder another player. Returns false if the murder should be prevented.
     /// The host checks if the action is valid based on the killer and target and if it was triggered by an ability.
     /// </summary>
     public virtual bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) => true;
 
     /// <summary>
-    /// Host-side check for the local player attempting to murder. This checks if the murder action is allowed.
+    /// Check for the local player attempting to murder. This checks if the murder action is allowed.
     /// If the check fails, the action will be canceled.
     /// </summary>
     public virtual bool CheckMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) => true;
@@ -683,12 +713,12 @@ public abstract class CustomRoleBehavior
     public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
 
     /// <summary>
-    /// Host-side check for an ability being used by another player. This checks if the action is allowed before execution.
+    /// Check for an ability being used by another player. This checks if the action is allowed before execution.
     /// </summary>
     public virtual bool CheckAbilityOther(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
 
     /// <summary>
-    /// Host-side check for an ability being used by the local player. The host validates the ability before it is executed.
+    /// Check for an ability being used by the local player. The host validates the ability before it is executed.
     /// </summary>
     public virtual bool CheckAbility(int id, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) => true;
 
@@ -703,12 +733,12 @@ public abstract class CustomRoleBehavior
     public virtual void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
 
     /// <summary>
-    /// Host-side check when another player attempts to report a body. If the check fails, the report action will be canceled.
+    /// Check when another player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
     public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
 
     /// <summary>
-    /// Host-side check when the local player attempts to report a body. If the check fails, the report action will be canceled.
+    /// Check when the local player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
     public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
 
@@ -723,12 +753,12 @@ public abstract class CustomRoleBehavior
     public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
 
     /// <summary>
-    /// Host-side check when another player attempts to use or exit a vent. This checks if the action is allowed before execution.
+    /// Check when another player attempts to use or exit a vent. This checks if the action is allowed before execution.
     /// </summary>
     public virtual bool CheckVentOther(PlayerControl venter, int ventId, bool Exit) => true;
 
     /// <summary>
-    /// Host-side check when the local player attempts to use or exit a vent. This checks if the action is allowed.
+    /// Check when the local player attempts to use or exit a vent. This checks if the action is allowed.
     /// </summary>
     public virtual bool CheckVent(PlayerControl venter, int ventId, bool Exit) => true;
 
