@@ -12,6 +12,7 @@ public class MorphlingRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override bool DefaultVentOption => false;
 
     public BetterOptionItem? SampleCooldown;
     public BetterOptionItem? TransformCooldown;
@@ -42,6 +43,7 @@ public class MorphlingRole : CustomRoleBehavior
 
         TransformButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
         TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
+        TransformButton.InteractCondition = () => { return !GameStates.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
@@ -72,6 +74,14 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
+    public override void OnSabotage(ISystemType system, SystemTypes? systemType)
+    {
+        if (systemType == SystemTypes.MushroomMixupSabotage)
+        {
+            OnResetAbilityState(false);
+        }
+    }
+
     public override void OnAbilityDurationEnd(int id, bool isTimeOut)
     {
         switch (id)
@@ -80,7 +90,6 @@ public class MorphlingRole : CustomRoleBehavior
                 if (originalData != null)
                 {
                     OnResetAbilityState(isTimeOut);
-                    SampleButton.SetCooldown();
                 }
                 break;
         }
@@ -127,6 +136,9 @@ public class MorphlingRole : CustomRoleBehavior
             }
             sampleData = null;
             originalData = null;
+            TransformButton.SetCooldown(state: 0);
         }
+
+        SampleButton.SetCooldown();
     }
 }

@@ -52,6 +52,7 @@ public class GlitchRole : CustomRoleBehavior
     {
         HackButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, null, this, true, HackDistance.GetValue()));
         MimicButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
+        MimicButton.InteractCondition = () => { return !GameStates.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -156,7 +157,6 @@ public class GlitchRole : CustomRoleBehavior
         {
             case 6:
                 {
-                    MimicButton.SetCooldown();
                     ResetMimic();
                 }
                 break;
@@ -191,6 +191,14 @@ public class GlitchRole : CustomRoleBehavior
         }
     }
 
+    public override void OnSabotage(ISystemType system, SystemTypes? systemType)
+    {
+        if (systemType == SystemTypes.MushroomMixupSabotage)
+        {
+            ResetMimic();
+        }
+    }
+
     private void ResetMimic()
     {
         IsDisguised = false;
@@ -200,6 +208,7 @@ public class GlitchRole : CustomRoleBehavior
         {
             CustomRoleManager.RoleListener(_player, role => role.OnUndisguise(_player));
             SetOutfit(originalData);
+            MimicButton.SetCooldown(state: 0);
         }
         originalData = null;
     }

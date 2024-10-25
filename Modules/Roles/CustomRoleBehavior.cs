@@ -839,6 +839,11 @@ public abstract class CustomRoleBehavior
     public virtual void OnTaskComplete(PlayerControl player, uint taskId) { }
 
     /// <summary>
+    /// Called when a Sabotage is called.
+    /// </summary>
+    public virtual void OnSabotage(ISystemType system, SystemTypes? systemType) { }
+
+    /// <summary>
     /// Determines whether a player's role should be revealed to this role.
     /// </summary>
     /// <param name="target">The player whose role is being checked for reveal.</param>

@@ -135,6 +135,21 @@ public static class Utils
                 or SystemTypes.HeliSabotage
                 or SystemTypes.Electrical;
 
+    public static SystemTypes? GetSystemTypes(this ISystemType system)
+    {
+        return system switch
+        {
+            _ when system.CanCast<SwitchSystem>() => SystemTypes.Electrical,
+            _ when system.CanCast<ReactorSystemType>() => SystemTypes.Reactor,
+            _ when system.CanCast<LifeSuppSystemType>() => SystemTypes.LifeSupp,
+            _ when system.CanCast<HeliSabotageSystem>() => SystemTypes.HeliSabotage,
+            _ when system.CanCast<HqHudSystemType>() => SystemTypes.Comms,
+            _ when system.CanCast<HudOverrideSystemType>() => SystemTypes.Comms,
+            _ when system.CanCast<MushroomMixupSabotageSystem>() => SystemTypes.MushroomMixupSabotage,
+            _ => null
+        };
+    }
+
     // Flash screen color with custom fade in, fade out, and total duration (max alpha 50% for transparency)
     private static Coroutine? activeFadeCoroutine;
     public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false)

@@ -37,7 +37,7 @@ public static class GameStates
             SystemTypes.HeliSabotage when mapId == 4 => system.Cast<HeliSabotageSystem>()?.IsActive ?? false,
             SystemTypes.Comms when mapId is 1 or 5 => system.Cast<HqHudSystemType>()?.IsActive ?? false,
             SystemTypes.Comms => system.Cast<HudOverrideSystemType>()?.IsActive ?? false,
-            SystemTypes.MushroomMixupSabotage when mapId == 5 => system.Cast<MushroomMixupSabotageSystem>()?.IsActive ?? false,
+            SystemTypes.MushroomMixupSabotage when mapId == 5 || IsFreePlay => system.Cast<MushroomMixupSabotageSystem>()?.IsActive ?? false,
             _ => false
         };
     }

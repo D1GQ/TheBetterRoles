@@ -6,43 +6,60 @@ namespace TheBetterRoles;
 public class BaseButton
 {
     public static List<BaseButton> allButtons = [];
-    public CustomRoleBehavior? Role { get; set; }
-    public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
+
+    // Player and Role information
+    public CustomRoleBehavior? Role { get; protected set; }
     public PlayerControl? _player => Role._player;
-    public ActionButton? ActionButton { get; set; }
-    public PassiveButton? Button { get; set; }
-    public TextMeshPro? Text { get; set; }
+    public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
+
+    // Button and UI elements
+    public ActionButton? ActionButton { get; protected set; }
+    public PassiveButton? Button { get; protected set; }
+    public TextMeshPro? Text { get; protected set; }
     public Func<bool> VisibleCondition = () => true;
-    public int Id { get; set; }
+    public Func<bool> InteractCondition = () => true;
+
+    // Properties related to visibility and interaction
+    public int Id { get; protected set; }
     public bool UseAsDead { get; set; }
     public bool Visible { get; set; }
+    public bool Hacked { get; set; }
+
+    // Distances for interaction
     public float ClosestObjDistance { get; set; } = float.MaxValue;
     public float Distance { get; set; } = 0.8f;
 
-    public bool Hacked { get; set; }
-
-    public string? Name { get; set; } = "Ability";
+    // Ability configuration
+    public string? Name { get; protected set; } = "Ability";
     public IntRange Range = new(0, 100);
     public int State = 0;
+    public bool InfiniteUses { get; protected set; } = true;
+    public int Uses { get; protected set; } = 0;
 
-    public float Cooldown = 25;
-    public float TempCooldown = 0f;
-    public string DurationName = "";
-    public float Duration = 0f;
-    public bool CanCancelDuration = false;
-    public bool InfiniteUses = true;
-    public int Uses = 0;
-
+    // Cooldown and duration settings
+    public float Cooldown { get; set; } = 25;
+    public float TempCooldown { get; protected set; } = 0f;
+    public string DurationName { get; set; } = "";
+    public float Duration { get; set; } = 0f;
+    public bool CanCancelDuration { get; set; } = false;
     public bool HasDuration => Duration > 0f;
-    public Func<bool> InteractCondition { get; set; } = () => true;
+
+    // Core interaction logic
     public virtual bool BaseShow() =>
         !(GameStates.IsMeeting || GameStates.IsExilling) &&
-        (MapBehaviour.Instance == null || MapBehaviour.Instance.IsOpen == false);
+        (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen);
 
-    public virtual bool CanInteractOnPress() => (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() || CanCancelDuration && State > 0) && !Hacked;
-    public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder()
-        && InteractCondition() && (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
-    public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
+    public virtual bool CanInteractOnPress() =>
+        (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() ||
+        CanCancelDuration && State > 0) && !Hacked;
+
+    public virtual bool BaseInteractable() =>
+        !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() &&
+        InteractCondition() &&
+        (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
+
+    public virtual bool BaseCooldown() =>
+        !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
@@ -143,6 +160,7 @@ public class BaseButton
     public virtual void SetCooldown(float amount = -1, int state = -1)
     {
         if (state >= 0) State = state;
+        if (State == 0) ActionButton.OverrideText(Name);
         if (State > 0) return;
 
         if (amount <= -1)
