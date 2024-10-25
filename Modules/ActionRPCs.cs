@@ -4,6 +4,17 @@ using InnerNet;
 
 namespace TheBetterRoles;
 
+
+[Flags]
+enum MultiMurderFlags : short
+{
+    isAbility = 1 << 0,     // 1  (0b00001)
+    snapToTarget = 1 << 1,  // 2  (0b00010)
+    spawnBody = 1 << 2,     // 4  (0b00100)
+    showAnimation = 1 << 3, // 8  (0b01000)
+    playSound = 1 << 4      // 16 (0b10000)
+}
+
 static class ActionPatch
 {
     [HarmonyPatch(typeof(PlayerControl))]
@@ -13,7 +24,9 @@ static class ActionPatch
         [HarmonyPrefix]
         public static bool CmdReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            __instance.ReportBodySync(target);
+            if (__instance.IsAlive())
+                __instance.ReportBodySync(target);
+
             return false;
         }
 
@@ -21,7 +34,9 @@ static class ActionPatch
         [HarmonyPrefix]
         public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
-            __instance.ReportBodySync(target);
+            if (__instance.IsAlive())
+                __instance.ReportBodySync(target);
+
             return false;
         }
     }
@@ -98,19 +113,28 @@ static class ActionRPCs
     private static bool CheckSetRoleAction(PlayerControl player, CustomRoles role) => true;
 
     // Make a player kill a target
-    public static void MurderSync(this PlayerControl player, PlayerControl target, bool isAbility = false, bool snapToTarget = true,
-        bool spawnBody = true, bool showAnimation = true, bool playSound = true, bool IsRPC = false)
+    public static void MurderSync(
+        this PlayerControl player,
+        PlayerControl target,
+        bool isAbility = false,
+        MultiMurderFlags flags = MultiMurderFlags.snapToTarget | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation | MultiMurderFlags.playSound,
+        bool IsRPC = false)
     {
-        if (CheckMurderAction(player, target, isAbility) == true)
+        if (CheckMurderAction(player, target, isAbility))
         {
             // Run after checks for roles
             CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, player == target, isAbility));
             CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
-
             CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
             player.BetterData().RoleInfo.Kills++;
             target.BetterData().RoleInfo.RoleTypeWhenAlive = target.BetterData().RoleInfo.RoleType;
+
+            bool snapToTarget = (flags & MultiMurderFlags.snapToTarget) != 0;
+            bool spawnBody = (flags & MultiMurderFlags.spawnBody) != 0;
+            bool showAnimation = (flags & MultiMurderFlags.showAnimation) != 0;
+            bool playSound = (flags & MultiMurderFlags.playSound) != 0;
+
             player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation, playSound);
         }
 
@@ -118,13 +142,8 @@ static class ActionRPCs
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Murder, player);
         writer.WriteNetObject(target);
-        byte flags = 0;
-        flags |= (byte)((isAbility ? 1 : 0) << 0);
-        flags |= (byte)((snapToTarget ? 1 : 0) << 1);
-        flags |= (byte)((spawnBody ? 1 : 0) << 2);
-        flags |= (byte)((showAnimation ? 1 : 0) << 3);
-        flags |= (byte)((playSound ? 1 : 0) << 4);
-        writer.Write(flags);
+        writer.Write(isAbility);
+        writer.Write((byte)flags);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
@@ -317,7 +336,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Vent, player);
-        writer.Write(ventId);
+        writer.Write((byte)ventId);
         writer.Write(Exit);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }

@@ -2,6 +2,7 @@
 using Hazel;
 using InnerNet;
 using TheBetterRoles.Patches;
+using static TheBetterRoles.ActionRPCs;
 
 namespace TheBetterRoles;
 
@@ -439,19 +440,21 @@ internal static class RPC
             case RpcAction.Murder:
                 {
                     var target = reader.ReadNetObject<PlayerControl>();
+                    bool isAbility = reader.ReadBoolean();
                     byte flags = reader.ReadByte();
-                    var isAbility = (flags & (1 << 0)) != 0;
-                    var snapToTarget = (flags & (1 << 1)) != 0;
-                    var spawnBody = (flags & (1 << 2)) != 0;
-                    var showAnimation = (flags & (1 << 3)) != 0;
-                    var playSound = (flags & (1 << 4)) != 0;
+
+                    bool snapToTarget = (flags & (byte)MultiMurderFlags.snapToTarget) != 0;
+                    bool spawnBody = (flags & (byte)MultiMurderFlags.spawnBody) != 0;
+                    bool showAnimation = (flags & (byte)MultiMurderFlags.showAnimation) != 0;
+                    bool playSound = (flags & (byte)MultiMurderFlags.playSound) != 0;
 
                     if (target != null)
                     {
-                        player.MurderSync(target, isAbility, snapToTarget, spawnBody, showAnimation, playSound, IsRPC);
+                        player.MurderSync(target, isAbility, (MultiMurderFlags)flags, IsRPC);
                     }
                 }
                 break;
+
             case RpcAction.PlayerMenu:
                 {
                     var Id = reader.ReadInt32();
@@ -475,7 +478,7 @@ internal static class RPC
                 break;
             case RpcAction.Vent:
                 {
-                    var ventId = reader.ReadInt32();
+                    var ventId = reader.ReadByte();
                     var exit = reader.ReadBoolean();
                     player.VentSync(ventId, exit, IsRPC);
                 }

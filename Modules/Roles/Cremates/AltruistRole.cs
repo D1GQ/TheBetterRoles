@@ -180,7 +180,7 @@ public class AltruistRole : CustomRoleBehavior
         target.NetTransform.SnapTo(body.transform.position);
         if (_player.IsLocalPlayer() && KillOnRevive.GetBool())
         {
-            _player.MurderSync(_player, true, false, true, false, true);
+            _player.MurderSync(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound);
         }
         target.CustomRevive();
         UnityEngine.Object.Destroy(body.gameObject);

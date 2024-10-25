@@ -6,10 +6,11 @@ namespace TheBetterRoles;
 
 public enum SettingType
 {
-    None,
-    Bool,
+    Byte,
+    TempByte,
+    Int,
     Float,
-    Int
+    Bool,
 }
 
 public class BetterOptionItem
