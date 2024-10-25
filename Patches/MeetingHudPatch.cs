@@ -21,8 +21,9 @@ namespace TheBetterRoles
             voteArea.Overlay.color = Color.white;
             voteArea.XMark.gameObject.SetActive(true);
             voteArea.XMark.transform.localScale = Vector3.one;
+            voteArea.ThumbsDown.gameObject.SetActive(false);
             var votes = voteArea.GetComponentInChildren<VoteSpreader>().Votes;
-            foreach (var item in votes )
+            foreach (var item in votes)
             {
                 UnityEngine.Object.Destroy(item.gameObject);
             }
