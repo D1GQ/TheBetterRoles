@@ -30,7 +30,13 @@ public class PlayerMeetingButton
             Button.name = $"Button({name})";
             Button.OnClick = new();
             var target = Utils.PlayerDataFromPlayerId(pva.TargetPlayerId);
-            Button.OnClick.AddListener((Action)(() => { ClickAction.Invoke(Button, pva, target); }));
+            Button.OnClick.AddListener((Action)(() => 
+            {
+                if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.Results)
+                {
+                    ClickAction.Invoke(Button, pva, target);
+                }
+            }));
 
             Button.GetComponent<SpriteRenderer>().sprite = sprite ?? HudManager.Instance.UseButton.graphic.sprite;
             var highlight = Button.transform.Find("ControllerHighlight").GetComponent<SpriteRenderer>();

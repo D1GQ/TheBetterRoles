@@ -289,7 +289,10 @@ public class GuessTab
         roleButton.transform.Find("ControllerHighlight").transform.localScale = new Vector3(1f, 1.4f, 1f);
         roleButton.OnClick.AddListener((Action)(() =>
         {
-            guessManager.GuessAction(role.RoleType, Utils.PlayerDataFromPlayerId(guessManager.TargetId));
+            if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.Results)
+            {
+                guessManager.GuessAction(role.RoleType, Utils.PlayerDataFromPlayerId(guessManager.TargetId));
+            }
             guessManager.Minigame.Close();
         }));
         allRoleButtons.Add(roleButton);
