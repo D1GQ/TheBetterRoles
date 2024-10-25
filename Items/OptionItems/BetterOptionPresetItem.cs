@@ -91,7 +91,7 @@ public class BetterOptionPresetItem : BetterOptionItem
         _ = new LateTask(() =>
         {
             GameSettingMenu.Instance.ChangeTab(BetterTabs.SystemSettings.Id, false);
-            RPC.SyncSettings();
+            RPC.SyncAllSettings();
         }, 0.25f, shoudLog: false);
     }
 

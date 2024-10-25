@@ -4,6 +4,14 @@ using UnityEngine;
 
 namespace TheBetterRoles;
 
+public enum SettingType
+{
+    None,
+    Bool,
+    Float,
+    Int
+}
+
 public class BetterOptionItem
 {
     public static int IdNum = 0;
