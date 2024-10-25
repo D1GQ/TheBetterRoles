@@ -31,7 +31,7 @@ public class VeteranRole : CustomRoleBehavior
                 AlertCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertCooldown"), [0f, 180f, 2.5f], 20, "", "s", RoleOptionItem),
                 AlertDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertDuration"), [0f, 180f, 2.5f], 12, "", "s", RoleOptionItem),
                 MaximumNumberOfAlerts = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.MaximumNumberOfAlerts"), [1, 100, 1], 3, "", "", RoleOptionItem),
-                AlertsGainFromTask = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
+                AlertsGainFromTask = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0f, 100f, 0.5f], 1, "", "", RoleOptionItem),
             ];
         }
     }
@@ -83,12 +83,18 @@ public class VeteranRole : CustomRoleBehavior
         return true;
     }
 
+    private float gainedUses = 0f;
     public override void OnTaskComplete(PlayerControl player, uint taskId)
     {
         int currentUses = AlertButton.Uses;
-        int gainedUses = AlertsGainFromTask.GetInt();
+        gainedUses += AlertsGainFromTask.GetFloat();
+        if (gainedUses % 1 != 0)
+        {
+            return;
+        }
         int maxAlerts = MaximumNumberOfAlerts.GetInt();
-        int newUses = Math.Clamp(currentUses + gainedUses, 0, maxAlerts);
+        int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxAlerts);
         AlertButton.SetUses(newUses);
+        gainedUses = 0f;
     }
 }

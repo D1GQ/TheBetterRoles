@@ -118,7 +118,7 @@ class PlayerControlPatch
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
                 player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
             {
-                sbTag.Append($"{player.GetRoleNameAndColor()}---");
+                sbTag.Append($"{player.GetRoleNameAndColor()}{player.FormatTasksToText()}---");
             }
 
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||

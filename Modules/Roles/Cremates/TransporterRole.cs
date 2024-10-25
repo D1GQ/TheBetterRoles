@@ -26,7 +26,7 @@ public class TransporterRole : CustomRoleBehavior
             [
                 TransportCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
                 MaximumNumberOfTransports = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.MaximumNumberOfTransports"), [1, 100, 1], 5, "", "", RoleOptionItem),
-                TransportsGainFromTask = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0, 100, 1], 1, "", "", RoleOptionItem),
+                TransportsGainFromTask = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0f, 100f, 0.5f], 1f, "", "", RoleOptionItem),
             ];
         }
     }
@@ -120,13 +120,19 @@ public class TransporterRole : CustomRoleBehavior
         firstTarget = null;
     }
 
+    private float gainedUses = 0f;
     public override void OnTaskComplete(PlayerControl player, uint taskId)
     {
         int currentUses = TransportButton.Uses;
-        int gainedUses = TransportsGainFromTask.GetInt();
-        int maxAlerts = MaximumNumberOfTransports.GetInt();
-        int newUses = Math.Clamp(currentUses + gainedUses, 0, maxAlerts);
+        gainedUses += TransportsGainFromTask.GetFloat();
+        if (gainedUses % 1 != 0)
+        {
+            return;
+        }
+        int maxTransports = MaximumNumberOfTransports.GetInt();
+        int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxTransports);
         TransportButton.SetUses(newUses);
+        gainedUses = 0f;
     }
 
 }

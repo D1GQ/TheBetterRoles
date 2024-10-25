@@ -64,6 +64,17 @@ public static class Utils
 
         return nameBuilder.ToString();
     }
+    public static string FormatTasksToText(this PlayerControl player)
+    {
+        if (CustomRoleManager.RoleChecksAny(player, role => role.HasTask, false) || CustomRoleManager.RoleChecksAny(player, role => role.HasSelfTask, false))
+        {
+            return $" <color=#cbcbcb>({player.Data.Tasks.ToArray().Where(task => task.Complete).Count()}/{player.Data.Tasks.Count})</color>";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
     // Add msg to chat
     public static void AddChatPrivate(string text, string overrideName = "", bool setRight = false)
     {

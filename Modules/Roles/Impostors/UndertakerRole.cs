@@ -126,14 +126,14 @@ public class UndertakerRole : CustomRoleBehavior
 
     public override void OnResetAbilityState(bool isTimeOut)
     {
-        IsDragging = false;
-        Dragging = null;
         if (rigidbody != null)
         {
             rigidbody.velocity = Vector2.zero;
             UnityEngine.Object.Destroy(rigidbody);
         }
-        UnityEngine.Object.Destroy(boxCollider);
+        if (boxCollider != null) UnityEngine.Object.Destroy(boxCollider);
+        IsDragging = false;
+        Dragging = null;
         ResetSpeed();
     }
 
@@ -145,15 +145,19 @@ public class UndertakerRole : CustomRoleBehavior
             return;
         }
 
-        if (rigidbody == null || boxCollider == null)
+        if (Dragging == null || rigidbody == null || boxCollider == null || _player == null || _player.MyPhysics == null || _player.MyPhysics.Animations == null)
         {
+            if (IsDragging)
+            {
+                OnResetAbilityState(false);
+                SendRoleSync(0);
+            }
             return;
         }
 
         bool SnapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
         boxCollider.enabled = !SnapToPlayer;
 
-        // Hide body in vent
         if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f && !SnapToPlayer)
         {
             if (_player.IsLocalPlayer())
@@ -201,6 +205,7 @@ public class UndertakerRole : CustomRoleBehavior
             rigidbody.velocity = Vector2.zero;
         }
     }
+
 
     private void HideBody()
     {
