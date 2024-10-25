@@ -364,6 +364,7 @@ static class ActionRPCs
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
                 target.Exiled();
+                MeetingHudPatch.AdjustVotesOnGuess(target);
                 if (target.IsLocalPlayer())
                 {
                     HudManager.Instance.AbilityButton.gameObject.SetActive(false);
@@ -373,6 +374,7 @@ static class ActionRPCs
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
                 player.Exiled();
+                MeetingHudPatch.AdjustVotesOnGuess(player);
                 if (player.IsLocalPlayer())
                 {
                     HudManager.Instance.AbilityButton.gameObject.SetActive(false);
@@ -382,7 +384,7 @@ static class ActionRPCs
 
         if (IsRPC) return;
 
-        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerPress, player);
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.GuessPlayer, player);
         writer.WriteNetObject(target);
         writer.Write((int)roleType);
         AmongUsClient.Instance.EndActionSyncRpc(writer);

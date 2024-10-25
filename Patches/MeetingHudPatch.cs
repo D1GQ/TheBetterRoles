@@ -7,8 +7,39 @@ using UnityEngine;
 namespace TheBetterRoles
 {
     [HarmonyPatch(typeof(MeetingHud))]
-    class MeetingHudPatche
+    class MeetingHudPatch
     {
+        public static void AdjustVotesOnGuess(PlayerControl pc)
+        {
+            PlayerVoteArea voteArea = MeetingHud.Instance.playerStates.First(
+                x => x.TargetPlayerId == pc.PlayerId
+            );
+            if (voteArea == null) return;
+            if (voteArea.DidVote) voteArea.UnsetVote();
+            voteArea.AmDead = true;
+            voteArea.Overlay.gameObject.SetActive(true);
+            voteArea.Overlay.color = Color.white;
+            voteArea.XMark.gameObject.SetActive(true);
+            voteArea.XMark.transform.localScale = Vector3.one;
+            var votes = voteArea.GetComponentInChildren<VoteSpreader>().Votes;
+            foreach (var item in votes )
+            {
+                UnityEngine.Object.Destroy(item.gameObject);
+            }
+            foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
+            {
+                if (playerVoteArea.VotedFor != pc.PlayerId) continue;
+                playerVoteArea.UnsetVote();
+                var voteAreaPlayer = Utils.PlayerFromPlayerId(playerVoteArea.TargetPlayerId);
+                if (!voteAreaPlayer.AmOwner) continue;
+                MeetingHud.Instance.ClearVote();
+            }
+            if (MeetingHud.Instance.state is MeetingHud.VoteStates.Discussion or MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted)
+            {
+                MeetingHud.Instance.CheckForEndVoting();
+            }
+        }
+
         [HarmonyPatch(nameof(MeetingHud.Start))]
         [HarmonyPostfix]
         public static void StartPostfix(MeetingHud __instance)

@@ -14,10 +14,10 @@ public class BetterOptionItem
     public static List<BetterOptionItem> BetterOptionItems = [];
 
     public int maskLayer = 20;
-    public int Id = 0;
-    public BetterOptionTab? Tab;
-    public OptionBehaviour? Option;
-    public string? Name = "None";
+    public int Id { get; protected set; } = 0;
+    public BetterOptionTab? Tab { get; protected set; }
+    public OptionBehaviour? Option { get; protected set; }
+    public string? Name { get; protected set; } = "None";
     public TextMeshPro? TitleText;
     public GameObject? obj;
 

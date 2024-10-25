@@ -41,7 +41,7 @@ public class BaseButton
 
     public virtual bool CanInteractOnPress() => (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() || CanCancelDuration && State > 0) && !Hacked;
     public virtual bool BaseInteractable() => !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder()
-        && InteractCondition() && !ActionButton.isCoolingDown || CanCancelDuration && State > 0;
+        && InteractCondition() && (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
     public virtual bool BaseCooldown() => !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)

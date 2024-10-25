@@ -113,8 +113,8 @@ public class TargetButton : BaseButton
         if (target != null && Visible)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
-            lastTarget = target;
         }
+        lastTarget = target;
 
         bool flag = Uses != 0 || InfiniteUses;
 

@@ -114,8 +114,8 @@ public class DeadBodyButton : BaseButton
         if (target != null && Visible)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
-            lastDeadBody = target;
         }
+        lastDeadBody = target;
 
         bool flag = Uses != 0 || InfiniteUses;
 
