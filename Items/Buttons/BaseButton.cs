@@ -8,6 +8,7 @@ public class BaseButton
     public static List<BaseButton> allButtons = [];
 
     // Player and Role information
+    public int Id { get; protected set; }
     public CustomRoleBehavior? Role { get; protected set; }
     public PlayerControl? _player => Role._player;
     public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
@@ -20,7 +21,6 @@ public class BaseButton
     public Func<bool> InteractCondition = () => true;
 
     // Properties related to visibility and interaction
-    public int Id { get; protected set; }
     public bool UseAsDead { get; set; }
     public bool Visible { get; set; }
     public bool Hacked { get; set; }
@@ -157,6 +157,19 @@ public class BaseButton
 
     public virtual void OnRemoveButton() { }
 
+    protected void ResetState(bool isTimeOut = false)
+    {
+        if (State == 1)
+        {
+            if (!_player.IsLocalPlayer()) return;
+
+            State = 0;
+            SetCooldown();
+            Text.SetText(Name);
+            _player.ResetAbilityStateSync(Id, (int)Role.RoleType, isTimeOut);
+        }
+    }
+
     public virtual void SetCooldown(float amount = -1, int state = -1)
     {
         if (state >= 0) State = state;
@@ -188,19 +201,6 @@ public class BaseButton
 
         if (DurationName != "") ActionButton.OverrideText(DurationName);
         State = 1;
-    }
-
-    public void ResetState(bool isTimeOut = false)
-    {
-        if (State == 1)
-        {
-            if (!_player.IsLocalPlayer()) return;
-
-            State = 0;
-            SetCooldown();
-            Text.SetText(Name);
-            _player.ResetAbilityStateSync(Id, (int)Role.RoleType, isTimeOut);
-        }
     }
 
     public void SetUses(int Amount)

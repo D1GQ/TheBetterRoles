@@ -74,14 +74,6 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
-    public override void OnSabotage(ISystemType system, SystemTypes? systemType)
-    {
-        if (systemType == SystemTypes.MushroomMixupSabotage)
-        {
-            OnResetAbilityState(false);
-        }
-    }
-
     public override void OnAbilityDurationEnd(int id, bool isTimeOut)
     {
         switch (id)
@@ -123,8 +115,18 @@ public class MorphlingRole : CustomRoleBehavior
         }
     }
 
+    public override void OnSabotage(ISystemType system, SystemTypes? systemType)
+    {
+        if (systemType == SystemTypes.MushroomMixupSabotage)
+        {
+            OnResetAbilityState(false);
+        }
+    }
+
     public override void OnResetAbilityState(bool IsTimeOut)
     {
+        if (!IsDisguised) return;
+
         IsDisguised = false;
         DisguisedTargetId = -1;
         if (sampleData != null)
@@ -138,7 +140,6 @@ public class MorphlingRole : CustomRoleBehavior
             originalData = null;
             TransformButton.SetCooldown(state: 0);
         }
-
         SampleButton.SetCooldown();
     }
 }

@@ -195,12 +195,17 @@ public class GlitchRole : CustomRoleBehavior
     {
         if (systemType == SystemTypes.MushroomMixupSabotage)
         {
-            ResetMimic();
+            if (IsDisguised)
+            {
+                ResetMimic();
+            }
         }
     }
 
     private void ResetMimic()
     {
+        if (!IsDisguised) return;
+
         IsDisguised = false;
         DisguisedTargetId = -1;
 
