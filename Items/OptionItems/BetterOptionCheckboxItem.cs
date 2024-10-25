@@ -6,7 +6,7 @@ namespace TheBetterRoles;
 public class BetterOptionCheckboxItem : BetterOptionItem
 {
     private ToggleOption? ThisOption;
-    public bool? IsChecked;
+    public bool IsChecked;
     public bool defaultValue;
 
     public override bool ShowChildrenCondition() => IsChecked == true;
@@ -102,10 +102,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     {
         if (BetterDataManager.CanLoadSetting(Id))
         {
-            if (ThisOption == null) return;
-
             var Bool = BetterDataManager.LoadBoolSetting(Id, DefaultValue);
-            ThisOption.CheckMark.GetComponent<SpriteRenderer>().enabled = Bool;
+            if (ThisOption != null) ThisOption.CheckMark.GetComponent<SpriteRenderer>().enabled = Bool;
             IsChecked = Bool;
         }
         else
@@ -122,7 +120,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         }
         else
         {
-            return IsChecked ??= false;
+            return IsChecked;
         }
     }
 
@@ -154,7 +152,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
     public override string FormatValueAsText()
     {
-        Color color = IsChecked ?? false ? Color.green : Color.red;
+        Color color = IsChecked ? Color.green : Color.red;
         return $"<color={Utils.Color32ToHex(color)}>{IsChecked}</color>";
     }
 }
