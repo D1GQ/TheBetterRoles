@@ -62,6 +62,7 @@ public class UndertakerRole : CustomRoleBehavior
                         rigidbody = body.gameObject.AddComponent<Rigidbody2D>();
                         rigidbody.gravityScale = 0f;
                         rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+                        rigidbody.freezeRotation = true;
                         SetSpeed();
                     }
 
@@ -158,7 +159,9 @@ public class UndertakerRole : CustomRoleBehavior
         bool SnapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
         boxCollider.enabled = !SnapToPlayer;
 
-        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f && !SnapToPlayer)
+        Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
+        if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f
+            && !SnapToPlayer && Vector2.Distance(vent.transform.position, rigidbody.position) < 0.5f)
         {
             if (_player.IsLocalPlayer())
             {
@@ -178,9 +181,9 @@ public class UndertakerRole : CustomRoleBehavior
         Vector2 targetPosition = truePosition + offset;
         Vector2 difference = targetPosition - objectPosition;
 
-        float followSpeed = 3f * _player.MyPhysics.SpeedMod;
+        float followSpeed = 3f * _player.MyPhysics.Speed;
         float smoothFactor = 1f;
-        float snapThreshold = 1.25f + (_player.MyPhysics.SpeedMod * 0.5f);
+        float snapThreshold = 0.65f + (_player.MyPhysics.Speed * 0.8f);
 
         if (difference.magnitude > snapThreshold)
         {
