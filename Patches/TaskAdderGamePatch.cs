@@ -98,7 +98,7 @@ class TaskAdderGamePatch
                     items.Key.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType;
                 }
             }));
-            UnityEngine.Object.Destroy(taskAddButton);
+            taskAddButton.DestroyMono();
             rolesForButtons[taskAddButton] = roleBehaviour;
         }
 

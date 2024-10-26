@@ -43,7 +43,7 @@ public class LanternAddon : CustomAddonBehavior
         _player.lightSource.enabled = true;
         if (Lantern != null)
         {
-            UnityEngine.Object.Destroy(Lantern);
+            Lantern.DestroyObj();
         }
     }
 
@@ -72,7 +72,7 @@ public class LanternAddon : CustomAddonBehavior
             _player.lightSource.gameObject.transform.position = _player.GetCustomPosition();
             if (Lantern != null)
             {
-                UnityEngine.Object.Destroy(Lantern);
+                Lantern.DestroyObj();
             }
             Lantern = new GameObject("Lantern");
             Lantern.transform.position = _player.transform.position + new Vector3(0f, 0f, 0.005f) - new Vector3(0f, 0.05f, 0f);

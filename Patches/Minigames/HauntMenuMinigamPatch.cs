@@ -53,7 +53,7 @@ class HauntMenuMinigamPatch
         __instance.FilterText.transform.position += new Vector3(0f, 0.15f, 0f);
         __instance.NameText.transform.position += new Vector3(0f, 0.15f, 0f);
 
-        UnityEngine.Object.Destroy(__instance.HauntingText.gameObject.GetComponent<TextTranslatorTMP>());
+        __instance.HauntingText.DestroyTextTranslator();
         __instance.HauntingText.transform.position += new Vector3(0f, 0.5f, 0f);
         __instance.HauntingText.transform.localScale += new Vector3(0.5f, 0.5f, 0.5f);
         UpdateText(__instance);

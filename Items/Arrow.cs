@@ -51,7 +51,7 @@ class ArrowLocator
     public void Remove()
     {
         allArrows.Remove(this);
-        UnityEngine.Object.Destroy(Arrow.gameObject);
+        Arrow.DestroyObj();
     }
 
     [HarmonyPatch(typeof(ArrowBehaviour))]

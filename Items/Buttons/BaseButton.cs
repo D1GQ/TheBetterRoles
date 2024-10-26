@@ -149,7 +149,7 @@ public class BaseButton
         allButtons.Remove(this);
         if (_player.IsLocalPlayer())
         {
-            UnityEngine.Object.Destroy(Button.gameObject);
+            Button.DestroyObj();
         }
 
         OnRemoveButton();

@@ -200,13 +200,13 @@ static class GameSettingMenuPatch
             PanelSprite.transform.localScale = new Vector3(PanelSprite.transform.localScale.x, 0.625f);
         }
 
-        UnityEngine.Object.Destroy(__instance.MenuDescriptionText.gameObject.GetComponent<TextTranslatorTMP>());
+        __instance.MenuDescriptionText.DestroyTextTranslator();
         GameSettingMenu.Instance.ChangeTab(1, false);
 
-        UnityEngine.Object.Destroy(__instance.PresetsTab.gameObject);
-        UnityEngine.Object.Destroy(__instance.RoleSettingsTab.gameObject);
-        UnityEngine.Object.Destroy(__instance.GamePresetsButton.gameObject);
-        UnityEngine.Object.Destroy(__instance.RoleSettingsButton.gameObject);
+        __instance.PresetsTab.DestroyObj();
+        __instance.RoleSettingsTab.DestroyObj();
+        __instance.GamePresetsButton.DestroyObj();
+        __instance.RoleSettingsButton.DestroyObj();
         __instance.GameSettingsButton.OnMouseOver.RemoveAllListeners();
         __instance.GameSettingsButton.transform.position = __instance.GameSettingsButton.transform.position + new Vector3(0f, 0.6f, 0f);
 

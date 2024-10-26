@@ -16,8 +16,8 @@ public class BetterOptionDividerItem : BetterOptionItem
         CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(gameOptionsMenu.Tab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
         categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, 2f, -2f);
-        UnityEngine.Object.Destroy(categoryHeaderMasked.Background.gameObject);
-        UnityEngine.Object.Destroy(categoryHeaderMasked.Title.gameObject);
+        categoryHeaderMasked.Background.gameObject.DestroyObj();
+        categoryHeaderMasked.Title.DestroyObj();
         if (categoryHeaderMasked.Divider != null)
         {
             categoryHeaderMasked.Divider.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);

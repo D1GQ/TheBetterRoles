@@ -129,7 +129,7 @@ public class MoleRole : CustomRoleBehavior
 
         vent.EnterVentAnim = null;
         vent.ExitVentAnim = null;
-        if (vent.myAnim != null) UnityEngine.Object.Destroy(vent.myAnim);
+        if (vent.myAnim != null) vent.myAnim.DestroyMono();
         var animator = vent.GetComponentInChildren<Animator>();
         if (animator != null)
         {
@@ -208,7 +208,7 @@ public class MoleRole : CustomRoleBehavior
             var allVents = ShipStatus.Instance.AllVents.ToList();
             allVents.RemoveAll(v => v.Id == vent.Id);
             ShipStatus.Instance.AllVents = allVents.ToArray();
-            UnityEngine.Object.Destroy(vent.gameObject);
+            vent.DestroyObj();
         }
     }
 
@@ -244,7 +244,7 @@ public class MoleRole : CustomRoleBehavior
         var allVents = ShipStatus.Instance.AllVents.ToList();
         allVents.RemoveAll(v => v.Id == vent.Id);
         ShipStatus.Instance.AllVents = allVents.ToArray();
-        UnityEngine.Object.Destroy(vent.gameObject);
+        vent.DestroyObj();
     }
 
 }

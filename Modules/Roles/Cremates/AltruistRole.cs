@@ -183,7 +183,7 @@ public class AltruistRole : CustomRoleBehavior
             _player.MurderSync(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound);
         }
         target.CustomRevive();
-        UnityEngine.Object.Destroy(body.gameObject);
+        body.DestroyObj();
     }
 
     private void SetMovement(PlayerControl player, bool canMove)

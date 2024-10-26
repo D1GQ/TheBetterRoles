@@ -105,7 +105,7 @@ public class CustomGameManager
             position.y -= 0.25f;
             introCutscene.BackgroundBar.transform.position = position;
             introCutscene.BackgroundBar.material.SetColor("_Color", PlayerControl.LocalPlayer.GetTeamColor());
-            UnityEngine.Object.Destroy(introCutscene.TeamTitle.gameObject.GetComponent<TextTranslatorTMP>());
+            introCutscene.TeamTitle.DestroyTextTranslator();
             introCutscene.TeamTitle.text = PlayerControl.LocalPlayer.GetRoleTeamName();
             introCutscene.TeamTitle.color = PlayerControl.LocalPlayer.GetTeamColor();
             var flag = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) || PlayerControl.LocalPlayer.Is(CustomRoleTeam.Neutral);
@@ -114,7 +114,7 @@ public class CustomGameManager
             if (flag)
             {
                 int Imps = Main.AllPlayerControls.Where(p => p.Is(CustomRoleTeam.Impostor)).Count();
-                UnityEngine.Object.Destroy(introCutscene.ImpostorText.gameObject.GetComponent<TextTranslatorTMP>());
+                introCutscene.ImpostorText.DestroyTextTranslator();
                 if (Imps == 1)
                 {
                     introCutscene.ImpostorText.text = Translator.GetString(StringNames.NumImpostorsS);

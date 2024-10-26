@@ -153,7 +153,7 @@ namespace TheBetterRoles
                 yield return null;
             }
 
-            UnityEngine.Object.Destroy(soundObject);
+            soundObject.DestroyObj();
         }
 
         private static void UpdateVolumeBasedOnDistance(AudioSource audioSource, Vector2 sourcePosition, float range)

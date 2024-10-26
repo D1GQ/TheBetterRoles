@@ -15,8 +15,8 @@ public class BetterOptionTitleItem : BetterOptionItem
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
 
-        UnityEngine.Object.Destroy(optionBehaviour.CheckMark.transform.parent.gameObject);
-        UnityEngine.Object.Destroy(optionBehaviour.GetComponent<ToggleOption>());
+        optionBehaviour.CheckMark.transform.parent.gameObject.DestroyObj();
+        optionBehaviour.GetComponent<ToggleOption>().DestroyMono();
         optionBehaviour.TitleText.alignment = TMPro.TextAlignmentOptions.Center;
         optionBehaviour.TitleText.outlineColor = Color.black;
         optionBehaviour.TitleText.outlineWidth = 0.2f;

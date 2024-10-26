@@ -119,7 +119,6 @@ public class MorphlingRole : CustomRoleBehavior
     {
         if (systemType == SystemTypes.MushroomMixupSabotage)
         {
-            Logger.InGame("TEST");
             OnResetAbilityState(false);
         }
     }

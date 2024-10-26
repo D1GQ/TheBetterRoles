@@ -109,6 +109,6 @@ public class InvestigatorRole : CustomRoleBehavior
 
         spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
 
-        UnityEngine.Object.Destroy(footprint);
+        footprint.DestroyObj();
     }
 }

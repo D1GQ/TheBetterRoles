@@ -50,9 +50,9 @@ public class HudManagerPatch
                 ChatNotifications.gameObject.SetActive(true);
                 GameObject BAUNotification = UnityEngine.Object.Instantiate(ChatNotifications.gameObject);
                 BAUNotification.name = "BAUNotification";
-                UnityEngine.Object.Destroy(BAUNotification.GetComponent<ChatNotification>());
-                UnityEngine.Object.Destroy(GameObject.Find($"{BAUNotification.name}/Sizer/PoolablePlayer"));
-                UnityEngine.Object.Destroy(GameObject.Find($"{BAUNotification.name}/Sizer/ColorText"));
+                BAUNotification.GetComponent<ChatNotification>().DestroyMono();
+                GameObject.Find($"{BAUNotification.name}/Sizer/PoolablePlayer").DestroyObj();
+                GameObject.Find($"{BAUNotification.name}/Sizer/ColorText").DestroyObj();
                 BAUNotification.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(-1.57f, 5.3f, -15f);
                 GameObject.Find($"{BAUNotification.name}/Sizer/NameText").transform.localPosition = new Vector3(-3.3192f, -0.0105f);
                 BetterNotificationManager.NameText = GameObject.Find($"{BAUNotification.name}/Sizer/NameText").GetComponent<TextMeshPro>();

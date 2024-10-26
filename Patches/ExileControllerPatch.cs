@@ -43,7 +43,7 @@ class ExileControllerPatch
             __instance.initData.networkedPlayer.IsDead = true;
         }
         __instance.ReEnableGameplay();
-        UnityEngine.Object.Destroy(__instance.gameObject);
+        __instance.gameObject.DestroyObj();
 
         return false;
     }

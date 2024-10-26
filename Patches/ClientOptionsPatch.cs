@@ -109,7 +109,7 @@ public static class OptionsMenuBehaviourPatch
             SwitchToVanilla = ClientOptionItem.Create(title, null, __instance, SwitchToVanillaButtonToggle, IsToggle: false, toggleCheck: () => !toggleCheckInGame(title));
             static void SwitchToVanillaButtonToggle()
             {
-                UnityEngine.Object.Destroy(BetterNotificationManager.BAUNotificationManagerObj);
+                BetterNotificationManager.BAUNotificationManagerObj.DestroyObj();
                 Harmony.UnpatchAll();
             }
         }

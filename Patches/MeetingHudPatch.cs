@@ -25,7 +25,7 @@ namespace TheBetterRoles
             var votes = voteArea.GetComponentInChildren<VoteSpreader>().Votes;
             foreach (var item in votes)
             {
-                UnityEngine.Object.Destroy(item.gameObject);
+                item.gameObject.DestroyObj();
             }
             foreach (var playerVoteArea in MeetingHud.Instance.playerStates)
             {
@@ -87,13 +87,19 @@ namespace TheBetterRoles
                 LevelDisplay.GetComponent<SpriteRenderer>().color = new UnityEngine.Color(1f, 0f, 1f, 1f);
                 var IdLabel = LevelDisplay.transform.Find("LevelLabel");
                 var IdNumber = LevelDisplay.transform.Find("LevelNumber");
-                UnityEngine.Object.Destroy(IdLabel.GetComponent<TextTranslatorTMP>());
+                IdLabel.gameObject.DestroyTextTranslator();
                 IdLabel.GetComponent<TextMeshPro>().text = "ID";
                 IdNumber.GetComponent<TextMeshPro>().text = pva.TargetPlayerId.ToString();
                 IdLabel.name = "IdLabel";
                 IdNumber.name = "IdNumber";
                 PlayerLevel.transform.position += new Vector3(0.23f, 0f);
             }
+
+            var text = UnityEngine.Object.Instantiate(__instance.TitleText, Camera.main.transform);
+            text.transform.localPosition = new Vector3(0f, 0f, -5f);
+            text.DestroyTextTranslator();
+            text.fontSizeMax = 2f;
+            text.text = "Text Here";
 
             Logger.LogHeader("Meeting Has Started");
         }

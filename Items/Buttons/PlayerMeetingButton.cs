@@ -68,7 +68,7 @@ public class PlayerMeetingButton
         AllButtons.Remove(this);
         foreach (var button in Buttons.Keys)
         {
-            UnityEngine.Object.Destroy(button.gameObject);
+            button.DestroyObj();
         }
     }
 }

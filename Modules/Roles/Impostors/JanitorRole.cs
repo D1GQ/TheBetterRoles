@@ -100,6 +100,6 @@ public class JanitorRole : CustomRoleBehavior
         }
 
         Cleaning = null;
-        UnityEngine.Object.Destroy(body.gameObject);
+        body.DestroyObj();
     }
 }
