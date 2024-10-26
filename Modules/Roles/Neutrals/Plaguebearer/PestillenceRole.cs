@@ -43,7 +43,7 @@ public class PestillenceRole : CustomRoleBehavior
         return true;
     }
 
-    public override string AddMeetingStartUpText(ref CustomClip? clip)
+    public override string AddMeetingText(ref CustomClip? clip)
     {
         if (showMsg)
         {

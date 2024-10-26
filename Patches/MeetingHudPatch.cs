@@ -114,7 +114,7 @@ namespace TheBetterRoles
             CustomRoleManager.RoleListenerOther(role =>
             {
                 CustomClip? clip = null;
-                string text = role.AddMeetingStartUpText(ref clip);
+                string text = role.AddMeetingText(ref clip);
                 if (!string.IsNullOrEmpty(text))
                 {
                     texts[text] = clip;

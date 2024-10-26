@@ -666,7 +666,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Returns text that will appear on the meeting hud on start.
     /// </summary>
-    public virtual string AddMeetingStartUpText(ref CustomClip? clip) => string.Empty;
+    public virtual string AddMeetingText(ref CustomClip? clip) => string.Empty;
 
     /// <summary>
     /// Check for a player guessing another player's role.
