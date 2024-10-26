@@ -27,7 +27,7 @@ public class MoleRole : CustomRoleBehavior
         {
             return
             [
-                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 2, "", "", RoleOptionItem),
+                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 1, "", "", RoleOptionItem),
             ];
         }
     }
@@ -126,14 +126,28 @@ public class MoleRole : CustomRoleBehavior
         // Set usable for local player
         vent.SetEnabled(_player.IsLocalPlayer());
         float Alpha = _player.IsLocalPlayer() ? 1 : 0;
-        if (vent.transform.Find("Sprite") == null)
+
+        vent.EnterVentAnim = null;
+        vent.ExitVentAnim = null;
+        if (vent.myAnim != null) UnityEngine.Object.Destroy(vent.myAnim);
+        var animator = vent.GetComponentInChildren<Animator>();
+        if (animator != null)
         {
-            vent.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, Alpha);
+            UnityEngine.Object.Destroy(animator);
         }
-        else if (vent.transform.Find("Sprite") != null)
+
+        var spriteObj = vent.transform.Find("Sprite");
+        if (spriteObj != null)
         {
-            vent.transform.Find("Sprite").GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 0f, Alpha);
+            spriteObj.transform.localPosition = new Vector3(0f, 0f, 0f);
+            spriteObj.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
         }
+
+        vent.myRend.color = new Color(1f, 0.4f, 0.4f, Alpha);
+        _ = new LateTask(() =>
+        {
+            vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
+        }, 0.00005f, shoudLog: false);
 
         vent.Id = GetAvailableId();
         var pos = Pos;
@@ -166,12 +180,6 @@ public class MoleRole : CustomRoleBehavior
         allVents.Add(vent);
         ShipStatus.Instance.AllVents = allVents.ToArray();
 
-        // Play animation
-        if (vent.myAnim != null && _player.IsLocalPlayer())
-        {
-            vent.myAnim.Play(vent.ExitVentAnim, 1);
-        }
-
         Vents.Add(vent);
     }
 
@@ -186,14 +194,14 @@ public class MoleRole : CustomRoleBehavior
         }
     }
     // Fix meeting breaking
-    private void RemoveVent(Vent vent, bool fade = true)
+    private void RemoveVent(Vent vent, bool shrink = true)
     {
         vent.SetEnabled(false);
         Vents.Remove(vent);
 
-        if (fade)
+        if (shrink)
         {
-            _player.BetterData().StartCoroutine(FadeVentOut(vent));
+            _player.BetterData().StartCoroutine(ShrinkVentOut(vent));
         }
         else
         {
@@ -204,30 +212,27 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    private IEnumerator FadeVentOut(Vent vent)
+    private IEnumerator ShrinkVentOut(Vent vent)
     {
-        float fadeDuration = 1f;
-        float fadeSpeed = 1f / fadeDuration;
-        bool fading = true;
+        float shrinkDuration = 1f;
+        Vector3 startScale = vent.transform.localScale;
+        Vector3 targetScale = Vector3.zero;
+        Vector3 startPosition = vent.transform.position;
+        Vector3 targetPosition = startPosition - new Vector3(0, 0.15f, 0);
 
         if (_player.IsLocalPlayer())
         {
-            while (fading)
+            float elapsedTime = 0f;
+
+            while (elapsedTime < shrinkDuration)
             {
-                fading = false;
+                // Increase elapsed time
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsedTime / shrinkDuration); // Interpolation factor from 0 to 1
 
-                foreach (var renderer in vent.GetComponentsInChildren<SpriteRenderer>())
-                {
-                    Color currentColor = renderer.color;
-
-                    float newAlpha = Mathf.Max(currentColor.a - fadeSpeed * Time.deltaTime, 0f);
-                    renderer.color = new Color(currentColor.r, currentColor.g, currentColor.b, newAlpha);
-
-                    if (newAlpha > 0f)
-                    {
-                        fading = true;
-                    }
-                }
+                // Interpolate scale and position based on the interpolation factor
+                vent.transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+                vent.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
 
                 yield return null;
             }
@@ -235,9 +240,11 @@ public class MoleRole : CustomRoleBehavior
             DigButton.AddUse();
         }
 
+        // Remove the vent from the list and destroy the game object
         var allVents = ShipStatus.Instance.AllVents.ToList();
         allVents.RemoveAll(v => v.Id == vent.Id);
         ShipStatus.Instance.AllVents = allVents.ToArray();
         UnityEngine.Object.Destroy(vent.gameObject);
     }
+
 }

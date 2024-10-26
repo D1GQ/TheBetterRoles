@@ -108,8 +108,9 @@ public class CustomGameManager
             UnityEngine.Object.Destroy(introCutscene.TeamTitle.gameObject.GetComponent<TextTranslatorTMP>());
             introCutscene.TeamTitle.text = PlayerControl.LocalPlayer.GetRoleTeamName();
             introCutscene.TeamTitle.color = PlayerControl.LocalPlayer.GetTeamColor();
-            var flag = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate);
+            var flag = PlayerControl.LocalPlayer.Is(CustomRoleTeam.Crewmate) || PlayerControl.LocalPlayer.Is(CustomRoleTeam.Neutral);
             introCutscene.ImpostorText.gameObject.SetActive(flag);
+
             if (flag)
             {
                 int Imps = Main.AllPlayerControls.Where(p => p.Is(CustomRoleTeam.Impostor)).Count();
@@ -123,6 +124,7 @@ public class CustomGameManager
                     introCutscene.ImpostorText.text = string.Format(Translator.GetString(StringNames.NumImpostorsP), Imps);
                 }
             }
+
             int maxDepth = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < teamToDisplay.Count; i++)
             {
@@ -180,7 +182,7 @@ public class CustomGameManager
                     __instance.TeamTitle.gameObject.SetActive(false);
                     __instance.BackgroundBar.material.color = RoleColor;
                     __instance.BackgroundBar.transform.SetLocalZ(-15);
-                    __instance.transform.Find("BackgroundLayer").transform.SetLocalZ(-16);
+                    __instance.transform.Find("BackgroundLayer").transform.SetLocalZ(-15);
                     __instance.YouAreText.color = RoleColor;
                     __instance.RoleText.color = RoleColor;
                     __instance.RoleBlurbText.color = RoleColor;
@@ -488,7 +490,7 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => false;// !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
+    public static bool ShouldCheckConditions => !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
 
     public static void GameStart()
     {
@@ -625,22 +627,22 @@ public class CustomGameManager
 
     public static bool CheckPlayerAmount(ref CustomRoleTeam team)
     {
-        List<PlayerControl> allPlayers = Main.AllAlivePlayerControls.ToList();
-        List<PlayerControl> impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor)).ToList();
-        List<PlayerControl> nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
-        List<PlayerControl> killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
+        var allPlayers = Main.AllAlivePlayerControls;
+        var impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor)).ToList();
+        var nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
+        var killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
 
-        if (impostors.Count <= 0 && killingPlayers.Count <= 0)
+        if (impostors.Count == 0 && killingPlayers.Count == 0)
         {
             team = CustomRoleTeam.Crewmate;
             return true;
         }
-        else if (impostors.Count >= nonKillingPlayers.Count && killingPlayers.Count <= 0)
+        if (impostors.Count >= nonKillingPlayers.Count && killingPlayers.Count == 0)
         {
             team = CustomRoleTeam.Impostor;
             return true;
         }
-        else if (allPlayers.Count == 1 && killingPlayers.Count == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
+        if (allPlayers.Count() == 1 && killingPlayers.Count == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
         {
             team = CustomRoleTeam.Neutral;
             return true;

@@ -45,11 +45,11 @@ public static class GameStates
     {
         var deathSabotages = new[]
         {
-        SystemTypes.Reactor,
-        SystemTypes.Laboratory,
-        SystemTypes.LifeSupp,
-        SystemTypes.HeliSabotage,
-    };
+            SystemTypes.Reactor,
+            SystemTypes.Laboratory,
+            SystemTypes.LifeSupp,
+            SystemTypes.HeliSabotage,
+        };
 
         return deathSabotages.Any(IsSystemActive);
     }
@@ -57,10 +57,10 @@ public static class GameStates
     {
         var noneDeathSabotages = new[]
         {
-        SystemTypes.Electrical,
-        SystemTypes.Comms,
-        SystemTypes.MushroomMixupSabotage
-    };
+            SystemTypes.Electrical,
+            SystemTypes.Comms,
+            SystemTypes.MushroomMixupSabotage
+        };
 
         return noneDeathSabotages.Any(IsSystemActive);
     }
@@ -68,14 +68,14 @@ public static class GameStates
     {
         var allSabotages = new[]
         {
-        SystemTypes.Electrical,
-        SystemTypes.Reactor,
-        SystemTypes.Laboratory,
-        SystemTypes.LifeSupp,
-        SystemTypes.HeliSabotage,
-        SystemTypes.Comms,
-        SystemTypes.MushroomMixupSabotage
-    };
+            SystemTypes.Electrical,
+            SystemTypes.Reactor,
+            SystemTypes.Laboratory,
+            SystemTypes.LifeSupp,
+            SystemTypes.HeliSabotage,
+            SystemTypes.Comms,
+            SystemTypes.MushroomMixupSabotage
+        };
 
         return allSabotages.Any(IsSystemActive);
     }

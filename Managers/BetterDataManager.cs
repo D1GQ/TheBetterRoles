@@ -8,6 +8,7 @@ class BetterDataManager
     public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), "BetterRole_Data");
     public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, "SaveInfo");
     public static string filePathFolderSettings = Path.Combine(filePathFolder, "Settings");
+    public static string filePathFolderHats = Path.Combine(filePathFolder, "Hats");
     public static string SettingsFile => Path.Combine(filePathFolderSettings, $"Preset-{Main.Preset.Value}.json");
     public static string banPlayerListFile = Path.Combine(filePathFolderSaveInfo, "BanPlayerList.txt");
     public static string banNameListFile = Path.Combine(filePathFolderSaveInfo, "BanNameList.txt");
@@ -34,6 +35,11 @@ class BetterDataManager
         if (!Directory.Exists(filePathFolderSaveInfo))
         {
             Directory.CreateDirectory(filePathFolderSaveInfo);
+        }
+
+        if (!Directory.Exists(filePathFolderHats))
+        {
+            Directory.CreateDirectory(filePathFolderHats);
         }
 
         if (!File.Exists(banPlayerListFile))

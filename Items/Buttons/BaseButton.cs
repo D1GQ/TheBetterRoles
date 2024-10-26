@@ -173,7 +173,7 @@ public class BaseButton
     public virtual void SetCooldown(float amount = -1, int state = -1)
     {
         if (state >= 0) State = state;
-        if (State == 0) ActionButton.OverrideText(Name);
+        if (State == 0) ActionButton?.OverrideText(Name);
         if (State > 0) return;
 
         if (amount <= -1)
