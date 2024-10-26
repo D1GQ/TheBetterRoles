@@ -49,7 +49,7 @@ public class HudManagerPatch
                 ChatNotifications.timeOnScreen = 1f;
                 ChatNotifications.gameObject.SetActive(true);
                 GameObject BAUNotification = UnityEngine.Object.Instantiate(ChatNotifications.gameObject);
-                BAUNotification.name = "BAUNotification";
+                BAUNotification.name = "TBRNotification";
                 BAUNotification.GetComponent<ChatNotification>().DestroyMono();
                 GameObject.Find($"{BAUNotification.name}/Sizer/PoolablePlayer").DestroyObj();
                 GameObject.Find($"{BAUNotification.name}/Sizer/ColorText").DestroyObj();
@@ -61,6 +61,9 @@ public class HudManagerPatch
                 BAUNotification.SetActive(false);
                 ChatNotifications.timeOnScreen = 0f;
                 ChatNotifications.gameObject.SetActive(false);
+                BetterNotificationManager.TextArea.enableWordWrapping = true;
+                BetterNotificationManager.TextArea.m_firstOverflowCharacterIndex = 0;
+                BetterNotificationManager.TextArea.overflowMode = TextOverflowModes.Overflow;
             }
         }
 

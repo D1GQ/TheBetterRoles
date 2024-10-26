@@ -7,7 +7,7 @@ public class PlayerMeetingButton
     public static List<PlayerMeetingButton> AllButtons = [];
     public Dictionary<PassiveButton, PlayerVoteArea> Buttons = [];
     public Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) => { };
-    public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.IsLocalData(); };
+    public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && !targetData.IsLocalData(); };
     public CustomRoleBehavior? Role;
     public bool CanUseAsDead = false;
     public bool Enabled = true;

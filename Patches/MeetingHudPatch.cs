@@ -164,7 +164,7 @@ namespace TheBetterRoles
 
         public static IEnumerator FadeText(TextMeshPro text)
         {
-            float displayDuration = 4f;
+            float displayDuration = 6f;
             float fadeDuration = 1.5f;
             float animationDuration = 0.15f;
             Vector3 originalScale = text.transform.localScale;

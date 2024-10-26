@@ -31,6 +31,7 @@ public class PestillenceRole : CustomRoleBehavior
     public override void OnSetUpRole()
     {
         KillButton.Cooldown = CustomRoleManager.GetRoleInstance<PlaguebearerRole>().PestilenceKillCooldown.GetFloat();
+        KillButton.SetCooldown();
     }
 
     public override bool CheckMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
