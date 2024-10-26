@@ -183,6 +183,7 @@
   "Role.Plaguebearer.Option.InfectCooldown": "Infect Cooldown",
   "Role.Plaguebearer.Option.InfectDistance": "Infect Distance",
   "Role.Plaguebearer.Option.PestilenceKillCooldown": "Pestilence Kill Cooldown",
+  "Role.Plaguebearer.TransformMsg": "A Plaguebearer has transformed into a Pestilence,\nHorseman of the Apocalypse!",
 
   "Role.Pestillence": "Pestillence",
   "Role.Pestillence.Info": "Kill all players",

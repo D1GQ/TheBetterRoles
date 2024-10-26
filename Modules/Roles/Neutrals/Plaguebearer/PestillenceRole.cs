@@ -1,5 +1,6 @@
 ﻿
 using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles;
 
@@ -26,6 +27,7 @@ public class PestillenceRole : CustomRoleBehavior
         }
     }
 
+    private bool showMsg = true;
     public override void OnSetUpRole()
     {
         KillButton.Cooldown = CustomRoleManager.GetRoleInstance<PlaguebearerRole>().PestilenceKillCooldown.GetFloat();
@@ -39,5 +41,14 @@ public class PestillenceRole : CustomRoleBehavior
         }
 
         return true;
+    }
+    public override string AddMeetingStartUpText(ref CustomClip? clip)
+    {
+        if (showMsg)
+        {
+            showMsg = false;
+            return $"<{CustomRoleManager.GetRoleInstance<PlaguebearerRole>().RoleColor}>{Translator.GetString("Role.Plaguebearer.TransformMsg")}</color>";
+        }
+        return string.Empty;
     }
 }

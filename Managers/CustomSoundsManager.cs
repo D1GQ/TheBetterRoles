@@ -6,6 +6,12 @@ using UnityEngine.Audio;
 
 namespace TheBetterRoles
 {
+    public class CustomClip
+    {
+        public string ClipName = string.Empty;
+        public float Volume = 1f;
+    }
+
     public static class CustomSoundsManager
     {
         private static Dictionary<string, AudioClip> soundEffects = new();
