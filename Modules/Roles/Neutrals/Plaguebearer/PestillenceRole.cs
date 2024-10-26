@@ -42,10 +42,12 @@ public class PestillenceRole : CustomRoleBehavior
 
         return true;
     }
+
     public override string AddMeetingStartUpText(ref CustomClip? clip)
     {
         if (showMsg)
         {
+            clip = new CustomClip() { ClipName = "Transform", Volume = 2f };
             showMsg = false;
             return $"<{CustomRoleManager.GetRoleInstance<PlaguebearerRole>().RoleColor}>{Translator.GetString("Role.Plaguebearer.TransformMsg")}</color>";
         }

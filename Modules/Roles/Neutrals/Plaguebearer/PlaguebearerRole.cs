@@ -15,7 +15,6 @@ public class PlaguebearerRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Chaos;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? playAnimation;
     public BetterOptionItem? InfectCooldown;
     public BetterOptionItem? InfectDistance;
     public BetterOptionItem? PestilenceKillCooldown;
@@ -26,7 +25,6 @@ public class PlaguebearerRole : CustomRoleBehavior
         {
             return
             [
-                playAnimation = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.PlayAnimation"), false, RoleOptionItem),
                 InfectCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
                 InfectDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectDistance"),
                     [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
@@ -109,47 +107,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     {
         if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(infected.Contains))
         {
-            if (playAnimation.GetBool())
-            {
-                PlayAnimation();
-            }
             _player.SetRoleSync(CustomRoles.Pestillence);
         }
-    }
-
-    private void PlayAnimation()
-    {
-        _player.shapeshifting = true;
-        _player.MyPhysics.SetNormalizedVelocity(Vector2.zero);
-        RoleEffectAnimation roleEffectAnimation = UnityEngine.Object.Instantiate<RoleEffectAnimation>(DestroyableSingleton<RoleManager>.Instance.shapeshiftAnim, _player.gameObject.transform);
-        roleEffectAnimation.SetMaskLayerBasedOnWhoShouldSee(_player.AmOwner);
-        roleEffectAnimation.Renderer.material.SetColor("_BackColor", Utils.HexToColor32(RoleColor));
-        roleEffectAnimation.Renderer.material.SetColor("_BodyColor", Utils.HexToColor32(RoleColor));
-        roleEffectAnimation.Renderer.material.SetColor("_VisorColor", Palette.VisorColor);
-        if (_player.cosmetics.FlipX)
-        {
-            roleEffectAnimation.transform.position -= new Vector3(0.14f, 0f, 0f);
-        }
-        roleEffectAnimation.MidAnimCB = (Action)(() =>
-        {
-            _player.cosmetics.SetScale(_player.MyPhysics.Animations.DefaultPlayerScale, _player.defaultCosmeticsScale);
-            // (_player.Data.Role as ShapeshifterRole).SetEvidence();
-        });
-        float shapeshiftScale = _player.MyPhysics.Animations.ShapeshiftScale;
-        if (AprilFoolsMode.ShouldLongAround())
-        {
-            _player.cosmetics.ShowLongModeParts(false);
-            _player.cosmetics.SetHatVisorVisible(false);
-        }
-        _player.StartCoroutine(_player.ScalePlayer(shapeshiftScale, 0.25f));
-        roleEffectAnimation.Play(_player, (Action)(() =>
-        {
-            _player.shapeshifting = false;
-            if (AprilFoolsMode.ShouldLongAround())
-            {
-                _player.cosmetics.ShowLongModeParts(true);
-                _player.cosmetics.SetHatVisorVisible(true);
-            }
-        }), PlayerControl.LocalPlayer.cosmetics.FlipX, RoleEffectAnimation.SoundType.Local, 0f, true, 0f);
     }
 }

@@ -179,7 +179,6 @@
   "Role.Plaguebearer.Info": "Infact all to unrelease Pestillence",
   "Role.Plaguebearer.LongInfo": "As the Plaguebearer, you are able to infect other players, players can also get infected by interacting with already infected players. Once all alive players are infected the Plaguebearer will turn into the Pestillence. Depending on settings when turning into the Pestillence the shapeshift animation will play.",
   "Role.Plaguebearer.Ability.1": "Infect",
-  "Role.Plaguebearer.Option.PlayAnimation": "Play Animation",
   "Role.Plaguebearer.Option.InfectCooldown": "Infect Cooldown",
   "Role.Plaguebearer.Option.InfectDistance": "Infect Distance",
   "Role.Plaguebearer.Option.PestilenceKillCooldown": "Pestilence Kill Cooldown",
