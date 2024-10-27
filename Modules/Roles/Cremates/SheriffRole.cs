@@ -33,7 +33,7 @@ public class SheriffRole : CustomRoleBehavior
                 ShotsAmount = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootsAmount"), [0, 15, 1], 0, "", "", RoleOptionItem),
                 Misfire = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.KillOnMisfire"),
                 [Translator.GetString("Role.Option.AtSelf"), Translator.GetString("Role.Option.AtTarget"), Translator.GetString("Role.Option.AtNone")], 0, RoleOptionItem),
-                CanShootImposters = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImposters"), true, RoleOptionItem),
+                CanShootImposters = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImpostors"), true, RoleOptionItem),
                 CanShootNeutrals = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootNeutralKilling"), false, RoleOptionItem)
             ];
         }

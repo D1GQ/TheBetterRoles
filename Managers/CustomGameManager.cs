@@ -519,7 +519,7 @@ public class CustomGameManager
             UnityEngine.Object.DontDestroyOnLoad(data.gameObject);
         }
 
-        PlayerControl.LocalPlayer.StartCoroutine(AmongUsClient.Instance.CoEndGame());
+        AmongUsClient.Instance.StartCoroutine(AmongUsClient.Instance.CoEndGame());
 
         _ = new LateTask(() =>
         {

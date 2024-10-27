@@ -80,7 +80,7 @@ public static class CustomRoleManager
         {
             IRandom.SetInstanceById(0);
 
-            int ImposterAmount = BetterGameSettings.ImposterAmount.GetInt();
+            int ImposterAmount = BetterGameSettings.ImpostorAmount.GetInt();
             int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
             int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
 

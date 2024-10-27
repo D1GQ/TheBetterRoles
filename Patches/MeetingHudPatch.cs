@@ -59,7 +59,7 @@ namespace TheBetterRoles
             };
             var role = PlayerControl.LocalPlayer.BetterData().RoleInfo.Role;
             Guess.Enabled = (BetterGameSettings.CrewmatesCanGuess.GetBool() && role.IsCrewmate)
-                || (BetterGameSettings.ImpostersCanGuess.GetBool() && role.IsImpostor)
+                || (BetterGameSettings.ImpostorsCanGuess.GetBool() && role.IsImpostor)
                 || (BetterGameSettings.KillingNeutralsCanGuess.GetBool() && role.IsNeutral && role.CanKill)
                 || (BetterGameSettings.BenignNeutralsCanGuess.GetBool() && role.IsNeutral && !role.CanKill)
                 || role.GuessReliantRole;

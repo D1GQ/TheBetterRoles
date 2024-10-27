@@ -80,12 +80,12 @@
   "Role.Sheriff.Option.ShootDistance": "Shoot Distance",
   "Role.Sheriff.Option.ShootsAmount": "Shoots Amount",
   "Role.Sheriff.Option.KillOnMisfire": "Kill On Misfire",
-  "Role.Sheriff.Option.CanShootImposters": "Can Shoot Imposters",
+  "Role.Sheriff.Option.CanShootImpostors": "Can Shoot Impostors",
   "Role.Sheriff.Option.CanShootNeutralKilling": "Can Shoot Neutral Killing",
 
   "Role.Veteran": "Veteran",
   "Role.Veteran.Info": "Go on Alert!",
-  "Role.Veteran.LongInfo": "The Veteran can go on alert mode. When the Veteran is on alert, anyone—whether crew, neutral, or impostor—who interacts with the Veteran will die.",
+  "Role.Veteran.LongInfo": "The Veteran can go on alert mode. When the Veteran is on alert, anyone—whether crewmate, neutral, or impostor—who interacts with the Veteran will die.",
   "Role.Veteran.Ability.1": "Alert",
   "Role.Veteran.Option.CanBeKilledOnAlert": "Can Be Killed on Alert",
   "Role.Veteran.Option.AlertCooldown": "Alert Cooldown",
@@ -303,7 +303,7 @@
   "BetterSetting.Description.ImpostorRoles": "Adjust the roles and features for Impostors, managing their unique abilities and kill mechanics.",
 
   "BetterSetting.Tab.NeutralRoles": "Neutral Roles",
-  "BetterSetting.Description.NeutralRoles": "Set up roles that fall outside of the traditional Crewmate and Imposter dynamics, such as third-party characters with unique objectives.",
+  "BetterSetting.Description.NeutralRoles": "Set up roles that fall outside of the traditional Crewmate and Impostor dynamics, such as third-party characters with unique objectives.",
 
   "BetterSetting.Tab.Addons": "Add-ons",
   "BetterSetting.Description.Addons": "Control additional role modifiers and enhancements that can affect all.",
@@ -353,7 +353,7 @@
   "BetterSetting.Title.GuessSettings": "Guess Settings",
   "BetterSetting.OnlyShowEnabledRoles": "Only Show Enabled Roles",
   "BetterSetting.CrewmatesCanGuess": "Crewmates Can Guess",
-  "BetterSetting.ImpostersCanGuess": "Imposters Can Guess",
+  "BetterSetting.ImpostorsCanGuess": "Impostors Can Guess",
   "BetterSetting.BenignNeutralsCanGuess": "Benign Neutrals Can Guess",
   "BetterSetting.KillingNeutralsCanGuess": "Killing Neutrals Can Guess",
   "BetterSetting.CanGuessAddons": "Can Guess Add-ons",

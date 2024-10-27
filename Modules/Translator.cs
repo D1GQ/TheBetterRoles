@@ -1,5 +1,6 @@
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -88,7 +89,14 @@ public static class Translator
                 }
 
                 // Add or update the translation for the current id and textString
-                translationMaps[textString][languageId] = translation.Replace("\\n", "\n").Replace("\\r", "\r");
+                if (textString.ToLower().Contains("role."))
+                {
+                    translationMaps[textString][languageId] = FormatRoleColor(translation.Replace("\\n", "\n").Replace("\\r", "\r"), textString);
+                }
+                else
+                {
+                    translationMaps[textString][languageId] = translation.Replace("\\n", "\n").Replace("\\r", "\r");
+                }
             }
         }
     }
@@ -152,6 +160,32 @@ public static class Translator
     }
     public static string GetString(StringNames stringName)
         => DestroyableSingleton<TranslationController>.Instance.GetString(stringName, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+
+    public static string FormatRoleColor(string text, string jsonStr)
+    {
+        var str = text;
+
+        foreach (var role in CustomRoleManager.allRoles)
+        {
+            string rolePattern = $@"\b{Regex.Escape(role.RoleName)}(s|es)?\b";
+            str = Regex.Replace(str, rolePattern, match => $"<{role.RoleColor}>{match.Value}</color>", RegexOptions.IgnoreCase);
+        }
+
+        if (text.Contains(' '))
+        {
+            foreach (var team in Enum.GetValues(typeof(CustomRoleTeam)).Cast<CustomRoleTeam>())
+            {
+                string teamName = Utils.GetCustomRoleTeamName(team);
+                string teamColor = Utils.GetCustomRoleTeamColor(team);
+
+                string teamPattern = $@"\b{Regex.Escape(teamName)}(s|es)?\b";
+                str = Regex.Replace(str, teamPattern, match => $"<color={teamColor}>{match.Value}</color>", RegexOptions.IgnoreCase);
+            }
+        }
+
+        return str;
+    }
+
     public static SupportedLangs GetUserTrueLang()
     {
         try

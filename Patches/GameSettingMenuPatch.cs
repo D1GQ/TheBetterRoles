@@ -10,7 +10,7 @@ class BetterGameSettings
     public static BetterOptionItem? CommonTasksNum;
     public static BetterOptionItem? LongTasksNum;
     public static BetterOptionItem? ShortTasksNum;
-    public static BetterOptionItem? ImposterAmount;
+    public static BetterOptionItem? ImpostorAmount;
     public static BetterOptionItem? MaximumBenignNeutralAmount;
     public static BetterOptionItem? MinimumBenignNeutralAmount;
     public static BetterOptionItem? MaximumKillingNeutralAmount;
@@ -19,7 +19,7 @@ class BetterGameSettings
     public static BetterOptionItem? MinimumAddonAmount;
     public static BetterOptionItem? OnlyShowEnabledRoles;
     public static BetterOptionItem? CrewmatesCanGuess;
-    public static BetterOptionItem? ImpostersCanGuess;
+    public static BetterOptionItem? ImpostorsCanGuess;
     public static BetterOptionItem? BenignNeutralsCanGuess;
     public static BetterOptionItem? KillingNeutralsCanGuess;
     public static BetterOptionItem? CanGuessAddons;
@@ -76,13 +76,13 @@ static class GameSettingMenuPatch
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.GuessSettings")));
         BetterGameSettings.OnlyShowEnabledRoles = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.OnlyShowEnabledRoles"), false);
         BetterGameSettings.CrewmatesCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.CrewmatesCanGuess"), false);
-        BetterGameSettings.ImpostersCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.ImpostersCanGuess"), false);
+        BetterGameSettings.ImpostorsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.ImpostorsCanGuess"), false);
         BetterGameSettings.BenignNeutralsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.BenignNeutralsCanGuess"), false);
         BetterGameSettings.KillingNeutralsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.KillingNeutralsCanGuess"), true);
         BetterGameSettings.CanGuessAddons = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.CanGuessAddons"), false);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Title.ImpostorSettings")));
-        BetterGameSettings.ImposterAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Impostors"), [0, 5, 1], 2, "", "");
+        BetterGameSettings.ImpostorAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Impostors"), [0, 5, 1], 2, "", "");
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.Title.NeutralSettings")));
         BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaxNonKillingNeutrals"), [0, 5, 1], 2, "", "");
