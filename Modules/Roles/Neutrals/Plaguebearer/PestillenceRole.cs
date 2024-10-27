@@ -27,7 +27,7 @@ public class PestillenceRole : CustomRoleBehavior
         }
     }
 
-    private bool showMsg = true;
+    public bool WasTransformed = false;
     public override void OnSetUpRole()
     {
         KillButton.Cooldown = CustomRoleManager.GetRoleInstance<PlaguebearerRole>().PestilenceKillCooldown.GetFloat();
@@ -46,10 +46,10 @@ public class PestillenceRole : CustomRoleBehavior
 
     public override string AddMeetingText(ref CustomClip? clip)
     {
-        if (showMsg)
+        if (WasTransformed)
         {
             clip = new CustomClip() { ClipName = "Transform", Volume = 2f };
-            showMsg = false;
+            WasTransformed = false;
             return $"<{CustomRoleManager.GetRoleInstance<PlaguebearerRole>().RoleColor}>{Translator.GetString("Role.Plaguebearer.TransformMsg")}</color>";
         }
         return string.Empty;
