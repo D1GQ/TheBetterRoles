@@ -88,7 +88,7 @@ public class SnitchRole : CustomRoleBehavior
         if (localPlayer.Role().IsNeutral && !SnitchSeesNeutralRoles.GetBool()) return;
 
         Utils.FlashScreen(RoleColor);
-        var arrow = new ArrowLocator().Create(color: Utils.HexToColor32(RoleColor));
+        var arrow = new ArrowLocator().Create(color: RoleColor32);
         arrow.SetPlayer(_player);
         arrows.Add(arrow);
     }

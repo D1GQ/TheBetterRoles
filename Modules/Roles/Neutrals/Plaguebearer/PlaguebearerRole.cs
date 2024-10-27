@@ -96,7 +96,7 @@ public class PlaguebearerRole : CustomRoleBehavior
         infected.Add(player.Data);
         if (_player.IsLocalPlayer())
         {
-            player.SetTrueVisorColor(Utils.HexToColor32(RoleColor));
+            player.SetTrueVisorColor(RoleColor32);
             player.BetterData().NameColor = RoleColor;
         }
 

@@ -10,7 +10,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace TheBetterRoles
 {
     [HarmonyPatch(typeof(MeetingHud))]
-    class MeetingHudPatch
+    static class MeetingHudPatch
     {
         public static void AdjustVotesOnGuess(PlayerControl pc)
         {
@@ -321,16 +321,31 @@ namespace TheBetterRoles
             }
         }
 
+        [HarmonyPatch(nameof(MeetingHud.CheckForEndVoting))]
+        [HarmonyPrefix]
+        public static void CheckForEndVoting_Prefix(MeetingHud __instance)
+        {
+            CustomRoleManager.RoleListenerOther(role => role.CheckForEndVoting(__instance));
+        }
+
         [HarmonyPatch(nameof(MeetingHud.VotingComplete))]
         [HarmonyPrefix]
-        public static void VotingCompletePrefix(MeetingHud __instance, [HarmonyArgument(0)] MeetingHud.VoterState[] states, [HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
+        public static void VotingComplete_Prefix(MeetingHud __instance, ref MeetingHud.VoterState[] states, ref NetworkedPlayerInfo exiled, ref bool tie)
         {
-            CustomRoleManager.RoleListenerOther(role => role.OnVotingComplete(states, exiled, tie));
+            var localStates = states;
+            var localExiled = exiled;
+            var localTie = tie;
+
+            CustomRoleManager.RoleListenerOther(role => role.OnVotingComplete(__instance, ref localStates, ref localExiled, ref localTie));
+
+            states = localStates;
+            exiled = localExiled;
+            tie = localTie;
         }
 
         [HarmonyPatch(nameof(MeetingHud.OnDestroy))]
         [HarmonyPostfix]
-        public static void OnDestroyPostfix()
+        public static void OnDestroy_Postfix()
         {
             Logger.LogHeader("Meeting Has Endded");
         }

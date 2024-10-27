@@ -24,7 +24,7 @@ public class TrackerAddon : CustomAddonBehavior
     private ArrowLocator? TrackerArrowLocator;
     public override void OnSetUpRole()
     {
-        if (_player.IsLocalPlayer()) TrackerArrowLocator = new ArrowLocator().Create(color: Utils.HexToColor32(RoleColor), maxScale: 0.5f, minDistance: 0f);
+        if (_player.IsLocalPlayer()) TrackerArrowLocator = new ArrowLocator().Create(color: RoleColor32, maxScale: 0.5f, minDistance: 0f);
     }
     public override void OnDeinitialize()
     {

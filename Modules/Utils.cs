@@ -12,19 +12,33 @@ namespace TheBetterRoles;
 public static class Utils
 {
     // Get player by client id
-    public static ClientData? ClientFromClientId(int clientId) => AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(cd => cd.Id == clientId) ?? null;
+    public static ClientData? ClientFromClientId(int clientId)
+        => AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(cd => cd.Id == clientId);
+
     // Get player data from player id
-    public static NetworkedPlayerInfo? PlayerDataFromPlayerId(int playerId) => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.PlayerId == playerId);
+    public static NetworkedPlayerInfo? PlayerDataFromPlayerId(int playerId)
+        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.PlayerId == playerId);
+
     // Get player data from client id
-    public static NetworkedPlayerInfo? PlayerDataFromClientId(int clientId) => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.ClientId == clientId);
+    public static NetworkedPlayerInfo? PlayerDataFromClientId(int clientId)
+        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.ClientId == clientId);
+
     // Get player data from friend code
-    public static NetworkedPlayerInfo? PlayerDataFromFriendCode(string friendCode) => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.FriendCode == friendCode);
+    public static NetworkedPlayerInfo? PlayerDataFromFriendCode(string friendCode)
+        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.FriendCode == friendCode);
+
     // Get player from player id
-    public static PlayerControl? PlayerFromPlayerId(int playerId) => Main.AllPlayerControls.FirstOrDefault(player => player.PlayerId == playerId) ?? null;
+    public static PlayerControl? PlayerFromPlayerId(int playerId)
+        => Main.AllPlayerControls.FirstOrDefault(player => player.PlayerId == playerId);
+
     // Get player from client id
-    public static PlayerControl? PlayerFromClientId(int clientId) => Main.AllPlayerControls.FirstOrDefault(player => player.GetClientId() == clientId) ?? null;
+    public static PlayerControl? PlayerFromClientId(int clientId)
+        => Main.AllPlayerControls.FirstOrDefault(player => player.GetClientId() == clientId);
+
     // Get player from net id
-    public static PlayerControl? PlayerFromNetId(uint netId) => Main.AllPlayerControls.FirstOrDefault(player => player.NetId == netId) ?? null;
+    public static PlayerControl? PlayerFromNetId(uint netId)
+        => Main.AllPlayerControls.FirstOrDefault(player => player.NetId == netId);
+
     // Set player name
     public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
     {

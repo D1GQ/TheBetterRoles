@@ -28,14 +28,14 @@ public class PlayerMenu
         var Phone = PlayerMinigame.transform.Find("PhoneUI/Background").GetComponent<SpriteRenderer>();
         if (Phone != null)
         {
-            Phone.material?.SetColor(PlayerMaterial.BodyColor, Utils.HexToColor32(Role.RoleColor));
-            Phone.material?.SetColor(PlayerMaterial.BackColor, Utils.HexToColor32(Role.RoleColor) - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+            Phone.material?.SetColor(PlayerMaterial.BodyColor, Role.RoleColor32);
+            Phone.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
         }
         var PhoneButton = PlayerMinigame.transform.Find("PhoneUI/UI_Phone_Button").GetComponent<SpriteRenderer>();
         if (PhoneButton != null)
         {
-            PhoneButton.material?.SetColor(PlayerMaterial.BodyColor, Utils.HexToColor32(Role.RoleColor));
-            PhoneButton.material?.SetColor(PlayerMaterial.BackColor, Utils.HexToColor32(Role.RoleColor) - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+            PhoneButton.material?.SetColor(PlayerMaterial.BodyColor, Role.RoleColor32);
+            PhoneButton.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
         }
 
         PlayerMinigame.StartCoroutine(PlayerMinigame.CoAnimateOpen());
@@ -60,9 +60,9 @@ public class PlayerMenu
             {
                 PlayerControl.LocalPlayer.PlayerMenuSync(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
             }));
-            shapeshifterPanel.NameText.color = (player.IsLocalData() ? Utils.HexToColor32(player.BetterData().RoleInfo.Role.RoleColor) : UnityEngine.Color.white);
+            shapeshifterPanel.NameText.color = (player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : UnityEngine.Color.white);
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
-            shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Utils.HexToColor32(Role.RoleColor);
+            shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Role.RoleColor32;
             shapeshifterPanel.Background.transform.Find("Highlight/ShapeshifterIcon").gameObject.SetActive(false);
             list.Add(shapeshifterPanel.Button);
         }

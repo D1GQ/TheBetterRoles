@@ -649,6 +649,7 @@ public enum CustomRoles
     Medic,
     Sheriff,
     Snitch,
+    Swapper,
     Veteran,
     Investigator,
     Transporter,

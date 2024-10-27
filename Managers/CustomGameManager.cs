@@ -207,7 +207,7 @@ public class CustomGameManager
             var role = first?.BetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
             var team = winTeam;
             Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
-                : Utils.HexToColor32(first.BetterData().RoleInfo.Role.RoleColor);
+                : first.BetterData().RoleInfo.Role.RoleColor32;
 
             __instance.WinText.alignment = TextAlignmentOptions.Right;
 

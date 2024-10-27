@@ -100,6 +100,11 @@
   "Role.Snitch.Option.SnitchSeesNeutralRoles": "Snitch Sees Neutral Roles",
   "Role.Snitch.Option.TasksRemainingWhenRevealed": "Tasks Remaining When Revealed",
 
+  "Role.Swapper": "Swapper",
+  "Role.Swapper.Info": "",
+  "Role.Swapper.LongInfo": "",
+  "Role.Swapper.Option.": "",
+
   "Role.Medic": "Medic",
   "Role.Medic.Info": "Cast a shield onto a player",
   "Role.Medic.LongInfo": "The Medic can place a shield on the target. The Medic can only give one shield for the whole game. Depending on the settings, the target's shield can or cannot deactivate when the Medic dies. The Medic can also see if someone is trying to break the target's shield.\nDepending on the Host's settings, the Medic or the target can see if the player has a shield.",

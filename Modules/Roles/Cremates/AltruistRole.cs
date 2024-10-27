@@ -142,7 +142,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             Utils.FlashScreen(RoleColor, 0.25f, 0.25f, ReviveDuration.GetFloat());
             _player.MyPhysics.Animations.PlayScanner(true, false, _player.MyPhysics.FlipX);
-            _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Utils.HexToColor32(RoleColor));
+            _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = RoleColor32);
             SetMovement(_player, false);
         }
 

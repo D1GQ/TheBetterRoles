@@ -280,7 +280,7 @@ public class GuessTab
             AspectPosition.EdgeAlignments.Center,
             GetRoleButtonPos(),
             null,
-            Utils.HexToColor32(role.RoleColor));
+            role.RoleColor32);
         roleButton.GetComponent<BoxCollider2D>().size = new Vector2(1.1f, 0.4f);
         roleButton.GetComponentInChildren<TextMeshPro>().SetOutlineColor(new Color32(0, 0, 0, 255));
         var spriteRenderer = roleButton.GetComponent<SpriteRenderer>();

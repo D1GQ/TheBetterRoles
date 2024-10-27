@@ -83,6 +83,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
 
+    public Color RoleColor32 => Utils.HexToColor32(RoleColor);
+
     /// <summary>
     /// Checks if the role belongs to the Crewmate team.
     /// </summary>
@@ -788,9 +790,14 @@ public abstract class CustomRoleBehavior
     public virtual void OnAbilityDurationEnd(int id, bool isTimeOut) { }
 
     /// <summary>
+    /// Called after a meeting has ended, converting PlayerVoteArea info to VoterState
+    /// </summary>
+    public virtual void CheckForEndVoting(MeetingHud meetingHud) { }
+    
+    /// <summary>
     /// Called after a meeting has ended, determining what happens after the discussion or vote.
     /// </summary>
-    public virtual void OnVotingComplete(MeetingHud.VoterState[] states, NetworkedPlayerInfo? exiled, bool tie) { }
+    public virtual void OnVotingComplete(MeetingHud meetingHud, ref MeetingHud.VoterState[] states, ref NetworkedPlayerInfo? exiled, ref bool tie) { }
 
     /// <summary>
     /// Called after an exile has concluded, handling the logic for the player who was exiled.

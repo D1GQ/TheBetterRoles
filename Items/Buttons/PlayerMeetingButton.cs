@@ -17,7 +17,7 @@ public class PlayerMeetingButton
         if (!GameStates.IsMeeting) return null;
 
         Role = role;
-        Color color = Role != null ? Utils.HexToColor32(Role.RoleColor) : Color.white;
+        Color color = Role != null ? Role.RoleColor32 : Color.white;
 
         foreach (var pva in MeetingHud.Instance.playerStates)
         {
