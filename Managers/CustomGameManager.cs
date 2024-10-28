@@ -72,6 +72,7 @@ public class CustomGameManager
                 }
             }
 
+            teamToShow = teamToShow.OrderBy(player => player.IsLocalPlayer() ? 0 : 1).ToList();
             Begin(__instance, teamToShow);
 
             return false;
@@ -94,6 +95,7 @@ public class CustomGameManager
                 }
             }
 
+            teamToShow = teamToShow.OrderBy(player => player.IsLocalPlayer() ? 0 : 1).ToList();
             Begin(__instance, teamToShow);
 
             return false;
@@ -490,7 +492,7 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
+    public static bool ShouldCheckConditions => false; // !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
 
     public static void GameStart()
     {

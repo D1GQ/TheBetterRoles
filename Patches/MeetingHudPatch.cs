@@ -1,5 +1,7 @@
+using AmongUs.Data;
 using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections;
 using System.Text;
 using TheBetterRoles.Patches;
@@ -284,14 +286,14 @@ namespace TheBetterRoles
 
                     if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
                     {
-                        sbTag.Append($"{player.GetRoleNameAndColor()}{player.FormatTasksToText()}---");
+                        sbTag.Append($"{player.Role()?.RoleNameAndAbilityAmount}{player.FormatTasksToText()}---");
                     }
 
                     if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
                     {
                         foreach (var addon in player.BetterData().RoleInfo.Addons)
                         {
-                            sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                            sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
                         }
                     }
 
@@ -321,26 +323,143 @@ namespace TheBetterRoles
             }
         }
 
+        [HarmonyPatch(nameof(MeetingHud.CalculateVotes))]
+        [HarmonyPrefix]
+        public static bool CalculateVotes_Prefix(MeetingHud __instance, ref Il2CppSystem.Collections.Generic.Dictionary<byte, int> __result)
+        {
+            var playerStates = __instance.playerStates.ToList();
+            Dictionary<byte, int> dictionary = [];
+
+            for (int i = 0; i < playerStates.Count; i++)
+            {
+                PlayerVoteArea playerVoteArea = playerStates[i];
+
+                int roleNum = 0;
+                CustomRoleManager.RoleListener(
+                    Utils.PlayerFromPlayerId(playerVoteArea.TargetPlayerId),
+                    role => roleNum =+ role.AddVotes(__instance, playerVoteArea)
+                );
+
+                if (playerVoteArea.VotedFor != 252 && playerVoteArea.VotedFor != 255 && playerVoteArea.VotedFor != 254)
+                {
+                    if (dictionary.TryGetValue(playerVoteArea.VotedFor, out int num))
+                    {
+                        dictionary[playerVoteArea.VotedFor] = num + roleNum + 1;
+                    }
+                    else
+                    {
+                        dictionary[playerVoteArea.VotedFor] = roleNum + 1;
+                    }
+                }
+            }
+
+            CustomRoleManager.RoleListenerOther(
+                role => role.AddAdditionalVotes(__instance, ref dictionary)
+            );
+
+            __instance.playerStates = playerStates.ToArray();
+
+            __result = new Il2CppSystem.Collections.Generic.Dictionary<byte, int>();
+            foreach (var kvp in dictionary)
+            {
+                __result[kvp.Key] = kvp.Value;
+            }
+
+            return false;
+        }
+
+        // if VoterId is 255 then hide vote color
+        [HarmonyPatch(nameof(MeetingHud.PopulateResults))]
+        [HarmonyPrefix]
+        public static bool PopulateResults_Prefix(MeetingHud __instance, [HarmonyArgument(0)] Il2CppArrayBase<MeetingHud.VoterState> states)
+        {
+            __instance.TitleText.text = Translator.GetString(StringNames.MeetingVotingResults);
+            int num = 0;
+            var statesOrder = states.OrderBy(pv => pv.VoterId < 200 ? 0 : 1);
+            for (int i = 0; i < __instance.playerStates.Length; i++)
+            {
+                PlayerVoteArea playerVoteArea = __instance.playerStates[i];
+                playerVoteArea.ClearForResults();
+                int num2 = 0;
+                foreach (MeetingHud.VoterState voterState in statesOrder)
+                {
+                    NetworkedPlayerInfo? playerById = Utils.PlayerDataFromPlayerId(voterState.VoterId);
+                    bool flag = voterState.VoterId == 255;
+                    if (playerById == null && !flag)
+                    {
+                        Logger.Error(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
+                    }
+                    else if (i == 0 && voterState.SkippedVote)
+                    {
+                        if (flag)
+                        {
+                            BloopAAnonymousVoteIcon(num, __instance.SkippedVoting.transform);
+                            num++;
+                            continue;
+                        }
+                        __instance.BloopAVoteIcon(playerById, num, __instance.SkippedVoting.transform);
+                        num++;
+                    }
+                    else if (voterState.VotedForId == playerVoteArea.TargetPlayerId)
+                    {
+                        if (flag)
+                        {
+                            BloopAAnonymousVoteIcon(num2, playerVoteArea.transform);
+                            num2++;
+                            continue;
+                        }
+                        __instance.BloopAVoteIcon(playerById, num2, playerVoteArea.transform);
+                        num2++;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static void BloopAAnonymousVoteIcon(int index, Transform parent)
+        {
+            var meetingHud = MeetingHud.Instance;
+            SpriteRenderer spriteRenderer = UnityEngine.Object.Instantiate<SpriteRenderer>(meetingHud.PlayerVotePrefab);
+            PlayerMaterial.SetColors(Palette.DisabledGrey, spriteRenderer);
+            spriteRenderer.color = new Color(1f, 1f, 1f, 0.5f);
+            spriteRenderer.transform.SetParent(parent);
+            spriteRenderer.transform.localScale = Vector3.zero;
+            PlayerVoteArea component = parent.GetComponent<PlayerVoteArea>();
+            if (component != null)
+            {
+                spriteRenderer.material.SetInt(PlayerMaterial.MaskLayer, component.MaskLayer);
+            }
+            meetingHud.StartCoroutine(Effects.Bloop(index * 0.3f, spriteRenderer.transform, 1f, 0.5f));
+            parent.GetComponent<VoteSpreader>().AddVote(spriteRenderer);
+        }
+
         [HarmonyPatch(nameof(MeetingHud.CheckForEndVoting))]
         [HarmonyPrefix]
         public static void CheckForEndVoting_Prefix(MeetingHud __instance)
         {
-            CustomRoleManager.RoleListenerOther(role => role.CheckForEndVoting(__instance));
-        }
+            if (__instance.playerStates.All(ps => ps.AmDead || ps.DidVote))
+            {
+                CustomRoleManager.RoleListenerOther(role => role.OnEndVoting(__instance));
 
-        [HarmonyPatch(nameof(MeetingHud.VotingComplete))]
-        [HarmonyPrefix]
-        public static void VotingComplete_Prefix(MeetingHud __instance, ref MeetingHud.VoterState[] states, ref NetworkedPlayerInfo exiled, ref bool tie)
-        {
-            var localStates = states;
-            var localExiled = exiled;
-            var localTie = tie;
+                Il2CppSystem.Collections.Generic.Dictionary<byte, int> self = __instance.CalculateVotes();
+                Il2CppSystem.Collections.Generic.KeyValuePair<byte, int> max = self.MaxPair(out bool tie);
+                NetworkedPlayerInfo? exiled = GameData.Instance.AllPlayers.ToArray().FirstOrDefault((NetworkedPlayerInfo v) => !tie && v.PlayerId == max.Key);
+                List<MeetingHud.VoterState> list = [];
+                for (int i = 0; i < __instance.playerStates.Length; i++)
+                {
+                    PlayerVoteArea playerVoteArea = __instance.playerStates[i];
 
-            CustomRoleManager.RoleListenerOther(role => role.OnVotingComplete(__instance, ref localStates, ref localExiled, ref localTie));
+                    CustomRoleManager.RoleListener(Utils.PlayerFromPlayerId(playerVoteArea.TargetPlayerId), role => role.AddVisualVotes(__instance, playerVoteArea, ref list));
 
-            states = localStates;
-            exiled = localExiled;
-            tie = localTie;
+                    list.Add(new MeetingHud.VoterState
+                    {
+                        VoterId = playerVoteArea.TargetPlayerId,
+                        VotedForId = playerVoteArea.VotedFor
+                    });
+                }
+                __instance.RpcVotingComplete(list.ToArray(), exiled, tie);
+            }
         }
 
         [HarmonyPatch(nameof(MeetingHud.OnDestroy))]

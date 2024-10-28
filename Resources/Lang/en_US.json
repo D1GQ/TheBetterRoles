@@ -101,9 +101,9 @@
   "Role.Snitch.Option.TasksRemainingWhenRevealed": "Tasks Remaining When Revealed",
 
   "Role.Swapper": "Swapper",
-  "Role.Swapper.Info": "",
-  "Role.Swapper.LongInfo": "",
-  "Role.Swapper.Option.": "",
+  "Role.Swapper.Info": "Swap players votes",
+  "Role.Swapper.LongInfo": "As the Swapper, you can swap votes between two players in a meeting for a set amount of times.",
+  "Role.Swapper.Option.AmountOfSwaps": "Amount Of Swaps",
 
   "Role.Medic": "Medic",
   "Role.Medic.Info": "Cast a shield onto a player",
@@ -113,6 +113,16 @@
   "Role.Medic.Option.NotifyKiller": "Notify Killer",
   "Role.Medic.Option.RemoveShieldOnMedicDeath": "Remove Shield On Medic Death",
   "Role.Medic.Shielded": "Shielded",
+
+  "Role.Mayor": "Mayor",
+  "Role.Mayor.Info": "Preserve and use additional votes",
+  "Role.Mayor.LongInfo": "As the Mayor, you can preserve votes between meetings by skipping, collect votes cast on you, and use them later.",
+  "Role.Mayor.Option.CollectVoteOnSkip": "Collect Vote On Skip",
+  "Role.Mayor.Option.CollectVoteWhenVotedOn": "Collect Vote When Voted",
+  "Role.Mayor.Option.AdditionalVoteIcon": "Additional Vote Icon",
+  "Role.Mayor.AdditionalVoteIcon.Normal": "Normal",
+  "Role.Mayor.AdditionalVoteIcon.Anonymous": "Anonymous",
+  "Role.Mayor.AdditionalVoteIcon.Hide": "Hide",
 
   "Role.Investigator": "Investigator",
   "Role.Investigator.Info": "Investigate players footprints",

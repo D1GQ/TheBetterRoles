@@ -646,40 +646,41 @@ public enum CustomRoles
     // Crewmates
     Altruist,
     Crewmate,
+    Investigator,
+    Mayor,
     Medic,
     Sheriff,
     Snitch,
     Swapper,
-    Veteran,
-    Investigator,
     Transporter,
+    Veteran,
 
     // Impostors
     Impostor,
     Janitor,
-    Undertaker,
     Miner,
     Morphling,
     Swooper,
+    Undertaker,
 
     // Neutrals
+    Amnesiac,
+    Glitch,
     Jester,
     Mole,
-    Glitch,
     Opportunist,
     Pestillence,
-    Plaguebearer,
     Phantom,
-    Amnesiac,
+    Plaguebearer,
 
     // Addons
     Bait,
     ButtonBerry,
     Giant,
+    Lantern,
     NoiseMaker,
     Swift,
     Tracker,
-    Lantern,
 }
 
 public enum CustomRoleTeam

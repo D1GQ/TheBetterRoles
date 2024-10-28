@@ -1,4 +1,5 @@
 ﻿
+using AmongUs.Data;
 using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
@@ -16,12 +17,15 @@ public class SwapperRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+
+    public BetterOptionItem? AmountOfSwaps;
     public override BetterOptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                AmountOfSwaps = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swapper.Option.AmountOfSwaps"), [1, 100, 1], 3, "", "", RoleOptionItem)
             ];
         }
     }
@@ -31,21 +35,23 @@ public class SwapperRole : CustomRoleBehavior
     private NetworkedPlayerInfo? secondTargetData;
     private bool hasSwapped;
     private bool isSwapping;
+    private int swaps = 0;
 
     public override void OnMeetingStart(MeetingHud meetingHud)
     {
+        swaps = AmountOfSwaps.GetInt();
         isSwapping = false;
         if (_player.IsLocalPlayer())
         {
             swapperButton = new PlayerMeetingButton().Create("Swap", this, LoadAbilitySprite("Swap", 80));
-            swapperButton.ShowCondition = (pva, targetData) => { return (!targetData.IsDead && !targetData.Disconnected && !hasSwapped || targetData == firstTargetData || targetData == secondTargetData) && !isSwapping; };
+            swapperButton.ShowCondition = (pva, targetData) => { return (!targetData.IsDead && !targetData.Disconnected && !hasSwapped || targetData == firstTargetData || targetData == secondTargetData) && !isSwapping && swaps > 0; };
             swapperButton.ClickAction = OnSwap;
         }
     }
 
     private void OnSwap(PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData)
     {
-        if (MeetingHud.Instance.state != MeetingHud.VoteStates.NotVoted) return;
+        if (MeetingHud.Instance.state != MeetingHud.VoteStates.NotVoted || swaps <= 0) return;
 
         if (firstTargetData == targetData || secondTargetData == targetData)
         {
@@ -104,29 +110,45 @@ public class SwapperRole : CustomRoleBehavior
         firstTargetData = null;
         secondTargetData = null;
 
-        foreach (var button in swapperButton.Buttons.Keys)
+        if (swapperButton != null)
         {
-            if (button == null) continue;
-            button.GetComponent<SpriteRenderer>().color = Color.white;
+            foreach (var button in swapperButton.Buttons.Keys)
+            {
+                if (button == null) continue;
+                button.GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
     }
 
-    public override void CheckForEndVoting(MeetingHud meetingHud)
+    // Only ran by host!
+    public override void OnEndVoting(MeetingHud meetingHud)
+    {
+        SwapVotes(meetingHud);
+        SendRoleSync(1);
+    }
+
+    private void SwapVotes(MeetingHud meetingHud, bool onlyAnimate = false)
     {
         if (hasSwapped && firstTargetData != null && secondTargetData != null)
         {
-            isSwapping = true;
-            foreach (var pva in meetingHud.playerStates.ToArray())
+            PlayerVoteArea? myPva = meetingHud.playerStates.FirstOrDefault(p => p.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId);
+
+            if (!onlyAnimate)
             {
-                if (pva.VotedFor == firstTargetData.PlayerId)
+                foreach (var pva in meetingHud.playerStates.ToArray())
                 {
-                    if (pva.AmDead) continue;
-                    pva.VotedFor = secondTargetData.PlayerId;
-                }
-                else if (pva.VotedFor == secondTargetData.PlayerId)
-                {
-                    if (pva.AmDead) continue;
-                    pva.VotedFor = firstTargetData.PlayerId;
+                    if (pva.VotedFor == firstTargetData.PlayerId)
+                    {
+                        if (pva.AmDead) continue;
+                        pva.UnsetVote();
+                        pva.SetVote(secondTargetData.PlayerId);
+                    }
+                    else if (pva.VotedFor == secondTargetData.PlayerId)
+                    {
+                        if (pva.AmDead) continue;
+                        pva.UnsetVote();
+                        pva.SetVote(firstTargetData.PlayerId);
+                    }
                 }
             }
 
@@ -140,6 +162,24 @@ public class SwapperRole : CustomRoleBehavior
 
     private IEnumerator SwapAnimation(PlayerVoteArea pva1, PlayerVoteArea pva2)
     {
+        swaps--;
+        isSwapping = true;
+
+        PlayerVoteArea? myPva = MeetingHud.Instance.playerStates.FirstOrDefault(p => p.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId);
+
+        if (myPva.VotedFor == pva1.TargetPlayerId)
+        {
+            pva1.ThumbsDown.enabled = true;
+            PlayerMaterial.SetColors(new Color(0.4f, 0.4f, 0.4f, 1f), pva2.ThumbsDown);
+            pva2.ThumbsDown.color = new Color(1f, 1f, 1f, 0.5f);
+        }
+        else if (myPva.VotedFor == pva2.TargetPlayerId)
+        {
+            pva2.ThumbsDown.enabled = true;
+            PlayerMaterial.SetColors(new Color(0.4f, 0.4f, 0.4f, 1f), pva1.ThumbsDown);
+            pva1.ThumbsDown.color = new Color(1f, 1f, 1f, 0.5f);
+        }
+
         float animationDuration = 2.5f;
 
         Vector3 startPosition1 = pva1.transform.position;
@@ -188,6 +228,19 @@ public class SwapperRole : CustomRoleBehavior
                     hasSwapped = reader.ReadBoolean();
                 }
                 break;
+            case 1:
+                {
+                    SwapVotes(MeetingHud.Instance, true);
+                }
+                break;
+        }
+    }
+
+    public override void SetAbilityAmountForText(ref int maxAmount, ref int currentAmount)
+    {
+        if (GameStates.IsMeeting)
+        {
+            currentAmount = swaps;
         }
     }
 }

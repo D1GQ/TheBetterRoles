@@ -79,6 +79,26 @@ public abstract class CustomRoleBehavior
     public string RoleName => Translator.GetString($"Role.{Enum.GetName(RoleType)}");
 
     /// <summary>
+    /// Get role name and ability amount. This returns a translated string for the role's name and the amount of ability uses based on its type using a translator utility.
+    /// </summary>
+    public string RoleNameAndAbilityAmount
+    {
+        get
+        {
+            string str = string.Empty;
+            int max = -1, current = -1;
+            SetAbilityAmountForText(ref max, ref current);
+            if (max > -1 || current > -1)
+            {
+                string hex = Utils.Color32ToHex(Utils.HexToColor32(RoleColor) - new Color(0.15f, 0.15f, 0.15f));
+                str = $" <{hex}>(</color>{(max > -1 ? max.ToString() : string.Empty)}{(max > -1 && current > -1 ? $"<{hex}>/<color>" : string.Empty)}{(current > -1 ? current.ToString() : string.Empty)}<{hex}>)</color>";
+            }
+
+            return $"<{RoleColor}>{RoleName + str}</color>";
+        }
+    }
+
+    /// <summary>
     /// Set role color. This returns the custom color for the role's team, using the team’s color configuration.
     /// </summary>
     public virtual string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
@@ -666,6 +686,11 @@ public abstract class CustomRoleBehavior
     public virtual string SetNameMark(PlayerControl target) => string.Empty;
 
     /// <summary>
+    /// Returns icon next to player name.
+    /// </summary>
+    public virtual void SetAbilityAmountForText(ref int maxAmount, ref int currentAmount) { }
+
+    /// <summary>
     /// Returns text that will appear on the meeting hud on start.
     /// </summary>
     public virtual string AddMeetingText(ref CustomClip? clip) => string.Empty;
@@ -739,26 +764,6 @@ public abstract class CustomRoleBehavior
     public virtual void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body) { }
 
     /// <summary>
-    /// Check when another player attempts to report a body. If the check fails, the report action will be canceled.
-    /// </summary>
-    public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
-
-    /// <summary>
-    /// Check when the local player attempts to report a body. If the check fails, the report action will be canceled.
-    /// </summary>
-    public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
-
-    /// <summary>
-    /// Called after the host has allowed another player to report a body. This executes the logic after the report is approved.
-    /// </summary>
-    public virtual void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
-
-    /// <summary>
-    /// Called after the host has allowed the local player to report a body. This executes the logic after the report is approved.
-    /// </summary>
-    public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
-
-    /// <summary>
     /// Check when another player attempts to use or exit a vent. This checks if the action is allowed before execution.
     /// </summary>
     public virtual bool CheckVentOther(PlayerControl venter, int ventId, bool Exit) => true;
@@ -790,14 +795,47 @@ public abstract class CustomRoleBehavior
     public virtual void OnAbilityDurationEnd(int id, bool isTimeOut) { }
 
     /// <summary>
-    /// Called after a meeting has ended, converting PlayerVoteArea info to VoterState
+    /// Check when another player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
-    public virtual void CheckForEndVoting(MeetingHud meetingHud) { }
-    
+    public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+
     /// <summary>
-    /// Called after a meeting has ended, determining what happens after the discussion or vote.
+    /// Check when the local player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
-    public virtual void OnVotingComplete(MeetingHud meetingHud, ref MeetingHud.VoterState[] states, ref NetworkedPlayerInfo? exiled, ref bool tie) { }
+    public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+
+    /// <summary>
+    /// Called after the host has allowed another player to report a body. This executes the logic after the report is approved.
+    /// </summary>
+    public virtual void OnBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
+
+    /// <summary>
+    /// Called after the host has allowed the local player to report a body. This executes the logic after the report is approved.
+    /// </summary>
+    public virtual void OnBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) { }
+
+    /// <summary>
+    /// Called on meeting end, add additional votes to votedFor.
+    /// This code is only ran by the host!
+    /// </summary>
+    public virtual int AddVotes(MeetingHud meetingHud, PlayerVoteArea pva) => 0;
+
+    /// <summary>
+    /// Called on meeting end, add visual votes on players vote area.
+    /// </summary>
+    public virtual void AddVisualVotes(MeetingHud meetingHud, PlayerVoteArea votedFor, ref List<MeetingHud.VoterState> states) { }
+
+    /// <summary>
+    /// Called on meeting end, add additional votes for calculation of exiled.
+    /// This code is only ran by the host!
+    /// </summary>
+    public virtual void AddAdditionalVotes(MeetingHud meetingHud, ref Dictionary<byte, int> votes) { }
+
+    /// <summary>
+    /// Called after a meeting has ended, converting PlayerVoteArea info to VoterState.
+    /// This code is only ran by the host!
+    /// </summary>
+    public virtual void OnEndVoting(MeetingHud meetingHud) { }
 
     /// <summary>
     /// Called after an exile has concluded, handling the logic for the player who was exiled.
