@@ -118,7 +118,7 @@ class PlayerControlPatch
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
                 player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
             {
-                sbTag.Append($"{player.Role()?.RoleNameAndAbilityAmount}{player.FormatTasksToText()}---");
+                sbTag.Append($"{player.GetRoleNameAndColor()}{player.FormatTasksToText()}---");
             }
 
             if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
@@ -126,7 +126,7 @@ class PlayerControlPatch
             {
                 foreach (var addon in playerData.RoleInfo.Addons)
                 {
-                    sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
+                    sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
                 }
             }
         }

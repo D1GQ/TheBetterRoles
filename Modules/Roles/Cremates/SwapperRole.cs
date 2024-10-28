@@ -236,7 +236,7 @@ public class SwapperRole : CustomRoleBehavior
         }
     }
 
-    public override void SetAbilityAmountForText(ref int maxAmount, ref int currentAmount)
+    public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
     {
         if (GameStates.IsMeeting)
         {
