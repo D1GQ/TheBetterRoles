@@ -91,7 +91,7 @@ public abstract class CustomRoleBehavior
             if (max > -1 || current > -1)
             {
                 string hex = Utils.Color32ToHex(Utils.HexToColor32(RoleColor) - new Color(0.15f, 0.15f, 0.15f));
-                str = $" <{hex}>(</color>{(max > -1 ? max.ToString() : string.Empty)}{(max > -1 && current > -1 ? $"<{hex}>/<color>" : string.Empty)}{(current > -1 ? current.ToString() : string.Empty)}<{hex}>)</color>";
+                str = $" <{hex}>(</color>{(max > -1 ? max.ToString() : string.Empty)}{(max > -1 && current > -1 ? $"<{hex}>/</color>" : string.Empty)}{(current > -1 ? current.ToString() : string.Empty)}<{hex}>)</color>";
             }
 
             return $"<{RoleColor}>{RoleName + str}</color>";

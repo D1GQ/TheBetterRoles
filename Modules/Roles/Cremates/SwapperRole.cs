@@ -240,6 +240,7 @@ public class SwapperRole : CustomRoleBehavior
     {
         if (GameStates.IsMeeting)
         {
+            maxAmount = AmountOfSwaps.GetInt();
             currentAmount = swaps;
         }
     }

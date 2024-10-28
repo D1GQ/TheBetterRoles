@@ -116,7 +116,7 @@
 
   "Role.Mayor": "Mayor",
   "Role.Mayor.Info": "Preserve and use additional votes",
-  "Role.Mayor.LongInfo": "As the Mayor, you can preserve votes between meetings by skipping, collect votes cast on you, and use them later.",
+  "Role.Mayor.LongInfo": "As the Mayor, you can collect votes between meetings by skipping, and when votes are cast on you.",
   "Role.Mayor.Option.CollectVoteOnSkip": "Collect Vote On Skip",
   "Role.Mayor.Option.CollectVoteWhenVotedOn": "Collect Vote When Voted",
   "Role.Mayor.Option.AdditionalVoteIcon": "Additional Vote Icon",
