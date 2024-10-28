@@ -103,10 +103,7 @@ public class MayorRole : CustomRoleBehavior
 
     public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
     {
-        if (GameStates.IsMeeting)
-        {
-            currentAmount = additionalVotes;
-        }
+        currentAmount = additionalVotes;
     }
 
     public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)

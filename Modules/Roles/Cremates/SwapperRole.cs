@@ -238,10 +238,7 @@ public class SwapperRole : CustomRoleBehavior
 
     public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
     {
-        if (GameStates.IsMeeting)
-        {
-            maxAmount = AmountOfSwaps.GetInt();
-            currentAmount = swaps;
-        }
+        maxAmount = AmountOfSwaps.GetInt();
+        currentAmount = swaps;
     }
 }
