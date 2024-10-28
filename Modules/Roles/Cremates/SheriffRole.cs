@@ -7,6 +7,7 @@ namespace TheBetterRoles;
 public class SheriffRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 12;
     public override string RoleColor => "#feab00";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Sheriff;

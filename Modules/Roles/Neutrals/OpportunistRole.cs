@@ -5,6 +5,7 @@ namespace TheBetterRoles;
 public class OpportunistRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 22;
     public override string RoleColor => "#00CA28";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Opportunist;

@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class InvestigatorRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 9;
     public override string RoleColor => "#00FFEE";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Investigator;

@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class SwiftAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 28;
     public override string RoleColor => "#8DECFF";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Swift;

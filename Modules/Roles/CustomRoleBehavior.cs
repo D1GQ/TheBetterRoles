@@ -133,9 +133,10 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
+    /// Use id 32 for the next role!
     /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
     /// </summary>
-    public int RoleId => (int)RoleType;
+    public abstract int RoleId { get; }
 
     /// <summary>
     /// Get automatically generated role UID based on the role type. Each role is assigned a unique identifier derived from its type.
@@ -360,7 +361,7 @@ public abstract class CustomRoleBehavior
 
         var num = tempOptionNum;
         tempOptionNum++;
-        return RoleUID + 50 + 5 * num;
+        return RoleUID + 50 + (5 * num);
     }
 
     private int tempBaseOptionNum = 0;
@@ -515,9 +516,9 @@ public abstract class CustomRoleBehavior
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
         writer.WriteNetObject(_player);
         writer.Write((int)RoleType);
-        writer.Write(id);
+        writer.Write((byte)id);
         writer.Write(targetId);
-        writer.Write((int)type);
+        writer.Write((byte)type);
         AbilityWriter(id, this, ref writer);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
@@ -537,9 +538,9 @@ public abstract class CustomRoleBehavior
         {
             case CustomRPC.RoleAction:
                 {
-                    var id = reader.ReadInt32();
+                    var id = reader.ReadByte();
                     var targetId = reader.ReadInt32();
-                    var type = (TargetType)reader.ReadInt32();
+                    var type = (TargetType)reader.ReadByte();
 
                     OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
                         type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,

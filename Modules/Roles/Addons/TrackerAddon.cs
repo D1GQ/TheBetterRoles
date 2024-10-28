@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class TrackerAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 29;
     public override string RoleColor => "#80FF00";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Tracker;

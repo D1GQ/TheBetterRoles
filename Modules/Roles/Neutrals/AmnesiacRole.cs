@@ -7,6 +7,7 @@ namespace TheBetterRoles;
 public class AmnesiacRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 31;
     public override string RoleColor => "#96E5FF";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Amnesiac;

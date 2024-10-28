@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class TransporterRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 15;
     public override string RoleColor => "#68b2bf";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Transporter;

@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class MayorRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 10;
     public override string RoleColor => "#004f1e";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mayor;

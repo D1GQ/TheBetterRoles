@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class PlaguebearerRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 17;
     public override string RoleColor => "#97BD3D";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Plaguebearer;

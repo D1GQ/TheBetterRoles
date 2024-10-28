@@ -10,6 +10,7 @@ namespace TheBetterRoles;
 public class AltruistRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 8;
     public override string RoleColor => "#BA0400";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Altruist;

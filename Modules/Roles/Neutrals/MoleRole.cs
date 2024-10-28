@@ -10,6 +10,7 @@ namespace TheBetterRoles;
 public class MoleRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 21;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Mole;

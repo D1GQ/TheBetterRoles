@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class LanternAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 26;
     public override string RoleColor => "#c7c71d";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Lantern;

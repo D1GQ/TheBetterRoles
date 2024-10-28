@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class MedicRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 11;
     public override string RoleColor => "#00FF2A";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Medic;

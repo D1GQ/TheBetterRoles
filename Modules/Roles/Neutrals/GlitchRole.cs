@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class GlitchRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 19;
     public override bool VentReliantRole => true;
     public override bool CanVent => false;
     public override string RoleColor => "#32ff00";

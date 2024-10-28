@@ -10,6 +10,7 @@ namespace TheBetterRoles;
 public class JanitorRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 3;
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Janitor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;

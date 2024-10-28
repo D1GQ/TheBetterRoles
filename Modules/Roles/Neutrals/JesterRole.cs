@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class JesterRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 20;
     public override string RoleColor => "#FF82F8";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Jester;

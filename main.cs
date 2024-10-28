@@ -133,8 +133,9 @@ public class Main : BasePlugin
             ConsoleManager.CreateConsole();
             ConsoleManager.SetConsoleTitle("Among Us - TBR Console");
             ConsoleManager.ConfigPreventClose.Value = true;
-
             Logger = BepInEx.Logging.Logger.CreateLogSource(PluginGuid);
+
+            CheckRoleIds();
 
             BetterDataManager.SetUp();
             BetterDataManager.LoadData();
@@ -163,6 +164,35 @@ public class Main : BasePlugin
         catch (Exception ex)
         {
             TheBetterRoles.Logger.Error(ex);
+        }
+    }
+
+    private void CheckRoleIds()
+    {
+        Dictionary<int, List<string>> idToRolesMap = [];
+
+        foreach (var role in CustomRoleManager.allRoles)
+        {
+            var id = role.RoleId;
+
+            if (idToRolesMap.ContainsKey(id))
+            {
+                idToRolesMap[id].Add(role.GetType().Name);
+            }
+            else
+            {
+                idToRolesMap[id] = [role.GetType().Name];
+            }
+        }
+
+        foreach (var kvp in idToRolesMap)
+        {
+            if (kvp.Value.Count > 1)
+            {
+                var rolesWithSameId = string.Join(", ", kvp.Value);
+                TheBetterRoles.Logger.Warning($"Duplicate RoleId detected: Id ({kvp.Key}) is assigned to roles: {rolesWithSameId}. " +
+                    "This will cause weird side effects and needs to be changed as soon as possible!");
+            }
         }
     }
 

@@ -8,6 +8,7 @@ namespace TheBetterRoles;
 public class MinerRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 4;
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Miner;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;

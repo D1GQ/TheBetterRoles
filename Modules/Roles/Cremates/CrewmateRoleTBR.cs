@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class CrewmateRoleTBR : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 1;
     public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Crewmate;

@@ -5,6 +5,7 @@ namespace TheBetterRoles;
 public class BaitAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 23;
     public override string RoleColor => "#00BDA4";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Bait;

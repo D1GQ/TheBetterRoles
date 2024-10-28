@@ -7,6 +7,7 @@ namespace TheBetterRoles;
 public class PestillenceRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 18;
     public override bool CanBeAssigned => false;
     public override string RoleColor => "#4F631E";
     public override CustomRoleBehavior Role => this;

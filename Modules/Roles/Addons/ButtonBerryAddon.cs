@@ -7,6 +7,7 @@ namespace TheBetterRoles;
 public class ButtonBerryAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 24;
     public override string RoleColor => "#FF00EE";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.ButtonBerry;

@@ -11,6 +11,7 @@ namespace TheBetterRoles;
 public class SwapperRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 14;
     public override string RoleColor => "#52c345";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Swapper;

@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class SnitchRole : CustomRoleBehavior
 {
     // Role Info
+    public override int RoleId => 13;
     public override bool TaskReliantRole => true;
     public override string RoleColor => "#F3CE35";
     public override CustomRoleBehavior Role => this;

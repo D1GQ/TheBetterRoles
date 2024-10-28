@@ -6,6 +6,7 @@ namespace TheBetterRoles;
 public class NoiseMakerAddon : CustomAddonBehavior
 {
     // Role Info
+    public override int RoleId => 27;
     public override string RoleColor => "#920086";
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.NoiseMaker;
