@@ -218,4 +218,22 @@ public class BetterOptionPlayerItem : BetterOptionItem
             UpdatePositions();
         }
     }
+
+    public override void SyncValue()
+    {
+        if (ThisOption)
+        {
+            AdjustButtonsActiveState();
+
+            if (IsParent || IsChild)
+            {
+                bool Bool = ShowChildrenCondition();
+                foreach (var item in ChildrenList)
+                {
+                    item.obj.SetActive(Bool && item.SelfShowCondition());
+                }
+                UpdatePositions();
+            }
+        }
+    }
 }

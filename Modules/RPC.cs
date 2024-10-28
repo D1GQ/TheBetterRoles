@@ -342,6 +342,7 @@ internal static class RPC
                             string text = reader.ReadString();
 
                             BetterDataManager.SaveSetting(Id, data);
+                            BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue();
                             Utils.SettingsChangeNotifierSync(Id, text);
                         }
                     }

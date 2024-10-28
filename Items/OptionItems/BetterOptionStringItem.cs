@@ -206,6 +206,29 @@ public class BetterOptionStringItem : BetterOptionItem
         }
     }
 
+    public override void SyncValue()
+    {
+        if (ThisOption)
+        {
+            Load(defaultValue);
+
+            if (CurrentValue <= Values.Length - 1 && CurrentValue >= 0)
+            {
+                ThisOption.ValueText.text = Values[CurrentValue];
+            }
+
+            if (IsParent || IsChild)
+            {
+                bool Bool = ShowChildrenCondition();
+                foreach (var item in ChildrenList)
+                {
+                    item.obj.SetActive(Bool && item.SelfShowCondition());
+                }
+                UpdatePositions();
+            }
+        }
+    }
+
     public override string FormatValueAsText()
     {
         return Values[CurrentValue];

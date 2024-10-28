@@ -143,8 +143,7 @@ public class BetterOptionItem
         throw new NotImplementedException();
     }
 
-    public virtual string FormatValueAsText()
-    {
-        return string.Empty;
-    }
+    public virtual void SyncValue() { }
+
+    public virtual string FormatValueAsText() => string.Empty;
 }

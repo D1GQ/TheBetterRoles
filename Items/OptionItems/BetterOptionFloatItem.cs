@@ -247,6 +247,26 @@ public class BetterOptionFloatItem : BetterOptionItem
         }
     }
 
+    public override void SyncValue()
+    {
+        if (ThisOption)
+        {
+            Load(defaultValue);
+
+            ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
+
+            if (IsParent || IsChild)
+            {
+                bool Bool = ShowChildrenCondition();
+                foreach (var item in ChildrenList)
+                {
+                    item.obj.SetActive(Bool && item.SelfShowCondition());
+                }
+                UpdatePositions();
+            }
+        }
+    }
+
     public override string FormatValueAsText()
     {
         return $"{PreFix}{CurrentValue}{PostFix}";

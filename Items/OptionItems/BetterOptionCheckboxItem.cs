@@ -150,6 +150,30 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         }
     }
 
+    public override void SyncValue()
+    {
+        if (ThisOption)
+        {
+            Load(defaultValue);
+
+            var check = ThisOption.CheckMark.GetComponent<SpriteRenderer>();
+            if (check != null)
+            {
+                check.enabled = IsChecked;
+            }
+
+            if (IsParent || IsChild)
+            {
+                bool Bool = ShowChildrenCondition();
+                foreach (var item in ChildrenList)
+                {
+                    item.obj.SetActive(Bool && item.SelfShowCondition());
+                }
+                UpdatePositions();
+            }
+        }
+    }
+
     public override string FormatValueAsText()
     {
         Color color = IsChecked ? Color.green : Color.red;

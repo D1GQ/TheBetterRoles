@@ -254,6 +254,26 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
     }
 
+    public override void SyncValue()
+    {
+        if (ThisOption)
+        {
+            Load(defaultValue);
+
+            ThisOption.ValueText.text = $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
+
+            if (IsParent || IsChild)
+            {
+                bool Bool = ShowChildrenCondition();
+                foreach (var item in ChildrenList)
+                {
+                    item.obj.SetActive(Bool && item.SelfShowCondition());
+                }
+                UpdatePositions();
+            }
+        }
+    }
+
     public override string FormatValueAsText()
     {
         return $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
