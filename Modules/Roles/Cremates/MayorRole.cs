@@ -14,6 +14,7 @@ public class MayorRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+
     public BetterOptionItem? CollectVoteOnSkip;
     public BetterOptionItem? CollectVoteWhenVotedOn;
     public BetterOptionItem? AdditionalVoteIcon;
@@ -48,30 +49,43 @@ public class MayorRole : CustomRoleBehavior
         }
     }
 
-    public override void OnEndVoting(MeetingHud meetingHud)
-    {
-        foreach (var pva in meetingHud.playerStates)
-        {
-            if (pva.TargetPlayerId == _player.PlayerId && pva.VotedFor == 253 && CollectVoteOnSkip.GetBool())
-            {
-                additionalVotes++;
-            }
-            else if (pva.TargetPlayerId != _player.PlayerId && pva.VotedFor == _player.PlayerId && CollectVoteWhenVotedOn.GetBool())
-            {
-                additionalVotes++;
-            }
-        }
-    }
-
+    private AudioClip? lastSound;
     private void OnVoteButton(PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData)
     {
         if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted)
         {
             additionalVotes--;
             voted.Add(pva.TargetPlayerId);
-            SoundManager.instance.PlaySound(MeetingHud.Instance.VoteLockinSound, false);
+            if (lastSound != null)
+            {
+                SoundManager.instance.StopSound(lastSound);
+            }
+            lastSound = MeetingHud.Instance.VoteLockinSound;
+            SoundManager.instance.PlaySound(lastSound, false);
         }
         SendRoleSync(0);
+    }
+
+    public override void OnEndVoting(MeetingHud meetingHud)
+    {
+        foreach (var pva in meetingHud.playerStates)
+        {
+            if (CollectVoteOnSkip.GetBool())
+            {
+                if (pva.TargetPlayerId == _player.PlayerId && pva.VotedFor == 253)
+                {
+                    additionalVotes++;
+                }
+            }
+
+            if (CollectVoteWhenVotedOn.GetBool())
+            {
+                if (pva.TargetPlayerId != _player.PlayerId && pva.VotedFor == _player.PlayerId)
+                {
+                    additionalVotes++;
+                }
+            }
+        }
     }
 
     public override void AddAdditionalVotes(MeetingHud meetingHud, ref Dictionary<byte, int> votes)
