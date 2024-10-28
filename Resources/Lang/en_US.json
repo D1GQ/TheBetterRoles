@@ -51,6 +51,8 @@
   "Role.Team.None": "None",
 
   "Role.Ability.CanVent": "Can Vent",
+  "Role.Ability.VentCooldown": "Vent Cooldown",
+  "Role.Ability.VentDuration": "Vent Duration",
 
   "Role.Option.Distance.1": "Short",
   "Role.Option.Distance.2": "Medium",

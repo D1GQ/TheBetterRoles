@@ -36,7 +36,7 @@ public class MoleRole : CustomRoleBehavior
     public VentButton? BurrowButton = new();
     public override void OnSetUpRole()
     {
-        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, this, null, true, true));
+        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
         BurrowButton.VentCondition = (Vent vent) =>
         {
             return CanVentOptionItem.GetBool() || Vents.Select(vents => vents.Id).Contains(vent.Id);

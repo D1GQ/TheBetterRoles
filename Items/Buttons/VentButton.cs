@@ -9,13 +9,14 @@ public class VentButton : BaseButton
     public float HighlightDistance { get; set; } = 3.5f;
     public bool IsAbility { get; set; }
     public Func<Vent, bool> VentCondition { get; set; } = (Vent target) => true;
-    public VentButton Create(int id, string name, float cooldown, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
+    public VentButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
         Distance = 0.8f;
         Role = role;
         Id = id;
         Name = name;
         Cooldown = cooldown;
+        Duration = duration;
         Uses = abilityUses;
         Visible = true;
         IsAbility = isAbility;
@@ -65,13 +66,19 @@ public class VentButton : BaseButton
                 {
                     if (!isAbility)
                     {
-                        if (!_player.inVent)
+                        if (lastTargetVent != null)
                         {
-                            _player.VentSync(lastTargetVent.Id, false);
-                        }
-                        else
-                        {
-                            _player.VentSync(lastTargetVent.Id, true);
+                            if (!_player.inVent)
+                            {
+                                _player.VentSync(lastTargetVent.Id, false);
+                                if (Duration > 0f)
+                                    SetDuration();
+                            }
+                            else
+                            {
+                                _player.VentSync(lastTargetVent.Id, true);
+                                ResetState();
+                            }
                         }
                     }
                     else
@@ -112,7 +119,10 @@ public class VentButton : BaseButton
         return this;
     }
 
-    public override bool BaseInteractable() => !_player.inMovingPlat && !_player.IsOnLadder();
+    public override bool BaseInteractable() =>
+        !_player.inMovingPlat && !_player.IsOnLadder() &&
+        InteractCondition() &&
+        (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
 
     public override void FixedUpdate()
     {

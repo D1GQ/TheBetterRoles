@@ -202,7 +202,7 @@ class CommandsPatch
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.whisper") || cmd == FormatCommandTranslation("Command.Helper.whisper.trim"):
                 if (HandlePlayerArgument(command, subArgs) == true)
                 {
-                    if (UseCommandInGame() == true)
+                    if (UseCommandInLobby() == true)
                     {
                         var player = cmdTarget;
                         var msg = string.Join(" ", command[2..].ToArray());
@@ -346,6 +346,16 @@ class CommandsPatch
     private static bool UseCommandInGame()
     {
         bool flag = GameStates.IsInGame && GameStates.IsMeeting || GameStates.IsExilling || GameStates.IsLobby || GameStates.IsFreePlay || !PlayerControl.LocalPlayer.IsAlive();
+        if (!flag)
+        {
+            Utils.AddChatPrivate("<color=#f50000><size=125%><b>Unable To Use Command While In Game!</b></size></color>");
+        }
+        return flag;
+    }
+
+    private static bool UseCommandInLobby()
+    {
+        bool flag = GameStates.IsLobby || GameStates.IsFreePlay;
         if (!flag)
         {
             Utils.AddChatPrivate("<color=#f50000><size=125%><b>Unable To Use Command While In Game!</b></size></color>");

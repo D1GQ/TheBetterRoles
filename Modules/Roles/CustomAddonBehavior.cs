@@ -40,18 +40,27 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
         OnSetUpRole();
     }
 
+    private int tempBaseOptionNum = 0;
+    private int GetBaseOptionID()
+    {
+        var num = tempBaseOptionNum;
+        tempBaseOptionNum++;
+        return RoleUID + num;
+    }
+
     protected override void SetUpSettings()
     {
-        RoleOptionItem = new BetterOptionPercentItem().Create(RoleUID, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
-        AmountOptionItem = new BetterOptionIntItem().Create(RoleUID + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+        tempBaseOptionNum = 0;
+        RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
+        AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
         if (RoleCategory is not CustomRoleCategory.GoodAddon or CustomRoleCategory.EvilAddon)
         {
-            AssignToCrewmate = new BetterOptionCheckboxItem().Create(RoleUID + 7, SettingsTab,
+            AssignToCrewmate = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToCrewmate"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>", "</color>"), true, RoleOptionItem);
-            AssignToImpostor = new BetterOptionCheckboxItem().Create(RoleUID + 8, SettingsTab,
+            AssignToImpostor = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToImpostor"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>", "</color>"), true, RoleOptionItem);
-            AssignToNeutral = new BetterOptionCheckboxItem().Create(RoleUID + 9, SettingsTab,
+            AssignToNeutral = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToNeutral"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Neutral)}>", "</color>"), true, RoleOptionItem);
         }
 

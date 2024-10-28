@@ -14,6 +14,13 @@ public enum TargetType
     Vent
 }
 
+public class OptionAttributes
+{
+    public int Amount = 0;
+    public float Cooldown = 0f;
+    public float Duration = 0f;
+}
+
 public abstract class CustomRoleBehavior
 {
     /// <summary>
@@ -197,6 +204,21 @@ public abstract class CustomRoleBehavior
     public BetterOptionItem? CanVentOptionItem { get; set; }
 
     /// <summary>
+    /// The option that sets the cooldown time between vent uses for players in this role.
+    /// </summary>
+    public BetterOptionItem? VentCooldownOptionItem { get; set; }
+
+    /// <summary>
+    /// The option that sets the duration a player can stay in a vent while playing this role.
+    /// </summary>
+    public BetterOptionItem? VentDurationOptionItem { get; set; }
+
+    /// <summary>
+    /// Additional options for CanVent
+    /// </summary>
+    public virtual OptionAttributes? AdditionalVentOptions => null;
+
+    /// <summary>
     /// The option that determines whether players can use vents while playing this role. 
     /// </summary>
     public virtual bool DefaultVentOption => IsImpostor;
@@ -338,7 +360,15 @@ public abstract class CustomRoleBehavior
 
         var num = tempOptionNum;
         tempOptionNum++;
-        return RoleUID + 10 + 5 * num;
+        return RoleUID + 50 + 5 * num;
+    }
+
+    private int tempBaseOptionNum = 0;
+    private int GetBaseOptionID()
+    {
+        var num = tempBaseOptionNum;
+        tempBaseOptionNum++;
+        return RoleUID + num;
     }
 
     public CustomRoleBehavior Initialize(PlayerControl player)
@@ -397,6 +427,9 @@ public abstract class CustomRoleBehavior
     /// </summary>
     protected virtual void SetUpRole()
     {
+        SetUpSettings();
+        OptionItems.Initialize();
+
         if (_player != null)
         {
             SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
@@ -409,12 +442,11 @@ public abstract class CustomRoleBehavior
                 return !target.IsImpostorTeammate();
             };
 
-            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), 0, 0, this, null, false, true));
+            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
             VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
+            VentButton.CanCancelDuration = true;
         }
 
-        SetUpSettings();
-        OptionItems.Initialize();
         OnSetUpRole();
     }
 
@@ -425,16 +457,27 @@ public abstract class CustomRoleBehavior
 
     protected virtual void SetUpSettings()
     {
-        RoleOptionItem = new BetterOptionPercentItem().Create(RoleUID, SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
-        AmountOptionItem = new BetterOptionIntItem().Create(RoleUID + 1, SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
-        if (!IsCrewmate && !VentReliantRole && !IsGhostRole)
-            CanVentOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 2, SettingsTab, Translator.GetString("Role.Ability.CanVent"), DefaultVentOption, RoleOptionItem);
+        tempBaseOptionNum = 0;
+        RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
+        AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+
+        bool ventFlag = !IsCrewmate && !VentReliantRole && !IsGhostRole;
+        if (ventFlag)
+        {
+            CanVentOptionItem = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), DefaultVentOption, RoleOptionItem);
+        }
+        if (AdditionalVentOptions != null)
+        {
+            if (AdditionalVentOptions.Cooldown > 0f) VentCooldownOptionItem = new BetterOptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentCooldown"), [0f, 180f, 2.5f], AdditionalVentOptions.Cooldown, "", "s", ventFlag ? CanVentOptionItem : null);
+            if (AdditionalVentOptions.Duration > 0f) VentDurationOptionItem = new BetterOptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentDuration"), [0f, 180f, 2.5f], AdditionalVentOptions.Duration, "", "s", ventFlag ? CanVentOptionItem : null);
+        }
+
         if (TaskReliantRole)
         {
-            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(RoleUID + 3, SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
-            CommonTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 4, SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            LongTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 5, SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            ShortTasksOptionItem = new BetterOptionIntItem().Create(RoleUID + 6, SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
+            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
+            CommonTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            LongTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            ShortTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
 
         OptionItems.Initialize();
@@ -581,6 +624,18 @@ public abstract class CustomRoleBehavior
         }
 
         return true;
+    }
+
+    public void OnDurationEnd(int id, bool isTimeOut) 
+    { 
+        switch (id)
+        {
+            case 3:
+                {
+                    _player.VentSync(_player.GetPlayerVentId(), true);
+                }
+                break;
+        }
     }
 
     /// <summary>

@@ -82,7 +82,7 @@ public static class Utils
     {
         if (CustomRoleManager.RoleChecksAny(player, role => role.HasTask, false) || CustomRoleManager.RoleChecksAny(player, role => role.HasSelfTask, false))
         {
-            return $" <color=#cbcbcb>({player.Data.Tasks.ToArray().Where(task => task.Complete).Count()}/{player.Data.Tasks.Count})</color>";
+            return $" <#ffff2b>({player.Data.Tasks.ToArray().Where(task => task.Complete).Count()}/{player.Data.Tasks.Count})</color>";
         }
         else
         {

@@ -64,7 +64,7 @@ public class BaseButton
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
         if ((!checkVent && !_player.CanMove && !_player.IsInVent()) ||
-            (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0
+            (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0 && !CanCancelDuration
             || !BaseInteractable())
         {
             return [];
@@ -167,6 +167,7 @@ public class BaseButton
             SetCooldown();
             Text.SetText(Name);
             _player.ResetAbilityStateSync(Id, (int)Role.RoleType, isTimeOut);
+            Role.OnDurationEnd(Id, isTimeOut);
         }
     }
 
