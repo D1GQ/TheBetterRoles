@@ -57,6 +57,8 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
         RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
         AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
+        OptionItems.Initialize();
+
         if (RoleCategory is not CustomRoleCategory.GoodAddon or CustomRoleCategory.EvilAddon)
         {
             AssignToCrewmate = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
@@ -66,7 +68,5 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
             AssignToNeutral = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToNeutral"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Neutral)}>", "</color>"), true, RoleOptionItem);
         }
-
-        OptionItems.Initialize();
     }
 }

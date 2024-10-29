@@ -22,6 +22,9 @@ public class ArsonistRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
+    public BetterOptionItem? ArsonistType;
+    public BetterOptionItem? MinimumDousesToIgnite;
+    public BetterOptionItem? MaximumDouses;
     public BetterOptionItem? DouseCooldown;
     public BetterOptionItem? DouseDistance;
     public BetterOptionItem? DousingDuration;
@@ -35,12 +38,44 @@ public class ArsonistRole : CustomRoleBehavior
         {
             return
             [
-                DouseCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseCooldown"), [0f, 180f, 2.5f], 20f, "", "s", RoleOptionItem),
+                ArsonistType = new BetterOptionStringItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Arsonist.Option.ArsonistType"),
+                [Translator.GetString("Role.Arsonist.ArsonistType.Original"), Translator.GetString("Role.Arsonist.ArsonistType.Modern")], 0, RoleOptionItem),
+                MinimumDousesToIgnite = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MinimumDousesToIgnite"), [1, 15, 1], 1, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
+                MaximumDouses = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MaximumDouses"), [1, 15, 1], 3, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
+
+                DouseCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseCooldown"), [0f, 180f, 2.5f], 20f, "", "s", RoleOptionItem),
                 DouseDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseDistance"),
                     [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 0, RoleOptionItem),
+
                 DousingDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingDuration"), [0f, 5f, 0.5f], 0f, "", "s", RoleOptionItem),
                 DousingRange = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingRange"), [0f, 5f, 0.25f], 1.25f, "", "x", DousingDuration),
             ];
+        }
+    }
+
+    private bool IsOriginal => ArsonistType.GetValue() == 0;
+
+    private bool ShowDouseButton()
+    {
+        if (IsOriginal)
+        {
+            return !Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); ;
+        }
+        else
+        {
+            return doused.Where(data => !data.IsDead && !data.Disconnected).ToArray().Length < MaximumDouses.GetInt();
+        }
+    }
+
+    private bool ShowIgniteButton()
+    {
+        if (IsOriginal)
+        {
+            return Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); ;
+        }
+        else
+        {
+            return doused.Where(data => !data.IsDead && !data.Disconnected).ToArray().Length >= MinimumDousesToIgnite.GetInt();
         }
     }
 
@@ -48,14 +83,14 @@ public class ArsonistRole : CustomRoleBehavior
     {
         DouseButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Arsonist.Ability.1"), DouseCooldown.GetFloat(), DousingDuration.GetFloat(), 0, null, this, true, DouseDistance.GetValue()));
         DouseButton.CanCancelDuration = true;
-        DouseButton.VisibleCondition = () => { return !Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); };
+        DouseButton.VisibleCondition = ShowDouseButton;
         DouseButton.TargetCondition = (PlayerControl target) =>
         {
             return !doused.Contains(target.Data);
         };
 
-        IgniteButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Arsonist.Ability.2"), 0, 0, 1, null, this, true));
-        IgniteButton.VisibleCondition = () => { return Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); };
+        IgniteButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Arsonist.Ability.2"), DouseCooldown.GetFloat(), 0, IsOriginal ? 1 : 0, null, this, true));
+        IgniteButton.VisibleCondition = ShowIgniteButton;
     }
 
     private List<NetworkedPlayerInfo> doused = [];

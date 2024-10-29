@@ -82,7 +82,7 @@ static class GameSettingMenuPatch
         BetterGameSettings.CrewmatesCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.CrewmatesCanGuess"), false);
         BetterGameSettings.ImpostorsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.ImpostorsCanGuess"), false);
         BetterGameSettings.BenignNeutralsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.BenignNeutralsCanGuess"), false);
-        BetterGameSettings.KillingNeutralsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.KillingNeutralsCanGuess"), true);
+        BetterGameSettings.KillingNeutralsCanGuess = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.KillingNeutralsCanGuess"), false);
         BetterGameSettings.CanGuessAddons = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.CanGuessAddons"), false);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Title.ImpostorSettings")));

@@ -474,6 +474,8 @@ public abstract class CustomRoleBehavior
         RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f);
         AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
+        OptionItems.Initialize();
+
         bool ventFlag = !IsCrewmate && !VentReliantRole && !IsGhostRole;
         if (ventFlag)
         {
@@ -492,8 +494,6 @@ public abstract class CustomRoleBehavior
             LongTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
             ShortTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
-
-        OptionItems.Initialize();
     }
 
     protected T AddButton<T>(T button) where T : BaseButton

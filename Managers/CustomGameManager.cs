@@ -646,7 +646,7 @@ public class CustomGameManager
             team = CustomRoleTeam.Impostor;
             return true;
         }
-        if (allPlayers.Count() == 1 && killingPlayers.Count == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
+        if (allPlayers.Length == 1 && killingPlayers.Count == 1 && allPlayers.All(pc => pc.Is(CustomRoleTeam.Neutral)))
         {
             team = CustomRoleTeam.Neutral;
             return true;
