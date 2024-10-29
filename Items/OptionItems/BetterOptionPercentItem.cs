@@ -77,6 +77,8 @@ public class BetterOptionPercentItem : BetterOptionItem
         Tab = gameOptionsMenu;
         Name = name;
         TitleText = optionBehaviour.TitleText;
+        TitleText.outlineColor = Color.black;
+        TitleText.outlineWidth = 0.2f;
         Option = optionBehaviour;
         ThisOption = optionBehaviour;
 
