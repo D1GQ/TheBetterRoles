@@ -134,14 +134,14 @@ public class AltruistRole : CustomRoleBehavior
         if (target != null && body != null && !target.BetterData().RoleInfo.Role.IsGhostRole)
         {
             isReviving = true;
-            reviveCoroutine = _player.BetterData().StartCoroutine(StartRevive(target, body));
+            reviveCoroutine = _player.BetterData().StartCoroutine(CoStartRevive(target, body));
             return true;
         }
 
         return false;
     }
 
-    private IEnumerator StartRevive(PlayerControl target, DeadBody body)
+    private IEnumerator CoStartRevive(PlayerControl target, DeadBody body)
     {
         if (_player.IsLocalPlayer())
         {

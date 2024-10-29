@@ -98,11 +98,11 @@ public static class CustomSoundsManager
 
         if (!loop)
         {
-            SoundManager.instance.StartCoroutine(DestroyAfterPlayback(tempAudioSource, clip.length));
+            SoundManager.instance.StartCoroutine(CoDestroyAfterPlayback(tempAudioSource, clip.length));
         }
     }
 
-    private static IEnumerator DestroyAfterPlayback(AudioSource audioSource, float clipLength)
+    private static IEnumerator CoDestroyAfterPlayback(AudioSource audioSource, float clipLength)
     {
         yield return new WaitForSeconds(clipLength);
         UnityEngine.Object.Destroy(audioSource);
@@ -144,7 +144,7 @@ public static class CustomSoundsManager
 
             if (!loop)
             {
-                SoundManager.instance.StartCoroutine(ManageDynamicSound(soundObject, audioSource, position, range));
+                SoundManager.instance.StartCoroutine(CoManageDynamicSound(soundObject, audioSource, position, range));
             }
         }
         else
@@ -153,7 +153,7 @@ public static class CustomSoundsManager
         }
     }
 
-    private static IEnumerator ManageDynamicSound(GameObject soundObject, AudioSource audioSource, Vector2 position, float range)
+    private static IEnumerator CoManageDynamicSound(GameObject soundObject, AudioSource audioSource, Vector2 position, float range)
     {
         while (audioSource.isPlaying)
         {

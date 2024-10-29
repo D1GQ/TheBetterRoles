@@ -51,7 +51,7 @@ public class JanitorRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                _player.BetterData().StartCoroutine(FadeBodyOut(body));
+                _player.BetterData().StartCoroutine(CoFadeBodyOut(body));
                 if (KillCooldownClean.GetBool())
                 {
                     KillButton.SetCooldown(SetKillCooldown.GetFloat());
@@ -77,7 +77,7 @@ public class JanitorRole : CustomRoleBehavior
         return true;
     }
 
-    private IEnumerator FadeBodyOut(DeadBody body)
+    private IEnumerator CoFadeBodyOut(DeadBody body)
     {
         Cleaning = body;
         bool fading = true;

@@ -121,9 +121,9 @@ static class PlayerControlHelper
 
         KillAnimation[] killAnimationsArray = killer.KillAnimations.ToArray();
         KillAnimation randomKillAnimation = killAnimationsArray[UnityEngine.Random.Range(0, killAnimationsArray.Length)];
-        killer.MyPhysics.StartCoroutine(NewMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));
+        killer.MyPhysics.StartCoroutine(CoNewMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));
     }
-    private static IEnumerator NewMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
+    private static IEnumerator CoNewMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
     {
         FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
         bool isParticipant = PlayerControl.LocalPlayer == killer || PlayerControl.LocalPlayer == target;
