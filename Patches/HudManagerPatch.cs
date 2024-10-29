@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TMPro;
 using UnityEngine;
 
@@ -9,15 +12,10 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(HudManager))]
 public class HudManagerPatch
 {
-    public static string WelcomeMessage = $"<b><color=#00b530><size=125%><align=\"center\">{string.Format(Translator.GetString("WelcomeMsg.WelcomeToBAU"), Translator.GetString("BetterAmongUs"))}\n{Main.GetVersionText()}</size>\n" +
-        $"{Translator.GetString("WelcomeMsg.ThanksForDownloading")}</align></color></b>\n<size=120%> </size>\n" +
-        string.Format(Translator.GetString("WelcomeMsg.BAUDescription1"), Translator.GetString("bau"), Translator.GetString("BetterOption.AntiCheat")) + "\n\n" +
-        string.Format(Translator.GetString("WelcomeMsg.BAUDescription2"), Translator.GetString("bau"), Translator.GetString("BetterOption"), Translator.GetString("BetterOption.BetterHost"));
-
     private static bool HasBeenWelcomed = false;
 
-    public static GameObject ButtonsLeft;
-    public static GameObject ButtonsRight;
+    public static GameObject? ButtonsLeft;
+    public static GameObject? ButtonsRight;
 
     [HarmonyPatch(nameof(HudManager.Start))]
     [HarmonyPostfix]
@@ -69,7 +67,7 @@ public class HudManagerPatch
 
         _ = new LateTask(() =>
         {
-            if (!HasBeenWelcomed && GameStates.IsInGame && GameStates.IsLobby && !GameStates.IsFreePlay)
+            if (!HasBeenWelcomed && GameState.IsInGame && GameState.IsLobby && !GameState.IsFreePlay)
             {
                 BetterNotificationManager.Notify($"<b><color=#00751f>{string.Format(Translator.GetString("WelcomeMsg.WelcomeToTBR"), Translator.GetString("TheBetterRoles"))}!</color></b>", 8f);
                 HasBeenWelcomed = true;
@@ -120,7 +118,7 @@ public class HudManagerPatch
         }
         catch { }
 
-        if (GameStates.IsFreePlay)
+        if (GameState.IsFreePlay)
             __instance.Chat.gameObject.SetActive(true);
     }
 }

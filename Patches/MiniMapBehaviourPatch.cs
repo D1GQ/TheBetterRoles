@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
 
@@ -13,7 +14,7 @@ public class MiniMapBehaviourPatch
         [HarmonyPrefix]
         public static void Show_Prefix(/*MapBehaviour __instance,*/ ref MapOptions opts)
         {
-            if (opts != null && !GameStates.IsMeeting && !GameStates.IsExilling)
+            if (opts != null && !GameState.IsMeeting && !GameState.IsExilling)
             {
                 if (PlayerControl.LocalPlayer.RoleAssigned())
                 {

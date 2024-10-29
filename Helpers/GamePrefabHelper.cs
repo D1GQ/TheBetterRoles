@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
 public class GamePrefabHelper
 {

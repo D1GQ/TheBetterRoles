@@ -1,9 +1,14 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class GlitchRole : CustomRoleBehavior
 {
@@ -47,13 +52,13 @@ public class GlitchRole : CustomRoleBehavior
     private NetworkedPlayerInfo.PlayerOutfit? originalData;
     private PlayerMenu? Menu;
 
-    public TargetButton? HackButton = new();
-    public AbilityButton? MimicButton = new();
+    public PlayerAbilityButton? HackButton = new();
+    public BaseAbilityButton? MimicButton = new();
     public override void OnSetUpRole()
     {
-        HackButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, null, this, true, HackDistance.GetValue()));
-        MimicButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
-        MimicButton.InteractCondition = () => { return !GameStates.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
+        HackButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, null, this, true, HackDistance.GetValue()));
+        MimicButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
+        MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

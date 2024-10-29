@@ -1,7 +1,8 @@
-﻿using TMPro;
+﻿using TheBetterRoles.Modules;
+using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Managers;
 
 class BetterNotificationManager
 {
@@ -53,7 +54,7 @@ class BetterNotificationManager
             BAUNotificationManagerObj.transform.position = AspectPosition.ComputeWorldPosition(localCamera, AspectPosition.EdgeAlignments.Bottom, new Vector3(-1.3f, 0.7f, localCamera.nearClipPlane + 0.1f));
 
             showTime -= Time.deltaTime;
-            if (showTime <= 0f && GameStates.IsInGame)
+            if (showTime <= 0f && GameState.IsInGame)
             {
                 BAUNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>().text = "";
                 BAUNotificationManagerObj.SetActive(false);
@@ -62,7 +63,7 @@ class BetterNotificationManager
                 CheckNotifyQueue();
             }
 
-            if (!GameStates.IsInGame)
+            if (!GameState.IsInGame)
             {
                 BAUNotificationManagerObj.SetActive(false);
                 showTime = 0f;

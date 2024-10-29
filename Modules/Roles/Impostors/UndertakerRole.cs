@@ -1,9 +1,13 @@
 ﻿using Hazel;
 using PowerTools;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class UndertakerRole : CustomRoleBehavior
 {
@@ -35,15 +39,15 @@ public class UndertakerRole : CustomRoleBehavior
     private Rigidbody2D? rigidbody;
     private bool hasSpeed = false;
     private CircleCollider2D? boxCollider;
-    public DeadBodyButton? DragButton = new();
-    public AbilityButton? DropButton = new();
+    public DeadBodyAbilityButton? DragButton = new();
+    public BaseAbilityButton? DropButton = new();
     public override void OnSetUpRole()
     {
-        DragButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
+        DragButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
         DragButton.VisibleCondition = () => Dragging == null;
         DragButton.DeadBodyCondition = (DeadBody body) => body.GetComponentInChildren<SpriteAnim>().FrameTime >= 32;
 
-        DropButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
+        DropButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
         DropButton.VisibleCondition = () => Dragging != null;
     }
 

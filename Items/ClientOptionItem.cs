@@ -1,11 +1,10 @@
 ﻿using BepInEx.Configuration;
+using TheBetterRoles.Modules;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items;
 
-// Code from: https://github.com/tukasa0001/TownOfHost/pull/1265
-// Code from: https://github.com/0xDrMoe/TownofHost-Enhanced
 public class ClientOptionItem
 {
     public ConfigEntry<bool> Config;
@@ -87,11 +86,11 @@ public class ClientOptionItem
             ToggleButton.transform.localPosition = new Vector3(
                 // 現在のオプション数を基に位置を計算
                 numOptions % 2 == 0 ? -1.3f : 1.3f,
-                2.2f - (0.5f * (numOptions / 2)),
+                2.2f - 0.5f * (numOptions / 2),
                 -6f);
             ToggleButton.name = name;
             ToggleButton.Text.text = name;
-            ToggleButton.Text.text += (Config != null && Config.Value) ? ": On" : ": Off";
+            ToggleButton.Text.text += Config != null && Config.Value ? ": On" : ": Off";
 
             var passiveButton = ToggleButton.GetComponent<PassiveButton>();
             passiveButton.OnClick = new();
@@ -148,12 +147,12 @@ public class ClientOptionItem
     {
         if (ToggleButton == null) return;
 
-        var color = (Config != null && Config.Value) ? new Color32(0, 150, 0, byte.MaxValue) : new Color32(77, 77, 77, byte.MaxValue);
-        var textColor = (Config != null && Config.Value) ? new Color(1f, 1f, 1f, 1f) : new Color(1f, 1f, 1f, 0.5f);
+        var color = Config != null && Config.Value ? new Color32(0, 150, 0, byte.MaxValue) : new Color32(77, 77, 77, byte.MaxValue);
+        var textColor = Config != null && Config.Value ? new Color(1f, 1f, 1f, 1f) : new Color(1f, 1f, 1f, 0.5f);
         ToggleButton.Background.color = color;
         ToggleButton.Rollover?.ChangeOutColor(color);
         ToggleButton.Text.color = textColor;
         ToggleButton.Text.text = ToggleButton.name;
-        ToggleButton.Text.text += (Config != null && Config.Value) ? ": On" : ": Off";
+        ToggleButton.Text.text += Config != null && Config.Value ? ": On" : ": Off";
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 class Encryptor
 {

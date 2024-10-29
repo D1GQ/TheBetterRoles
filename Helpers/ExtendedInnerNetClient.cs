@@ -1,6 +1,8 @@
 ﻿using Hazel;
 using InnerNet;
-namespace TheBetterRoles;
+using TheBetterRoles.Modules;
+
+namespace TheBetterRoles.Helpers;
 
 static class ExtendedInnerNetClient
 {
@@ -47,7 +49,7 @@ static class ExtendedInnerNetClient
                 currentByte = reader.ReadByte();
             }
 
-            @bools[i] = (currentByte & (1 << bitIndex)) != 0;
+            @bools[i] = (currentByte & 1 << bitIndex) != 0;
 
             bitIndex++;
 

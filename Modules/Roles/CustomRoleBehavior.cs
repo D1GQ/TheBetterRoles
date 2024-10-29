@@ -1,10 +1,14 @@
-﻿
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using Hazel;
 using InnerNet;
+using TheBetterRoles.Items;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public enum TargetType
 {
@@ -252,17 +256,17 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The kill button for the role, allowing the player to perform kills if applicable.
     /// </summary>
-    public TargetButton? KillButton { get; set; }
+    public PlayerAbilityButton? KillButton { get; set; }
 
     /// <summary>
     /// The sabotage button for the role, allowing the player to perform sabotage actions.
     /// </summary>
-    public SabotageButton? SabotageButton { get; set; }
+    public SabotageAbilityButton? SabotageButton { get; set; }
 
     /// <summary>
     /// The vent button for the role, allowing the player to use vents if they have that ability.
     /// </summary>
-    public VentButton? VentButton { get; set; }
+    public VentAbilityButton? VentButton { get; set; }
 
     /// <summary>
     /// Set if the player is interactable with a target ability button, determining whether they can be targeted by abilities.
@@ -348,8 +352,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual bool CanMove => true;
 
-    public float GetChance() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleUID) : 0f;
-    public int GetAmount() => GameStates.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleUID + 1) : 0;
+    public float GetChance() => GameState.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleUID) : 0f;
+    public int GetAmount() => GameState.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleUID + 1) : 0;
 
     private int tempOptionNum = 0;
     protected int GetOptionUID(bool firstOption = false)
@@ -393,7 +397,7 @@ public abstract class CustomRoleBehavior
                 }
             }
 
-            if (!GameStates.IsFreePlay)
+            if (!GameState.IsFreePlay)
             {
                 SetAllCooldowns();
             }
@@ -433,17 +437,17 @@ public abstract class CustomRoleBehavior
 
         if (_player != null)
         {
-            SabotageButton = AddButton(new SabotageButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
+            SabotageButton = AddButton(new SabotageAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-            KillButton = AddButton(new TargetButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
+            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
                 return !target.IsImpostorTeammate();
             };
 
-            VentButton = AddButton(new VentButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
+            VentButton = AddButton(new VentAbilityButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
             VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
             VentButton.CanCancelDuration = true;
         }
@@ -627,8 +631,8 @@ public abstract class CustomRoleBehavior
         return true;
     }
 
-    public void OnDurationEnd(int id, bool isTimeOut) 
-    { 
+    public void OnDurationEnd(int id, bool isTimeOut)
+    {
         switch (id)
         {
             case 3:
@@ -672,11 +676,11 @@ public abstract class CustomRoleBehavior
 
     public void TryOverrideTasks(bool overideOldTask = false)
     {
-        if (GameStates.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
+        if (GameState.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
         {
             _player.SetNewTasks(LongTasksOptionItem.GetInt(), ShortTasksOptionItem.GetInt(), CommonTasksOptionItem.GetInt());
         }
-        else if (GameStates.IsHost && overideOldTask)
+        else if (GameState.IsHost && overideOldTask)
         {
             _player.SetNewTasks();
         }

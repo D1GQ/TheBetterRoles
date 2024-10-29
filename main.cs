@@ -6,7 +6,11 @@ using HarmonyLib;
 using Innersloth.IO;
 using System.Security.Cryptography;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
 namespace TheBetterRoles;
@@ -154,16 +158,16 @@ public class Main : BasePlugin
                 File.WriteAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-previous-log.txt"), File.ReadAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt")));
 
             File.WriteAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt"), "");
-            TheBetterRoles.Logger.Log("The Better Roles successfully loaded!");
+            TBRLogger.Log("The Better Roles successfully loaded!");
 
             string SupportedVersions = string.Empty;
             foreach (string text in SupportedAmongUsVersions.ToArray())
                 SupportedVersions += $"{text} ";
-            TheBetterRoles.Logger.Log($"TheBetterRoles {TheBetterRolesVersion}-{ReleaseDate} - [{AmongUsVersion} --> {SupportedVersions.Substring(0, SupportedVersions.Length - 1)}] {Utils.GetPlatformName(PlatformData.Platform)}");
+            TBRLogger.Log($"TheBetterRoles {TheBetterRolesVersion}-{ReleaseDate} - [{AmongUsVersion} --> {SupportedVersions.Substring(0, SupportedVersions.Length - 1)}] {Utils.GetPlatformName(PlatformData.Platform)}");
         }
         catch (Exception ex)
         {
-            TheBetterRoles.Logger.Error(ex);
+            TBRLogger.Error(ex);
         }
     }
 
@@ -190,7 +194,7 @@ public class Main : BasePlugin
             if (kvp.Value.Count > 1)
             {
                 var rolesWithSameId = string.Join(", ", kvp.Value);
-                TheBetterRoles.Logger.Warning($"Duplicate RoleId detected: Id ({kvp.Key}) is assigned to roles: {rolesWithSameId}. " +
+                TBRLogger.Warning($"Duplicate RoleId detected: Id ({kvp.Key}) is assigned to roles: {rolesWithSameId}. " +
                     "This will cause weird side effects and needs to be changed as soon as possible!");
             }
         }

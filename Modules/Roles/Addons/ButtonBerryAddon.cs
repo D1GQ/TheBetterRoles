@@ -1,8 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class ButtonBerryAddon : CustomAddonBehavior
 {
@@ -24,10 +28,10 @@ public class ButtonBerryAddon : CustomAddonBehavior
         }
     }
 
-    public AbilityButton? MeetingButton;
+    public BaseAbilityButton? MeetingButton;
     public override void OnSetUpRole()
     {
-        MeetingButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false));
+        MeetingButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

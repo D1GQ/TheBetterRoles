@@ -1,7 +1,10 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Items;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class TrackerAddon : CustomAddonBehavior
 {

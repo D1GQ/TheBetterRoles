@@ -1,8 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class MorphlingRole : CustomRoleBehavior
 {
@@ -34,17 +38,17 @@ public class MorphlingRole : CustomRoleBehavior
 
     private NetworkedPlayerInfo.PlayerOutfit? originalData;
     private NetworkedPlayerInfo.PlayerOutfit? sampleData;
-    public TargetButton? SampleButton;
-    public AbilityButton? TransformButton;
+    public PlayerAbilityButton? SampleButton;
+    public BaseAbilityButton? TransformButton;
 
     public override void OnSetUpRole()
     {
-        SampleButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f));
+        SampleButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f));
         SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData == null; };
 
-        TransformButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
+        TransformButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
         TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
-        TransformButton.InteractCondition = () => { return !GameStates.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
+        TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }

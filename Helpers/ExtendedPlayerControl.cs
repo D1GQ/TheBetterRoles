@@ -2,6 +2,9 @@
 using BepInEx.Unity.IL2CPP.Utils;
 using InnerNet;
 using System.Collections;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
 
@@ -188,7 +191,7 @@ static class ExtendedPlayerControl
     public static bool CanBeTeleported(this PlayerControl player)
     {
         if (player.Data == null
-            || GameStates.IsMeeting
+            || GameState.IsMeeting
             || !player.IsAlive()
             || player.inVent
             || player.walkingToVent
@@ -240,7 +243,7 @@ static class ExtendedPlayerControl
     {
         if (player == null) return false;
 
-        if (player.isDummy || GameStates.IsLocalGame || !GameStates.IsVanillaServer)
+        if (player.isDummy || GameState.IsLocalGame || !GameState.IsVanillaServer)
         {
             return true;
         }
@@ -309,7 +312,7 @@ static class ExtendedPlayerControl
     public static bool IsInRoomSelect(this PlayerControl player)
     {
         if (player == null) return false;
-        return GameStates.AirshipIsActive && Vector2.Distance(player.GetTruePosition(), new(-25, 40)) < 5f;
+        return GameState.AirshipIsActive && Vector2.Distance(player.GetTruePosition(), new(-25, 40)) < 5f;
     }
     // Check if player controller is self client
     public static bool IsLocalPlayer(this PlayerControl player) => player != null && PlayerControl.LocalPlayer != null && player == PlayerControl.LocalPlayer;

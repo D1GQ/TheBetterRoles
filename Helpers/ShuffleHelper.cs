@@ -1,8 +1,10 @@
-﻿namespace TheBetterRoles;
+﻿using TheBetterRoles.Helpers.Random;
+
+namespace TheBetterRoles.Helpers;
 
 public static class ShuffleListExtension
 {
-    private static readonly Random rng = new();
+    private static readonly System.Random rng = new();
 
     /// <summary>
     /// Shuffles all elements in a collection randomly

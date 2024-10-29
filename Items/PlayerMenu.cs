@@ -1,7 +1,10 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items;
 
 [HarmonyPatch(typeof(ShapeshifterMinigame))]
 public class PlayerMenu
@@ -29,22 +32,22 @@ public class PlayerMenu
         if (Phone != null)
         {
             Phone.material?.SetColor(PlayerMaterial.BodyColor, Role.RoleColor32);
-            Phone.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+            Phone.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new Color(0.25f, 0.25f, 0.25f));
         }
         var PhoneButton = PlayerMinigame.transform.Find("PhoneUI/UI_Phone_Button").GetComponent<SpriteRenderer>();
         if (PhoneButton != null)
         {
             PhoneButton.material?.SetColor(PlayerMaterial.BodyColor, Role.RoleColor32);
-            PhoneButton.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new UnityEngine.Color(0.25f, 0.25f, 0.25f));
+            PhoneButton.material?.SetColor(PlayerMaterial.BackColor, Role.RoleColor32 - new Color(0.25f, 0.25f, 0.25f));
         }
 
         PlayerMinigame.StartCoroutine(PlayerMinigame.CoAnimateOpen());
         List<byte> dead = Main.AllDeadBodys.Select(d => d.ParentId).ToList();
         List<NetworkedPlayerInfo> players = GameData.Instance.AllPlayers.ToArray()
             .Where(d =>
-                (d.IsDead == ShowDead) ||
-                (ShowDeadWithBodys && d.IsDead && dead.Contains(d.PlayerId)) ||
-                (!d.IsDead && ShowSelf == d.IsLocalData() && !d.Disconnected)
+                d.IsDead == ShowDead ||
+                ShowDeadWithBodys && d.IsDead && dead.Contains(d.PlayerId) ||
+                !d.IsDead && ShowSelf == d.IsLocalData() && !d.Disconnected
             ).ToList();
 
         PlayerMinigame.potentialVictims = new Il2CppSystem.Collections.Generic.List<ShapeshifterPanel>();
@@ -60,7 +63,7 @@ public class PlayerMenu
             {
                 PlayerControl.LocalPlayer.PlayerMenuSync(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
             }));
-            shapeshifterPanel.NameText.color = (player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : UnityEngine.Color.white);
+            shapeshifterPanel.NameText.color = player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : Color.white;
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
             shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Role.RoleColor32;
             shapeshifterPanel.Background.transform.Find("Highlight/ShapeshifterIcon").gameObject.SetActive(false);

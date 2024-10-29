@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TMPro;
 using UnityEngine;
 
@@ -64,7 +67,7 @@ class PlayerControlPatch
             __instance.cosmetics.colorBlindText.text = string.Empty;
         }
 
-        if (GameStates.IsHost && GameStates.IsLobby)
+        if (GameState.IsHost && GameState.IsLobby)
         {
             ExtendedPlayerInfo? betterData = __instance?.BetterData();
 
@@ -92,7 +95,7 @@ class PlayerControlPatch
         var sbTagTop = new StringBuilder();
         var sbTagBottom = new StringBuilder();
 
-        if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        if (GameState.IsLobby && !GameState.IsFreePlay)
         {
             cosmetics.nameText.color = playerData.HasMod || player.IsLocalPlayer()
                 ? new Color(0.47f, 1f, 0.95f, 1f)
@@ -100,7 +103,7 @@ class PlayerControlPatch
 
             if (playerData.MismatchVersion)
             {
-                sbTag.Append($"<color=#FF0800>{playerData.Version} {(GameStates.IsHost ? $"- {(int)playerData.KickTimer}s" : string.Empty)}</color>+++");
+                sbTag.Append($"<color=#FF0800>{playerData.Version} {(GameState.IsHost ? $"- {(int)playerData.KickTimer}s" : string.Empty)}</color>+++");
             }
         }
         else
@@ -147,7 +150,7 @@ class PlayerControlPatch
     {
         if (target == null) return;
 
-        Logger.LogPrivate($"{__instance.Data.PlayerName} Has killed {target.Data.PlayerName} as {Translator.GetString(__instance.Data.Role.StringName)}", "EventLog");
+        TBRLogger.LogPrivate($"{__instance.Data.PlayerName} Has killed {target.Data.PlayerName} as {Translator.GetString(__instance.Data.Role.StringName)}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerControl.Shapeshift))]
     [HarmonyPostfix]
@@ -156,9 +159,9 @@ class PlayerControlPatch
         if (target == null) return;
 
         if (__instance != target)
-            Logger.LogPrivate($"{__instance.Data.PlayerName} Has Shapeshifted into {target.Data.PlayerName}, did animate: {animate}", "EventLog");
+            TBRLogger.LogPrivate($"{__instance.Data.PlayerName} Has Shapeshifted into {target.Data.PlayerName}, did animate: {animate}", "EventLog");
         else
-            Logger.LogPrivate($"{__instance.Data.PlayerName} Has Un-Shapeshifted, did animate: {animate}", "EventLog");
+            TBRLogger.LogPrivate($"{__instance.Data.PlayerName} Has Un-Shapeshifted, did animate: {animate}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerControl.SetRoleInvisibility))]
     [HarmonyPostfix]
@@ -166,9 +169,9 @@ class PlayerControlPatch
     {
 
         if (isActive)
-            Logger.LogPrivate($"{__instance.Data.PlayerName} Has Vanished as Phantom, did animate: {animate}", "EventLog");
+            TBRLogger.LogPrivate($"{__instance.Data.PlayerName} Has Vanished as Phantom, did animate: {animate}", "EventLog");
         else
-            Logger.LogPrivate($"{__instance.Data.PlayerName} Has Appeared as Phantom, did animate: {animate}", "EventLog");
+            TBRLogger.LogPrivate($"{__instance.Data.PlayerName} Has Appeared as Phantom, did animate: {animate}", "EventLog");
     }
 }
 
@@ -202,20 +205,20 @@ public class PlayerPhysicsPatch
     private static void BootFromVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has been booted from vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
+        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has been booted from vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerPhysics.CoEnterVent))]
     [HarmonyPostfix]
     private static void CoEnterVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
+        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerPhysics.CoExitVent))]
     [HarmonyPostfix]
     private static void CoExitVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
+        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {ventId}, as {Translator.GetString(__instance.myPlayer.Data.Role.StringName)}", "EventLog");
     }
 }

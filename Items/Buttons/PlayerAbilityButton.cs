@@ -1,14 +1,16 @@
-﻿
+﻿using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
-public class TargetButton : BaseButton
+public class PlayerAbilityButton : BaseButton
 {
     public PlayerControl? lastTarget { get; set; }
-    public Func<PlayerControl, bool> TargetCondition { get; set; } = (PlayerControl target) => true;
-    public TargetButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
+    public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
+    public PlayerAbilityButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
         Id = id;
@@ -97,7 +99,7 @@ public class TargetButton : BaseButton
         {
             var targets = GetObjectsInAbilityRange(
                 Main.AllPlayerControls
-                    .Where(target => target.IsAlive() && !target.IsLocalPlayer() && TargetCondition(target) && CustomRoleManager.RoleChecks(target, role => role.InteractableTarget))
+                    .Where(target => target.IsAlive() && !target.IsLocalPlayer() && TargetCondition(target) && target.RoleChecks(role => role.InteractableTarget))
                     .ToList(),
                 Distance,
                 false,

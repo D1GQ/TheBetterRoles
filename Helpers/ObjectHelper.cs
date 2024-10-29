@@ -1,7 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
 public static class ObjectHelper
 {

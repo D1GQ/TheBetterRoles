@@ -1,10 +1,13 @@
-﻿
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Reflection;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Helpers.Random;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Managers;
 
 public class RoleAssignmentData
 {
@@ -74,7 +77,7 @@ public static class CustomRoleManager
 
     public static void AssignRoles()
     {
-        if (!GameStates.IsHost) return;
+        if (!GameState.IsHost) return;
 
         try
         {
@@ -113,7 +116,7 @@ public static class CustomRoleManager
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
         }
     }
 
@@ -285,7 +288,7 @@ public static class CustomRoleManager
 
     private static void SyncPlayerRole(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
     {
-        Logger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
+        TBRLogger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
 
         // Sync main role
         player.SetRoleSync(selectedRole._role.RoleType);
@@ -293,7 +296,7 @@ public static class CustomRoleManager
         // Sync addons
         foreach (var addon in selectedAddons)
         {
-            Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
+            TBRLogger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
             player.SetRoleSync(addon._role.RoleType);
         }
     }
@@ -302,7 +305,7 @@ public static class CustomRoleManager
     {
         foreach (var assignment in assignments)
         {
-            Logger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
+            TBRLogger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
         }
     }
 
@@ -310,7 +313,7 @@ public static class CustomRoleManager
     public static List<RoleAssignmentData> availableGhostRoles = [];
     public static void AssignGhostRoleOnDeath(PlayerControl player)
     {
-        if (!GameStates.IsHost || GameStates.IsFreePlay) return;
+        if (!GameState.IsHost || GameState.IsFreePlay) return;
 
         IRandom.SetInstanceById(0);
 
@@ -366,14 +369,14 @@ public static class CustomRoleManager
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
                 player.SetRoleSync(selectedGhostRole._role.RoleType);
-                Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
+                TBRLogger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
     }
 
     public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)
     {
-        if (!GameStates.IsHost) return;
+        if (!GameState.IsHost) return;
 
         if (player != null)
         {
@@ -454,7 +457,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return false;
                 }
             }
@@ -476,7 +479,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) Logger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return false;
                 }
             }
@@ -492,11 +495,11 @@ public static class CustomRoleManager
         {
             foreach (var role in player.BetterData().RoleInfo.AllRoles)
             {
-                if (role == null || (targetRole != null && targetRole != role) || (filter != null && !filter(role))) continue;
+                if (role == null || targetRole != null && targetRole != role || filter != null && !filter(role)) continue;
 
                 if (predicate(role))
                 {
-                    if (log) Logger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return true;
                 }
             }
@@ -515,11 +518,11 @@ public static class CustomRoleManager
 
             foreach (var role in player.BetterData().RoleInfo.AllRoles)
             {
-                if (role == null || (filter != null && !filter(role))) continue;
+                if (role == null || filter != null && !filter(role)) continue;
 
                 if (predicate(role))
                 {
-                    if (log) Logger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return true;
                 }
             }
@@ -629,7 +632,7 @@ public static class CustomRoleManager
         {
             if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
             {
-                if (GameStates.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
+                if (GameState.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
                 Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);
                 PlayerControl.LocalPlayer.StopAllCoroutines();
                 DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -82,35 +83,29 @@ public class UsablePatch
             bool condition = pc.Object.CanMove;
             var mask = Constants.ShipOnlyMask;
 
-            if (__instance.CanCast<Ladder>())
+            if (CastHelper.TryCast<Ladder>(__instance))
             {
-                var ladder = __instance.Cast<Ladder>();
                 condition &= true;
             }
-            else if (__instance.CanCast<ZiplineConsole>())
+            else if (CastHelper.TryCast<ZiplineConsole>(__instance))
             {
-                var zipline = __instance.Cast<ZiplineConsole>();
                 condition &= !pc.Object.isKilling && !pc.IsDead;
             }
-            else if (__instance.CanCast<PlatformConsole>())
+            else if (CastHelper.TryCast<PlatformConsole>(__instance, out var platform))
             {
-                var platform = __instance.Cast<PlatformConsole>();
                 condition &= !platform.Platform.InUse && Vector2.Distance(platform.Platform.transform.position, platform.transform.position) < 2f;
             }
-            else if (__instance.CanCast<DeconControl>())
+            else if (CastHelper.TryCast<DeconControl>(__instance, out var decon))
             {
                 mask = Constants.ShipAndObjectsMask;
-                var decon = __instance.Cast<DeconControl>();
                 condition &= decon.System.CurState == DeconSystem.States.Idle;
             }
-            else if (__instance.CanCast<DoorConsole>())
+            else if (CastHelper.TryCast<DoorConsole>(__instance, out var door))
             {
-                var door = __instance.Cast<DoorConsole>();
                 condition = !door.MyDoor.IsOpen;
             }
-            else if (__instance.CanCast<OpenDoorConsole>())
+            else if (CastHelper.TryCast<OpenDoorConsole>(__instance, out var openDoor))
             {
-                var openDoor = __instance.Cast<OpenDoorConsole>();
                 condition = !openDoor.myDoor.IsOpen;
             }
             else

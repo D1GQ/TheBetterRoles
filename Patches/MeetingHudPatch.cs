@@ -1,13 +1,15 @@
-using AmongUs.Data;
 using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace TheBetterRoles
 {
@@ -50,9 +52,9 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void StartPostfix(MeetingHud __instance)
         {
-            PlayerMeetingButton.AllButtons.Clear();
+            PlayerVoteAreaButton.AllButtons.Clear();
 
-            var Guess = new PlayerMeetingButton().Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
+            var Guess = new PlayerVoteAreaButton().Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
             Guess.ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) =>
             {
                 CustomSoundsManager.Play("Gunload", 2f);
@@ -127,7 +129,7 @@ namespace TheBetterRoles
 
             __instance.StartCoroutine(DisplayTextsQueue(texts, textPros, __instance, textTemplate));
 
-            Logger.LogHeader("Meeting Has Started");
+            TBRLogger.LogHeader("Meeting Has Started");
         }
 
         private static IEnumerator DisplayTextsQueue(Dictionary<string, CustomClip?> texts, List<TextMeshPro> textPros, MonoBehaviour instance, TextMeshPro textTemplate)
@@ -206,14 +208,14 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void UpdatePostfix(MeetingHud __instance)
         {
-            var buttons = PlayerMeetingButton.AllButtons;
+            var buttons = PlayerVoteAreaButton.AllButtons;
             foreach (var button in buttons)
             {
                 if (button == null) continue;
                 button.Update();
             }
 
-            if (__instance.playerStates == null || !GameStates.IsInGame) return;
+            if (__instance.playerStates == null || !GameState.IsInGame) return;
 
             foreach (var pva in __instance.playerStates)
             {
@@ -337,7 +339,7 @@ namespace TheBetterRoles
                 int roleNum = 0;
                 CustomRoleManager.RoleListener(
                     Utils.PlayerFromPlayerId(playerVoteArea.TargetPlayerId),
-                    role => roleNum =+ role.AddVotes(__instance, playerVoteArea)
+                    role => roleNum = +role.AddVotes(__instance, playerVoteArea)
                 );
 
                 if (playerVoteArea.VotedFor != 252 && playerVoteArea.VotedFor != 255 && playerVoteArea.VotedFor != 254)
@@ -387,7 +389,7 @@ namespace TheBetterRoles
                     bool flag = voterState.VoterId == 255;
                     if (playerById == null && !flag)
                     {
-                        Logger.Error(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
+                        TBRLogger.Error(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
                     }
                     else if (i == 0 && voterState.SkippedVote)
                     {
@@ -466,7 +468,7 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void OnDestroy_Postfix()
         {
-            Logger.LogHeader("Meeting Has Endded");
+            TBRLogger.LogHeader("Meeting Has Endded");
         }
     }
 }

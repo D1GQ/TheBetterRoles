@@ -1,12 +1,12 @@
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers.Random;
 
-public class NetRandomWrapper(Random instance) : IRandom
+public class NetRandomWrapper(System.Random instance) : IRandom
 {
-    public Random wrapping = instance;
+    public System.Random wrapping = instance;
 
-    public NetRandomWrapper() : this(new Random())
+    public NetRandomWrapper() : this(new System.Random())
     { }
-    public NetRandomWrapper(int seed) : this(new Random(seed))
+    public NetRandomWrapper(int seed) : this(new System.Random(seed))
     { }
 
     public int Next(int minValue, int maxValue) => wrapping.Next(minValue, maxValue);

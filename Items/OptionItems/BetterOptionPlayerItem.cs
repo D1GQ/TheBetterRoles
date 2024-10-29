@@ -1,7 +1,8 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionPlayerItem : BetterOptionItem
 {
@@ -24,7 +25,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
             return this;
         }
 
-        NumberOption optionBehaviour = UnityEngine.Object.Instantiate<NumberOption>(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        NumberOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(0, option));
@@ -97,7 +98,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
             ThisOption.ValueText.text = "<color=#ababab>Random</color>";
         }
 
-        if (!GameStates.IsHost)
+        if (!GameState.IsHost)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

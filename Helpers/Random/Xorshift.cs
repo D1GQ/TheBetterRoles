@@ -1,4 +1,4 @@
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers.Random;
 
 public class Xorshift(uint seed) : IRandom
 {

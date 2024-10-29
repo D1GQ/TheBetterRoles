@@ -1,9 +1,8 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
-// Code from: https://github.com/0xDrMoe/TownofHost-Enhanced
 [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
 public static class Zoom
 {
@@ -13,7 +12,7 @@ public static class Zoom
     {
         if (PlayerControl.LocalPlayer.Role() != null)
         {
-            if (GameStates.IsCanMove && (!GameStates.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
+            if (GameState.IsCanMove && (!GameState.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
                 && !PlayerControl.LocalPlayer.BetterData().IsFakeAlive))
             {
                 if (Camera.main.orthographicSize > 3.0f)
@@ -23,7 +22,7 @@ public static class Zoom
                 {
                     SetZoomSize(times: false);
                 }
-                else if (Input.mouseScrollDelta.y < 0 && (GameStates.IsDead || GameStates.IsFreePlay || GameStates.IsLobby) &&
+                else if (Input.mouseScrollDelta.y < 0 && (GameState.IsDead || GameState.IsFreePlay || GameState.IsLobby) &&
                             Camera.main.orthographicSize < 18.0f)
                 {
                     SetZoomSize(times: true);
@@ -47,7 +46,7 @@ public static class Zoom
             Camera.main.orthographicSize = 3.0f;
             HudManager.Instance.UICamera.orthographicSize = 3.0f;
             HudManager.Instance.Chat.transform.localScale = Vector3.one;
-            if (GameStates.IsMeeting)
+            if (GameState.IsMeeting)
                 MeetingHud.Instance.transform.localScale = Vector3.one;
         }
         else
@@ -71,7 +70,7 @@ public static class Flag
 
     public static void Run(Action action, string type, bool firstrun = false)
     {
-        if (oneTimeList.Contains(type) || (firstrun && !firstRunList.Contains(type)))
+        if (oneTimeList.Contains(type) || firstrun && !firstRunList.Contains(type))
         {
             if (!firstRunList.Contains(type))
                 firstRunList.Add(type);

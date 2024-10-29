@@ -1,4 +1,4 @@
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers.Random;
 
 public class HashRandomWrapper : IRandom
 {

@@ -1,10 +1,12 @@
 ﻿using HarmonyLib;
 using Hazel;
 using InnerNet;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
-using static TheBetterRoles.ActionRPCs;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 public enum RpcAction : int
 {
@@ -70,7 +72,7 @@ public static class MessageReaderUpdateSystemPatch
 {
     public static bool Prefix(/*ShipStatus __instance,*/ [HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] MessageReader reader)
     {
-        if (GameStates.IsHideNSeek) return false;
+        if (GameState.IsHideNSeek) return false;
 
         var amount = MessageReader.Get(reader).ReadByte();
 
@@ -103,7 +105,7 @@ internal static class RPC
 
     public static void SyncAllSettings(PlayerControl? player = null)
     {
-        if (!GameStates.IsHost) return;
+        if (!GameState.IsHost) return;
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncAllSettings, SendOption.Reliable, player != null ? player.Data.ClientId : -1);
         writer.Write(Main.modSignature);
@@ -197,7 +199,7 @@ internal static class RPC
 
     public static void SyncOption(int id, string data, string value)
     {
-        if (!GameStates.IsHost) return;
+        if (!GameState.IsHost) return;
 
         var text = Utils.SettingsChangeNotifier(id, value);
 
@@ -250,7 +252,7 @@ internal static class RPC
                             player.BetterData().HasMod = true;
                             player.BetterData().Version = version;
 
-                            if (GameStates.IsHost)
+                            if (GameState.IsHost)
                             {
                                 SyncAllSettings(player);
                             }
@@ -261,14 +263,14 @@ internal static class RPC
                             player.BetterData().MismatchVersion = true;
                             player.BetterData().HasMod = true;
                             player.BetterData().Version = version;
-                            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
+                            TBRLogger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
                         }
                     }
                     break;
                 case CustomRPC.SyncAllSettings:
                     {
                         var signature = reader.ReadString();
-                        if (!GameStates.IsHost && signature == Main.modSignature && player.IsHost())
+                        if (!GameState.IsHost && signature == Main.modSignature && player.IsHost())
                         {
                             BetterDataManager.HostSettings.Clear();
                             GameSettingMenuPatch.SetupSettings(true);
@@ -317,7 +319,7 @@ internal static class RPC
                                     int byteIndex = boolIndex / 8;
                                     if (byteIndex < boolByteCount)
                                     {
-                                        bool boolValue = (boolData[byteIndex] & (1 << (boolIndex % 8))) != 0; // Check the specific bit
+                                        bool boolValue = (boolData[byteIndex] & 1 << boolIndex % 8) != 0; // Check the specific bit
                                         settings[kvp.Key] = boolValue.ToString();
                                     }
                                     boolIndex++;
@@ -335,7 +337,7 @@ internal static class RPC
                 case CustomRPC.SyncOption:
                     {
                         var signature = reader.ReadString();
-                        if (!GameStates.IsHost && signature == Main.modSignature && player.IsHost())
+                        if (!GameState.IsHost && signature == Main.modSignature && player.IsHost())
                         {
                             int Id = reader.ReadInt32();
                             string data = reader.ReadString();

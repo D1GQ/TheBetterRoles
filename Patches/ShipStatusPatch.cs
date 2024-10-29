@@ -1,8 +1,9 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
-using Hazel;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using UnityEngine;
-using static Il2CppSystem.TimeZoneInfo;
 
 namespace TheBetterRoles.Patches;
 
@@ -68,61 +69,55 @@ class SystemPatch
             CustomRoleManager.RoleListenerOther(role => role.OnSabotage(__instance, __instance.GetSystemTypes()));
         }
 
-        if (__instance.CanCast<SwitchSystem>())
+        if (CastHelper.TryCast<SwitchSystem>(__instance, out var switchSystem))
         {
-            var system = __instance.Cast<SwitchSystem>();
-            if (!system.IsActive)
+            if (!switchSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<ReactorSystemType>())
+        else if (CastHelper.TryCast<ReactorSystemType>(__instance, out var reactorSystem))
         {
-            var system = __instance.Cast<ReactorSystemType>();
-            if (!system.IsActive)
+            if (!reactorSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<LifeSuppSystemType>())
+        else if (CastHelper.TryCast<LifeSuppSystemType>(__instance, out var lifeSuppSystem))
         {
-            var system = __instance.Cast<LifeSuppSystemType>();
-            if (!system.IsActive)
+            if (!lifeSuppSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<HeliSabotageSystem>())
+        else if (CastHelper.TryCast<HeliSabotageSystem>(__instance, out var heliSabotageSystem))
         {
-            var system = __instance.Cast<HeliSabotageSystem>();
-            if (!system.IsActive)
+            if (!heliSabotageSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<HqHudSystemType>())
+        else if (CastHelper.TryCast<HqHudSystemType>(__instance, out var hqHudSystem))
         {
-            var system = __instance.Cast<HqHudSystemType>();
-            if (!system.IsActive)
+            if (!hqHudSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<HudOverrideSystemType>())
+        else if (CastHelper.TryCast<HudOverrideSystemType>(__instance, out var hudOverrideSystem))
         {
-            var system = __instance.Cast<HudOverrideSystemType>();
-            if (!system.IsActive)
+            if (!hudOverrideSystem.IsActive)
             {
                 RoleCheck();
             }
             return;
         }
-        else if (__instance.CanCast<MushroomMixupSabotageSystem>())
+        else if (CastHelper.TryCast<MushroomMixupSabotageSystem>(__instance))
         {
             RoleCheck();
         }

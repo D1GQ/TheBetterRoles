@@ -1,9 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
-using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class PlaguebearerRole : CustomRoleBehavior
 {
@@ -19,7 +22,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     public BetterOptionItem? InfectCooldown;
     public BetterOptionItem? InfectDistance;
     public BetterOptionItem? PestilenceKillCooldown;
-    public TargetButton? InfectButton;
+    public PlayerAbilityButton? InfectButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -35,7 +38,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        InfectButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue()));
+        InfectButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue()));
         InfectButton.TargetCondition = (PlayerControl target) =>
         {
             return !infected.Contains(target.Data);

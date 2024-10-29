@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Patches;
 
@@ -39,7 +40,7 @@ class RpcSetTasksPatch
     // Does not interfere with the vanilla task allocation process itself
     public static void Prefix(NetworkedPlayerInfo __instance, [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
     {
-        if (!GameStates.IsHost) return;
+        if (!GameState.IsHost) return;
         taskTypeIds = new Il2CppStructArray<byte>(0);
 
         // Default number of tasks

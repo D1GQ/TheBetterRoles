@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System.Text;
+using TheBetterRoles.Modules;
 using UnityEngine;
 using static TheBetterRoles.Patches.GamePlayManager;
 
@@ -14,7 +15,7 @@ public class PingTrackerPatch
     {
         try
         {
-            if (GameStates.IsFreePlay)
+            if (GameState.IsFreePlay)
             {
                 __instance.gameObject.SetActive(false);
             }
@@ -23,7 +24,7 @@ public class PingTrackerPatch
 
             sb.AppendFormat("{0}: <b>{1}</b>\n", Translator.GetString("Ping").ToUpper(), GetPingColor(AmongUsClient.Instance.Ping));
 
-            if (GameStates.IsLobby && GameStates.IsHost && GameStates.IsVanillaServer && !GameStates.IsLocalGame)
+            if (GameState.IsLobby && GameState.IsHost && GameState.IsVanillaServer && !GameState.IsLocalGame)
             {
                 sb.AppendFormat("{0}: <b>{1}</b>\n", Translator.GetString("Timer").ToUpper(), GetTimeColor(GameStartManagerPatch.lobbyTimer));
             }

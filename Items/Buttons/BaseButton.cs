@@ -1,7 +1,10 @@
-﻿using TMPro;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
+using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
 public class BaseButton
 {
@@ -46,7 +49,7 @@ public class BaseButton
 
     // Core interaction logic
     public virtual bool BaseShow() =>
-        !(GameStates.IsMeeting || GameStates.IsExilling) &&
+        !(GameState.IsMeeting || GameState.IsExilling) &&
         (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen);
 
     public virtual bool CanInteractOnPress() =>
@@ -56,15 +59,15 @@ public class BaseButton
     public virtual bool BaseInteractable() =>
         !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() &&
         InteractCondition() &&
-        (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
+        (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
 
     public virtual bool BaseCooldown() =>
         !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
-        if ((!checkVent && !_player.CanMove && !_player.IsInVent()) ||
-            (checkVent && _player.IsInVent()) || (Uses <= 0 && !InfiniteUses) || State > 0 && !CanCancelDuration
+        if (!checkVent && !_player.CanMove && !_player.IsInVent() ||
+            checkVent && _player.IsInVent() || Uses <= 0 && !InfiniteUses || State > 0 && !CanCancelDuration
             || !BaseInteractable())
         {
             return [];
@@ -103,7 +106,7 @@ public class BaseButton
         }
         else
         {
-            outputList.Sort((T a, T b) =>
+            outputList.Sort((a, b) =>
             {
                 Vector3 posA3D = posSelector(a);
                 Vector3 posB3D = posSelector(b);

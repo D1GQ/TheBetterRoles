@@ -1,8 +1,9 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public enum SettingType
 {

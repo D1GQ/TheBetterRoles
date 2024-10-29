@@ -4,10 +4,14 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 public static class Utils
 {
@@ -80,7 +84,7 @@ public static class Utils
     }
     public static string FormatTasksToText(this PlayerControl player)
     {
-        if (CustomRoleManager.RoleChecksAny(player, role => role.HasTask, false) || CustomRoleManager.RoleChecksAny(player, role => role.HasSelfTask, false))
+        if (player.RoleChecksAny(role => role.HasTask, false) || player.RoleChecksAny(role => role.HasSelfTask, false))
         {
             return $" <#ffff2b>({player.Data.Tasks.ToArray().Where(task => task.Complete).Count()}/{player.Data.Tasks.Count})</color>";
         }
@@ -124,13 +128,13 @@ public static class Utils
             {
                 chat.notificationRoutine = chat.StartCoroutine(chat.BounceDot());
             }
-            SoundManager.Instance.PlaySound(chat.messageSound, false, 1f, null).pitch = 0.5f + (float)data.PlayerId / 15f;
+            SoundManager.Instance.PlaySound(chat.messageSound, false, 1f, null).pitch = 0.5f + data.PlayerId / 15f;
             ChatPatch.ChatControllerPatch.SetChatPoolTheme(pooledBubble);
         }
         catch (Exception ex)
         {
             chat.chatBubblePool.Reclaim(pooledBubble);
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
             throw;
         }
     }
@@ -153,13 +157,13 @@ public static class Utils
     {
         return system switch
         {
-            _ when system.CanCast<SwitchSystem>() => SystemTypes.Electrical,
-            _ when system.CanCast<ReactorSystemType>() => SystemTypes.Reactor,
-            _ when system.CanCast<LifeSuppSystemType>() => SystemTypes.LifeSupp,
-            _ when system.CanCast<HeliSabotageSystem>() => SystemTypes.HeliSabotage,
-            _ when system.CanCast<HqHudSystemType>() => SystemTypes.Comms,
-            _ when system.CanCast<HudOverrideSystemType>() => SystemTypes.Comms,
-            _ when system.CanCast<MushroomMixupSabotageSystem>() => SystemTypes.MushroomMixupSabotage,
+            _ when CastHelper.TryCast<SwitchSystem>(system) => SystemTypes.Electrical,
+            _ when CastHelper.TryCast<ReactorSystemType>(system) => SystemTypes.Reactor,
+            _ when CastHelper.TryCast<LifeSuppSystemType>(system) => SystemTypes.LifeSupp,
+            _ when CastHelper.TryCast<HeliSabotageSystem>(system) => SystemTypes.HeliSabotage,
+            _ when CastHelper.TryCast<HqHudSystemType>(system) => SystemTypes.Comms,
+            _ when CastHelper.TryCast<HudOverrideSystemType>(system) => SystemTypes.Comms,
+            _ when CastHelper.TryCast<MushroomMixupSabotageSystem>(system) => SystemTypes.MushroomMixupSabotage,
             _ => null
         };
     }
@@ -228,7 +232,7 @@ public static class Utils
     public static void SetOutline(this Vent vent, Color color, bool showOutline, bool showMain)
     {
         if (vent == null) return;
-        vent.myRend.material.SetFloat("_Outline", (showOutline ? 1 : 0));
+        vent.myRend.material.SetFloat("_Outline", showOutline ? 1 : 0);
         vent.myRend.material.SetColor("_OutlineColor", color);
         vent.myRend.material.SetColor("_AddColor", showMain ? color : Color.clear);
     }
@@ -306,7 +310,7 @@ public static class Utils
         else
         {
             Notifier.lastMessageKey = Id;
-            LobbyNotificationMessage newMessage = UnityEngine.Object.Instantiate<LobbyNotificationMessage>(Notifier.notificationMessageOrigin, Vector3.zero, Quaternion.identity, Notifier.transform);
+            LobbyNotificationMessage newMessage = UnityEngine.Object.Instantiate(Notifier.notificationMessageOrigin, Vector3.zero, Quaternion.identity, Notifier.transform);
             newMessage.transform.localPosition = new Vector3(0f, 0f, -2f);
             newMessage.SetUp(text, Notifier.settingsChangeSprite, Notifier.settingsChangeColor, (Action)(() =>
             {
@@ -477,7 +481,7 @@ public static class Utils
 
     public static void DisconnectAccountFromOnline(bool apiError = false)
     {
-        if (GameStates.IsInGame)
+        if (GameState.IsInGame)
         {
             AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
         }
@@ -531,7 +535,7 @@ public static class Utils
             for (int i = 0; i < samples.Length; i++)
             {
                 offset = i * 4;
-                samples[i] = (float)BitConverter.ToInt32(byteAudio, offset) / Int32.MaxValue;
+                samples[i] = (float)BitConverter.ToInt32(byteAudio, offset) / int.MaxValue;
             }
             int channels = 2;
             int sampleRate = 48000;
@@ -566,12 +570,12 @@ public static class Utils
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
             sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
 
-            Logger.Log($"Successfully loaded sprite from {path}");
+            TBRLogger.Log($"Successfully loaded sprite from {path}");
             return CachedSprites[path + pixelsPerUnit] = sprite;
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
             return null;
         }
     }
@@ -588,16 +592,16 @@ public static class Utils
             using (var ms = new MemoryStream())
             {
                 stream.CopyTo(ms);
-                if (!ImageConversion.LoadImage(texture, ms.ToArray(), false))
+                if (!texture.LoadImage(ms.ToArray(), false))
                     return null;
             }
 
-            Logger.Log($"Successfully loaded texture from {path}");
+            TBRLogger.Log($"Successfully loaded texture from {path}");
             return texture;
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
             return null;
         }
     }

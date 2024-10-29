@@ -1,7 +1,9 @@
 ﻿
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class JesterRole : CustomRoleBehavior
 {

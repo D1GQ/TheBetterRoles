@@ -1,9 +1,13 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
-using static TheBetterRoles.Translator;
+using static TheBetterRoles.Modules.Translator;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class MedicRole : CustomRoleBehavior
 {
@@ -21,7 +25,7 @@ public class MedicRole : CustomRoleBehavior
     public BetterOptionItem? NotifyKiller;
     public BetterOptionItem? RemoveShieldOnMedicDeath;
 
-    public TargetButton? ShieldButton;
+    public PlayerAbilityButton? ShieldButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -42,7 +46,7 @@ public class MedicRole : CustomRoleBehavior
 
     public override void OnSetUpRole()
     {
-        ShieldButton = AddButton(new TargetButton().Create(5, "Shield", 0, 1, null, this, true, 1));
+        ShieldButton = AddButton(new PlayerAbilityButton().Create(5, "Shield", 0, 1, null, this, true, 1));
     }
 
     public override void OnDeinitialize()

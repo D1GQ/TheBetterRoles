@@ -1,10 +1,8 @@
 using AmongUs.GameOptions;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
-// Code from: https://github.com/0xDrMoe/TownofHost-Enhanced
-
-public static class GameStates
+public static class GameState
 {
     /**********Check Game Status***********/
     public static bool IsDev => EOSManager.Instance?.userId != null && Main.DevUser.Contains($"{Utils.GetHashPuid(EOSManager.Instance.userId.ToString())}+{EOSManager.Instance.friendCode}");
@@ -82,7 +80,7 @@ public static class GameStates
     public static bool IsInGame => InGame;
     public static bool IsLobby => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Joined;
     public static bool IsInIntro => IntroCutscene.Instance != null;
-    public static bool IsInGamePlay => (InGame && IsShip && !IsLobby && !IsInIntro) || IsFreePlay;
+    public static bool IsInGamePlay => InGame && IsShip && !IsLobby && !IsInIntro || IsFreePlay;
     public static bool IsEnded => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Ended;
     public static bool IsNotJoined => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.NotJoined;
     public static bool IsOnlineGame => AmongUsClient.Instance?.NetworkMode == NetworkModes.OnlineGame;
@@ -93,7 +91,7 @@ public static class GameStates
             if (!IsOnlineGame) return false;
 
             string region = ServerManager.Instance.CurrentRegion.Name;
-            return (region == "North America" || region == "Europe" || region == "Asia");
+            return region == "North America" || region == "Europe" || region == "Asia";
         }
     }
     public static bool IsLocalGame => AmongUsClient.Instance?.NetworkMode == NetworkModes.LocalGame;

@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using TMPro;
 using UnityEngine;
 
@@ -103,7 +105,7 @@ class ChatPatch
 
             // chatBubble.NameText.text = playerName;
             chatBubble.ColorBlindName.color = Palette.PlayerColors[sourcePlayer.Data.DefaultOutfit.ColorId];
-            Logger.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
+            TBRLogger.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
         }
 
         [HarmonyPatch(nameof(ChatController.AddChatNote))]

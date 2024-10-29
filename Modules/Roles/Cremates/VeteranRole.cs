@@ -1,8 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class VeteranRole : CustomRoleBehavior
 {
@@ -21,7 +25,7 @@ public class VeteranRole : CustomRoleBehavior
     public BetterOptionItem? MaximumNumberOfAlerts;
     public BetterOptionItem? AlertsGainFromTask;
 
-    public AbilityButton? AlertButton;
+    public BaseAbilityButton? AlertButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -40,7 +44,7 @@ public class VeteranRole : CustomRoleBehavior
 
     public override void OnSetUpRole()
     {
-        AlertButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Veteran.Ability.1"), AlertCooldown.GetFloat(), AlertDuration.GetFloat(), 1, null, this, true));
+        AlertButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Veteran.Ability.1"), AlertCooldown.GetFloat(), AlertDuration.GetFloat(), 1, null, this, true));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

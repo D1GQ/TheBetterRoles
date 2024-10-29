@@ -1,6 +1,11 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Helpers.Random;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class BaitAddon : CustomAddonBehavior
 {

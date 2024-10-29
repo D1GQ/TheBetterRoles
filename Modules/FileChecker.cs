@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 class FileChecker
 {
@@ -20,7 +20,7 @@ class FileChecker
     public static void UpdateUnauthorizedFiles()
     {
 #if DEBUG
-        if (GameStates.IsDev)
+        if (GameState.IsDev)
         {
             HasTrySpoofFriendCode = false;
         }
@@ -35,12 +35,12 @@ class FileChecker
         {
             if (EOSManager.Instance.userId == null || HasTrySpoofFriendCode)
             {
-                PlayButton.GetComponent<UnityEngine.BoxCollider2D>().enabled = false;
+                PlayButton.GetComponent<BoxCollider2D>().enabled = false;
                 GameObject.Find("Main Buttons/PlayButton/Inactive").GetComponent<SpriteRenderer>().color = Color.gray;
             }
             else
             {
-                PlayButton.GetComponent<UnityEngine.BoxCollider2D>().enabled = true;
+                PlayButton.GetComponent<BoxCollider2D>().enabled = true;
                 GameObject.Find("Main Buttons/PlayButton/Inactive").GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f);
             }
         }
@@ -48,7 +48,7 @@ class FileChecker
         // Unauthorized file or ban detected.
         if (HasUnauthorizedFile)
         {
-            if (GameStates.IsInGame)
+            if (GameState.IsInGame)
             {
                 Utils.DisconnectSelf(OnlineMsg);
             }
@@ -80,7 +80,7 @@ class FileChecker
             HasTrySpoofFriendCode = true;
         }
 
-        if (GameStates.IsInGame && GameStates.IsLobby)
+        if (GameState.IsInGame && GameState.IsLobby)
         {
             waitTime -= Time.deltaTime;
 
@@ -112,7 +112,7 @@ class FileChecker
         string ClientFriendCode = string.Empty;
         string ClientPUIDHash = string.Empty;
 
-        if (!GameStates.IsInGame)
+        if (!GameState.IsInGame)
         {
             ClientUserName = GameObject.Find("AccountTab")?.GetComponent<AccountTab>()?.userName.text;
             ClientFriendCode = EOSManager.Instance.friendCode;
@@ -129,7 +129,7 @@ class FileChecker
         }
 
 #if DEBUG
-        if (GameStates.IsDev)
+        if (GameState.IsDev)
         {
             Enabled = false;
             return false;
@@ -169,7 +169,7 @@ class FileChecker
         // Check for banned words in VersionInfo display. Aka check cheat developers ego
         foreach (var WordInVersionInfo in KeyWordsInVersionInfo)
         {
-            if (!GameStates.IsInGame)
+            if (!GameState.IsInGame)
             {
                 if (UnityEngine.Object.FindFirstObjectByType<VersionShower>().text.text.ToLower().Contains(WordInVersionInfo.ToLower()))
                 {

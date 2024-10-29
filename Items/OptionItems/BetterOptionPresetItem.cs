@@ -1,8 +1,11 @@
 ﻿using System.Text.Json;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionPresetItem : BetterOptionItem
 {
@@ -24,12 +27,12 @@ public class BetterOptionPresetItem : BetterOptionItem
         CurrentValue = DefaultValue;
         ShowCondition = null;
 
-        if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby || GameSettingMenuPatch.Preload)
+        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby || GameSettingMenuPatch.Preload)
         {
             return this;
         }
 
-        NumberOption optionBehaviour = UnityEngine.Object.Instantiate<NumberOption>(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        NumberOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
 
@@ -99,9 +102,9 @@ public class BetterOptionPresetItem : BetterOptionItem
     {
         if (ThisOption == null) return;
 
-        ThisOption.ValueText.text = GameStates.IsHost ? Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString() : Translator.GetString(StringNames.HostHeader);
+        ThisOption.ValueText.text = GameState.IsHost ? Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString() : Translator.GetString(StringNames.HostHeader);
 
-        if (!GameStates.IsHost)
+        if (!GameState.IsHost)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

@@ -1,6 +1,4 @@
-// Code from: https://github.com/0xDrMoe/TownofHost-Enhanced
-
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
 class LateTask
 {
@@ -17,7 +15,7 @@ class LateTask
             action();
 
             if (shouldLog == true)
-                Logger.Log($"{name} has finished", "LateTask");
+                TBRLogger.Log($"{name} has finished", "LateTask");
             return true;
         }
         return false;
@@ -25,9 +23,9 @@ class LateTask
     public LateTask(Action action, float time, string name = "No Name Task", bool shoudLog = true)
     {
         this.action = action;
-        this.timer = time;
+        timer = time;
         this.name = name;
-        this.shouldLog = shoudLog;
+        shouldLog = shoudLog;
         Tasks.Add(this);
     }
     public static void Update(float deltaTime)
@@ -45,7 +43,7 @@ class LateTask
             catch (Exception ex)
             {
                 TasksToRemove.Add(task);
-                Logger.Error(ex);
+                TBRLogger.Error(ex);
             }
         }
         TasksToRemove.ForEach(task => Tasks.Remove(task));

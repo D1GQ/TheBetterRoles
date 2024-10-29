@@ -1,5 +1,8 @@
 ﻿using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
 namespace TheBetterRoles;

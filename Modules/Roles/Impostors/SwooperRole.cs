@@ -1,10 +1,14 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class SwooperRole : CustomRoleBehavior
 {
@@ -34,10 +38,10 @@ public class SwooperRole : CustomRoleBehavior
     }
 
     private bool isVisible = true;
-    public AbilityButton? InvisibilityButton = new();
+    public BaseAbilityButton? InvisibilityButton = new();
     public override void OnSetUpRole()
     {
-        InvisibilityButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true));
+        InvisibilityButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true));
         InvisibilityButton.CanCancelDuration = true;
     }
 

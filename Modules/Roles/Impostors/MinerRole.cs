@@ -1,9 +1,13 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class MinerRole : CustomRoleBehavior
 {
@@ -31,10 +35,10 @@ public class MinerRole : CustomRoleBehavior
     }
 
     private bool IsVisible { get; set; } = true;
-    public AbilityButton? DigButton = new();
+    public BaseAbilityButton? DigButton = new();
     public override void OnSetUpRole()
     {
-        DigButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
+        DigButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
         DigButton.InteractCondition = () => VentButton.ClosestObjDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
         && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
     }

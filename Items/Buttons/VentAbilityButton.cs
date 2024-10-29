@@ -1,15 +1,18 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
-public class VentButton : BaseButton
+public class VentAbilityButton : BaseButton
 {
     public Vent? lastTargetVent { get; set; }
     public float HighlightDistance { get; set; } = 3.5f;
     public bool IsAbility { get; set; }
-    public Func<Vent, bool> VentCondition { get; set; } = (Vent target) => true;
-    public VentButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
+    public Func<Vent, bool> VentCondition { get; set; } = (target) => true;
+    public VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
         Distance = 0.8f;
         Role = role;
@@ -122,7 +125,7 @@ public class VentButton : BaseButton
     public override bool BaseInteractable() =>
         !_player.inMovingPlat && !_player.IsOnLadder() &&
         InteractCondition() &&
-        (!ActionButton.isCoolingDown || (State > 0 && CanCancelDuration));
+        (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
 
     public override void FixedUpdate()
     {

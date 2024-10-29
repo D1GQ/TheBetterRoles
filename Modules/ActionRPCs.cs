@@ -1,8 +1,11 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
+using TheBetterRoles.Managers;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 
 [Flags]
@@ -50,20 +53,20 @@ static class ActionRPCs
         // If there is no SenderPlayer, validation passes
         SenderPlayer == null
         // If SenderPlayer is the host's character and the game is not in host state, validation passes
-        || AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameStates.IsHost
+        || AmongUsClient.Instance.GetHost().Character == SenderPlayer && !GameState.IsHost
         // If the player is provided, is the same as SenderPlayer, and the game is in host state, validation passes
-        || player != null && player == SenderPlayer && GameStates.IsHost;
+        || player != null && player == SenderPlayer && GameState.IsHost;
 
-    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer || GameStates.IsHost;
+    private static bool ValidateHostCheck() => SenderPlayer != null && AmongUsClient.Instance.GetHost().Character == SenderPlayer || GameState.IsHost;
 
     // Needs to be fixed, clients do not receive the RPC
     public static void EndGameSync(List<byte> winners, EndGameReason reason, CustomRoleTeam team, bool IsRPC = false)
     {
-        if (!GameStates.IsHost && !IsRPC) return;
+        if (!GameState.IsHost && !IsRPC) return;
 
         if (ValidateHostCheck())
         {
-            if (GameStates.IsHost)
+            if (GameState.IsHost)
             {
                 var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.EndGame, PlayerControl.LocalPlayer);
                 writer.Write((byte)reason);
@@ -149,12 +152,12 @@ static class ActionRPCs
 
     private static bool CheckMurderAction(PlayerControl player, PlayerControl target, bool isAbility)
     {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckMurder(player, target, player == target, isAbility)))
+        if (!player.RoleChecks(role => role.CheckMurder(player, target, player == target, isAbility)))
         {
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecks(target, role => role.CheckMurder(player, target, player == target, isAbility)))
+        if (!target.RoleChecks(role => role.CheckMurder(player, target, player == target, isAbility)))
         {
             return false;
         }
@@ -164,9 +167,9 @@ static class ActionRPCs
             return false;
         }
 
-        if (!CustomRoleManager.RoleChecksAny(player, role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive())
+        if (!player.RoleChecksAny(role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive())
         {
-            Logger.Log($"Canceled Murder Action: Invalid");
+            TBRLogger.Log($"Canceled Murder Action: Invalid");
             return false;
         }
 
@@ -203,7 +206,7 @@ static class ActionRPCs
             CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
 
             // Start Meeting
-            if (GameStates.IsHost)
+            if (GameState.IsHost)
             {
                 MeetingRoomManager.Instance.AssignSelf(player, bodyInfo);
                 DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
@@ -232,7 +235,7 @@ static class ActionRPCs
         {
             return false;
         }
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckBodyReport(player, bodyInfo, isButton)))
+        if (!player.RoleChecks(role => role.CheckBodyReport(player, bodyInfo, isButton)))
         {
             return false;
         }
@@ -247,7 +250,7 @@ static class ActionRPCs
     // Resync after ability duration
     public static void ResetAbilityStateSync(this PlayerControl player, int id, int roleType, bool isTimeOut, bool IsRPC = false)
     {
-        if ((CheckResetAbilityStateAction(player, id) == true))
+        if (CheckResetAbilityStateAction(player, id) == true)
         {
             CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleType == (CustomRoles)roleType);
             CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleType == (CustomRoles)roleType);
@@ -320,7 +323,7 @@ static class ActionRPCs
                 if (player.IsLocalPlayer())
                 {
                     ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
-                        player.IsLocalPlayer() && CustomRoleManager.RoleChecks(player, role => role.CanMoveInVents, false));
+                        player.IsLocalPlayer() && player.RoleChecks(role => role.CanMoveInVents, false));
                 }
             }
             else
@@ -343,7 +346,7 @@ static class ActionRPCs
 
     private static bool CheckVentAction(PlayerControl player, int ventId, bool Exit)
     {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckVent(player, ventId, Exit)))
+        if (!player.RoleChecks(role => role.CheckVent(player, ventId, Exit)))
         {
             return false;
         }
@@ -355,7 +358,7 @@ static class ActionRPCs
 
         if (ShipStatus.Instance == null)
         {
-            Logger.Log($"Canceled Vent Action: ShipStatus Null");
+            TBRLogger.Log($"Canceled Vent Action: ShipStatus Null");
         }
 
         return true;
@@ -379,7 +382,7 @@ static class ActionRPCs
                     MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
                 }
             }, 2.5f, shoudLog: false);
-            if (CustomRoleManager.RoleChecksAny(target, role => role.RoleType == roleType, false))
+            if (target.RoleChecksAny(role => role.RoleType == roleType, false))
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
                 target.Exiled();
@@ -411,11 +414,11 @@ static class ActionRPCs
 
     private static bool CheckGuessPlayerAction(PlayerControl player, PlayerControl target, CustomRoles roleType)
     {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckGuess(player, target, roleType)))
+        if (!player.RoleChecks(role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }
-        if (!CustomRoleManager.RoleChecks(target, role => role.CheckGuess(player, target, roleType)))
+        if (!target.RoleChecks(role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }

@@ -1,20 +1,23 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
+using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
-public class PlayerMeetingButton
+public class PlayerVoteAreaButton
 {
-    public static List<PlayerMeetingButton> AllButtons = [];
+    public static List<PlayerVoteAreaButton> AllButtons = [];
     public Dictionary<PassiveButton, PlayerVoteArea> Buttons = [];
-    public Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (PassiveButton? button, PlayerVoteArea? pva, NetworkedPlayerInfo? targetData) => { };
+    public Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (button, pva, targetData) => { };
     public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && !targetData.IsLocalData(); };
     public CustomRoleBehavior? Role;
     public bool CanUseAsDead = false;
     public bool Enabled = true;
 
-    public PlayerMeetingButton? Create(string name, CustomRoleBehavior? role = null, Sprite? sprite = null)
+    public PlayerVoteAreaButton? Create(string name, CustomRoleBehavior? role = null, Sprite? sprite = null)
     {
-        if (!GameStates.IsMeeting) return null;
+        if (!GameState.IsMeeting) return null;
 
         Role = role;
         Color color = Role != null ? Role.RoleColor32 : Color.white;
@@ -30,7 +33,7 @@ public class PlayerMeetingButton
             Button.name = $"Button({name})";
             Button.OnClick = new();
             var target = Utils.PlayerDataFromPlayerId(pva.TargetPlayerId);
-            Button.OnClick.AddListener((Action)(() => 
+            Button.OnClick.AddListener((Action)(() =>
             {
                 if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.Results)
                 {

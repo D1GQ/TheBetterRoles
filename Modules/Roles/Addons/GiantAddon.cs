@@ -1,7 +1,9 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class GiantAddon : CustomAddonBehavior
 {
@@ -29,7 +31,6 @@ public class GiantAddon : CustomAddonBehavior
     }
 
     public override bool CanMoveInVents => !IsBig;
-    public AbilityButton? MeetingButton = new();
     private bool IsBig = false;
     public override void OnSetUpRole()
     {

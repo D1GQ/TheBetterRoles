@@ -1,8 +1,11 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Managers;
 
 public class GuessManager : MonoBehaviour
 {
@@ -21,7 +24,7 @@ public class GuessManager : MonoBehaviour
 
     public void Start()
     {
-        if (Instance != null && Instance != this || !GameStates.IsMeeting)
+        if (Instance != null && Instance != this || !GameState.IsMeeting)
         {
             Destroy(this);
             return;
@@ -67,7 +70,7 @@ public class GuessManager : MonoBehaviour
         Destroy(pva);
         ButtonTemplate.GetComponentInChildren<TextMeshPro>().text = "Text Here";
 
-        if (GameStates.IsMeeting)
+        if (GameState.IsMeeting)
         {
             MeetingHud.Instance.ButtonParent.gameObject.SetActive(false);
         }
@@ -220,7 +223,7 @@ public class GuessManager : MonoBehaviour
 
     public void OnDestroy()
     {
-        if (GameStates.IsMeeting && shouldSetButtons)
+        if (GameState.IsMeeting && shouldSetButtons)
         {
             MeetingHud.Instance?.ButtonParent?.gameObject?.SetActive(true);
         }

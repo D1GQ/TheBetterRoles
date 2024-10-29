@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Managers;
 
 class BetterDataManager
 {
@@ -109,7 +111,7 @@ class BetterDataManager
 
     public static void SaveSetting(int id, string input)
     {
-        if (GameStates.IsInGame && !GameStates.IsHost)
+        if (GameState.IsInGame && !GameState.IsHost)
         {
             HostSettings[id] = input;
             return;
@@ -127,7 +129,7 @@ class BetterDataManager
 
     public static bool CanLoadSetting(int id)
     {
-        if (GameStates.IsInGame && !GameStates.IsHost)
+        if (GameState.IsInGame && !GameState.IsHost)
         {
             if (HostSettings.ContainsKey(id))
             {
@@ -156,7 +158,7 @@ class BetterDataManager
 
     public static bool LoadBoolSetting(int id, bool Default = false)
     {
-        if (GameStates.IsInGame && !GameStates.IsHost)
+        if (GameState.IsInGame && !GameState.IsHost)
         {
             if (HostSettings.TryGetValue(id, out var setting) && bool.TryParse(setting, out var @bool))
             {
@@ -190,7 +192,7 @@ class BetterDataManager
 
     public static float LoadFloatSetting(int id, float Default = 0f)
     {
-        if (GameStates.IsInGame && !GameStates.IsHost)
+        if (GameState.IsInGame && !GameState.IsHost)
         {
             if (HostSettings.TryGetValue(id, out var setting) && float.TryParse(setting, out var @float))
             {
@@ -224,7 +226,7 @@ class BetterDataManager
 
     public static int LoadIntSetting(int id, int Default = 0)
     {
-        if (GameStates.IsInGame && !GameStates.IsHost)
+        if (GameState.IsInGame && !GameState.IsHost)
         {
             if (HostSettings.TryGetValue(id, out var setting) && int.TryParse(setting, out var @int))
             {
@@ -326,7 +328,7 @@ class BetterDataManager
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
         }
     }
 }

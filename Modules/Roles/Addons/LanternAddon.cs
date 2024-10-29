@@ -1,9 +1,13 @@
-﻿
-using Hazel;
+﻿using Hazel;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class LanternAddon : CustomAddonBehavior
 {
@@ -25,11 +29,11 @@ public class LanternAddon : CustomAddonBehavior
         }
     }
 
-    public AbilityButton? LanternButton;
+    public BaseAbilityButton? LanternButton;
     private GameObject? Lantern;
     public override void OnSetUpRole()
     {
-        LanternButton = AddButton(new AbilityButton().Create(5, Translator.GetString("Role.Lantern.Ability.1"), 3f, 0, 0, null, this, false));
+        LanternButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Lantern.Ability.1"), 3f, 0, 0, null, this, false));
         CreateLantern();
         LanternButton.SetCooldown();
     }

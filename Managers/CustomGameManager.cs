@@ -3,11 +3,14 @@ using HarmonyLib;
 using Hazel;
 using InnerNet;
 using System.Text;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Managers;
 
 public enum EndGameReason
 {
@@ -219,14 +222,14 @@ public class CustomGameManager
             {
                 case CustomRoleTeam.Impostor:
                     __instance.WinText.text += $"{Translator.GetString(StringNames.ImpostorsCategory)}\n<size=75%>";
-                    Logger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    TBRLogger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Crewmate:
                     __instance.WinText.text += $"{Translator.GetString(StringNames.Crewmates)}\n<size=75%>";
-                    Logger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    TBRLogger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Neutral:
-                    Logger.Log($"Game Has Ended: Team -> Neutral, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    TBRLogger.Log($"Game Has Ended: Team -> Neutral, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     __instance.WinText.text += $"{Utils.GetCustomRoleName(role)}\n<size=75%>";
                     break;
                 case CustomRoleTeam.None:
@@ -235,11 +238,11 @@ public class CustomGameManager
                         __instance.WinText.text = Translator.GetString("Game.Summary.Abandoned");
                         __instance.WinText.color = Color.gray;
                         teamColor = Color.gray;
-                        Logger.Log($"Game Has Ended: By Host");
+                        TBRLogger.Log($"Game Has Ended: By Host");
                     }
                     break;
                 default:
-                    Logger.Log($"Game Has Ended: Error");
+                    TBRLogger.Log($"Game Has Ended: Error");
                     __instance.WinText.text = Translator.GetString("Game.Summary.Error");
                     __instance.WinText.color = Color.red;
                     teamColor = Color.red;
@@ -279,13 +282,13 @@ public class CustomGameManager
             for (int i = 0; i < players.Count; i++)
             {
                 NetworkedPlayerInfo cachedPlayerData = players[i];
-                int num2 = (i % 2 == 0) ? -1 : 1;
+                int num2 = i % 2 == 0 ? -1 : 1;
                 int num3 = (i + 1) / 2;
                 float num4 = num3 / num;
                 float num5 = Mathf.Lerp(1f, 0.75f, num4);
-                float num6 = ((i == 0) ? -8 : -1);
-                PoolablePlayer poolablePlayer = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, __instance.transform);
-                poolablePlayer.transform.localPosition = new Vector3(1f * (float)num2 * (float)num3 * num5, FloatRange.SpreadToEdges(-1.125f, 0f, num3, num), num6 + (float)num3 * 0.01f) * 0.9f;
+                float num6 = i == 0 ? -8 : -1;
+                PoolablePlayer poolablePlayer = UnityEngine.Object.Instantiate(__instance.PlayerPrefab, __instance.transform);
+                poolablePlayer.transform.localPosition = new Vector3(1f * num2 * num3 * num5, FloatRange.SpreadToEdges(-1.125f, 0f, num3, num), num6 + num3 * 0.01f) * 0.9f;
                 float num7 = Mathf.Lerp(1f, 0.65f, num4) * 0.9f;
                 Vector3 vector = new Vector3(num7, num7, 1f);
                 poolablePlayer.transform.localScale = vector;
@@ -324,9 +327,9 @@ public class CustomGameManager
             var role = first?.BetterData()?.RoleInfo?.Role;
             if (role == null) return;
 
-            Logger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameStates.GetActiveMapId)}/{GameStates.GetActiveMapId}", "GamePlayManager");
+            TBRLogger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
 
-            Logger.LogHeader("Game Summary Start", "GameSummary");
+            TBRLogger.LogHeader("Game Summary Start", "GameSummary");
 
             GameObject SummaryObj = UnityEngine.Object.Instantiate(endGameManager.WinText.gameObject, endGameManager.WinText.transform.parent.transform);
             SummaryObj.name = "SummaryObj (TMP)";
@@ -401,7 +404,7 @@ public class CustomGameManager
                         break;
                 }
 
-                Logger.Log($"{winteam}: {winTag}", "GameSummary");
+                TBRLogger.Log($"{winteam}: {winTag}", "GameSummary");
 
                 string SummaryHeader = $"<align=\"center\"><size=150%>   {Translator.GetString("GameSummary")}</size></align>";
                 SummaryHeader += $"\n\n<size=90%><color={winColor}>{winteam} {Translator.GetString("Game.Summary.Won")}</color></size>" +
@@ -443,18 +446,18 @@ public class CustomGameManager
                         deathReason = $"『<color=#838383<b>Unknown</b></color>』";
                     }
 
-                    Logger.Log($"{name} {roleInfo} {deathReason}", "GameSummary");
+                    TBRLogger.Log($"{name} {roleInfo} {deathReason}", "GameSummary");
 
                     sb.AppendLine($"- {name} {roleInfo} {deathReason}\n");
                 }
 
                 SummaryText.text = $"{SummaryHeader}\n\n<size=58%>{sb}</size>";
-                Logger.LogHeader("Game Summary End", "GameSummary");
+                TBRLogger.LogHeader("Game Summary End", "GameSummary");
             }
         }
         catch (Exception ex)
         {
-            Logger.Error(ex);
+            TBRLogger.Error(ex);
         }
     }
 
@@ -550,7 +553,7 @@ public class CustomGameManager
         }
         */
 
-        if (GameStates.IsHost)
+        if (GameState.IsHost)
         {
             GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
         }
@@ -558,7 +561,7 @@ public class CustomGameManager
 
     public static void CheckWinConditions()
     {
-        if (!GameStates.IsHost || !ShouldCheckConditions || GameHasEnded) return;
+        if (!GameState.IsHost || !ShouldCheckConditions || GameHasEnded) return;
 
         CustomRoleTeam team = CustomRoleTeam.None;
 
@@ -566,14 +569,14 @@ public class CustomGameManager
         {
             team = CustomRoleTeam.Impostor;
             var Impostors = GetPlayerIdsFromTeam(team);
-            Logger.Log("Ending Game As Host: Critical Sabotage");
+            TBRLogger.Log("Ending Game As Host: Critical Sabotage");
             ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage, team);
             GameHasEnded = true;
         }
         else if (CheckCustomWin() is PlayerControl player && player != null)
         {
             team = CustomRoleTeam.Neutral;
-            Logger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
+            TBRLogger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
             List<byte> players = [player.Data.PlayerId];
             ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole, team);
             GameHasEnded = true;
@@ -581,7 +584,7 @@ public class CustomGameManager
         else if (CheckPlayerAmount(ref team))
         {
             var players = GetPlayerIdsFromTeam(team);
-            Logger.Log($"Ending Game As Host: {Utils.GetCustomRoleTeamName(team)} Outnumbered");
+            TBRLogger.Log($"Ending Game As Host: {Utils.GetCustomRoleTeamName(team)} Outnumbered");
             ActionRPCs.EndGameSync(players, EndGameReason.Outnumbered, team);
             GameHasEnded = true;
         }
@@ -631,8 +634,8 @@ public class CustomGameManager
     {
         var allPlayers = Main.AllAlivePlayerControls;
         var impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor)).ToList();
-        var nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
-        var killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && CustomRoleManager.RoleChecksAny(pc, role => role.CanKill)).ToList();
+        var nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !pc.RoleChecksAny(role => role.CanKill)).ToList();
+        var killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && pc.RoleChecksAny(role => role.CanKill)).ToList();
 
         if (impostors.Count == 0 && killingPlayers.Count == 0)
         {

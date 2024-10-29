@@ -1,4 +1,8 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -281,7 +285,7 @@ static class OptionsConsolePatch
         if (__instance != null)
         {
             __instance.HostOnly = false;
-            if (PlayerControl.LocalPlayer?.BetterData()?.HasMod == false && !GameStates.IsHost)
+            if (PlayerControl.LocalPlayer?.BetterData()?.HasMod == false && !GameState.IsHost)
             {
                 couldUse = false;
                 canUse = false;

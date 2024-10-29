@@ -1,10 +1,11 @@
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Globalization;
-using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 public static class Translator
 {
@@ -12,9 +13,9 @@ public static class Translator
     public const string LANGUAGE_FOLDER_NAME = "Language";
     public static void Init()
     {
-        Logger.Log("Loading language files...", "Translator");
+        TBRLogger.Log("Loading language files...", "Translator");
         LoadLangs();
-        Logger.Log("Language file loaded successfully", "Translator");
+        TBRLogger.Log("Language file loaded successfully", "Translator");
     }
     public static void LoadLangs()
     {
@@ -31,7 +32,7 @@ public static class Translator
 
             if (jsonFileNames.Length == 0)
             {
-                Logger.Error("Json Translation files does not exist.", "Translator");
+                TBRLogger.Error("Json Translation files does not exist.", "Translator");
                 return;
             }
             foreach (string jsonFileName in jsonFileNames)
@@ -57,7 +58,7 @@ public static class Translator
                     else
                     {
                         //Logger.Error(jsonDictionary["HostText"], "Translator");
-                        Logger.Error($"Invalid JSON format in {jsonFileName}: Missing or invalid 'LanguageID' field.", "Translator");
+                        TBRLogger.Error($"Invalid JSON format in {jsonFileName}: Missing or invalid 'LanguageID' field.", "Translator");
                     }
                 }
             }
@@ -70,7 +71,7 @@ public static class Translator
         }
         catch (Exception ex)
         {
-            Logger.Error($"Error: {ex}", "Translator");
+            TBRLogger.Error($"Error: {ex}", "Translator");
         }
         if (!Directory.Exists(LANGUAGE_FOLDER_NAME)) Directory.CreateDirectory(LANGUAGE_FOLDER_NAME);
     }
@@ -139,7 +140,7 @@ public static class Translator
         var res = showInvalid ? $"<INVALID:{str}>" : str;
         try
         {
-            if (translateMaps.TryGetValue(str, out var dic) && (!dic.TryGetValue((int)langId, out res) || res == "" || (langId is not SupportedLangs.SChinese and not SupportedLangs.TChinese && Regex.IsMatch(res, @"[\u4e00-\u9fa5]") && res == GetString(str, SupportedLangs.SChinese)))) //strに該当する&無効なlangIdかresが空
+            if (translateMaps.TryGetValue(str, out var dic) && (!dic.TryGetValue((int)langId, out res) || res == "" || langId is not SupportedLangs.SChinese and not SupportedLangs.TChinese && Regex.IsMatch(res, @"[\u4e00-\u9fa5]") && res == GetString(str, SupportedLangs.SChinese))) //strに該当する&無効なlangIdかresが空
             {
                 if (langId == SupportedLangs.English) res = $"*{str}";
                 else res = GetString(str, SupportedLangs.English);
@@ -153,8 +154,8 @@ public static class Translator
         }
         catch (Exception Ex)
         {
-            Logger.Error($"Error oucured at [{str}] in String.csv", "Translator");
-            Logger.Error("Here was the error:\n" + Ex.ToString(), "Translator");
+            TBRLogger.Error($"Error oucured at [{str}] in String.csv", "Translator");
+            TBRLogger.Error("Here was the error:\n" + Ex.ToString(), "Translator");
         }
         return res;
     }

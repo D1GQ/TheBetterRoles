@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionHeaderItem : BetterOptionItem
 {
@@ -13,7 +13,7 @@ public class BetterOptionHeaderItem : BetterOptionItem
 
         Tab = gameOptionsMenu;
         Name = name;
-        CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(gameOptionsMenu.Tab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
         categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, 2f, -2f);
         categoryHeaderMasked.Title.text = name;

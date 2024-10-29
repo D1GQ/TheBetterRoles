@@ -1,7 +1,9 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionCheckboxItem : BetterOptionItem
 {
@@ -22,7 +24,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
-        if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
+        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
             Load(DefaultValue);
             BetterOptionItems.Add(this);
@@ -43,7 +45,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             }
         }
 
-        ToggleOption optionBehaviour = UnityEngine.Object.Instantiate<ToggleOption>(gameOptionsMenu.Tab.checkboxOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        ToggleOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.checkboxOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
@@ -87,7 +89,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Parent.ChildrenList.Add(this);
         }
 
-        if (!GameStates.IsHost)
+        if (!GameState.IsHost)
         {
             optionBehaviour.CheckMark.transform.parent.Find("ActiveSprite").gameObject.SetActive(false);
             optionBehaviour.CheckMark.transform.parent.Find("InactiveSprite").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);

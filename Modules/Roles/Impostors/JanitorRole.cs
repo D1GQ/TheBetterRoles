@@ -1,11 +1,15 @@
-﻿
-using BepInEx.Unity.IL2CPP.Utils;
+﻿using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class JanitorRole : CustomRoleBehavior
 {
@@ -36,10 +40,10 @@ public class JanitorRole : CustomRoleBehavior
 
     private DeadBody? Cleaning;
     bool IsVisible { get; set; } = true;
-    public DeadBodyButton? CleanButton = new();
+    public DeadBodyAbilityButton? CleanButton = new();
     public override void OnSetUpRole()
     {
-        CleanButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0f));
+        CleanButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0f));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

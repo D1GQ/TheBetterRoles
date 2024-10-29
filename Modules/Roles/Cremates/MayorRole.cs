@@ -1,9 +1,13 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class MayorRole : CustomRoleBehavior
 {
@@ -35,7 +39,7 @@ public class MayorRole : CustomRoleBehavior
     }
 
 
-    private PlayerMeetingButton? voteButton;
+    private PlayerVoteAreaButton? voteButton;
     private int additionalVotes = 1;
     private List<byte> voted = [];
 
@@ -44,7 +48,7 @@ public class MayorRole : CustomRoleBehavior
         voted.Clear();
         if (_player.IsLocalPlayer())
         {
-            voteButton = new PlayerMeetingButton().Create("Vote", this, LoadAbilitySprite("Vote", 100));
+            voteButton = new PlayerVoteAreaButton().Create("Vote", this, LoadAbilitySprite("Vote", 100));
             voteButton.ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && additionalVotes > 0; };
             voteButton.ClickAction = OnVoteButton;
         }

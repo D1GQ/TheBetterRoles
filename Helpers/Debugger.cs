@@ -1,9 +1,11 @@
 ﻿
 using BepInEx;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
-class Logger
+class TBRLogger
 {
     public static void Log(string info, string tag = "Log", bool logConsole = true, ConsoleColor color = ConsoleColor.White)
     {
@@ -38,7 +40,7 @@ class Logger
     public static void LogPrivate(string info, string tag = "Log")
     {
 #if DEBUG
-        if (GameStates.IsDev)
+        if (GameState.IsDev)
         {
             Log(info, tag);
             return;

@@ -1,12 +1,14 @@
-﻿
-using AmongUs.Data;
-using BepInEx.Unity.IL2CPP.Utils;
+﻿using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class SwapperRole : CustomRoleBehavior
 {
@@ -31,7 +33,7 @@ public class SwapperRole : CustomRoleBehavior
         }
     }
 
-    private PlayerMeetingButton? swapperButton;
+    private PlayerVoteAreaButton? swapperButton;
     private NetworkedPlayerInfo? firstTargetData;
     private NetworkedPlayerInfo? secondTargetData;
     private bool hasSwapped;
@@ -44,7 +46,7 @@ public class SwapperRole : CustomRoleBehavior
         isSwapping = false;
         if (_player.IsLocalPlayer())
         {
-            swapperButton = new PlayerMeetingButton().Create("Swap", this, LoadAbilitySprite("Swap", 80));
+            swapperButton = new PlayerVoteAreaButton().Create("Swap", this, LoadAbilitySprite("Swap", 80));
             swapperButton.ShowCondition = (pva, targetData) => { return (!targetData.IsDead && !targetData.Disconnected && !hasSwapped || targetData == firstTargetData || targetData == secondTargetData) && !isSwapping && swaps > 0; };
             swapperButton.ClickAction = OnSwap;
         }

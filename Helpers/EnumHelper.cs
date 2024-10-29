@@ -1,5 +1,5 @@
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
 public static class EnumHelper
 {
@@ -27,7 +27,7 @@ public static class EnumHelper
     {
         List<TEnum[]> chunkedList = [];
         TEnum[] allValues = GetAllValues<TEnum>();
-        var rnd = new Random();
+        var rnd = new System.Random();
         if (shuffle) allValues = allValues.Shuffle().ToArray();
         if (exclude != null) allValues = allValues.Where(exclude).ToArray();
 

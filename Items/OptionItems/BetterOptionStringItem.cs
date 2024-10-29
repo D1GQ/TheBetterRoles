@@ -1,7 +1,9 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionStringItem : BetterOptionItem
 {
@@ -26,7 +28,7 @@ public class BetterOptionStringItem : BetterOptionItem
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
-        if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
+        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
             Load(DefaultValue);
             BetterOptionItems.Add(this);
@@ -47,7 +49,7 @@ public class BetterOptionStringItem : BetterOptionItem
             }
         }
 
-        StringOption optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(gameOptionsMenu.Tab.stringOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        StringOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.stringOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
@@ -116,7 +118,7 @@ public class BetterOptionStringItem : BetterOptionItem
             ThisOption.ValueText.text = Values[CurrentValue];
         }
 
-        if (!GameStates.IsHost)
+        if (!GameState.IsHost)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

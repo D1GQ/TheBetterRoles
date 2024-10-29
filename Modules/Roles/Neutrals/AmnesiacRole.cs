@@ -1,8 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class AmnesiacRole : CustomRoleBehavior
 {
@@ -16,7 +20,7 @@ public class AmnesiacRole : CustomRoleBehavior
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
     public BetterOptionItem? RememberCooldown;
-    public DeadBodyButton? RememberButton;
+    public DeadBodyAbilityButton? RememberButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -29,7 +33,7 @@ public class AmnesiacRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        RememberButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 0f));
+        RememberButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 0f));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

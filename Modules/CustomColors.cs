@@ -3,9 +3,8 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
-// Thx to https://github.com/TheOtherRolesAU/TheOtherRoles
 public class CustomColors
 {
     protected static Dictionary<int, string> ColorStrings = [];
@@ -64,9 +63,9 @@ public class CustomColors
 
     public static void Load()
     {
-        List<StringNames> longlist = Enumerable.ToList<StringNames>(Palette.ColorNames);
-        List<Color32> colorlist = Enumerable.ToList<Color32>(Palette.PlayerColors);
-        List<Color32> shadowlist = Enumerable.ToList<Color32>(Palette.ShadowColors);
+        List<StringNames> longlist = Palette.ColorNames.ToList();
+        List<Color32> colorlist = Palette.PlayerColors.ToList();
+        List<Color32> shadowlist = Palette.ShadowColors.ToList();
 
         List<CustomColor> colors =
         [
@@ -248,7 +247,7 @@ public class CustomColors
         foreach (CustomColor cc in colors)
         {
             longlist.Add((StringNames)id);
-            CustomColors.ColorStrings[id++] = cc.longname;
+            ColorStrings[id++] = cc.longname;
             colorlist.Add(cc.color);
             shadowlist.Add(cc.shadow);
             if (cc.isLighterColor)
@@ -284,7 +283,7 @@ public class CustomColors
             {
                 if ((int)name >= 50000)
                 {
-                    string text = CustomColors.ColorStrings[(int)name];
+                    string text = ColorStrings[(int)name];
                     if (text != null)
                     {
                         __result = text;
@@ -340,7 +339,7 @@ public class CustomColors
                         continue;
                     ColorChip chip = chips[pos];
                     int row = i / cols, col = i % cols;
-                    chip.transform.localPosition = new Vector3(-0.975f + (col * 0.5f), 1.475f - (row * 0.5f), chip.transform.localPosition.z);
+                    chip.transform.localPosition = new Vector3(-0.975f + col * 0.5f, 1.475f - row * 0.5f, chip.transform.localPosition.z);
                     chip.transform.localScale *= 0.76f;
                 }
                 for (int j = Order.Count; j < chips.Length; j++)
@@ -365,7 +364,7 @@ public class CustomColors
             public static void Postfix()
             {
                 if (!needsPatch) return;
-                LegacySaveManager.colorConfig %= CustomColors.pickableColors;
+                LegacySaveManager.colorConfig %= pickableColors;
                 needsPatch = false;
             }
         }
@@ -381,13 +380,13 @@ public class CustomColors
             }
             public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] byte bodyColor)
             { // Fix incorrect color assignment
-                uint color = (uint)bodyColor;
+                uint color = bodyColor;
                 if (isTaken(__instance, color) || color >= Palette.PlayerColors.Length)
                 {
                     int num = 0;
-                    while (num++ < 50 && (color >= CustomColors.pickableColors || isTaken(__instance, color)))
+                    while (num++ < 50 && (color >= pickableColors || isTaken(__instance, color)))
                     {
-                        color = (color + 1) % CustomColors.pickableColors;
+                        color = (color + 1) % pickableColors;
                     }
                 }
                 __instance.RpcSetColor((byte)color);

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Modules;
 
 namespace TheBetterRoles;
 

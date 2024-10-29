@@ -1,5 +1,8 @@
 using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
 namespace TheBetterRoles;
@@ -12,14 +15,14 @@ class OnGameJoinedPatch
         try
         {
             // Fix host icon in lobby on modded servers
-            if (!GameStates.IsVanillaServer)
+            if (!GameState.IsVanillaServer)
             {
                 var host = AmongUsClient.Instance.GetHost().Character;
                 host.SetColor(-2);
                 host.SetColor(host.CurrentOutfit.ColorId);
             }
 
-            Logger.Log($"Successfully joined {GameCode.IntToGameName(AmongUsClient.Instance.GameId)}", "OnGameJoinedPatch");
+            TBRLogger.Log($"Successfully joined {GameCode.IntToGameName(AmongUsClient.Instance.GameId)}", "OnGameJoinedPatch");
         }
         catch { };
     }
@@ -31,11 +34,11 @@ public static class OnPlayerJoinedPatch
     {
         _ = new LateTask(() =>
         {
-            if (GameStates.IsInGame)
+            if (GameState.IsInGame)
             {
                 var player = Utils.PlayerFromClientId(client.Id);
 
-                if (GameStates.IsHost) RPC.SendModRequest();
+                if (GameState.IsHost) RPC.SendModRequest();
 
                 /*
                 // Auto ban player on ban list
@@ -137,7 +140,7 @@ class GameDataShowNotificationPatch
         {
             var ReasonText = $"<color=#ff0>{playerData.BetterData().RealName}</color> {forceReasonText}";
 
-            Logger.Log(ReasonText);
+            TBRLogger.Log(ReasonText);
 
             DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(ReasonText);
         }
@@ -173,7 +176,7 @@ class GameDataShowNotificationPatch
                     break;
             }
 
-            Logger.Log(ReasonText);
+            TBRLogger.Log(ReasonText);
 
             DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(ReasonText);
         }

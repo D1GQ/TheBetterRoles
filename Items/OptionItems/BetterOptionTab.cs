@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionTab
 {
@@ -90,7 +90,7 @@ public class BetterOptionTab
 
             // Calculate the new position
             float xPosition = startingPosition.x + (columnIndex == 0 ? -xOffset : xOffset); // Adjust x based on column
-            float yPosition = startingPosition.y - (rowIndex * buttonHeight); // Adjust y based on row
+            float yPosition = startingPosition.y - rowIndex * buttonHeight; // Adjust y based on row
 
             // Set the position
             tab.TabButton.transform.position = new Vector3(xPosition, yPosition, startingPosition.z);

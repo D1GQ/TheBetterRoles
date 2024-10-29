@@ -1,6 +1,7 @@
 using AmongUs.Data;
 using Discord;
 using HarmonyLib;
+using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Patches;
 
@@ -27,15 +28,15 @@ public class DiscordRPC
                 UpdateRegionAndLobbyCode();
                 if (!string.IsNullOrEmpty(lobbycode) && !string.IsNullOrEmpty(region))
                 {
-                    if (GameStates.IsNormalGame)
+                    if (GameState.IsNormalGame)
                         details = $"TBR - {lobbycode} ({region})";
-                    else if (GameStates.IsHideNSeek)
+                    else if (GameState.IsHideNSeek)
                         details = $"TBR Hide & Seek - {lobbycode} ({region})";
                 }
             }
             else
             {
-                if (GameStates.IsHideNSeek)
+                if (GameState.IsHideNSeek)
                     details = $"TBR v{Main.PluginVersion} - Hide & Seek";
             }
         }
@@ -48,7 +49,7 @@ public class DiscordRPC
 
     private static void UpdateRegionAndLobbyCode()
     {
-        if (GameStates.IsLobby)
+        if (GameState.IsLobby)
         {
             lobbycode = GameStartManager.Instance.GameRoomNameCode.text;
             region = ServerManager.Instance.CurrentRegion.Name;

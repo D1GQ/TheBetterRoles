@@ -4,9 +4,10 @@ using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System.Reflection;
+using TheBetterRoles.Helpers;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Modules;
 
 [HarmonyPatch(typeof(ShipStatus))]
 class SubmergedShipStatusPatch
@@ -82,7 +83,7 @@ public static class SubmergedCompatibility
     {
         try
         {
-            Logger.Log("Trying to load Submerged...");
+            TBRLogger.Log("Trying to load Submerged...");
             var thisAsm = Assembly.GetCallingAssembly();
             var resourceName = thisAsm.GetManifestResourceNames().FirstOrDefault(s => s.EndsWith("Submerged.dll"));
             if (resourceName == null) return false;
@@ -105,7 +106,7 @@ public static class SubmergedCompatibility
         }
         catch (Exception e)
         {
-            Logger.Error(e);
+            TBRLogger.Error(e);
             return false;
         }
     }

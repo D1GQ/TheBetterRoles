@@ -1,7 +1,9 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionPercentItem : BetterOptionItem
 {
@@ -24,7 +26,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
-        if (gameOptionsMenu?.Tab == null || !GameStates.IsLobby)
+        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
             Load(DefaultValue);
             BetterOptionItems.Add(this);
@@ -45,7 +47,7 @@ public class BetterOptionPercentItem : BetterOptionItem
             }
         }
 
-        NumberOption optionBehaviour = UnityEngine.Object.Instantiate<NumberOption>(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        NumberOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
@@ -113,7 +115,7 @@ public class BetterOptionPercentItem : BetterOptionItem
 
         ThisOption.ValueText.text = $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
 
-        if (!GameStates.IsHost)
+        if (!GameState.IsHost)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

@@ -1,11 +1,15 @@
-﻿
-using BepInEx.Unity.IL2CPP.Utils;
+﻿using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class AltruistRole : CustomRoleBehavior
 {
@@ -22,7 +26,7 @@ public class AltruistRole : CustomRoleBehavior
     public BetterOptionItem? ReviveDuration;
     public BetterOptionItem? KillOnRevive;
 
-    public DeadBodyButton? ReviveButton;
+    public DeadBodyAbilityButton? ReviveButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -37,7 +41,7 @@ public class AltruistRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        ReviveButton = AddButton(new DeadBodyButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 0f));
+        ReviveButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 0f));
         ReviveButton.CanCancelDuration = true;
         ReviveButton.DeadBodyCondition = (DeadBody body) =>
         {

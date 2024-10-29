@@ -1,11 +1,15 @@
-﻿
-using BepInEx.Unity.IL2CPP.Utils;
+﻿using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class MoleRole : CustomRoleBehavior
 {
@@ -33,17 +37,17 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    public AbilityButton? DigButton = new();
-    public VentButton? BurrowButton = new();
+    public BaseAbilityButton? DigButton = new();
+    public VentAbilityButton? BurrowButton = new();
     public override void OnSetUpRole()
     {
-        BurrowButton = AddButton(new VentButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
+        BurrowButton = AddButton(new VentAbilityButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
         BurrowButton.VentCondition = (Vent vent) =>
         {
             return CanVentOptionItem.GetBool() || Vents.Select(vents => vents.Id).Contains(vent.Id);
         };
 
-        DigButton = AddButton(new AbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
+        DigButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
         DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
         && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
     }

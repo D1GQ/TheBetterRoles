@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -60,7 +62,7 @@ public class ClientPatch
         [HarmonyPostfix]
         public static void ExitGame_Postfix([HarmonyArgument(0)] DisconnectReasons reason)
         {
-            Logger.Log($"Client has left game for: {Enum.GetName(reason)}", "AmongUsClientPatch");
+            TBRLogger.Log($"Client has left game for: {Enum.GetName(reason)}", "AmongUsClientPatch");
         }
     }
     [HarmonyPatch(typeof(InnerNetClient))]
@@ -70,14 +72,14 @@ public class ClientPatch
         [HarmonyPrefix]
         public static bool CanBan_Prefix(ref bool __result)
         {
-            __result = GameStates.IsHost;
+            __result = GameState.IsHost;
             return false;
         }
         [HarmonyPatch(nameof(InnerNetClient.CanKick))]
         [HarmonyPrefix]
         public static bool CanKick_Prefix(ref bool __result)
         {
-            __result = GameStates.IsHost || (GameStates.IsInGamePlay && (GameStates.IsMeeting || GameStates.IsExilling));
+            __result = GameState.IsHost || (GameState.IsInGamePlay && (GameState.IsMeeting || GameState.IsExilling));
             return false;
         }
     }

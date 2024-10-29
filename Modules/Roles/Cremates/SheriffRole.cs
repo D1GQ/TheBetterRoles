@@ -1,8 +1,12 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Items.Buttons;
+using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Roles;
 
 public class SheriffRole : CustomRoleBehavior
 {
@@ -21,7 +25,7 @@ public class SheriffRole : CustomRoleBehavior
     public BetterOptionItem? Misfire;
     public BetterOptionItem? CanShootImposters;
     public BetterOptionItem? CanShootNeutrals;
-    public TargetButton? ShootButton;
+    public PlayerAbilityButton? ShootButton;
     public override BetterOptionItem[]? OptionItems
     {
         get
@@ -41,7 +45,7 @@ public class SheriffRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        ShootButton = AddButton(new TargetButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetValue()));
+        ShootButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetValue()));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)

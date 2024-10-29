@@ -1,12 +1,13 @@
-﻿
+﻿using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
-public class SabotageButton : BaseButton
+public class SabotageAbilityButton : BaseButton
 {
-    public SabotageButton Create(int id, string name, CustomRoleBehavior role, bool Right = true, int index = -1)
+    public SabotageAbilityButton Create(int id, string name, CustomRoleBehavior role, bool Right = true, int index = -1)
     {
         Role = role;
         Id = id;

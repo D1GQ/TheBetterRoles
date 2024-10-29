@@ -1,7 +1,9 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items;
 
 class ArrowLocator
 {

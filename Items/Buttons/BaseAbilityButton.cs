@@ -1,11 +1,13 @@
-﻿using TheBetterRoles.Patches;
+﻿using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Items.Buttons;
 
-public class AbilityButton : BaseButton
+public class BaseAbilityButton : BaseButton
 {
-    public AbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, int index = -1)
+    public BaseAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, int index = -1)
     {
         Role = role;
         Id = id;

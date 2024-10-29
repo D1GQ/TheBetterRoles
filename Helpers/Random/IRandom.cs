@@ -1,4 +1,4 @@
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers.Random;
 
 public interface IRandom
 {
@@ -35,6 +35,6 @@ public interface IRandom
                 Instance = Activator.CreateInstance(type) as IRandom ?? Instance;
             }
         }
-        else Logger.Error($"Invalid ID: {id}", "IRandom.SetInstanceById");
+        else TBRLogger.Error($"Invalid ID: {id}", "IRandom.SetInstanceById");
     }
 }

@@ -1,5 +1,8 @@
-﻿
-namespace TheBetterRoles;
+﻿using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+
+namespace TheBetterRoles.Roles;
 
 public abstract class CustomAddonBehavior : CustomRoleBehavior
 {

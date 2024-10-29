@@ -1,4 +1,7 @@
 ﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -43,7 +46,7 @@ class GamePlayManager
         [HarmonyPostfix]
         private static void EndGame_Postfix(/*GameManager __instance*/)
         {
-            if (GameStates.IsHost)
+            if (GameState.IsHost)
             {
                 foreach (PlayerControl player in Main.AllPlayerControls)
                 {
@@ -79,9 +82,9 @@ class GamePlayManager
         [HarmonyPostfix]
         private static void Update_Postfix(GameStartManager __instance)
         {
-            if (GameStates.IsLobby)
+            if (GameState.IsLobby)
             {
-                if (!GameStates.IsHost)
+                if (!GameState.IsHost)
                 {
                     __instance.StartButton.gameObject.SetActive(false);
                     return;
@@ -126,7 +129,7 @@ class GamePlayManager
         [HarmonyPrefix]
         private static void FinallyBegin_Prefix(/*GameStartManager __instance*/)
         {
-            Logger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameStates.GetActiveMapId)}/{GameStates.GetActiveMapId}", "GamePlayManager");
+            TBRLogger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
             CustomGameManager.GameStart();
         }
     }
