@@ -634,15 +634,14 @@ public class CustomGameManager
     {
         var allPlayers = Main.AllAlivePlayerControls;
         var impostors = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Impostor)).ToList();
-        var nonKillingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && !pc.RoleChecksAny(role => role.CanKill)).ToList();
-        var killingPlayers = allPlayers.Where(pc => !pc.Is(CustomRoleTeam.Impostor) && pc.RoleChecksAny(role => role.CanKill)).ToList();
+        var killingPlayers = allPlayers.Where(pc => pc.Is(CustomRoleTeam.Neutral) && pc.RoleChecksAny(role => role.IsKillingRole)).ToList();
 
         if (impostors.Count == 0 && killingPlayers.Count == 0)
         {
             team = CustomRoleTeam.Crewmate;
             return true;
         }
-        if (impostors.Count >= nonKillingPlayers.Count && killingPlayers.Count == 0)
+        if (impostors.Count >= allPlayers.Length && killingPlayers.Count == 0)
         {
             team = CustomRoleTeam.Impostor;
             return true;

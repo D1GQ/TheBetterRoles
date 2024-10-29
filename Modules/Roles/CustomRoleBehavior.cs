@@ -133,6 +133,13 @@ public abstract class CustomRoleBehavior
     public bool IsNeutral => RoleTeam == CustomRoleTeam.Neutral;
 
     /// <summary>
+    /// Checks if the role is a killing role.
+    /// </summary>
+    public bool IsKillingRole =>
+        RoleCategory == CustomRoleCategory.Killing ||
+        Utils.GetCustomRoleClass(RoleType).CanKill;
+
+    /// <summary>
     /// Determines whether the vote-out message is always shown for this role.
     /// </summary>
     public virtual bool AlwaysShowVoteOutMsg => false;

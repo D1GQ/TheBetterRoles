@@ -164,6 +164,7 @@ public class ArsonistRole : CustomRoleBehavior
 
     private void Ignite()
     {
+        DouseButton?.SetCooldown();
         foreach (var data in doused)
         {
             var player = data.Object;
