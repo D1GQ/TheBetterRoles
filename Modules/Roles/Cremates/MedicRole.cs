@@ -47,7 +47,7 @@ public class MedicRole : CustomRoleBehavior
 
     public override void OnSetUpRole()
     {
-        ShieldButton = AddButton(new PlayerAbilityButton().Create(5, "Shield", 0, 1, null, this, true, 1));
+        ShieldButton = AddButton(new PlayerAbilityButton().Create(5, "Shield", 0, 0, 1, null, this, true, 1));
     }
 
     public override void OnDeinitialize()

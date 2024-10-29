@@ -138,7 +138,7 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
-    /// Use id 32 for the next role!
+    /// Use id 33 for the next role!
     /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
     /// </summary>
     public abstract int RoleId { get; }
@@ -441,7 +441,7 @@ public abstract class CustomRoleBehavior
             SabotageButton = AddButton(new SabotageAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
 
-            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
+            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {

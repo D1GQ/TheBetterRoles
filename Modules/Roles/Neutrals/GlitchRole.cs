@@ -57,7 +57,7 @@ public class GlitchRole : CustomRoleBehavior
     public BaseAbilityButton? MimicButton = new();
     public override void OnSetUpRole()
     {
-        HackButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, null, this, true, HackDistance.GetValue()));
+        HackButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, 0, null, this, true, HackDistance.GetValue()));
         MimicButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
         MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
     }

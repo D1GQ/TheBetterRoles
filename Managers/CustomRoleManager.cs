@@ -29,7 +29,7 @@ public static class CustomRoleManager
         .GetTypes()
         .Where(t => t.IsSubclassOf(typeof(CustomRoleBehavior)) && !t.IsAbstract)
         .Select(t => (CustomRoleBehavior)Activator.CreateInstance(t))
-        .OrderBy(role => role.RoleId)
+        .OrderBy(role => (int)role.RoleType)
         .ToArray();
 
     public static T? GetRoleInstance<T>() where T : CustomRoleBehavior
@@ -647,8 +647,8 @@ public static class CustomRoleManager
 public enum CustomRoles
 {
     // Crewmates
-    Altruist,
     Crewmate,
+    Altruist,
     Investigator,
     Mayor,
     Medic,
@@ -667,6 +667,7 @@ public enum CustomRoles
     Undertaker,
 
     // Neutrals
+    Arsonist,
     Amnesiac,
     Glitch,
     Jester,

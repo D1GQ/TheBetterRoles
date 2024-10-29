@@ -69,6 +69,15 @@ static class PlayerControlHelper
         }
     }
 
+    /// <summary>
+    /// Only call this directly if it's a 100% guarantee kill without any checks and is synced to all clients!
+    /// </summary>
+    /// <param name="killer">Set the killer.</param>
+    /// <param name="target">Set the victim.</param>
+    /// <param name="snapToTarget">Set if the killer should snap to the victim.</param>
+    /// <param name="spawnBody">Set if a body should Spawn from the murder.</param>
+    /// <param name="showAnimation">Set if the kill animation should play for the victim.</param>
+    /// <param name="playSound">Set if the kill sound should play for the Killer.</param>
     public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true, bool playSound = true)
     {
         if (killer.IsLocalPlayer())

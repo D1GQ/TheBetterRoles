@@ -30,7 +30,7 @@ public class PlaguebearerRole : CustomRoleBehavior
         {
             return
             [
-                InfectCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
+                InfectCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
                 InfectDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectDistance"),
                     [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
                 PestilenceKillCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.PestilenceKillCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
@@ -39,7 +39,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     }
     public override void OnSetUpRole()
     {
-        InfectButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, null, this, true, InfectDistance.GetValue()));
+        InfectButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, 0, null, this, true, InfectDistance.GetValue()));
         InfectButton.TargetCondition = (PlayerControl target) =>
         {
             return !infected.Contains(target.Data);

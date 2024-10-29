@@ -43,7 +43,7 @@ public class MorphlingRole : CustomRoleBehavior
 
     public override void OnSetUpRole()
     {
-        SampleButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, null, this, true, 1.2f));
+        SampleButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, 0, null, this, true, 1.2f));
         SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData == null; };
 
         TransformButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));

@@ -11,13 +11,14 @@ public class PlayerAbilityButton : BaseButton
 {
     public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
-    public PlayerAbilityButton Create(int id, string name, float cooldown, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
+    public PlayerAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         Role = role;
         Id = id;
         Distance = range * 0.5f + 1f;
         Name = name;
         Cooldown = cooldown;
+        Duration = duration;
         Uses = abilityUses;
         Visible = true;
 

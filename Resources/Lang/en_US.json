@@ -212,6 +212,16 @@
   "Role.Mole.Ability.2": "Dig Hole",
   "Role.Mole.Option.MaxVents": "Max Vents",
 
+  "Role.Arsonist": "Arsonist",
+  "Role.Arsonist.Info": "Douse players then ignite",
+  "Role.Arsonist.LongInfo": "As the Arsonist, depending on the settings, you must either douse all remaining players in the game and then ignite to win, or douse a set number of players and eliminate them all at once by igniting.",
+  "Role.Arsonist.Ability.1": "Douse",
+  "Role.Arsonist.Ability.2": "Ignite",
+  "Role.Arsonist.Option.DouseCooldown": "Douse Cooldown",
+  "Role.Arsonist.Option.DouseDistance": "Douse Distance",
+  "Role.Arsonist.Option.DousingDuration": "Dousing Duration",
+  "Role.Arsonist.Option.DousingRange": "Dousing Range",
+
   "Role.Amnesiac": "Amnesiac",
   "Role.Amnesiac.Info": "Remember an role",
   "Role.Amnesiac.LongInfo": "As the Amnesiac, you can remember a dead body's role. When remembering, you become that role.",

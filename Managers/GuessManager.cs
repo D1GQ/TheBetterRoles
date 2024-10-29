@@ -137,7 +137,7 @@ public class GuessManager : MonoBehaviour
 
     private void CreateRoles()
     {
-        foreach (var role in CustomRoleManager.allRoles.OrderBy(r => r.GetType().Name))
+        foreach (var role in CustomRoleManager.allRoles/*.OrderBy(r => r.GetType().Name)*/)
         {
             if (role.IsGhostRole) continue;
             if (!role.CanBeAssigned) continue;
