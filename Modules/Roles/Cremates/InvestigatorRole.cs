@@ -50,8 +50,23 @@ public class InvestigatorRole : CustomRoleBehavior
             Footprints = GameObject.Find("Footprints");
         }
     }
+
+    public override void OnDeinitialize()
+    {
+        foreach (var body in bodyPrints)
+        {
+            if (body)
+            {
+                body.DestroyObj();
+            }
+        }
+    }
+
     private GameObject? Footprints;
     private Dictionary<byte, float> Timer = [];
+
+    private List<GameObject> bodyPrints = [];
+    private List<GameObject> markedBodies = [];
     public override void FixedUpdate()
     {
         if (_player.IsLocalPlayer())
@@ -77,23 +92,50 @@ public class InvestigatorRole : CustomRoleBehavior
                     }
                 }
             }
+
+            foreach (var body in Main.AllDeadBodys)
+            {
+                if (body)
+                {
+                    if (!markedBodies.Contains(body.gameObject))
+                    {
+                        markedBodies.Add(body.gameObject);
+                        CreateBodyprint(body);
+                    }
+                }
+            }
         }
     }
 
     private void CreateFootprint(PlayerControl player)
     {
-        GameObject footprint = new GameObject("Footprint");
+        GameObject footprint = new("Footprint");
         footprint.transform.SetParent(Footprints.transform);
         footprint.transform.position = player.transform.position + new Vector3(0f, 0f, 0.005f) - new Vector3(0f, 0.25f, 0f);
         footprint.transform.LookAt2d(player.GetTruePosition() + player.MyPhysics.Velocity * 1000f);
         footprint.transform.rotation *= Quaternion.Euler(0f, 0f, 90f);
         var spriteRenderer = footprint.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = LoadAbilitySprite("Footprint", 135);
-        spriteRenderer.color = !AnonymousFootprint.GetBool() ? Palette.PlayerColors[player.Data.DefaultOutfit.ColorId] : Color.gray;
+        spriteRenderer.color = !AnonymousFootprint.GetBool() ? Palette.PlayerColors[player.Data.DefaultOutfit.ColorId] : Palette.DisabledGrey;
         var color = spriteRenderer.color;
         spriteRenderer.color = new Color(color.r, color.g, color.b, 0.75f);
 
         _player.BetterData().StartCoroutine(CoFadeFootprintOut(footprint, spriteRenderer));
+    }
+
+    private void CreateBodyprint(DeadBody body)
+    {
+        GameObject bodyprint = UnityEngine.Object.Instantiate(body.transform.Find("Sprite").GetComponent<SpriteRenderer>().gameObject);
+        bodyprint.transform.SetParent(Footprints.transform, true);
+        var sprite = bodyprint.GetComponent<SpriteRenderer>();
+        if (sprite != null)
+        {
+            sprite.color = Palette.PlayerColors[Utils.PlayerDataFromPlayerId(body.ParentId).DefaultOutfit.ColorId] - new Color(0f, 0f, 0f, 0.5f);
+        }
+        bodyprint.transform.localPosition = body.transform.Find("Sprite").position;
+        bodyprint.transform.localScale = new Vector3(0.35f, 0.35f, 0.35f);
+        bodyprint.transform.position += new Vector3(0f, 0f, 0.0005f);
+        bodyPrints.Add(bodyprint);
     }
 
     private System.Collections.IEnumerator CoFadeFootprintOut(GameObject footprint, SpriteRenderer spriteRenderer)

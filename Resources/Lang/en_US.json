@@ -128,7 +128,7 @@
 
   "Role.Investigator": "Investigator",
   "Role.Investigator.Info": "Investigate players footprints",
-  "Role.Investigator.LongInfo": "As the Investigator, players leave behind footprints for a set amount of time.",
+  "Role.Investigator.LongInfo": "As the Investigator, players leave behind footprints for a set amount of time. The Investigator can also see where bodies have been found throughout the entire game.",
   "Role.Investigator.Option.FootprintInterval": "Footprint Interval",
   "Role.Investigator.Option.FootprintDuration": "Footprint Duration",
   "Role.Investigator.Option.AnonymousFootprint": "Anonymous Footprint",
