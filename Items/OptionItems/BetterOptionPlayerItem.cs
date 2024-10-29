@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Modules;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 

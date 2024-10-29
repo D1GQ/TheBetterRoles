@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Hazel;
 using Il2CppSystem.Text;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TMPro;

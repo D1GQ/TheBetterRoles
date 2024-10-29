@@ -8,9 +8,9 @@ using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
 
-namespace TheBetterRoles;
+namespace TheBetterRoles.Helpers;
 
-static class ExtendedPlayerControl
+static class PlayerControlHelper
 {
     // Get players client
     public static ClientData? GetClient(this PlayerControl player)
@@ -132,7 +132,7 @@ static class ExtendedPlayerControl
         DeadBody? deadBody = null;
         if (spawnBody)
         {
-            deadBody = UnityEngine.Object.Instantiate<DeadBody>(GameManager.Instance.DeadBodyPrefab);
+            deadBody = UnityEngine.Object.Instantiate(GameManager.Instance.DeadBodyPrefab);
             deadBody.enabled = false;
             deadBody.ParentId = target.PlayerId;
             deadBody.bodyRenderers.ToList().ForEach(target.SetPlayerMaterialColors);
@@ -185,7 +185,7 @@ static class ExtendedPlayerControl
 
     public static void ShieldBreakAnimation(this PlayerControl player, string color)
     {
-        ShieldBreakAnimation(player, Utils.HexToColor32(color));
+        player.ShieldBreakAnimation(Utils.HexToColor32(color));
     }
 
     public static bool CanBeTeleported(this PlayerControl player)
@@ -268,11 +268,11 @@ static class ExtendedPlayerControl
     // Set color outline on player
     public static void SetOutline(this PlayerControl player, bool active, Color? color = null)
     {
-        player.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", (float)(active ? 1 : 0));
+        player.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", active ? 1 : 0);
         SpriteRenderer[] longModeParts = player.cosmetics.currentBodySprite.LongModeParts;
         for (int i = 0; i < longModeParts.Length; i++)
         {
-            longModeParts[i].material.SetFloat("_Outline", (float)(active ? 1 : 0));
+            longModeParts[i].material.SetFloat("_Outline", active ? 1 : 0);
         }
         if (color != null)
         {
@@ -288,11 +288,11 @@ static class ExtendedPlayerControl
     public static void SetOutlineByHex(this PlayerControl player, bool active, string hexColor = "")
     {
         Color color = Utils.HexToColor32(hexColor);
-        player.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", (float)(active ? 1 : 0));
+        player.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", active ? 1 : 0);
         SpriteRenderer[] longModeParts = player.cosmetics.currentBodySprite.LongModeParts;
         for (int i = 0; i < longModeParts.Length; i++)
         {
-            longModeParts[i].material.SetFloat("_Outline", (float)(active ? 1 : 0));
+            longModeParts[i].material.SetFloat("_Outline", active ? 1 : 0);
         }
         if (color != null)
         {
@@ -350,11 +350,11 @@ static class ExtendedPlayerControl
         return false;
     }
     // Check if player can vent
-    public static bool CanVent(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanKill, false) == true;
+    public static bool CanVent(this PlayerControl player) => player.RoleChecksAny(role => role.CanKill, false) == true;
     // Check if player can kill
-    public static bool CanKill(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanKill, false) == true;
+    public static bool CanKill(this PlayerControl player) => player.RoleChecksAny(role => role.CanKill, false) == true;
     // Check if player can sabotage
-    public static bool CanSabotage(this PlayerControl player) => CustomRoleManager.RoleChecksAny(player, role => role.CanSabotage, false) == true;
+    public static bool CanSabotage(this PlayerControl player) => player.RoleChecksAny(role => role.CanSabotage, false) == true;
     public static bool RoleAssigned(this PlayerControl player)
     {
         if (player == null) return false;
@@ -380,8 +380,8 @@ static class ExtendedPlayerControl
     // Check if player is a imposter teammate
     public static bool IsImpostorTeammate(this PlayerControl player) =>
         player != null && PlayerControl.LocalPlayer != null &&
-        ((player.IsLocalPlayer() && PlayerControl.LocalPlayer.Is(CustomRoleTeam.Impostor)) ||
-        (PlayerControl.LocalPlayer.Is(CustomRoleTeam.Impostor) && player.Is(CustomRoleTeam.Impostor)));
+        (player.IsLocalPlayer() && PlayerControl.LocalPlayer.Is(CustomRoleTeam.Impostor) ||
+        PlayerControl.LocalPlayer.Is(CustomRoleTeam.Impostor) && player.Is(CustomRoleTeam.Impostor));
 
     // Check if player is same team
     public static bool IsTeammate(this PlayerControl player) =>

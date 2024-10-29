@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Managers;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;

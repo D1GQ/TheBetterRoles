@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Items;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;

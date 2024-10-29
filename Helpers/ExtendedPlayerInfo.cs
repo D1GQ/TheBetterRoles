@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
@@ -93,7 +94,7 @@ public class ExtendedRoleInfo
         .ToList();
 }
 
-public static class PlayerControlDataExtension
+public static class PlayerDataExtension
 {
     [HarmonyPatch(typeof(NetworkedPlayerInfo))]
     class NetworkedPlayerInfoPatch

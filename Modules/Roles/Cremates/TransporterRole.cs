@@ -1,4 +1,5 @@
 ﻿using Hazel;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;

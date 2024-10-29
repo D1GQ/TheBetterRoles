@@ -1,5 +1,6 @@
 ﻿using Hazel;
 using PowerTools;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;

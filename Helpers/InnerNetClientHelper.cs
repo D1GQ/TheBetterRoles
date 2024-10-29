@@ -4,7 +4,7 @@ using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Helpers;
 
-static class ExtendedInnerNetClient
+static class InnerNetClientHelper
 {
     public static void WriteBooleans(this MessageWriter writer, bool[] @bools)
     {

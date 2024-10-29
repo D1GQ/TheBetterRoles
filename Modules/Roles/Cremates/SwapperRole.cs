@@ -1,6 +1,7 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using Hazel;
 using System.Collections;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
