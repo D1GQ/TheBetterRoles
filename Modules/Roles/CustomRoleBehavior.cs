@@ -441,7 +441,6 @@ public abstract class CustomRoleBehavior
     protected virtual void SetUpRole()
     {
         SetUpSettings();
-        OptionItems.Initialize();
 
         if (_player != null)
         {
