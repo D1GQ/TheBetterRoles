@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;

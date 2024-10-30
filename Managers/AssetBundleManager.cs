@@ -1,6 +1,6 @@
-﻿using TheBetterRoles.Helpers;
+﻿using System.Reflection;
+using TheBetterRoles.Helpers;
 using UnityEngine;
-using System.Reflection;
 
 namespace TheBetterRoles.Managers
 {
