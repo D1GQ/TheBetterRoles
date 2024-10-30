@@ -468,7 +468,7 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void OnDestroy_Postfix()
         {
-            TBRLogger.LogHeader("Meeting Has Endded");
+            TBRLogger.LogHeader("Meeting Has Ended");
         }
     }
 }
