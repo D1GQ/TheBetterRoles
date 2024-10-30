@@ -125,12 +125,6 @@ public class Main : BasePlugin
 
     public override void Load()
     {
-        // Add custom components
-        {
-            AddComponent<ExtendedPlayerInfo>();
-            AddComponent<GuessManager>();
-        }
-
         try
         {
             Preset = Config.Bind("Better Settings", "Preset", 1);
@@ -138,6 +132,13 @@ public class Main : BasePlugin
             ConsoleManager.SetConsoleTitle("Among Us - TBR Console");
             ConsoleManager.ConfigPreventClose.Value = true;
             Logger = BepInEx.Logging.Logger.CreateLogSource(PluginGuid);
+
+            // Add custom components
+            {
+                AddComponent<AssetBundleManager>();
+                AddComponent<ExtendedPlayerInfo>();
+                AddComponent<GuessManager>();
+            }
 
             CheckRoleIds();
 
@@ -149,7 +150,6 @@ public class Main : BasePlugin
             GameSettingMenuPatch.SetupSettings(true);
             CustomColors.Load();
             CustomSoundsManager.Load();
-            _ = AssetBundleManager.LoadAssets();
             SubmergedCompatibility.Initialize();
 
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)

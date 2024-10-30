@@ -187,6 +187,7 @@ public class ArsonistRole : CustomRoleBehavior
         doused.Add(target.Data);
         if (_player.IsLocalPlayer())
         {
+            CustomSoundsManager.Play("Douse", 2.5f);
             target.SetTrueVisorColor(Utils.HexToColor32("#59360d"));
             target.BetterData().NameColor = "#59360d";
         }

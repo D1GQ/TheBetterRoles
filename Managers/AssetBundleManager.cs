@@ -1,98 +1,148 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
+using BepInEx.Unity.IL2CPP.Utils;
 using TheBetterRoles.Helpers;
 using UnityEngine;
 
-namespace TheBetterRoles.Managers
+namespace TheBetterRoles.Managers;
+
+public class AssetBundleManager : MonoBehaviour
 {
-    public static class AssetBundleManager
+    private class Result<T>
     {
-        private static readonly Dictionary<string, AssetBundle> loadedBundles = [];
+        private T _value;
+        private Exception _error;
 
-        private static AssetBundle? shaders;
-        public static Shader? GlitchShader;
+        public void SetValue(T value) => (_value, _error) = (value, null);
+        public void SetError(Exception error) => (_value, _error) = (default, error);
+        public T GetValue() => _error != null ? throw _error : _value;
+    }
 
-        public static async Task LoadAssets()
+    private static AssetBundleManager? Instance;
+    private static readonly Dictionary<string, AssetBundle> loadedBundles = new();
+    private bool _errored;
+
+    public static Shader? GlitchShader { get; private set; }
+    public static bool Errored => Instance?._errored ?? false;
+
+    public void Awake()
+    {
+        if (Instance != null) return;
+        Instance = this;
+
+        TBRLogger.Log("Loading assets");
+        this.StartCoroutine(InitializeAssets());
+    }
+
+
+    private IEnumerator InitializeAssets()
+    {
+        AssetBundle? shadersBundle;
+        try
         {
-            shaders = LoadEmbeddedBundle("TheBetterRoles.Resources.AssetBundles.shaders");
-            LogAssetNames(shaders);
-
-            // GlitchShader = await LoadAsync<Shader>(shaders, "assets/shaders/glitchshader.shader");
+            shadersBundle = LoadEmbeddedBundle("TheBetterRoles.Resources.AssetBundles.shaders");
+            LogAssetNames(shadersBundle);
+        }
+        catch (Exception e)
+        {
+            HandleError(e);
+            yield break;
         }
 
-        private static void LogAssetNames(AssetBundle? assetBundle)
-        {
-            if (assetBundle == null)
-            {
-                TBRLogger.Error("AssetBundle is null. Cannot log asset names.");
-                return;
-            }
+        var glitchResult = new Result<Shader>();
+        yield return LoadAsset(shadersBundle, "GlitchShader", glitchResult);
 
-            string[] assetNames = assetBundle.GetAllAssetNames();
-            TBRLogger.Log("Assets in the bundle:");
-            foreach (var name in assetNames)
-            {
-                TBRLogger.Log(name);
-            }
+        try
+        {
+            GlitchShader = glitchResult.GetValue();
+            TBRLogger.Log("Assets loaded successfully.");
+        }
+        catch (Exception e)
+        {
+            HandleError(e);
+        }
+    }
+
+    private static void LogAssetNames(AssetBundle? assetBundle)
+    {
+        if (assetBundle == null)
+        {
+            TBRLogger.Error("AssetBundle is null. Cannot log asset names.");
+            return;
         }
 
-        private static AssetBundle? LoadEmbeddedBundle(string resourceName)
+        foreach (string name in assetBundle.GetAllAssetNames())
         {
-            if (loadedBundles.ContainsKey(resourceName))
-            {
-                return loadedBundles[resourceName];
-            }
+            TBRLogger.Log(name);
+        }
+    }
 
-            var assembly = Assembly.GetExecutingAssembly();
-            using Stream? stream = assembly.GetManifestResourceStream(resourceName);
-            if (stream == null)
-            {
-                TBRLogger.Error($"Embedded asset bundle '{resourceName}' not found in the assembly.");
-                return null;
-            }
-
-            byte[] buffer = new byte[stream.Length];
-            stream.Read(buffer, 0, buffer.Length);
-
-            AssetBundle? bundle = AssetBundle.LoadFromMemory(buffer);
-            if (bundle != null)
-            {
-                loadedBundles[resourceName] = bundle;
-                TBRLogger.Log($"Embedded asset bundle '{resourceName}' loaded successfully.");
-            }
-            else
-            {
-                TBRLogger.Error($"Failed to load embedded asset bundle '{resourceName}'.");
-            }
+    private static AssetBundle? LoadEmbeddedBundle(string resourceName)
+    {
+        if (loadedBundles.TryGetValue(resourceName, out var bundle))
+        {
             return bundle;
         }
 
-        public static async Task<T?> LoadAsync<T>(this AssetBundle assetBundle, string assetName) where T : UnityEngine.Object
+        var assembly = Assembly.GetExecutingAssembly();
+        using Stream? stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
         {
-            if (assetBundle == null)
-            {
-                TBRLogger.Error("AssetBundle is null. Cannot load asset.");
-                return null;
-            }
-
-            TBRLogger.Log($"Fetching '{assetName}'");
-            AssetBundleRequest request = assetBundle.LoadAssetAsync<T>(assetName);
-
-            while (!request.isDone)
-            {
-                await Task.Delay(500);
-            }
-
-            T? asset = request.asset as T;
-            if (asset != null)
-            {
-                TBRLogger.Log($"Asset '{assetName}' loaded successfully.");
-            }
-            else
-            {
-                TBRLogger.Error($"Asset '{assetName}' not found or failed to load in the asset bundle.");
-            }
-
-            return asset;
+            throw new FileNotFoundException($"Embedded asset bundle '{resourceName}' not found.");
         }
+
+        byte[] buffer = new byte[stream.Length];
+        stream.Read(buffer, 0, buffer.Length);
+
+        bundle = AssetBundle.LoadFromMemory(buffer);
+        if (bundle == null) throw new Exception($"Failed to load embedded asset bundle '{resourceName}'.");
+
+        loadedBundles[resourceName] = bundle;
+        TBRLogger.Log($"Embedded asset bundle '{resourceName}' loaded successfully.");
+        return bundle;
+    }
+
+    private static IEnumerator LoadAsset<T>(AssetBundle bundle, string objectName, Result<T> result) where T : UnityEngine.Object
+    {
+        AssetBundleRequest bundleReq;
+
+        try
+        {
+            bundleReq = bundle.LoadAssetAsync<T>(objectName);
+            if (bundleReq == null) throw new NullReferenceException();
+        }
+        catch (Exception e)
+        {
+            result.SetError(e);
+            yield break;
+        }
+
+        while (!bundleReq.WasCollected && !bundleReq.isDone) yield return null;
+
+        try
+        {
+            if (CastHelper.TryCast<T>(bundleReq.asset, out var item))
+            {
+                result.SetValue(item);
+            }
+        }
+        catch (Exception e)
+        {
+            result.SetError(e);
+        }
+    }
+
+    private void HandleError(Exception e)
+    {
+        _errored = true;
+        TBRLogger.Error($"Error loading assets: {e.Message}");
+        this.StartCoroutine(ShowErrorDialog(e));
+    }
+
+    private static IEnumerator ShowErrorDialog(Exception e)
+    {
+        // Placeholder for custom error dialog implementation.
+        TBRLogger.Log("Displaying error dialog.");
+        yield return null;
     }
 }

@@ -518,8 +518,11 @@ public abstract class CustomRoleBehavior
 
     protected void RemoveButton(BaseButton button)
     {
-        button.RemoveButton();
-        Buttons.Remove(button);
+        if (button != null)
+        {
+            button.RemoveButton();
+            Buttons.Remove(button);
+        }
     }
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type)
