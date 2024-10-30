@@ -19,6 +19,7 @@ public class PestillenceRole : CustomRoleBehavior
     public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
     public override bool CanKill => true;
     public override bool CanVent => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().CanVent;
+    public override bool HasImpostorVision => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().HasImpostorVision;
 
     public override BetterOptionItem[]? OptionItems
     {

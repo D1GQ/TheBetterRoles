@@ -21,7 +21,7 @@ class ShipStatusPatch
             __result = __instance.MaxLightRadius;
             return false;
         }
-        if (player.Is(CustomRoleTeam.Impostor))
+        if (CustomRoleManager.RoleChecksAny(player, role => role.HasImpostorVision))
         {
             __result = __instance.MaxLightRadius *
                 PlayerControl.LocalPlayer.BetterData()?.PlayerVisionMod * PlayerControl.LocalPlayer.BetterData()?.PlayerVisionModPlus

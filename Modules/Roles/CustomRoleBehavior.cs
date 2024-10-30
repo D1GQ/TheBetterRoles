@@ -294,7 +294,17 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The base vision modification factor for the player, derived from game settings.
     /// </summary>
-    public float BaseVisionMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(!IsImpostor ? FloatOptionNames.CrewLightMod : FloatOptionNames.ImpostorLightMod);
+    public float BaseVisionMod => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(!HasImpostorVision ? FloatOptionNames.CrewLightMod : FloatOptionNames.ImpostorLightMod);
+
+    /// <summary>
+    /// The option that determines whether players has Impostor vision.
+    /// </summary>
+    protected BetterOptionItem? HasImpostorVisionOption { get; set; }
+
+    /// <summary>
+    /// The bool that determines whether players has Impostor vision.
+    /// </summary>
+    public virtual bool HasImpostorVision => IsImpostor || HasImpostorVisionOption?.GetBool() == true;
 
     /// <summary>
     /// Set if player appearance is disguised.
@@ -474,6 +484,11 @@ public abstract class CustomRoleBehavior
         AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
         OptionItems.Initialize();
+
+        if (IsNeutral)
+        {
+            HasImpostorVisionOption = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.HasImpostorVision"), false, RoleOptionItem);
+        }
 
         bool ventFlag = !IsCrewmate && !VentReliantRole && !IsGhostRole;
         if (ventFlag)

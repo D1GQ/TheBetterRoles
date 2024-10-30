@@ -50,6 +50,7 @@
   "Role.Team.Neutral": "Neutral",
   "Role.Team.None": "None",
 
+  "Role.Ability.HasImpostorVision": "Impostor Vision",
   "Role.Ability.CanVent": "Can Vent",
   "Role.Ability.VentCooldown": "Vent Cooldown",
   "Role.Ability.VentDuration": "Vent Duration",

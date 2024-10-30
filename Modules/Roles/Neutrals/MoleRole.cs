@@ -99,7 +99,7 @@ public class MoleRole : CustomRoleBehavior
         }
         foreach (Vent vent in ventsToRemove)
         {
-            RemoveVent(vent, false);
+            RemoveVent(vent);
         }
     }
 
