@@ -5,6 +5,7 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace TheBetterRoles.Modules;
 
@@ -330,6 +331,7 @@ internal static class RPC
                             foreach (var kvp in settings)
                             {
                                 BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
+                                BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
                             }
                         }
                     }
@@ -344,7 +346,7 @@ internal static class RPC
                             string text = reader.ReadString();
 
                             BetterDataManager.SaveSetting(Id, data);
-                            BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue();
+                            BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue(data);
                             Utils.SettingsChangeNotifierSync(Id, text);
                         }
                     }

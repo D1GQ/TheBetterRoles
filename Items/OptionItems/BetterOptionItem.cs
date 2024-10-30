@@ -2,6 +2,7 @@
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
+using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace TheBetterRoles.Items.OptionItems;
 
@@ -16,6 +17,8 @@ public enum SettingType
 
 public class BetterOptionItem
 {
+    protected float topDistance = 0.15f;
+    protected float bottomDistance = 0.50f;
     public static int IdNum = 0;
     public float StaticSpacingNum => 1f;
     public float StaticSpacingNumPlus => 0.45f;
@@ -62,8 +65,8 @@ public class BetterOptionItem
 
             SpacingNum += item switch
             {
-                BetterOptionHeaderItem => 0.1f,
-                BetterOptionDividerItem => 0.15f,
+                BetterOptionHeaderItem => item.topDistance,
+                BetterOptionDividerItem => item.topDistance,
                 _ => 0f,
             };
 
@@ -78,18 +81,17 @@ public class BetterOptionItem
 
             SpacingNum += item switch
             {
-                BetterOptionHeaderItem => 0.75f,
-                BetterOptionTitleItem => 0.50f,
+                BetterOptionHeaderItem => item.bottomDistance,
+                BetterOptionTitleItem => item.bottomDistance,
                 _ => 0.45f,
             };
-
-
-            _ = new LateTask(() =>
-            {
-                item.Tab.Tab.scrollBar.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
-                item.Tab.Tab.scrollBar.ScrollRelative(new(0f, 0f));
-            }, 0.005f, shoudLog: false);
         }
+
+        _ = new LateTask(() =>
+        {
+            BetterOptionTab.allTabs.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab.scrollBar.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
+            BetterOptionTab.allTabs.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab.scrollBar.ScrollRelative(new(0f, 0f));
+        }, 0.005f, shoudLog: false);
     }
 
     public void SetUp(OptionBehaviour optionBehaviour)
@@ -144,7 +146,7 @@ public class BetterOptionItem
         throw new NotImplementedException();
     }
 
-    public virtual void SyncValue() { }
+    public virtual void SyncValue(string value) { }
 
     public virtual string FormatValueAsText() => string.Empty;
 }

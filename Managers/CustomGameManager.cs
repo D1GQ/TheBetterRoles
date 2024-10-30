@@ -192,6 +192,7 @@ public class CustomGameManager
                     __instance.RoleText.color = RoleColor;
                     __instance.RoleBlurbText.color = RoleColor;
                 }, 0.0001f, shoudLog: false);
+                HudManager.Instance.MapButton.gameObject.SetActive(true);
             }
             catch { }
         }
@@ -502,7 +503,6 @@ public class CustomGameManager
         GameHasEnded = false;
         CustomRoleManager.availableGhostRoles.Clear();
         CustomRoleBehavior.SubTeam.Clear();
-        HudManager.Instance.MapButton.gameObject.SetActive(true);
     }
 
     public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)

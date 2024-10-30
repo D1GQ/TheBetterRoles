@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Managers;
+﻿using AmongUs.GameOptions;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionCheckboxItem : BetterOptionItem
 {
+    public BoolOptionNames? VanillaOption;
+
     private ToggleOption? ThisOption;
     public bool IsChecked;
     public bool defaultValue;
@@ -15,7 +18,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, bool DefaultValue = true, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionCheckboxItem Create(int id, BetterOptionTab gameOptionsMenu, string name, bool DefaultValue = true, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, BoolOptionNames? vanillaOption = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Tab = gameOptionsMenu;
@@ -23,6 +26,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         IsChecked = DefaultValue;
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
+        VanillaOption = vanillaOption;
 
         if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
@@ -36,7 +40,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return BetterOptionItems.First(op => op.Id == Id);
+                return (BetterOptionCheckboxItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -112,6 +116,11 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         {
             BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+        }
     }
 
     public override bool GetBool()
@@ -138,7 +147,14 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     public override void ValueChanged(int id, OptionBehaviour optionBehaviour)
     {
         IsChecked = !IsChecked;
+
         BetterDataManager.SaveSetting(Id, IsChecked.ToString());
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+        }
+
         RPC.SyncOption(id, IsChecked.ToString(), FormatValueAsText());
 
         if (IsParent || IsChild)
@@ -152,12 +168,14 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         }
     }
 
-    public override void SyncValue()
+    public override void SyncValue(string value)
     {
+        if (!bool.TryParse(value, out bool @bool)) return;
+
+        IsChecked = @bool;
+
         if (ThisOption)
         {
-            Load(defaultValue);
-
             var check = ThisOption.CheckMark.GetComponent<SpriteRenderer>();
             if (check != null)
             {
@@ -173,6 +191,11 @@ public class BetterOptionCheckboxItem : BetterOptionItem
                 }
                 UpdatePositions();
             }
+        }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
         }
     }
 

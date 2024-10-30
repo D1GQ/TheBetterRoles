@@ -44,9 +44,9 @@ class RpcSetTasksPatch
         taskTypeIds = new Il2CppStructArray<byte>(0);
 
         // Default number of tasks
-        int NumCommonTasks = BetterGameSettings.CommonTasksNum.GetInt();
-        int NumLongTasks = BetterGameSettings.LongTasksNum.GetInt();
-        int NumShortTasks = BetterGameSettings.ShortTasksNum.GetInt();
+        int NumCommonTasks = VanillaGameSettings.CommonTasksNum.GetInt();
+        int NumLongTasks = VanillaGameSettings.LongTasksNum.GetInt();
+        int NumShortTasks = VanillaGameSettings.ShortTasksNum.GetInt();
 
         if (__instance?.BetterData()?.RoleInfo != null)
         {

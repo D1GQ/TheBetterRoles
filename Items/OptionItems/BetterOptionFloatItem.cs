@@ -1,4 +1,6 @@
-﻿using TheBetterRoles.Managers;
+﻿using AmongUs.GameOptions;
+using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
@@ -7,6 +9,8 @@ namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionFloatItem : BetterOptionItem
 {
+    public FloatOptionNames? VanillaOption;
+
     private NumberOption? ThisOption;
     public float CurrentValue;
     public float defaultValue;
@@ -19,7 +23,7 @@ public class BetterOptionFloatItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionFloatItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, FloatOptionNames? vanillaOption = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         floatRange = new(values[0], values[1]);
@@ -29,6 +33,7 @@ public class BetterOptionFloatItem : BetterOptionItem
         CurrentValue = DefaultValue;
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
+        VanillaOption = vanillaOption;
 
         if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
@@ -42,7 +47,7 @@ public class BetterOptionFloatItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return BetterOptionItems.First(op => op.Id == Id);
+                return (BetterOptionFloatItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -137,6 +142,11 @@ public class BetterOptionFloatItem : BetterOptionItem
         if (CurrentValue <= floatRange.min) ThisOption.MinusBtn.SetInteractable(false);
 
         BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
+        }
     }
 
     public void Increase()
@@ -201,6 +211,11 @@ public class BetterOptionFloatItem : BetterOptionItem
         {
             BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
+        }
     }
 
     public override float GetFloat()
@@ -249,12 +264,14 @@ public class BetterOptionFloatItem : BetterOptionItem
         }
     }
 
-    public override void SyncValue()
+    public override void SyncValue(string value)
     {
+        if (!float.TryParse(value, out float @float)) return;
+
+        CurrentValue = @float;
+
         if (ThisOption)
         {
-            Load(defaultValue);
-
             ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
 
             if (IsParent || IsChild)
@@ -266,6 +283,11 @@ public class BetterOptionFloatItem : BetterOptionItem
                 }
                 UpdatePositions();
             }
+        }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
         }
     }
 

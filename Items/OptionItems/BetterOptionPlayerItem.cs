@@ -14,7 +14,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, string name, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionPlayerItem Create(BetterOptionTab gameOptionsMenu, string name, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
         Id = TempPlayerOptionDataNum + 1;
         Tab = gameOptionsMenu;
@@ -221,8 +221,12 @@ public class BetterOptionPlayerItem : BetterOptionItem
         }
     }
 
-    public override void SyncValue()
+    public override void SyncValue(string value)
     {
+        if (!int.TryParse(value, out int @int)) return;
+
+        CurrentIndex = @int;
+
         if (ThisOption)
         {
             AdjustButtonsActiveState();

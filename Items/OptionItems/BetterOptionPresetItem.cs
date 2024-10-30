@@ -17,7 +17,7 @@ public class BetterOptionPresetItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, int DefaultValue)
+    public BetterOptionPresetItem Create(BetterOptionTab gameOptionsMenu, int DefaultValue)
     {
         intRange = new(1, 5);
         Increment = 1;

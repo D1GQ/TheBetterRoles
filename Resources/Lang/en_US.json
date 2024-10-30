@@ -326,8 +326,11 @@
   "BetterSetting.Presets": "Presets",
   "BetterSetting.SetTo": "Set To:",
 
+  "BetterSetting.Tab.GameSettings": "Game Settings",
+  "BetterSetting.Description.GameSettings": "Configure game options related to the game.",
+
   "BetterSetting.Tab.SystemSettings": "System Settings",
-  "BetterSetting.Description.SystemSettings": "Configure system/mod options related to the game.",
+  "BetterSetting.Description.SystemSettings": "Configure system/mod options related to the mod.",
 
   "BetterSetting.Tab.CrewmateRoles": "Crewmate Roles",
   "BetterSetting.Description.CrewmateRoles": "Customize roles and settings for the Crewmates, defining their tasks and abilities.",
@@ -370,19 +373,44 @@
   "BetterSetting.RoleCategory.HelpfulAddon": "Helpful Addons",
   "BetterSetting.RoleCategory.HarmfulAddon": "Harmful Addon",
 
-  "BetterSetting.Title.ModSettings": "Mod Settings",
-  "BetterSetting.ConfirmEjects": "Confirm Ejects",
-  "BetterSetting.MaxNonKillingNeutrals": "Maximum Non-Killing Neutrals",
+  "BetterSetting.Title.PlayerSettings": "Player Settings",
+  "BetterSetting.Title.PlayerSettings.Impostor": "Impostor Settings",
+  "BetterSetting.ImpostorVision": "Impostor Vision",
+  "BetterSetting.KillCooldown": "Kill Cooldown",
+  "BetterSetting.KillDistance": "Kill Distance",
+  "BetterSetting.Title.PlayerSettings.Cremate": "Crewmate Settings",
+  "BetterSetting.PlayerVision": "Crewmate Vision",
+  "BetterSetting.PlayerSpeed": "Player Speed",
+
+  "BetterSetting.Title.MeetingSettings": "Meeting Settings",
+  "BetterSetting.EmergencyMeetings": "Emergency Meetings",
+  "BetterSetting.EmergencyCooldown": "Emergency Cooldown",
+  "BetterSetting.DiscussionTime": "Discussion Time",
+  "BetterSetting.VotingTime": "Voting Time",
+  "BetterSetting.AnonymousVotes": "Anonymous Votes",
+  "BetterSetting.ConfirmEjects": "Confirm Ejections",
+
+  "BetterSetting.Title.TaskSettings": "Task Settings",
+  "BetterSetting.TaskBarUpdate": "Task Bar Update",
+  "BetterSetting.TaskBarUpdate.Always": "Always",
+  "BetterSetting.TaskBarUpdate.Meetings": "Meetings",
+  "BetterSetting.TaskBarUpdate.Never": "Never",
+  "BetterSetting.VisualTask": "Visual Task",
+
   "BetterSetting.Title.ImpostorSettings": "Impostor Settings",
   "BetterSetting.Impostors": "# Impostors",
+
   "BetterSetting.Title.NeutralSettings": "Neutral Settings",
   "BetterSetting.MinimumBenignNeutralAmount": "Minimum Non-Killing Neutrals",
   "BetterSetting.MaximumBenignNeutralAmount": "Maximum Non-Killing Neutrals",
   "BetterSetting.MaximumKillingNeutralAmount": "Maximum Killing Neutrals",
   "BetterSetting.MinimumKillingNeutralAmount": "Minimum Killing Neutrals",
+
   "BetterSetting.Title.AddonSettings": "Add-on Settings",
   "BetterSetting.MaximumAddonAmount": "Maximum Add-ons",
   "BetterSetting.MinimumAddonAmount": "Minimum Add-ons",
+
+  "BetterSetting.Title.ModSettings": "Mod Settings",
   "BetterSetting.Title.GuessSettings": "Guess Settings",
   "BetterSetting.OnlyShowEnabledRoles": "Only Show Enabled Roles",
   "BetterSetting.CrewmatesCanGuess": "Crewmates Can Guess",

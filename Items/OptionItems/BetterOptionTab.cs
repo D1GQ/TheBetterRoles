@@ -15,7 +15,7 @@ public class BetterOptionTab
     public PassiveButton? TabButton;
     public Color? Color;
 
-    public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color)
+    public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color, bool destroyMapPicker = true)
     {
         if (GameSettingMenuPatch.Preload)
         {
@@ -42,6 +42,7 @@ public class BetterOptionTab
         var BetterSettingsButton = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsButton, GameSettingMenu.Instance.GameSettingsButton.transform.parent);
         TabButton = BetterSettingsButton;
 
+        BetterSettingsButton.gameObject.SetActive(true);
         BetterSettingsButton.name = Name;
         BetterSettingsButton.OnClick.RemoveAllListeners();
         BetterSettingsButton.OnMouseOver.RemoveAllListeners();
@@ -61,7 +62,7 @@ public class BetterOptionTab
         var BetterSettingsTab = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsTab, GameSettingMenu.Instance.GameSettingsTab.transform.parent);
         Tab = BetterSettingsTab;
         BetterSettingsTab.name = Name;
-        BetterSettingsTab.scrollBar.Inner.DestroyChildren();
+        if (destroyMapPicker) BetterSettingsTab.scrollBar.Inner.DestroyChildren();
 
         allTabs.Add(this);
         AlignButtons();
@@ -73,7 +74,7 @@ public class BetterOptionTab
     {
         int buttonCount = allTabs.Count;
         float buttonHeight = 0.4f; // The height offset between buttons
-        Vector3 startingPosition = GameSettingMenu.Instance.GameSettingsButton.transform.position - new Vector3(0.15f, 0.65f, 0f); // Starting position from GameSettingsButton
+        Vector3 startingPosition = GameSettingMenu.Instance.GameSettingsButton.transform.position + new Vector3(-0.15f, 0.8f, 0f); // Starting position from GameSettingsButton
         float xOffset = 0.7f; // Horizontal offset for columns
 
         // Loop through each button and calculate its position

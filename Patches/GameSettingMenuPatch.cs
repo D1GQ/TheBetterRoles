@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
@@ -7,13 +8,31 @@ using UnityEngine;
 
 namespace TheBetterRoles.Patches;
 
-
-class BetterGameSettings
+class VanillaGameSettings
 {
-    public static BetterOptionItem? ConfirmEjects;
+    public static BetterOptionFloatItem? ImpostorVision;
+    public static BetterOptionFloatItem? KillCooldown;
+    public static BetterOptionStringItem? KillDistance;
+
+    public static BetterOptionFloatItem? PlayerVision;
+    public static BetterOptionFloatItem? PlayerSpeed;
+
+    public static BetterOptionIntItem? EmergencyMeetings;
+    public static BetterOptionIntItem? EmergencyCooldown;
+    public static BetterOptionIntItem? DiscussionTime;
+    public static BetterOptionIntItem? VotingTime;
+    public static BetterOptionCheckboxItem? AnonymousVotes;
+    public static BetterOptionCheckboxItem? ConfirmEjects;
+
+    public static BetterOptionStringItem? TaskBarUpdate;
     public static BetterOptionItem? CommonTasksNum;
     public static BetterOptionItem? LongTasksNum;
     public static BetterOptionItem? ShortTasksNum;
+    public static BetterOptionCheckboxItem? VisualTask;
+}
+
+class BetterGameSettings
+{    
     public static BetterOptionItem? ImpostorAmount;
     public static BetterOptionItem? MaximumBenignNeutralAmount;
     public static BetterOptionItem? MinimumBenignNeutralAmount;
@@ -35,6 +54,7 @@ class BetterGameSettingsTemp
 
 class BetterTabs
 {
+    public static BetterOptionTab? GameSettings;
     public static BetterOptionTab? SystemSettings;
     public static BetterOptionTab? CrewmateRoles;
     public static BetterOptionTab? ImpostorRoles;
@@ -59,8 +79,11 @@ static class GameSettingMenuPatch
         BetterOptionItem.TempPlayerOptionDataNum = 0;
         TitleList.Clear();
 
+        BetterTabs.GameSettings = new BetterOptionTab().CreateTab(1, Translator.GetString("BetterSetting.Tab.GameSettings"),
+            Translator.GetString("BetterSetting.Description.GameSettings"), Color.green, false);
+
         BetterTabs.SystemSettings = new BetterOptionTab().CreateTab(2, Translator.GetString("BetterSetting.Tab.SystemSettings"),
-            Translator.GetString("BetterSetting.Description.SystemSettings"), Color.green);
+            Translator.GetString("BetterSetting.Description.SystemSettings"), Color.yellow);
         BetterTabs.CrewmateRoles = new BetterOptionTab().CreateTab(3, Translator.GetString("BetterSetting.Tab.CrewmateRoles"),
             Translator.GetString("BetterSetting.Description.CrewmateRoles"), Color.cyan);
         BetterTabs.ImpostorRoles = new BetterOptionTab().CreateTab(4, Translator.GetString("BetterSetting.Tab.ImpostorRoles"),
@@ -70,12 +93,41 @@ static class GameSettingMenuPatch
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, Translator.GetString("BetterSetting.Tab.Addons"),
             Translator.GetString("BetterSetting.Description.Addons"), Color.magenta);
 
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings"), 1.5f));
+
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor")));
+        VanillaGameSettings.ImpostorVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.ImpostorVision"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.ImpostorLightMod);
+        VanillaGameSettings.KillCooldown = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillCooldown"), [0f, 180f, 2.5f], 25f, "", "s", vanillaOption: FloatOptionNames.KillCooldown);
+        VanillaGameSettings.KillDistance = new BetterOptionStringItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillDistance"),
+                [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, vanillaOption: Int32OptionNames.KillDistance);
+
+        new BetterOptionDividerItem().Create(BetterTabs.GameSettings);
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Cremate")));
+        VanillaGameSettings.PlayerVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerVision"), [0.25f, 5f, 0.25f], 0.75f, "", "x", vanillaOption: FloatOptionNames.CrewLightMod);
+        VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
+
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.MeetingSettings")));
+
+        VanillaGameSettings.EmergencyMeetings = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.EmergencyMeetings"), [0, 100, 1], 1, "", "", vanillaOption: Int32OptionNames.NumEmergencyMeetings);
+        VanillaGameSettings.EmergencyCooldown = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.EmergencyCooldown"), [0, 180, 5], 20, "", "s", vanillaOption: Int32OptionNames.EmergencyCooldown);
+        VanillaGameSettings.DiscussionTime = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.DiscussionTime"), [0, 500, 15], 15, "", "s", vanillaOption: Int32OptionNames.DiscussionTime);
+        VanillaGameSettings.VotingTime = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.VotingTime"), [0, 500, 10], 120, "", "s", vanillaOption: Int32OptionNames.VotingTime);
+        VanillaGameSettings.AnonymousVotes = new BetterOptionCheckboxItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.AnonymousVotes"), true, vanillaOption: BoolOptionNames.AnonymousVotes);
+        VanillaGameSettings.ConfirmEjects = new BetterOptionCheckboxItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.ConfirmEjects"), false);
+
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.TaskSettings")));
+
+        VanillaGameSettings.TaskBarUpdate = new BetterOptionStringItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.TaskBarUpdate"),
+            [Translator.GetString("BetterSetting.TaskBarUpdate.Always"), Translator.GetString("BetterSetting.TaskBarUpdate.Meetings"), Translator.GetString("BetterSetting.TaskBarUpdate.Never")], 1, vanillaOption: Int32OptionNames.TaskBarMode);
+
+        VanillaGameSettings.CommonTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("Role.Option.CommonTasks"), [0, 5, 1], 2);
+        VanillaGameSettings.LongTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("Role.Option.LongTasks"), [0, 5, 1], 2);
+        VanillaGameSettings.ShortTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("Role.Option.ShortTasks"), [0, 5, 1], 4);
+        VanillaGameSettings.VisualTask = new BetterOptionCheckboxItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.VisualTask"), false, vanillaOption: BoolOptionNames.VisualTasks);
+
+
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.ModSettings")));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);
-        BetterGameSettings.ConfirmEjects = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.ConfirmEjects"), false);
-        BetterGameSettings.CommonTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("Role.Option.CommonTasks"), [0, 5, 1], 2);
-        BetterGameSettings.LongTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("Role.Option.LongTasks"), [0, 5, 1], 2);
-        BetterGameSettings.ShortTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("Role.Option.ShortTasks"), [0, 5, 1], 4);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.GuessSettings")));
         BetterGameSettings.OnlyShowEnabledRoles = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.OnlyShowEnabledRoles"), false);
@@ -89,7 +141,7 @@ static class GameSettingMenuPatch
         BetterGameSettings.ImpostorAmount = new BetterOptionIntItem().Create(-1, BetterTabs.ImpostorRoles, Translator.GetString("BetterSetting.Impostors"), [0, 5, 1], 2, "", "");
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.Title.NeutralSettings")));
-        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaxNonKillingNeutrals"), [0, 5, 1], 2, "", "");
+        BetterGameSettings.MaximumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaximumBenignNeutralAmount"), [0, 5, 1], 2, "", "");
         BetterGameSettings.MinimumBenignNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MinimumBenignNeutralAmount"), [0, 5, 1], 0, "", "");
         BetterGameSettings.MaximumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MaximumKillingNeutralAmount"), [0, 5, 1], 2, "", "");
         BetterGameSettings.MinimumKillingNeutralAmount = new BetterOptionIntItem().Create(-1, BetterTabs.NeutralRoles, Translator.GetString("BetterSetting.MinimumKillingNeutralAmount"), [0, 5, 1], 0, "", "");
@@ -205,16 +257,14 @@ static class GameSettingMenuPatch
         }
 
         __instance.MenuDescriptionText.DestroyTextTranslator();
-        GameSettingMenu.Instance.ChangeTab(1, false);
-
         __instance.PresetsTab.DestroyObj();
         __instance.RoleSettingsTab.DestroyObj();
         __instance.GamePresetsButton.DestroyObj();
         __instance.RoleSettingsButton.DestroyObj();
-        __instance.GameSettingsButton.OnMouseOver.RemoveAllListeners();
-        __instance.GameSettingsButton.transform.position = __instance.GameSettingsButton.transform.position + new Vector3(0f, 0.6f, 0f);
+        __instance.GameSettingsButton.gameObject.SetActive(false);
 
         SetupSettings();
+        GameSettingMenu.Instance.ChangeTab(1, false);
     }
 
     [HarmonyPatch(nameof(GameSettingMenu.ChangeTab))]
@@ -222,37 +272,76 @@ static class GameSettingMenuPatch
     public static bool ChangeTab_Prefix(GameSettingMenu __instance, [HarmonyArgument(0)] int tabNum, [HarmonyArgument(1)] bool previewOnly)
     {
         ActiveTab = tabNum;
-        __instance.GameSettingsTab.gameObject.SetActive(false);
-        __instance.GameSettingsButton.SelectButton(false);
 
+        // Ensure all tabs and buttons are deactivated first
         foreach (var tab in BetterOptionTab.allTabs)
         {
-            if (tab.Tab == null || tab.TabButton == null) continue;
+            if (tab?.Tab == null || tab.TabButton == null) continue;
 
             tab.Tab.gameObject.SetActive(false);
             tab.TabButton.SelectButton(false);
         }
 
+        // Proceed with setting active tab if previewOnly conditions are met
         if ((previewOnly && Controller.currentTouchType == Controller.TouchType.Joystick) || !previewOnly)
         {
-            if (tabNum > 1 && BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum).Tab != null
-                && BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum).TabButton != null)
+            var currentTab = BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum);
+            if (currentTab != null && currentTab.Tab != null && currentTab.TabButton != null)
             {
-                var tab = BetterOptionTab.allTabs.FirstOrDefault(t => t.Id == tabNum);
-                tab.Tab.gameObject.SetActive(true);
-                tab.TabButton.SelectButton(true);
-                __instance.MenuDescriptionText.text = tab.Description;
+                currentTab.Tab.gameObject.SetActive(true);
+                currentTab.TabButton.SelectButton(true);
+
+                if (__instance?.MenuDescriptionText != null)
+                {
+                    __instance.MenuDescriptionText.text = currentTab.Description;
+                }
                 Initialize();
-            }
-            else if (tabNum == 1)
-            {
-                __instance.GameSettingsTab.gameObject.SetActive(true);
-                __instance.GameSettingsButton.SelectButton(true);
-                __instance.MenuDescriptionText.text = Translator.GetString(StringNames.GameSettingsDescription);
             }
         }
 
         return false;
+    }
+}
+
+// Preload modified vanilla options
+[HarmonyPatch(typeof(GameOptionsManager))]
+static class GameOptionsManagerPatch
+{
+    [HarmonyPatch(nameof(GameOptionsManager.Initialize))]
+    [HarmonyPostfix]
+    public static void CreateSettings_Postfix(/*GameOptionsManager __instance*/)
+    {
+        foreach (var Option in BetterOptionItem.BetterOptionItems)
+        {
+            if (Option.TryCast<BetterOptionCheckboxItem>(out var Bool))
+            {
+                if (Bool.VanillaOption != null)
+                {
+                    Bool.Load(Bool.defaultValue);
+                }
+            }
+            else if (Option.TryCast<BetterOptionFloatItem>(out var Float))
+            {
+                if (Float.VanillaOption != null)
+                {
+                    Float.Load(Float.defaultValue);
+                }
+            }
+            else if (Option.TryCast<BetterOptionIntItem>(out var Int))
+            {
+                if (Int.VanillaOption != null)
+                {
+                    Int.Load(Int.defaultValue);
+                }
+            }
+            else if (Option.TryCast<BetterOptionStringItem>(out var String))
+            {
+                if (String.VanillaOption != null)
+                {
+                    String.Load(String.defaultValue);
+                }
+            }
+        }
     }
 }
 

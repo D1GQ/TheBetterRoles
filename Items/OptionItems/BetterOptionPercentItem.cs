@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Managers;
+﻿using AmongUs.GameOptions;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class BetterOptionPercentItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionPercentItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
@@ -38,7 +39,7 @@ public class BetterOptionPercentItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return BetterOptionItems.First(op => op.Id == Id);
+                return (BetterOptionPercentItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -258,12 +259,14 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
     }
 
-    public override void SyncValue()
+    public override void SyncValue(string value)
     {
+        if (!float.TryParse(value, out float @float)) return;
+
+        CurrentValue = @float;
+
         if (ThisOption)
         {
-            Load(defaultValue);
-
             ThisOption.ValueText.text = $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
 
             if (IsParent || IsChild)

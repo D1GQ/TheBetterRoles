@@ -16,7 +16,7 @@ class ExileControllerPatch
 
         if (init != null && init.outfit != null)
         {
-            if (BetterGameSettings.ConfirmEjects.GetBool() || init.networkedPlayer.BetterData().RoleInfo.Role.AlwaysShowVoteOutMsg)
+            if (VanillaGameSettings.ConfirmEjects.GetBool() || init.networkedPlayer.BetterData().RoleInfo.Role.AlwaysShowVoteOutMsg)
             {
                 __instance.completeString = string.Format(Translator.GetString("ConfirmEject"), init.outfit.PlayerName, $"{Utils.GetCustomRoleNameAndColor(init.networkedPlayer.BetterData().RoleInfo.Role.RoleType)}");
             }

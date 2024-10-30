@@ -5,14 +5,17 @@ namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionDividerItem : BetterOptionItem
 {
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu)
+    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, float topDistance = 0.15f, float bottomDistance = 0.50f)
     {
         if (gameOptionsMenu.Tab == null)
         {
             return this;
         }
 
+        Id = -1;
         Tab = gameOptionsMenu;
+        this.topDistance = topDistance;
+        this.bottomDistance = bottomDistance;
         Name = "Divider";
         CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;

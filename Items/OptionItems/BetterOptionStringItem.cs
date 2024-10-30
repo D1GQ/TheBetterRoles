@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Managers;
+﻿using AmongUs.GameOptions;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace TheBetterRoles.Items.OptionItems;
 
 public class BetterOptionStringItem : BetterOptionItem
 {
+    public Int32OptionNames? VanillaOption;
+
     private StringOption? ThisOption;
     public string[] Values = [];
     public int CurrentValue;
@@ -16,7 +19,7 @@ public class BetterOptionStringItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionItem Create(int id, BetterOptionTab gameOptionsMenu, string name, string[] strings, int DefaultValue = 0, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionStringItem Create(int id, BetterOptionTab gameOptionsMenu, string name, string[] strings, int DefaultValue = 0, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, Int32OptionNames? vanillaOption = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Values = strings;
@@ -27,6 +30,7 @@ public class BetterOptionStringItem : BetterOptionItem
         CurrentValue = DefaultValue;
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
+        VanillaOption = vanillaOption;
 
         if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
         {
@@ -40,7 +44,7 @@ public class BetterOptionStringItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return BetterOptionItems.First(op => op.Id == Id);
+                return (BetterOptionStringItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -132,6 +136,11 @@ public class BetterOptionStringItem : BetterOptionItem
         if (CurrentValue <= 0) ThisOption.MinusBtn.SetInteractable(false);
 
         BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+        }
     }
 
     public void Increase()
@@ -172,6 +181,11 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+        }
     }
 
     public override int GetValue()
@@ -208,12 +222,14 @@ public class BetterOptionStringItem : BetterOptionItem
         }
     }
 
-    public override void SyncValue()
+    public override void SyncValue(string value)
     {
+        if (!int.TryParse(value, out int @int)) return;
+
+        CurrentValue = @int;
+
         if (ThisOption)
         {
-            Load(defaultValue);
-
             if (CurrentValue <= Values.Length - 1 && CurrentValue >= 0)
             {
                 ThisOption.ValueText.text = Values[CurrentValue];
@@ -228,6 +244,11 @@ public class BetterOptionStringItem : BetterOptionItem
                 }
                 UpdatePositions();
             }
+        }
+
+        if (VanillaOption != null)
+        {
+            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
         }
     }
 
