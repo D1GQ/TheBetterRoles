@@ -200,12 +200,29 @@ public class ArsonistRole : CustomRoleBehavior
     private void Ignite()
     {
         DouseButton?.SetCooldown();
-        foreach (var data in doused)
+        if (IsOriginal)
         {
-            var player = data.Object;
-            if (player != null && player.IsAlive() && player != _player)
+            foreach (var data in doused)
             {
-                _player.CustomMurderPlayer(player, false);
+                var player = data.Object;
+                if (player != null && player.IsAlive() && player != _player)
+                {
+                    _player.CustomMurderPlayer(player, false);
+                }
+            }
+        }
+        else
+        {
+            if (_player.IsLocalPlayer())
+            {
+                foreach (var data in doused)
+                {
+                    var player = data.Object;
+                    if (player != null && player.IsAlive() && player != _player)
+                    {
+                        _player.MurderSync(player, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
+                    }
+                }
             }
         }
     }

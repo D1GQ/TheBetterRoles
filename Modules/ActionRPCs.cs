@@ -11,7 +11,6 @@ namespace TheBetterRoles.Modules;
 [Flags]
 enum MultiMurderFlags : short
 {
-    isAbility = 1 << 0,     // 1  (0b00001)
     snapToTarget = 1 << 1,  // 2  (0b00010)
     spawnBody = 1 << 2,     // 4  (0b00100)
     showAnimation = 1 << 3, // 8  (0b01000)

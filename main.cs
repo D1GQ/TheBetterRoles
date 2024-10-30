@@ -149,6 +149,7 @@ public class Main : BasePlugin
             GameSettingMenuPatch.SetupSettings(true);
             CustomColors.Load();
             CustomSoundsManager.Load();
+            _ = AssetBundleManager.LoadAssets();
             SubmergedCompatibility.Initialize();
 
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)

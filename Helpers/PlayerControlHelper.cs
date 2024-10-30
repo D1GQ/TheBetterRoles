@@ -130,7 +130,7 @@ static class PlayerControlHelper
         PlayerPhysics sourcePhys = killer.MyPhysics;
         if (showAnimation)
         {
-            KillAnimation.SetMovement(killer, false);
+            if (snapToTarget) KillAnimation.SetMovement(killer, false);
             KillAnimation.SetMovement(target, false);
         }
         if (isParticipant)
@@ -160,15 +160,17 @@ static class PlayerControlHelper
             }
         }
         target.Die(DeathReason.Kill, true);
-        yield return killer.MyPhysics.Animations.CoPlayCustomAnimation(killAnimation.BlurAnim);
+
         if (snapToTarget)
         {
+            yield return killer.MyPhysics.Animations.CoPlayCustomAnimation(killAnimation.BlurAnim);
             killer.NetTransform.SnapTo(target.transform.position);
+            sourcePhys.Animations.PlayIdleAnimation();
         }
-        sourcePhys.Animations.PlayIdleAnimation();
+
         if (showAnimation)
         {
-            KillAnimation.SetMovement(killer, true);
+            if (snapToTarget) KillAnimation.SetMovement(killer, true);
             KillAnimation.SetMovement(target, true);
         }
         if (deadBody != null) deadBody.enabled = true;
