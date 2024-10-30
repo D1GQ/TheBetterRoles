@@ -457,7 +457,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return false;
                 }
             }
@@ -479,7 +479,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs {predicate.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.Log($"Role check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
                     return false;
                 }
             }
