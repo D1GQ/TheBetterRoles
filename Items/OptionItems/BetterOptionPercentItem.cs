@@ -27,14 +27,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
 
-        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
-        {
-            Load(DefaultValue);
-            BetterOptionItems.Add(this);
-            return this;
-        }
-
-        if (GameSettingMenuPatch.Preload)
+        if (GameSettingMenuPatch.Preload || gameOptionsMenu?.Tab == null)
         {
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
@@ -52,12 +45,6 @@ public class BetterOptionPercentItem : BetterOptionItem
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
-
-        // Fix Game Crash
-        foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
-        {
-            optionBehaviour.data = rulesCategory.AllGameSettings.ToArray().FirstOrDefault(item => item.Type == OptionTypes.Number);
-        }
 
         optionBehaviour.PlusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.MinusBtn.OnClick.RemoveAllListeners();
@@ -118,7 +105,7 @@ public class BetterOptionPercentItem : BetterOptionItem
 
         ThisOption.ValueText.text = $"<color={GetColor(CurrentValue)}>{CurrentValue}%</color>";
 
-        if (!GameState.IsHost)
+        if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

@@ -4,6 +4,20 @@ namespace TheBetterRoles.Helpers;
 
 public static class ObjectHelper
 {
+    public static GameObject? FindObjectByName(string objectName)
+    {
+        GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>(true);
+
+        foreach (GameObject obj in allObjects)
+        {
+            if (obj.name == objectName)
+            {
+                return obj;
+            }
+        }
+
+        return null;
+    }
     public static void DestroyObj(this GameObject obj)
     {
         if (obj != null)

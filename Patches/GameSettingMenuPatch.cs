@@ -245,6 +245,34 @@ static class GameSettingMenuPatch
     }
 
     [HarmonyPatch(nameof(GameSettingMenu.Start))]
+    [HarmonyPrefix]
+    public static bool Start_Prefix(GameSettingMenu __instance)
+    {
+        if (GameSettingMenu.Instance != null && GameSettingMenu.Instance != __instance)
+        {
+            UnityEngine.Object.Destroy(__instance.gameObject);
+        }
+
+        GameSettingMenu.Instance = __instance;
+        __instance.transform.position = new Vector3(__instance.transform.position.x, __instance.transform.position.y, -200f);
+
+        return false;
+    }
+
+    [HarmonyPatch(nameof(GameSettingMenu.Update))]
+    [HarmonyPrefix]
+    public static bool Update_Prefix(GameSettingMenu __instance)
+    {
+        if (Controller.currentTouchType != Controller.TouchType.Joystick)
+        {
+            __instance.ToggleLeftSideDarkener(false);
+            __instance.ToggleRightSideDarkener(false);
+        }
+
+        return false;
+    }
+
+    [HarmonyPatch(nameof(GameSettingMenu.Start))]
     [HarmonyPostfix]
     public static void Start_Postfix(GameSettingMenu __instance)
     {
@@ -256,12 +284,12 @@ static class GameSettingMenuPatch
             PanelSprite.transform.localScale = new Vector3(PanelSprite.transform.localScale.x, 0.625f);
         }
 
-        __instance.MenuDescriptionText.DestroyTextTranslator();
-        __instance.PresetsTab.DestroyObj();
-        __instance.RoleSettingsTab.DestroyObj();
-        __instance.GamePresetsButton.DestroyObj();
-        __instance.RoleSettingsButton.DestroyObj();
-        __instance.GameSettingsButton.gameObject.SetActive(false);
+        __instance.MenuDescriptionText?.DestroyTextTranslator();
+        __instance.PresetsTab?.DestroyObj();
+        __instance.RoleSettingsTab?.DestroyObj();
+        __instance.GamePresetsButton?.DestroyObj();
+        __instance.RoleSettingsButton?.DestroyObj();
+        __instance.GameSettingsButton?.gameObject?.SetActive(false);
 
         SetupSettings();
         GameSettingMenu.Instance.ChangeTab(1, false);

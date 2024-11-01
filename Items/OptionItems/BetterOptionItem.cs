@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Modules;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
@@ -47,7 +48,7 @@ public class BetterOptionItem
 
         foreach (var item in BetterOptionItems)
         {
-            if (item.Tab.Id != GameSettingMenuPatch.ActiveTab) continue;
+            if (item == null | item.Tab.Id != GameSettingMenuPatch.ActiveTab) continue;
 
             item.obj.transform.SetLocalY(2f);
 
@@ -75,9 +76,10 @@ public class BetterOptionItem
             {
                 if (item?.TitleText?.text != null && item.Name != null)
                 {
+                    item.TitleText.DestroyTextTranslator();
                     item.TitleText.text = item.Name;
                 }
-            }, 0.005f, shoudLog: false);
+            }, 0.025f, shoudLog: false);
 
             SpacingNum += item switch
             {
@@ -89,14 +91,13 @@ public class BetterOptionItem
 
         _ = new LateTask(() =>
         {
-            BetterOptionTab.allTabs.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab.scrollBar.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
-            BetterOptionTab.allTabs.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab.scrollBar.ScrollRelative(new(0f, 0f));
+            BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
+            BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.ScrollRelative(new(0f, 0f));
         }, 0.005f, shoudLog: false);
     }
 
     public void SetUp(OptionBehaviour optionBehaviour)
     {
-        SetData(optionBehaviour);
         SpriteRenderer[] componentsInChildren = optionBehaviour.GetComponentsInChildren<SpriteRenderer>(true);
         for (int i = 0; i < componentsInChildren.Length; i++)
         {

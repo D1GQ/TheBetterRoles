@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
@@ -28,14 +29,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
         ShowCondition = selfShowCondition;
         VanillaOption = vanillaOption;
 
-        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
-        {
-            Load(DefaultValue);
-            BetterOptionItems.Add(this);
-            return this;
-        }
-
-        if (GameSettingMenuPatch.Preload)
+        if (GameSettingMenuPatch.Preload || gameOptionsMenu?.Tab == null)
         {
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
@@ -93,7 +87,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Parent.ChildrenList.Add(this);
         }
 
-        if (!GameState.IsHost)
+        if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
             optionBehaviour.CheckMark.transform.parent.Find("ActiveSprite").gameObject.SetActive(false);
             optionBehaviour.CheckMark.transform.parent.Find("InactiveSprite").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);

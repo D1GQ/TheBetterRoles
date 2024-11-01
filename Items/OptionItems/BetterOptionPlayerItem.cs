@@ -31,12 +31,6 @@ public class BetterOptionPlayerItem : BetterOptionItem
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(0, option));
 
-        // Fix Game Crash
-        foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
-        {
-            optionBehaviour.data = rulesCategory.AllGameSettings.ToArray().FirstOrDefault(item => item.Type == OptionTypes.Player);
-        }
-
         optionBehaviour.PlusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.MinusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.PlusBtn.OnClick.AddListener(new Action(() => Increase()));
@@ -99,7 +93,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
             ThisOption.ValueText.text = "<color=#ababab>Random</color>";
         }
 
-        if (!GameState.IsHost)
+        if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

@@ -1,11 +1,41 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Modules;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
 
 public class UsablePatch
 {
+    [HarmonyPatch(typeof(OptionsConsole))]
+    [HarmonyPatch(nameof(OptionsConsole.Use))]
+    public class OptionsConsole_Use
+    {
+        public static bool Prefix(/*OptionsConsole __instance*/)
+        {
+            if (GameState.IsLobby && !GameState.IsFreePlay)
+            {
+                return true;
+            }
+
+            UnityEngine.Object.Instantiate(GamePrefabHelper.GetPrefabByName("PlayerOptionsMenu"), parent: Camera.main.transform);
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(OptionsConsole))]
+    [HarmonyPatch(nameof(OptionsConsole.CanUse))]
+    public class OptionsConsole_OnEnable
+    {
+        public static void Postfix(OptionsConsole __instance)
+        {
+            if (GameState.IsFreePlay)
+            {
+                __instance.GetComponentInChildren<SpriteRenderer>().color = Color.cyan;
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(Ladder), nameof(Ladder.SetDestinationCooldown))]
     public class Ladder_CoolDown
     {
@@ -69,6 +99,7 @@ public class UsablePatch
     [HarmonyPatch]
     public class Usable_CanUse
     {
+        [HarmonyPatch(typeof(OptionsConsole), nameof(OptionsConsole.CanUse))]
         [HarmonyPatch(typeof(Ladder), nameof(Ladder.CanUse))]
         [HarmonyPatch(typeof(ZiplineConsole), nameof(ZiplineConsole.CanUse))]
         [HarmonyPatch(typeof(PlatformConsole), nameof(PlatformConsole.CanUse))]
@@ -80,10 +111,18 @@ public class UsablePatch
         {
             if (__instance == null) return true;
 
+            bool canUseAsDead = false;
+            bool checkCollision = true;
             bool condition = pc.Object.CanMove;
             var mask = Constants.ShipOnlyMask;
 
-            if (CastHelper.TryCast<Ladder>(__instance))
+            if (CastHelper.TryCast<OptionsConsole>(__instance))
+            {
+                canUseAsDead = true;
+                checkCollision = false;
+                condition &= true;
+            }
+            else if (CastHelper.TryCast<Ladder>(__instance))
             {
                 condition &= true;
             }
@@ -113,16 +152,16 @@ public class UsablePatch
                 return true;
             }
 
-            CheckCanUse(__instance.Cast<MonoBehaviour>(), pc, ref canUse, ref couldUse, ref __result, mask, condition);
+            CheckCanUse(__instance.Cast<MonoBehaviour>(), pc, ref canUse, ref couldUse, ref __result, mask, condition, canUseAsDead, checkCollision);
             return false;
         }
     }
 
-    public static void CheckCanUse<T>(T console, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result, int mask, bool extraFlag = true) where T : MonoBehaviour
+    public static void CheckCanUse<T>(T console, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result, int mask, bool extraFlag = true, bool canUseAsDead = false, bool checkCollision = true) where T : MonoBehaviour
     {
         float num = float.MaxValue;
         PlayerControl @object = pc.Object;
-        couldUse = (!pc.IsDead || pc.BetterData().IsFakeAlive) && extraFlag;
+        couldUse = (!pc.IsDead || pc.BetterData().IsFakeAlive || canUseAsDead) && extraFlag;
         canUse = couldUse;
 
         if (canUse)
@@ -131,7 +170,7 @@ public class UsablePatch
             Vector3 position = console.transform.position;
             num = Vector2.Distance(truePosition, position);
 
-            canUse &= num <= console.Cast<IUsable>().UsableDistance && !PhysicsHelpers.AnythingBetween(truePosition, position, mask, false);
+            canUse &= num <= console.Cast<IUsable>().UsableDistance && (!PhysicsHelpers.AnythingBetween(truePosition, position, mask, false) || !checkCollision);
         }
 
         __result = num;

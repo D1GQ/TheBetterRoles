@@ -32,14 +32,7 @@ public class BetterOptionStringItem : BetterOptionItem
         ShowCondition = selfShowCondition;
         VanillaOption = vanillaOption;
 
-        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby)
-        {
-            Load(DefaultValue);
-            BetterOptionItems.Add(this);
-            return this;
-        }
-
-        if (GameSettingMenuPatch.Preload)
+        if (GameSettingMenuPatch.Preload || gameOptionsMenu?.Tab == null)
         {
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
@@ -57,12 +50,6 @@ public class BetterOptionStringItem : BetterOptionItem
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
-
-        // Fix Game Crash
-        foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
-        {
-            optionBehaviour.data = rulesCategory.AllGameSettings.ToArray().FirstOrDefault(item => item.Type == OptionTypes.String);
-        }
 
         optionBehaviour.PlusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.MinusBtn.OnClick.RemoveAllListeners();
@@ -122,7 +109,7 @@ public class BetterOptionStringItem : BetterOptionItem
             ThisOption.ValueText.text = Values[CurrentValue];
         }
 
-        if (!GameState.IsHost)
+        if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);

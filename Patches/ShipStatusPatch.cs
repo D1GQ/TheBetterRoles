@@ -10,6 +10,53 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(ShipStatus))]
 class ShipStatusPatch
 {
+    private static GameObject? settingsComputer;
+    [HarmonyPatch(nameof(ShipStatus.Start))]
+    [HarmonyPostfix]
+    public static void Start_Postfix(ShipStatus __instance)
+    {
+        if (GameState.IsFreePlay)
+        {
+            if (settingsComputer == null)
+            {
+                settingsComputer = ObjectHelper.FindObjectByName("CustomizeComputer");
+                if (settingsComputer != null)
+                {
+                    settingsComputer.SetActive(true);
+
+                    Vector3 pos = Vector3.zeroVector;
+                    float Z = settingsComputer.transform.position.z;
+                    bool invert = false;
+                    if (__instance.TryCast<SkeldShipStatus>())
+                    {
+                        pos = new Vector3(0.7127f, 3.3518f, Z);
+                    }
+                    else if (__instance.TryCast<MiraShipStatus>())
+                    {
+                        pos = new Vector3(24.7253f, 3.7456f, Z);
+                        invert = true;
+                    }
+                    else if (__instance.TryCast<PolusShipStatus>())
+                    {
+                        pos = new Vector3(18.3167f, -16.9478f, -1f);
+                    }
+                    else if (__instance.TryCast<AirshipStatus>())
+                    {
+                        pos = new Vector3(-1.5738f, -0.3927f, Z);
+                        invert = true;
+                    }
+                    else if (__instance.TryCast<FungleShipStatus>())
+                    {
+                        pos = new Vector3(-3.8168f, -1.5715f, Z);
+                    }
+
+                    settingsComputer.transform.position = pos;
+                    if (invert) settingsComputer.transform.localScale = new Vector3(0f - settingsComputer.transform.localScale.x, settingsComputer.transform.localScale.y, settingsComputer.transform.localScale.z);
+                }
+            }
+        }
+    }
+
     // Set vision for role
     [HarmonyPatch(nameof(ShipStatus.CalculateLightRadius))]
     [HarmonyPrefix]

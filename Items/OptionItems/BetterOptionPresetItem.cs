@@ -26,7 +26,7 @@ public class BetterOptionPresetItem : BetterOptionItem
         CurrentValue = DefaultValue;
         ShowCondition = null;
 
-        if (gameOptionsMenu?.Tab == null || !GameState.IsLobby || GameSettingMenuPatch.Preload)
+        if (gameOptionsMenu?.Tab == null || GameSettingMenuPatch.Preload)
         {
             return this;
         }
@@ -34,12 +34,6 @@ public class BetterOptionPresetItem : BetterOptionItem
         NumberOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
-
-        // Fix Game Crash
-        foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
-        {
-            optionBehaviour.data = rulesCategory.AllGameSettings.ToArray().FirstOrDefault(item => item.Type == OptionTypes.Number);
-        }
 
         optionBehaviour.PlusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.MinusBtn.OnClick.RemoveAllListeners();
@@ -101,9 +95,9 @@ public class BetterOptionPresetItem : BetterOptionItem
     {
         if (ThisOption == null) return;
 
-        ThisOption.ValueText.text = GameState.IsHost ? Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString() : Translator.GetString(StringNames.HostHeader);
+        ThisOption.ValueText.text = GameState.IsHost || !GameState.IsInGame || GameState.IsFreePlay ? Translator.GetString("BetterSetting.Preset") + " " + CurrentValue.ToString() : Translator.GetString(StringNames.HostHeader);
 
-        if (!GameState.IsHost)
+        if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
             ThisOption.PlusBtn.SetInteractable(false);
             ThisOption.MinusBtn.SetInteractable(false);
