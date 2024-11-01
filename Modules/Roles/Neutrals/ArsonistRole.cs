@@ -93,6 +93,22 @@ public class ArsonistRole : CustomRoleBehavior
         IgniteButton.VisibleCondition = ShowIgniteButton;
     }
 
+    public override void OnDeinitialize()
+    {
+        if (_player.IsLocalPlayer())
+        {
+            foreach (var data in doused)
+            {
+                var player = data.Object;
+                if (player != null)
+                {
+                    player.SetTrueVisorColor(Palette.VisorColor);
+                    player.BetterData().NameColor = string.Empty;
+                }
+            }
+        }
+    }
+
     private List<NetworkedPlayerInfo> doused = [];
     private Coroutine? douseCoroutine;
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -165,22 +181,6 @@ public class ArsonistRole : CustomRoleBehavior
         DousePlayer(target, true);
     }
 
-    public override void OnDeinitialize()
-    {
-        if (_player.IsLocalPlayer())
-        {
-            foreach (var data in doused)
-            {
-                var player = data.Object;
-                if (player != null)
-                {
-                    player.SetTrueVisorColor(Palette.VisorColor);
-                    player.BetterData().NameColor = string.Empty;
-                }
-            }
-        }
-    }
-
     private void DousePlayer(PlayerControl target, bool sync = false)
     {
         DouseButton?.SetCooldown(state: 0);
@@ -188,7 +188,7 @@ public class ArsonistRole : CustomRoleBehavior
         if (_player.IsLocalPlayer())
         {
             CustomSoundsManager.Play("Douse", 2.5f);
-            target.SetTrueVisorColor(Utils.HexToColor32("#59360d"));
+            target.SetTrueVisorColor(RoleColor32);
             target.BetterData().NameColor = "#59360d";
         }
 

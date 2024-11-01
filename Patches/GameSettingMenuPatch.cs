@@ -95,16 +95,16 @@ static class GameSettingMenuPatch
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings"), 1.5f));
 
-        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor")));
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor")}</color>"));
         VanillaGameSettings.ImpostorVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.ImpostorVision"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.ImpostorLightMod);
         VanillaGameSettings.KillCooldown = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillCooldown"), [0f, 180f, 2.5f], 25f, "", "s", vanillaOption: FloatOptionNames.KillCooldown);
         VanillaGameSettings.KillDistance = new BetterOptionStringItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillDistance"),
                 [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, vanillaOption: Int32OptionNames.KillDistance);
 
         new BetterOptionDividerItem().Create(BetterTabs.GameSettings);
-        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Cremate")));
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Crewmate")}</color>"));
         VanillaGameSettings.PlayerVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerVision"), [0.25f, 5f, 0.25f], 0.75f, "", "x", vanillaOption: FloatOptionNames.CrewLightMod);
-        VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
+        VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.MeetingSettings")));
 
@@ -311,6 +311,9 @@ static class GameOptionsManagerPatch
     [HarmonyPostfix]
     public static void CreateSettings_Postfix(/*GameOptionsManager __instance*/)
     {
+        Main.CurrentOptions.SetInt(Int32OptionNames.RulePreset, 100);
+        Main.CurrentOptions.SetBool(BoolOptionNames.IsDefaults, false);
+
         foreach (var Option in BetterOptionItem.BetterOptionItems)
         {
             if (Option.TryCast<BetterOptionCheckboxItem>(out var Bool))

@@ -118,9 +118,12 @@ public class Main : BasePlugin
 
     public static void SetVanillaSettings()
     {
-        if (GameOptionsManager.Instance?.GameHostOptions != null && GameOptionsManager.Instance?.CurrentGameOptions != null)
+        if (GameState.IsInGame)
         {
-            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            if (GameOptionsManager.Instance?.GameHostOptions != null && GameOptionsManager.Instance?.CurrentGameOptions != null)
+            {
+                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+            }
         }
     }
     public static IGameOptions? CurrentOptions => GameOptionsManager.Instance?.CurrentGameOptions;
