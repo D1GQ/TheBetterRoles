@@ -6,7 +6,7 @@ public static class CastHelper
 
     public static bool TryCast<T>(this object obj, out T? item) where T : class
     {
-        if (obj is T casted)
+        if (obj != null && obj is T casted)
         {
             item = casted;
             return true;

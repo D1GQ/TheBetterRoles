@@ -1,7 +1,9 @@
-﻿using BepInEx;
+﻿using AmongUs.GameOptions;
+using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
+using GameCore;
 using HarmonyLib;
 using Innersloth.IO;
 using System.Security.Cryptography;
@@ -114,6 +116,16 @@ public class Main : BasePlugin
         "J4sxGDREO5bjLvzvMkv059g+7wpNg7PbyWa9vLVWQkw=",
     ];
 
+    public static void SetVanillaSettings()
+    {
+        if (GameOptionsManager.Instance?.GameHostOptions != null && GameOptionsManager.Instance?.CurrentGameOptions != null)
+        {
+            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+        }
+    }
+    public static IGameOptions? CurrentOptions => GameOptionsManager.Instance?.CurrentGameOptions;
+    public static NormalGameOptionsV08? NormalOptions => GameOptionsManager.Instance?.currentNormalGameOptions;
+    public static HideNSeekGameOptionsV08? HideNSeekOptions => GameOptionsManager.Instance?.currentHideNSeekGameOptions;
     public static PlayerControl[] AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(pc => pc != null).ToArray();
 
     public static PlayerControl[] AllAlivePlayerControls => AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead).ToArray();

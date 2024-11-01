@@ -119,7 +119,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.CurrentOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.SetVanillaSettings();
         }
     }
 
@@ -152,7 +153,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.CurrentOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.SetVanillaSettings();
         }
 
         RPC.SyncOption(id, IsChecked.ToString(), FormatValueAsText());
@@ -195,7 +197,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.CurrentOptions?.SetBool((BoolOptionNames)VanillaOption, IsChecked);
+            Main.SetVanillaSettings();
         }
     }
 

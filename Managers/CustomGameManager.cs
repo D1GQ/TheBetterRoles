@@ -503,6 +503,11 @@ public class CustomGameManager
         GameHasEnded = false;
         CustomRoleManager.availableGhostRoles.Clear();
         CustomRoleBehavior.SubTeam.Clear();
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (player == null) continue;
+            player.RemainingEmergencies = Main.CurrentOptions.GetInt(Int32OptionNames.NumEmergencyMeetings);
+        }
     }
 
     public static void EndGame(List<byte> Winners, EndGameReason reason, CustomRoleTeam team)

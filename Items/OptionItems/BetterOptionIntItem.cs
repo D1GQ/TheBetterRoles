@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
@@ -141,11 +142,6 @@ public class BetterOptionIntItem : BetterOptionItem
         if (CurrentValue <= intRange.min) ThisOption.MinusBtn.SetInteractable(false);
 
         BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
-
-        if (VanillaOption != null)
-        {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-        }
     }
 
     public void Increase()
@@ -166,6 +162,11 @@ public class BetterOptionIntItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        if (VanillaOption != null)
+        {
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
+        }
         RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
@@ -187,6 +188,11 @@ public class BetterOptionIntItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
+        if (VanillaOption != null)
+        {
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
+        }
         RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
     }
 
@@ -211,7 +217,8 @@ public class BetterOptionIntItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
         }
     }
 
@@ -284,7 +291,8 @@ public class BetterOptionIntItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
         }
     }
 

@@ -136,11 +136,6 @@ public class BetterOptionStringItem : BetterOptionItem
         if (CurrentValue <= 0) ThisOption.MinusBtn.SetInteractable(false);
 
         BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
-
-        if (VanillaOption != null)
-        {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-        }
     }
 
     public void Increase()
@@ -149,6 +144,11 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue++;
             AdjustButtonsActiveState();
+            if (VanillaOption != null)
+            {
+                Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+                Main.SetVanillaSettings();
+            }
             RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
         }
     }
@@ -159,6 +159,11 @@ public class BetterOptionStringItem : BetterOptionItem
         {
             CurrentValue--;
             AdjustButtonsActiveState();
+            if (VanillaOption != null)
+            {
+                Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+                Main.SetVanillaSettings();
+            }
             RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
         }
     }
@@ -184,7 +189,8 @@ public class BetterOptionStringItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
         }
     }
 
@@ -248,7 +254,8 @@ public class BetterOptionStringItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            GameOptionsManager.Instance?.CurrentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            Main.SetVanillaSettings();
         }
     }
 
