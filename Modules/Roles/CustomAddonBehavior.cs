@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Items.OptionItems;
+﻿using TheBetterRoles.Helpers;
+using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 
@@ -39,8 +40,12 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
 
     protected override void SetUpRole()
     {
+        TBRLogger.LogMethodPrivate("Setting up Role Base!", GetType());
         SetUpSettings();
+
+        TBRLogger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
         OnSetUpRole();
+        TBRLogger.LogPrivate($"Finished setting up Role({RoleName})!");
     }
 
     private int tempBaseOptionNum = 0;

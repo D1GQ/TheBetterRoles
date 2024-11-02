@@ -43,17 +43,29 @@ public static class Utils
     public static PlayerControl? PlayerFromNetId(uint netId)
         => Main.AllPlayerControls.FirstOrDefault(player => player.NetId == netId);
 
+    public static void DirtyAllNames()
+    {
+        foreach (var player in Main.AllPlayerControls)
+        {
+            var betterData = player.BetterData();
+            if (betterData != null)
+            {
+                betterData.DirtyName = true;
+            }
+        }
+    }
+
     // Set player name
     public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
     {
-        if (player == null || !player.BetterData()?.RoleInfo?.RoleAssigned == true)
+        if (player == null || !(player.BetterData()?.RoleInfo?.RoleAssigned == true))
             return string.Empty;
 
         var playerData = player.BetterData();
         var roleInfo = playerData.RoleInfo;
         var role = roleInfo?.Role;
-
         NetworkedPlayerInfo target = player;
+
         if (!bypassDisguise && role?.IsDisguised == true && role.DisguisedTargetId >= 0)
         {
             foreach (var data in GameData.Instance.AllPlayers)
@@ -66,9 +78,9 @@ public static class Utils
             }
         }
 
-        StringBuilder nameBuilder = new();
-
+        StringBuilder nameBuilder = new StringBuilder();
         string? nameColor = target.BetterData().NameColor;
+
         if (string.IsNullOrEmpty(nameColor))
         {
             nameBuilder.Append(target.PlayerName);
@@ -79,9 +91,9 @@ public static class Utils
         }
 
         nameBuilder.Append(CustomRoleManager.GetRoleMarks(target.Object));
-
         return nameBuilder.ToString();
     }
+
     public static string FormatTasksToText(this PlayerControl player)
     {
         if (player.RoleChecksAny(role => role.HasTask, false) || player.RoleChecksAny(role => role.HasSelfTask, false))

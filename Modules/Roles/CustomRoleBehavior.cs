@@ -28,6 +28,9 @@ public class OptionAttributes
 
 public abstract class CustomRoleBehavior
 {
+    private bool hasSetup { get; set; } = false;
+    private bool hasDeinitialize { get; set; } = false;
+
     /// <summary>
     /// A dictionary representing players recruited by this role to win together. 
     /// The key is the recruiter, and the value is a list of players they recruited.
@@ -431,7 +434,15 @@ public abstract class CustomRoleBehavior
 
     public void Deinitialize()
     {
-        OnResetAbilityState(false);
+        if (hasDeinitialize) return;
+        hasDeinitialize = true;
+
+        TBRLogger.LogMethodPrivate("Deinitialize Role Base!", GetType());
+
+        try { OnResetAbilityState(false); }
+        catch (Exception ex) { TBRLogger.LogMethodPrivate(ex.ToString(), GetType()); }
+
+        TBRLogger.LogPrivate($"Finished deinitialize Role Base, now deinitialize Role({RoleName})!");
         OnDeinitialize();
 
         // Remove Buttons
@@ -447,6 +458,10 @@ public abstract class CustomRoleBehavior
         {
             _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
         }
+
+        TBRLogger.LogPrivate($"Finished deinitialize Role({RoleName})!");
+
+        Utils.DirtyAllNames();
     }
 
     /// <summary>
@@ -455,7 +470,10 @@ public abstract class CustomRoleBehavior
     /// </summary>
     protected virtual void SetUpRole()
     {
-        TBRLogger.LogMethodPrivate("Setting up role", GetType());
+        if (hasSetup) return;
+        hasSetup = true;
+
+        TBRLogger.LogMethodPrivate("Setting up Role Base!", GetType());
 
         SetUpSettings();
 
@@ -497,7 +515,13 @@ public abstract class CustomRoleBehavior
             VentButton.CanCancelDuration = true;
         }
 
+        TBRLogger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
+
         OnSetUpRole();
+
+        TBRLogger.LogPrivate($"Finished setting up Role({RoleName})!");
+
+        _player.DirtyName();
     }
 
     public void LoadSettings()
@@ -623,6 +647,7 @@ public abstract class CustomRoleBehavior
                 {
                     var syncNum = reader.ReadInt32();
                     OnReceiveRoleSync(syncNum, reader, realSender);
+                    Utils.DirtyAllNames();
                 }
                 break;
         }
@@ -650,6 +675,8 @@ public abstract class CustomRoleBehavior
                 }
                 break;
         }
+
+        Utils.DirtyAllNames();
     }
 
     private bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)

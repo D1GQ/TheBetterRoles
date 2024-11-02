@@ -243,6 +243,8 @@ internal static class RPC
                             PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
                         }
                         SendModAccept();
+
+                        Utils.DirtyAllNames();
                     }
                     break;
                 case CustomRPC.VersionAccept:
@@ -267,6 +269,8 @@ internal static class RPC
                             player.BetterData().Version = version;
                             TBRLogger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
                         }
+
+                        Utils.DirtyAllNames();
                     }
                     break;
                 case CustomRPC.SyncAllSettings:

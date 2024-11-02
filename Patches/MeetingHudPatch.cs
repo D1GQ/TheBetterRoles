@@ -72,6 +72,9 @@ namespace TheBetterRoles
 
             foreach (var pva in __instance.playerStates)
             {
+                var player = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
+                player?.DirtyName();
+
                 var TextTopMeeting = UnityEngine.Object.Instantiate(pva.NameText, pva.NameText.transform);
                 TextTopMeeting.gameObject.name = "TextTop";
                 TextTopMeeting.DestroyChildren();

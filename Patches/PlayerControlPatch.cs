@@ -38,24 +38,16 @@ class PlayerControlPatch
         InstantiatePlayerInfoText("InfoText_Info_TMP", new Vector3(0f, 0.25f));
         InstantiatePlayerInfoText("InfoText_T_TMP", new Vector3(0f, 0.15f));
         InstantiatePlayerInfoText("InfoText_B_TMP", new Vector3(0f, -0.15f));
+
+        __instance.DirtyName();
     }
 
-    public static Dictionary<byte, float> Times = [];
     [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
     [HarmonyPrefix]
     [HarmonyPriority(Priority.First)]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
     {
-        if (!Times.ContainsKey(__instance.PlayerId))
-        {
-            Times[__instance.PlayerId] = 0f;
-        }
-
-        Times[__instance.PlayerId] += Time.deltaTime;
-        if (Times[__instance.PlayerId] > 0.65f)
-        {
-            SetPlayerInfo(__instance);
-        }
+        SetPlayerInfo(__instance);
 
         // Set color blind text on player
         if (__instance.DataIsCollected())
@@ -87,23 +79,31 @@ class PlayerControlPatch
 
     public static void SetPlayerInfo(PlayerControl player)
     {
-        if (player == null || player.Data == null) return;
+        if (player?.Data == null || player?.BetterData()?.DirtyName == false) return;
 
         var playerData = player.BetterData();
         var cosmetics = player.cosmetics;
+
         var sbTag = new StringBuilder();
         var sbTagTop = new StringBuilder();
         var sbTagBottom = new StringBuilder();
 
-        if (GameState.IsLobby && !GameState.IsFreePlay)
+        bool isLobbyState = GameState.IsLobby && !GameState.IsFreePlay;
+        bool isLocalPlayerAlive = PlayerControl.LocalPlayer.IsAlive(true);
+        bool isLocalPlayer = player.IsLocalPlayer();
+
+        if (isLobbyState)
         {
-            cosmetics.nameText.color = playerData.HasMod || player.IsLocalPlayer()
+            cosmetics.nameText.color = playerData.HasMod || isLocalPlayer
                 ? new Color(0.47f, 1f, 0.95f, 1f)
                 : Color.white;
 
             if (playerData.MismatchVersion)
             {
-                sbTag.Append($"<color=#FF0800>{playerData.Version} {(GameState.IsHost ? $"- {(int)playerData.KickTimer}s" : string.Empty)}</color>+++");
+                sbTag.Append($"<color=#FF0800>{playerData.Version}");
+                if (GameState.IsHost)
+                    sbTag.Append($" - {(int)playerData.KickTimer}s");
+                sbTag.Append("</color>+++");
             }
         }
         else
@@ -118,14 +118,18 @@ class PlayerControlPatch
                 cosmetics.nameText.color = new Color(1f, 1f, 1f, cosmetics.nameText.color.a);
             }
 
-            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
-                player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player)))
+            bool canRevealRole = isLocalPlayer || !isLocalPlayerAlive || player.IsImpostorTeammate() ||
+                                 CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player));
+
+            if (canRevealRole)
             {
                 sbTag.Append($"{player.GetRoleNameAndColor()}{player.FormatTasksToText()}---");
             }
 
-            if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) ||
-                player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
+            bool canRevealAddons = isLocalPlayer || !isLocalPlayerAlive || player.IsImpostorTeammate() ||
+                                   CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player));
+
+            if (canRevealAddons)
             {
                 foreach (var addon in playerData.RoleInfo.Addons)
                 {
@@ -134,14 +138,11 @@ class PlayerControlPatch
             }
         }
 
-        if (sbTag.Length > 0) sbTag = Utils.FormatStringBuilder(sbTag);
-        if (sbTagTop.Length > 0) sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-        if (sbTagBottom.Length > 0) sbTagBottom = Utils.FormatStringBuilder(sbTagBottom);
-
+        // Format and set the strings
         player.RawSetName(Utils.FormatPlayerName(player.Data));
-        player.SetPlayerTextInfo(sbTagTop.ToString());
-        player.SetPlayerTextInfo(sbTagBottom.ToString(), isBottom: true);
-        player.SetPlayerTextInfo(sbTag.ToString(), isInfo: true);
+        if (sbTagTop.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagTop).ToString());
+        if (sbTagBottom.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagBottom).ToString(), isBottom: true);
+        if (sbTag.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTag).ToString(), isInfo: true);
     }
 }
 

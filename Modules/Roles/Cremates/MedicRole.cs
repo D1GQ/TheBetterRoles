@@ -7,6 +7,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using static TheBetterRoles.Modules.Translator;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.Roles;
 
@@ -52,10 +53,17 @@ public class MedicRole : CustomRoleBehavior
 
     public override void OnDeinitialize()
     {
-        if (Shielded != null)
-        {
-            Shielded = null;
-        }
+        RemoveShield();
+    }
+
+    private void AddShield(PlayerControl player)
+    {
+        Shielded = player.Data;
+    }
+
+    private void RemoveShield()
+    {
+        Shielded = null;
     }
 
     public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
@@ -64,7 +72,7 @@ public class MedicRole : CustomRoleBehavior
         {
             if (Shielded != null && RemoveShieldOnMedicDeath.GetBool())
             {
-                Shielded = null;
+                RemoveShield();
             }
         }
     }
@@ -78,7 +86,7 @@ public class MedicRole : CustomRoleBehavior
                 {
                     if (target != null)
                     {
-                        Shielded = target.Data;
+                        AddShield(target);
                     }
                 }
                 break;
