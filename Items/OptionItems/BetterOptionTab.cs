@@ -15,7 +15,7 @@ public class BetterOptionTab
     public PassiveButton? TabButton;
     public Color? Color;
 
-    public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color, bool destroyMapPicker = true)
+    public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color, bool doNotDestroyMapPicker = false)
     {
         if (GameSettingMenuPatch.Preload)
         {
@@ -62,7 +62,7 @@ public class BetterOptionTab
         var BetterSettingsTab = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsTab, GameSettingMenu.Instance.GameSettingsTab.transform.parent);
         Tab = BetterSettingsTab;
         BetterSettingsTab.name = Name;
-        if (destroyMapPicker) BetterSettingsTab.scrollBar.Inner.DestroyChildren();
+        if (!doNotDestroyMapPicker) BetterSettingsTab.scrollBar.Inner.DestroyChildren();
 
         allTabs.Add(this);
         AlignButtons();

@@ -79,8 +79,10 @@ static class GameSettingMenuPatch
         BetterOptionItem.TempPlayerOptionDataNum = 0;
         TitleList.Clear();
 
+        bool mapFlag = GameState.IsLobby && GameState.IsHost && !GameState.IsFreePlay;
+
         BetterTabs.GameSettings = new BetterOptionTab().CreateTab(1, Translator.GetString("BetterSetting.Tab.GameSettings"),
-            Translator.GetString("BetterSetting.Description.GameSettings"), Color.green, false);
+            Translator.GetString("BetterSetting.Description.GameSettings"), Color.green, mapFlag);
 
         BetterTabs.SystemSettings = new BetterOptionTab().CreateTab(2, Translator.GetString("BetterSetting.Tab.SystemSettings"),
             Translator.GetString("BetterSetting.Description.SystemSettings"), Color.yellow);
@@ -93,7 +95,7 @@ static class GameSettingMenuPatch
         BetterTabs.Addons = new BetterOptionTab().CreateTab(6, Translator.GetString("BetterSetting.Tab.Addons"),
             Translator.GetString("BetterSetting.Description.Addons"), Color.magenta);
 
-        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings"), 1.5f));
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings"), !mapFlag ? 0.1f : 1.5f));
 
         TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor")}</color>"));
         VanillaGameSettings.ImpostorVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.ImpostorVision"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.ImpostorLightMod);
