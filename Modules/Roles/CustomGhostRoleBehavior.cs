@@ -5,8 +5,7 @@ namespace TheBetterRoles.Roles;
 
 public abstract class CustomGhostRoleBehavior : CustomRoleBehavior
 {
-    protected override bool IsGhostRole => true;
-
+    public override bool IsGhostRole => true;
     private int tempBaseOptionNum = 0;
     private int GetBaseOptionID()
     {
