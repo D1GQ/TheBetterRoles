@@ -344,7 +344,7 @@ static class PlayerControlHelper
     // Get true position
     public static Vector2 GetCustomPosition(this PlayerControl player) => new(player.transform.position.x, player.transform.position.y);
     // Check if player is a dev
-    public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{Utils.GetHashPuid(player)}+{player.Data.FriendCode}");
+    public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{Utils.GetHashPuid(player)}+{Utils.GetHashPuid(player.Data.FriendCode)}");
     // Check if player is alive
     public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
     // Check if player is in a vent

@@ -393,6 +393,8 @@ internal static class RPC
     {
         MessageReader reader = MessageReader.Get(oldReader);
 
+        TBRLogger.InGame($"TEST");
+
         var signature = reader.ReadString();
         var action = reader.ReadInt32();
         var player = reader.ReadNetObject<PlayerControl>();

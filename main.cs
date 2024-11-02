@@ -113,7 +113,7 @@ public class Main : BasePlugin
 
     public static string[] DevUser =
     [
-        "J4sxGDREO5bjLvzvMkv059g+7wpNg7PbyWa9vLVWQkw=",
+        "8f23c48e2+3e249bee5",
     ];
 
     public static void SetVanillaSettings()

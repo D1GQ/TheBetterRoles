@@ -1,5 +1,6 @@
 ﻿using Hazel;
 using InnerNet;
+using LibCpp2IL.Logging;
 using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Helpers;
@@ -60,11 +61,10 @@ static class InnerNetClientHelper
         }
     }
 
-
     public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
+        MessageWriter writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
         writer.Write(Main.modSignature);
         writer.Write((int)action);
         writer.WriteNetObject(asPlayer ?? LocalPlayer);
@@ -72,7 +72,32 @@ static class InnerNetClientHelper
         return writer;
     }
 
-    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
+    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter oldWriter)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            _ = new LateTask(() =>
+            {
+                MessageWriter writer = oldWriter.Copy();
+                writer.EndMessage();
+            }, 0.5f * i, shoudLog: false);
+        }
+    }
+
+    public static MessageWriter Copy(this MessageWriter writer)
+    {
+        var list = new Il2CppSystem.Collections.Generic.Stack<int>();
+        foreach (int i in writer.messageStarts)
+        {
+            list.Push(i);
+        }
+        var msg = MessageWriter.Get(writer.SendOption);
+        msg.Position = writer.Position;
+        msg.messageStarts = list;
+        msg.Buffer = writer.Buffer;
+        msg.Length = writer.Length;
+        return msg;
+    }
 
     /// <summary>
     /// Starts the RPC desynchronization process for the given player, call ID, and send option.

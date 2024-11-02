@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<Authors>D1GQ</Authors>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<!-- Updated -->
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<OutputType>Library</OutputType>
 		<LangVersion>preview</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>True</Optimize>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
@@ -28,5 +35,10 @@
 	<ItemGroup>
 		<!-- Embed all files in the Resources folder -->
 		<EmbeddedResource Include="Resources\**\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Resources\AssetBundles\shaders" />
+	  <None Remove="Resources\Sounds\Douse.raw" />
 	</ItemGroup>
 </Project>

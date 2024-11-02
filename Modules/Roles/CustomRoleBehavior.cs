@@ -479,13 +479,13 @@ public abstract class CustomRoleBehavior
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
-                return !target.IsImpostorTeammate();
+                return !IsImpostor || !target.IsImpostorTeammate();
             };
             KillButton.OnClick = () => 
             {
                 if (KillButton.lastTarget != null)
                 {
-                    _player.MurderSync(KillButton.lastTarget);
+                    localPlayer.MurderSync(KillButton.lastTarget);
                     KillButton.SetCooldown();
                 }
             };
