@@ -6,8 +6,8 @@ namespace TheBetterRoles.Roles;
 
 public abstract class CustomAddonBehavior : CustomRoleBehavior
 {
+    protected override bool IsAddon => true;
     public virtual Func<CustomRoleBehavior, bool> AssignmentCondition => (CustomRoleBehavior role) => true;
-    public override bool IsAddon => true;
     public override bool CanMoveInVents => true;
 
     private BetterOptionItem? AssignToCrewmate { get; set; }

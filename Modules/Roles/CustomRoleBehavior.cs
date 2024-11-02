@@ -168,12 +168,12 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Check if the role is an addon, meaning an additional or modified role. This should never be overridden in subclasses.
     /// </summary>
-    public virtual bool IsAddon => false;
+    protected virtual bool IsAddon => false;
 
     /// <summary>
     /// Check if the role is an ghost role.
     /// </summary>
-    public virtual bool IsGhostRole => false;
+    protected virtual bool IsGhostRole => false;
 
     /// <summary>
     /// Get the role class. This is an abstract method that will return the custom behavior associated with this role.

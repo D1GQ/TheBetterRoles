@@ -10,7 +10,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
 {
     // Role Info
     public override int RoleId => 30;
-    public override bool IsGhostRole => true;
     public override bool TaskReliantRole => true;
     public override bool HasSelfTask => !HasBeenClicked;
     public override string RoleColor => "#A04D8A";
