@@ -578,7 +578,7 @@ public abstract class CustomRoleBehavior
         OnAbilityUse(id, target, vent, body, null, type);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
-        writer.WriteNetObject(_player);
+        writer.WritePlayerId(_player);
         writer.Write(RoleHash);
         writer.Write((byte)id);
         writer.Write(targetId);
@@ -595,7 +595,7 @@ public abstract class CustomRoleBehavior
 
     public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender)
     {
-        _ = reader.ReadNetObject<PlayerControl>(); // Player
+        _ = reader.ReadPlayerId(); // Player Id
         _ = reader.ReadInt32(); // Role hash
 
         switch ((CustomRPC)callId)
@@ -705,7 +705,7 @@ public abstract class CustomRoleBehavior
     protected void SendRoleSync(int syncId, object[]? additionalParams = null)
     {
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncRole, SendOption.Reliable, -1);
-        writer.WriteNetObject(_player);
+        writer.WritePlayerId(_player);
         writer.Write(RoleHash);
         writer.Write(syncId);
         OnSendRoleSync(syncId, writer, additionalParams);

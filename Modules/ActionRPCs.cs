@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using Hazel;
 using InnerNet;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
@@ -114,6 +115,20 @@ static class ActionRPCs
 
     private static bool CheckSetRoleAction(PlayerControl player, CustomRoles role) => true;
 
+    // Set player role
+    public static void PlayIntroSync(bool IsRPC = false)
+    {
+        if (ValidateHostCheck() == true)
+        {
+            CustomRoleManager.PlayIntro();
+        }
+
+        if (IsRPC) return;
+
+        var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayIntro);
+        AmongUsClient.Instance.EndActionSyncRpc(writer);
+    }
+
     // Make a player kill a target
     public static void MurderSync(
         this PlayerControl player,
@@ -143,7 +158,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Murder, player);
-        writer.WriteNetObject(target);
+        writer.WritePlayerId(target);
         writer.Write(isAbility);
         writer.Write((byte)flags);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
@@ -216,7 +231,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.ReportBody, player);
-        writer.WriteNetObject(bodyInfo);
+        writer.WritePlayerDataId(bodyInfo);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
@@ -280,7 +295,7 @@ static class ActionRPCs
         writer.Write(Id);
         writer.Write(roleType);
         writer.Write(close);
-        writer.WriteNetObject(target ?? null);
+        writer.WritePlayerDataId(target);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 
@@ -406,7 +421,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.GuessPlayer, player);
-        writer.WriteNetObject(target);
+        writer.WritePlayerId(target);
         writer.Write((int)roleType);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }

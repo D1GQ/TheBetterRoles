@@ -12,6 +12,7 @@ namespace TheBetterRoles.Modules;
 public enum RpcAction : int
 {
     ResetAbilityState,
+    PlayIntro,
     SetRole,
     EndGame,
     ReportBody,
@@ -354,7 +355,7 @@ internal static class RPC
                 case CustomRPC.RoleAction:
                 case CustomRPC.SyncRole:
                     {
-                        var user = reader.ReadNetObject<PlayerControl>();
+                        var user = reader.ReadPlayerId();
                         var hash = reader.ReadInt32();
 
                         if (user != null)
@@ -393,11 +394,9 @@ internal static class RPC
     {
         MessageReader reader = MessageReader.Get(oldReader);
 
-        TBRLogger.InGame($"TEST");
-
         var signature = reader.ReadString();
         var action = reader.ReadInt32();
-        var player = reader.ReadNetObject<PlayerControl>();
+        var player = reader.ReadPlayerId();
 
         if (Main.modSignature != signature) return;
 
@@ -427,6 +426,11 @@ internal static class RPC
                     player.ResetAbilityStateSync(id, roleType, isTimeOut, IsRPC);
                 }
                 break;
+            case RpcAction.PlayIntro:
+                {
+                    ActionRPCs.PlayIntroSync(IsRPC);
+                }
+                break;
             case RpcAction.SetRole:
                 {
                     var role = reader.ReadInt32();
@@ -436,7 +440,7 @@ internal static class RPC
                 break;
             case RpcAction.ReportBody:
                 {
-                    var bodyInfo = reader.ReadNetObject<NetworkedPlayerInfo>();
+                    var bodyInfo = reader.ReadPlayerDataId();
                     player.ReportBodySync(bodyInfo, IsRPC);
                 }
                 break;
@@ -447,7 +451,7 @@ internal static class RPC
                 break;
             case RpcAction.Murder:
                 {
-                    var target = reader.ReadNetObject<PlayerControl>();
+                    var target = reader.ReadPlayerId();
                     bool isAbility = reader.ReadBoolean();
                     byte flags = reader.ReadByte();
 
@@ -468,7 +472,7 @@ internal static class RPC
                     var Id = reader.ReadInt32();
                     var roleType = reader.ReadInt32();
                     var close = reader.ReadBoolean();
-                    var target = reader.ReadNetObject<NetworkedPlayerInfo>();
+                    var target = reader.ReadPlayerDataId();
                     if (target != null)
                     {
                         player.PlayerMenuSync(Id, roleType, target, null, null, close, IsRPC);
@@ -477,7 +481,7 @@ internal static class RPC
                 break;
             case RpcAction.PlayerPress:
                 {
-                    var target = reader.ReadNetObject<PlayerControl>();
+                    var target = reader.ReadPlayerId();
                     if (target != null)
                     {
                         player.PlayerPressSync(target, IsRPC);
@@ -493,7 +497,7 @@ internal static class RPC
                 break;
             case RpcAction.GuessPlayer:
                 {
-                    var target = reader.ReadNetObject<PlayerControl>();
+                    var target = reader.ReadPlayerId();
                     var roleType = (CustomRoles)reader.ReadInt32();
                     if (target != null)
                     {

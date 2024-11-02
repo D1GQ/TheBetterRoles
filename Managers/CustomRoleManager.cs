@@ -113,6 +113,8 @@ public static class CustomRoleManager
 
             // Log all assignments
             LogAllAssignments(playerRoleAssignments);
+
+            ActionRPCs.PlayIntroSync();
         }
         catch (Exception ex)
         {
@@ -592,8 +594,6 @@ public static class CustomRoleManager
 
         CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
         newRole?.Initialize(player);
-
-        PlayIntro();
     }
 
     public static void AddAddon(PlayerControl player, CustomRoles role)
@@ -630,7 +630,7 @@ public static class CustomRoleManager
     {
         if (!DestroyableSingleton<TutorialManager>.InstanceExists)
         {
-            if (!GameManager.Instance.GameHasStarted && Main.AllPlayerControls.All(pc => pc.Data != null && pc.BetterData().RoleInfo.RoleAssigned || pc.Data.Disconnected))
+            if (!GameManager.Instance.GameHasStarted)
             {
                 if (GameState.IsHost) Main.AllPlayerControls.ToList().ForEach(player => player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0)));
                 Main.AllPlayerControls.ToList().ForEach(PlayerNameColor.Set);

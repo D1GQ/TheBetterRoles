@@ -61,28 +61,30 @@ static class InnerNetClientHelper
         }
     }
 
+    public static void WritePlayerId(this MessageWriter writer, PlayerControl player) => writer.Write(player?.PlayerId ?? 255);
+
+    public static PlayerControl? ReadPlayerId(this MessageReader reader) => Utils.PlayerFromPlayerId(reader.ReadByte());
+
+    public static void WritePlayerDataId(this MessageWriter writer, NetworkedPlayerInfo data) => writer.Write(data?.PlayerId ?? 255);
+
+    public static NetworkedPlayerInfo? ReadPlayerDataId(this MessageReader reader) => Utils.PlayerDataFromPlayerId(reader.ReadByte());
+
+    public static void WriteDeadBodyId(this MessageWriter writer, DeadBody body) => writer.Write(body?.ParentId ?? 255);
+
+    public static DeadBody? ReadDeadBodyId(this MessageReader reader) => Main.AllDeadBodys.FirstOrDefault(deadbody => deadbody.ParentId == reader.ReadByte());
+
     public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
-        MessageWriter writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
         writer.Write(Main.modSignature);
         writer.Write((int)action);
-        writer.WriteNetObject(asPlayer ?? LocalPlayer);
+        writer.Write(asPlayer?.PlayerId ?? LocalPlayer.PlayerId);
 
         return writer;
     }
 
-    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter oldWriter)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            _ = new LateTask(() =>
-            {
-                MessageWriter writer = oldWriter.Copy();
-                writer.EndMessage();
-            }, 0.5f * i, shoudLog: false);
-        }
-    }
+    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
 
     public static MessageWriter Copy(this MessageWriter writer)
     {
