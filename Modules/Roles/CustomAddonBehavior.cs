@@ -46,6 +46,8 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
         TBRLogger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
         OnSetUpRole();
         TBRLogger.LogPrivate($"Finished setting up Role({RoleName})!");
+
+        _player.DirtyName();
     }
 
     private int tempBaseOptionNum = 0;

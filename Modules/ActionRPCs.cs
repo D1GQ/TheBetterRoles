@@ -417,6 +417,16 @@ static class ActionRPCs
                 }
             }
         }
+        else if (player.IsLocalPlayer())
+        {
+            _ = new LateTask(() =>
+            {
+                if (!DestroyableSingleton<HudManager>.Instance.KillOverlay.IsOpen)
+                {
+                    MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
+                }
+            }, 0.25f, shoudLog: false);
+        }
 
         if (IsRPC) return;
 
@@ -428,11 +438,11 @@ static class ActionRPCs
 
     private static bool CheckGuessPlayerAction(PlayerControl player, PlayerControl target, CustomRoles roleType)
     {
-        if (!player.RoleChecks(role => role.CheckGuess(player, target, roleType)))
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }
-        if (!target.RoleChecks(role => role.CheckGuess(player, target, roleType)))
+        if (!CustomRoleManager.RoleChecks(target, role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }

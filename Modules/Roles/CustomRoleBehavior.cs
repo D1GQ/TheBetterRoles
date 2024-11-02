@@ -459,9 +459,9 @@ public abstract class CustomRoleBehavior
             _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
         }
 
-        TBRLogger.LogPrivate($"Finished deinitialize Role({RoleName})!");
-
         Utils.DirtyAllNames();
+
+        TBRLogger.LogPrivate($"Finished deinitialize Role({RoleName})!");
     }
 
     /// <summary>

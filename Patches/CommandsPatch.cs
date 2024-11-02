@@ -85,6 +85,7 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
+                Main.AllPlayerControls[1].SetRoleSync(CustomRoles.Snitch);
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(
@@ -133,7 +134,7 @@ class CommandsPatch
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.dump"):
                 if (GameState.IsInGamePlay && !GameState.IsDev) return;
 
-                string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "better-log.txt");
+                string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
                 string log = File.ReadAllText(logFilePath);
                 string newLog = string.Empty;
                 string[] logArray = log.Split(new[] { Environment.NewLine }, StringSplitOptions.None);

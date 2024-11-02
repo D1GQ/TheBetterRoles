@@ -99,6 +99,24 @@ public class SnitchRole : CustomRoleBehavior
         arrows.Add(arrow);
     }
 
+    public override bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoles role)
+    {
+        if (target == _player)
+        {
+            if (HasFinishedTask)
+            {
+                if (guesser.IsLocalPlayer())
+                {
+                    DestroyableSingleton<HudManager>.Instance.ShowPopUp($"{target.Data.PlayerName} is unable to be guessed!");
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public override bool RevealPlayerRole(PlayerControl target)
     {
         if (HasFinishedTask)

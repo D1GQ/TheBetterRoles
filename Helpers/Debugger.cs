@@ -41,7 +41,7 @@ class TBRLogger
             ? $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}."
             : $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}. Info: {info}.";
 
-        Log(logMessage, loggedClassName, hostOnly);
+        Log(logMessage, "MethodLog", hostOnly);
     }
 
     public static void LogMethodPrivate(
@@ -63,7 +63,7 @@ class TBRLogger
             ? $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}."
             : $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}. Info: {info}.";
 
-        LogPrivate(logMessage, loggedClassName, hostOnly);
+        LogPrivate(logMessage, "MethodLog", hostOnly);
     }
 
     public static void LogHeader(string info, string tag = "LogHeader", bool hostOnly = false) => Log($"   >-------------- {info} --------------<", tag, hostOnly: hostOnly);

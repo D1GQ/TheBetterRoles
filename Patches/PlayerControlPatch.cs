@@ -42,12 +42,22 @@ class PlayerControlPatch
         __instance.DirtyName();
     }
 
+    public static Dictionary<byte, float> Times = [];
     [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
     [HarmonyPrefix]
     [HarmonyPriority(Priority.First)]
     public static void FixedUpdate_Prefix(PlayerControl __instance)
     {
-        SetPlayerInfo(__instance);
+        if (!Times.ContainsKey(__instance.PlayerId))
+        {
+            Times[__instance.PlayerId] = 0f;
+        }
+
+        Times[__instance.PlayerId] += Time.deltaTime;
+        if (Times[__instance.PlayerId] > 0.25f)
+        {
+            SetPlayerInfo(__instance);
+        }
 
         // Set color blind text on player
         if (__instance.DataIsCollected())
@@ -140,9 +150,9 @@ class PlayerControlPatch
 
         // Format and set the strings
         player.RawSetName(Utils.FormatPlayerName(player.Data));
-        if (sbTagTop.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagTop).ToString());
-        if (sbTagBottom.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagBottom).ToString(), isBottom: true);
-        if (sbTag.Length > 0) player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTag).ToString(), isInfo: true);
+        player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagTop).ToString());
+        player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagBottom).ToString(), isBottom: true);
+        player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTag).ToString(), isInfo: true);
     }
 }
 
