@@ -6,7 +6,7 @@ using TheBetterRoles.Patches;
 
 namespace TheBetterRoles.Roles;
 
-public class PhantomRoleTBR : CustomRoleBehavior
+public class PhantomRoleTBR : CustomGhostRoleBehavior
 {
     // Role Info
     public override int RoleId => 30;

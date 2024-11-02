@@ -39,7 +39,7 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
 
     protected override void SetUpRole()
     {
-        OptionItems.Initialize();
+        SetUpSettings();
         OnSetUpRole();
     }
 
