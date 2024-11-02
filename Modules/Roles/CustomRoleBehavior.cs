@@ -455,6 +455,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     protected virtual void SetUpRole()
     {
+        TBRLogger.LogMethodPrivate("Setting up role", GetType());
+
         SetUpSettings();
 
         if (_player != null)
@@ -553,6 +555,8 @@ public abstract class CustomRoleBehavior
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type)
     {
+        TBRLogger.LogMethodPrivate($"Checking Ability({id}) usage on {Enum.GetName(type)}: {targetId}", GetType());
+
         PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
         Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
         DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
@@ -570,6 +574,7 @@ public abstract class CustomRoleBehavior
         DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
 
         SetCooldownAndUse(id);
+        TBRLogger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
         OnAbilityUse(id, target, vent, body, null, type);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
@@ -606,7 +611,12 @@ public abstract class CustomRoleBehavior
                     DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
 
                     SetCooldownAndUse(id);
-                    OnAbilityUse(id, target, vent, body, reader, type);
+
+                    if (CheckRoleAction(id, target, vent, body) == true)
+                    {
+                        TBRLogger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
+                        OnAbilityUse(id, target, vent, body, reader, type);
+                    }
                 }
                 break;
             case CustomRPC.SyncRole:
@@ -699,6 +709,9 @@ public abstract class CustomRoleBehavior
         writer.Write(RoleHash);
         writer.Write(syncId);
         OnSendRoleSync(syncId, writer, additionalParams);
+
+        TBRLogger.LogMethodPrivate($"Sync role({syncId}), Length: {writer.Length}", GetType());
+
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
@@ -720,6 +733,8 @@ public abstract class CustomRoleBehavior
 
     public void TryOverrideTasks(bool overideOldTask = false)
     {
+        TBRLogger.LogMethodPrivate($"Overriding tasks for {GetType().Name}", GetType(), true);
+
         if (GameState.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
         {
             _player.SetNewTasks(LongTasksOptionItem.GetInt(), ShortTasksOptionItem.GetInt(), CommonTasksOptionItem.GetInt());
@@ -736,6 +751,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public void SetAllCooldowns()
     {
+        TBRLogger.LogMethodPrivate("Setting all button cooldowns", GetType());
+
         foreach (var button in Buttons)
         {
             button.SetCooldown();

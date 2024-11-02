@@ -41,6 +41,28 @@ class TBRLogger
             ? $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}."
             : $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}. Info: {info}.";
 
+        Log(logMessage, loggedClassName, hostOnly);
+    }
+
+    public static void LogMethodPrivate(
+    string info = "",
+    Type? runtimeType = null,
+    bool hostOnly = false,
+    [CallerFilePath] string callerFilePath = "",
+    [CallerLineNumber] int callerLineNumber = 0,
+    [CallerMemberName] string callerMemberName = "")
+    {
+        var loggedMethodFrame = new StackFrame(1, true);
+
+        var loggedMethod = loggedMethodFrame.GetMethod();
+        string loggedMethodName = loggedMethod.Name;
+        string? loggedClassFullName = runtimeType?.FullName ?? loggedMethod.DeclaringType?.FullName;
+        string? loggedClassName = runtimeType?.Name ?? loggedMethod.DeclaringType?.Name;
+
+        string logMessage = string.IsNullOrEmpty(info)
+            ? $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}."
+            : $"{loggedClassFullName}.{loggedMethodName} was called from {Path.GetFileName(callerFilePath)}({callerLineNumber}) in {callerMemberName}. Info: {info}.";
+
         LogPrivate(logMessage, loggedClassName, hostOnly);
     }
 

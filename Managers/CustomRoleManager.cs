@@ -457,7 +457,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.LogPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.LogMethodPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -479,7 +479,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.LogPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -499,7 +499,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) TBRLogger.LogPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }
@@ -522,7 +522,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) TBRLogger.LogPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", "CustomRoleManager");
+                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }
