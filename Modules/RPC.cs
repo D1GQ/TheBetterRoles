@@ -494,7 +494,7 @@ internal static class RPC
                 break;
             case RpcAction.Vent:
                 {
-                    var ventId = reader.ReadByte();
+                    var ventId = reader.ReadInt32();
                     var exit = reader.ReadBoolean();
                     player.VentSync(ventId, exit, IsRPC);
                 }

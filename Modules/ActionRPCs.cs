@@ -353,7 +353,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.Vent, player);
-        writer.Write((byte)ventId);
+        writer.Write(ventId);
         writer.Write(Exit);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
