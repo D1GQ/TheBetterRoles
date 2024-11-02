@@ -8,6 +8,7 @@ namespace TheBetterRoles.Items.Buttons;
 
 public class DeadBodyAbilityButton : BaseButton
 {
+    public Action? OnClick;
     public DeadBody? lastDeadBody { get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (body) => true;
     public DeadBodyAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
@@ -48,19 +49,13 @@ public class DeadBodyAbilityButton : BaseButton
             }
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
+            OnClick = Click;
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
                 {
-                    if (State == 0)
-                    {
-                        Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
-                    }
-                    else if (State == 1)
-                    {
-                        ResetState();
-                    }
+                    OnClick.Invoke();
                 }
             }));
         }
@@ -86,6 +81,18 @@ public class DeadBodyAbilityButton : BaseButton
 
         allButtons.Add(this);
         return this;
+    }
+
+    public override void Click()
+    {
+        if (State == 0)
+        {
+            Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
+        }
+        else if (State == 1)
+        {
+            ResetState();
+        }
     }
 
     public override void FixedUpdate()

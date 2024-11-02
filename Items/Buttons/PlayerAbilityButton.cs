@@ -9,6 +9,7 @@ namespace TheBetterRoles.Items.Buttons;
 
 public class PlayerAbilityButton : BaseButton
 {
+    public Action? OnClick;
     public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
     public PlayerAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
@@ -49,19 +50,13 @@ public class PlayerAbilityButton : BaseButton
             }
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
+            OnClick = Click;
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
                 {
-                    if (State == 0)
-                    {
-                        Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
-                    }
-                    else if (State == 1)
-                    {
-                        ResetState();
-                    }
+                    OnClick.Invoke();
                 }
             }));
         }
@@ -87,6 +82,18 @@ public class PlayerAbilityButton : BaseButton
 
         allButtons.Add(this);
         return this;
+    }
+
+    public override void Click()
+    {
+        if (State == 0)
+        {
+            Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
+        }
+        else if (State == 1)
+        {
+            ResetState();
+        }
     }
 
     public override void FixedUpdate()

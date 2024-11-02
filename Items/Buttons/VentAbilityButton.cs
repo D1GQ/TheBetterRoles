@@ -4,17 +4,21 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Items.Buttons;
 
 public class VentAbilityButton : BaseButton
 {
+    public Action? OnClick;
+    private bool isAbility { get; set; }
     public Vent? lastTargetVent { get; set; }
     public float HighlightDistance { get; set; } = 3.5f;
     public bool IsAbility { get; set; }
     public Func<Vent, bool> VentCondition { get; set; } = (target) => true;
     public VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
+        this.isAbility = isAbility;
         Distance = 0.8f;
         Role = role;
         Id = id;
@@ -63,39 +67,13 @@ public class VentAbilityButton : BaseButton
             }
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
+            OnClick = Click;
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
                 {
-                    if (!isAbility)
-                    {
-                        if (lastTargetVent != null)
-                        {
-                            if (!_player.inVent)
-                            {
-                                _player.VentSync(lastTargetVent.Id, false);
-                                if (Duration > 0f)
-                                    SetDuration();
-                            }
-                            else
-                            {
-                                _player.VentSync(lastTargetVent.Id, true);
-                                ResetState();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (State == 0)
-                        {
-                            Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
-                        }
-                        else if (State == 1)
-                        {
-                            ResetState();
-                        }
-                    }
+                    OnClick.Invoke();
                 }
             }));
         }
@@ -121,6 +99,38 @@ public class VentAbilityButton : BaseButton
 
         allButtons.Add(this);
         return this;
+    }
+
+    public override void Click()
+    {
+        if (!isAbility)
+        {
+            if (lastTargetVent != null)
+            {
+                if (!_player.inVent)
+                {
+                    _player.VentSync(lastTargetVent.Id, false);
+                    if (Duration > 0f)
+                        SetDuration();
+                }
+                else
+                {
+                    _player.VentSync(lastTargetVent.Id, true);
+                    ResetState();
+                }
+            }
+        }
+        else
+        {
+            if (State == 0)
+            {
+                Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
+            }
+            else if (State == 1)
+            {
+                ResetState();
+            }
+        }
     }
 
     public override bool BaseInteractable() =>

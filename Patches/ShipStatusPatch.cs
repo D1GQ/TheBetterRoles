@@ -4,6 +4,7 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.Patches;
 
@@ -23,6 +24,8 @@ class ShipStatusPatch
                 if (settingsComputer != null)
                 {
                     settingsComputer.SetActive(true);
+                    var button = settingsComputer.GetComponent<ButtonBehavior>();
+                    button?.DestroyMono();
 
                     Vector3 pos = Vector3.zeroVector;
                     float Z = settingsComputer.transform.position.z;

@@ -156,6 +156,11 @@ public abstract class CustomRoleBehavior
     public int RoleUID => 100000 + 200 * (int)RoleType;
 
     /// <summary>
+    /// Get automatically generated role Hash based on the role and player.
+    /// </summary>
+    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player.BetterData().RoleInfo.AllRoles.IndexOf(Role)}{_player.PlayerId}");
+
+    /// <summary>
     /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 
     /// </summary>
     public virtual bool CanBeAssigned => true;
@@ -269,7 +274,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The sabotage button for the role, allowing the player to perform sabotage actions.
     /// </summary>
-    public SabotageAbilityButton? SabotageButton { get; set; }
+    public BaseAbilityButton? SabotageButton { get; set; }
 
     /// <summary>
     /// The vent button for the role, allowing the player to use vents if they have that ability.
@@ -454,14 +459,35 @@ public abstract class CustomRoleBehavior
 
         if (_player != null)
         {
-            SabotageButton = AddButton(new SabotageAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), this, true));
+            SabotageButton = AddButton(new BaseAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, this, true));
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
+            SabotageButton.OnClick = () =>
+            {
+                if (SabotageButton.ActionButton.canInteract)
+                {
+                    if (Role.CanSabotage)
+                    {
+                        DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
+                        {
+                            Mode = MapOptions.Modes.Sabotage
+                        });
+                    }
+                }
+            };
 
             KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {
                 return !target.IsImpostorTeammate();
+            };
+            KillButton.OnClick = () => 
+            {
+                if (KillButton.lastTarget != null)
+                {
+                    _player.MurderSync(KillButton.lastTarget);
+                    KillButton.SetCooldown();
+                }
             };
 
             VentButton = AddButton(new VentAbilityButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
@@ -485,7 +511,7 @@ public abstract class CustomRoleBehavior
 
         OptionItems.Initialize();
 
-        if (IsNeutral)
+        if (IsNeutral && !IsGhostRole)
         {
             HasImpostorVisionOption = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.HasImpostorVision"), false, RoleOptionItem);
         }
@@ -527,9 +553,11 @@ public abstract class CustomRoleBehavior
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type)
     {
-        if (CheckRoleAction(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null) == true)
+        PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
+        Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
+        DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
+
+        if (CheckRoleAction(id, target, vent, body) == true)
         {
             UseAbility(id, targetId, type);
         }
@@ -537,14 +565,16 @@ public abstract class CustomRoleBehavior
 
     private void UseAbility(int id, int targetId, TargetType type)
     {
+        PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
+        Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
+        DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
+
         SetCooldownAndUse(id);
-        OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, null, type);
+        OnAbilityUse(id, target, vent, body, null, type);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
         writer.WriteNetObject(_player);
-        writer.Write((int)RoleType);
+        writer.Write(RoleHash);
         writer.Write((byte)id);
         writer.Write(targetId);
         writer.Write((byte)type);
@@ -560,8 +590,8 @@ public abstract class CustomRoleBehavior
 
     public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender)
     {
-        _ = reader.ReadNetObject<PlayerControl>();
-        _ = reader.ReadInt32();
+        _ = reader.ReadNetObject<PlayerControl>(); // Player
+        _ = reader.ReadInt32(); // Role hash
 
         switch ((CustomRPC)callId)
         {
@@ -571,10 +601,12 @@ public abstract class CustomRoleBehavior
                     var targetId = reader.ReadInt32();
                     var type = (TargetType)reader.ReadByte();
 
-                    OnAbilityUse(id, type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null,
-                        type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null,
-                        type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null, reader, type);
+                    PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
+                    Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
+                    DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
+
                     SetCooldownAndUse(id);
+                    OnAbilityUse(id, target, vent, body, reader, type);
                 }
                 break;
             case CustomRPC.SyncRole:
@@ -598,20 +630,7 @@ public abstract class CustomRoleBehavior
         switch (id)
         {
             case 1:
-                {
-                }
-                break;
             case 2:
-                {
-                    if (target != null)
-                    {
-                        if (_player.IsLocalPlayer())
-                        {
-                            _player.MurderSync(target);
-                        }
-                    }
-                }
-                break;
             case 3:
                 break;
             default:
@@ -677,7 +696,7 @@ public abstract class CustomRoleBehavior
     {
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncRole, SendOption.Reliable, -1);
         writer.WriteNetObject(_player);
-        writer.Write((int)RoleType);
+        writer.Write(RoleHash);
         writer.Write(syncId);
         OnSendRoleSync(syncId, writer, additionalParams);
         AmongUsClient.Instance.FinishRpcImmediately(writer);

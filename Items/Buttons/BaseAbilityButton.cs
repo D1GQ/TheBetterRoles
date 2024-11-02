@@ -8,6 +8,7 @@ namespace TheBetterRoles.Items.Buttons;
 
 public class BaseAbilityButton : BaseButton
 {
+    public Action? OnClick;
     public BaseAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, int index = -1)
     {
         Role = role;
@@ -21,7 +22,7 @@ public class BaseAbilityButton : BaseButton
         if (!_player.IsLocalPlayer()) return this;
 
         var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
-        buttonObj.name = $"CustomAbility({name})";
+        buttonObj.name = $"CustomAbility({Name.ToUpper()})";
 
         if (index > -1)
         {
@@ -45,19 +46,13 @@ public class BaseAbilityButton : BaseButton
             }
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
+            OnClick = Click;
             Button.OnClick.RemoveAllListeners();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
                 {
-                    if (State == 0)
-                    {
-                        Role.CheckAndUseAbility(Id, 0, TargetType.None);
-                    }
-                    else if (State == 1)
-                    {
-                        ResetState();
-                    }
+                    OnClick.Invoke();
                 }
             }));
         }
@@ -83,6 +78,18 @@ public class BaseAbilityButton : BaseButton
 
         allButtons.Add(this);
         return this;
+    }
+
+    public override void Click()
+    {
+        if (State == 0)
+        {
+            Role.CheckAndUseAbility(Id, 0, TargetType.None);
+        }
+        else if (State == 1)
+        {
+            ResetState();
+        }
     }
 
     public override void FixedUpdate()

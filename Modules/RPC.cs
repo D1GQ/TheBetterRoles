@@ -354,11 +354,12 @@ internal static class RPC
                 case CustomRPC.RoleAction:
                 case CustomRPC.SyncRole:
                     {
-                        var User = reader.ReadNetObject<PlayerControl>();
-                        var roleType = (CustomRoles)reader.ReadInt32();
-                        if (User != null)
+                        var user = reader.ReadNetObject<PlayerControl>();
+                        var hash = reader.ReadInt32();
+
+                        if (user != null)
                         {
-                            CustomRoleManager.RoleListener(User, role => role.HandleRpc(oldReader, callId, User, player), role => role.RoleType == roleType);
+                            CustomRoleManager.RoleListener(user, role => role.HandleRpc(oldReader, callId, user, player), role => role.RoleHash == hash);
                         }
                     }
                     break;

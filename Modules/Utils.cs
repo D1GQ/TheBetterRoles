@@ -345,6 +345,15 @@ public static class Utils
         string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
         return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
     }
+
+    public static int GetHashInt(string input)
+    {
+        using SHA256 sha256 = SHA256.Create();
+        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
+        int hashInt = BitConverter.ToInt32(hashBytes, 0);
+        return Math.Abs(hashInt % 100000);
+    }
+
     public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText = false)
     {
         if (!bigText)

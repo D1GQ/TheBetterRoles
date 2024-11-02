@@ -120,6 +120,8 @@ public class BaseButton
         return outputList;
     }
 
+    public virtual void Click() { }
+
     public virtual void FixedUpdate()
     {
         if (Hacked) return;
