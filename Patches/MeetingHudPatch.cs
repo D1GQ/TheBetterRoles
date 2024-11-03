@@ -132,7 +132,7 @@ namespace TheBetterRoles
 
             __instance.StartCoroutine(DisplayTextsQueue(texts, textPros, __instance, textTemplate));
 
-            TBRLogger.LogHeader("Meeting Has Started");
+            Logger.LogHeader("Meeting Has Started");
         }
 
         private static IEnumerator DisplayTextsQueue(Dictionary<string, CustomClip?> texts, List<TextMeshPro> textPros, MonoBehaviour instance, TextMeshPro textTemplate)
@@ -392,7 +392,7 @@ namespace TheBetterRoles
                     bool flag = voterState.VoterId == 255;
                     if (playerById == null && !flag)
                     {
-                        TBRLogger.Error(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
+                        Logger.Error(string.Format("Couldn't find player info for voter: {0}", voterState.VoterId));
                     }
                     else if (i == 0 && voterState.SkippedVote)
                     {
@@ -471,7 +471,7 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void OnDestroy_Postfix()
         {
-            TBRLogger.LogHeader("Meeting Has Ended");
+            Logger.LogHeader("Meeting Has Ended");
         }
     }
 }

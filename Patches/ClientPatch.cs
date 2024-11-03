@@ -62,7 +62,7 @@ public class ClientPatch
         [HarmonyPostfix]
         public static void ExitGame_Postfix([HarmonyArgument(0)] DisconnectReasons reason)
         {
-            TBRLogger.Log($"Client has left game for: {Enum.GetName(reason)}", "AmongUsClientPatch");
+            Logger.Log($"Client has left game for: {Enum.GetName(reason)}", "AmongUsClientPatch");
         }
     }
     [HarmonyPatch(typeof(InnerNetClient))]

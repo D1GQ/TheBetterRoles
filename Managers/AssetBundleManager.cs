@@ -30,7 +30,7 @@ public class AssetBundleManager : MonoBehaviour
         if (Instance != null) return;
         Instance = this;
 
-        TBRLogger.Log("Loading assets");
+        Logger.Log("Loading assets");
         this.StartCoroutine(InitializeAssets());
     }
 
@@ -55,7 +55,7 @@ public class AssetBundleManager : MonoBehaviour
         try
         {
             GlitchShader = glitchResult.GetValue();
-            TBRLogger.Log("Assets loaded successfully.");
+            Logger.Log("Assets loaded successfully.");
         }
         catch (Exception e)
         {
@@ -67,13 +67,13 @@ public class AssetBundleManager : MonoBehaviour
     {
         if (assetBundle == null)
         {
-            TBRLogger.Error("AssetBundle is null. Cannot log asset names.");
+            Logger.Error("AssetBundle is null. Cannot log asset names.");
             return;
         }
 
         foreach (string name in assetBundle.GetAllAssetNames())
         {
-            TBRLogger.Log(name);
+            Logger.Log(name);
         }
     }
 
@@ -98,7 +98,7 @@ public class AssetBundleManager : MonoBehaviour
         if (bundle == null) throw new Exception($"Failed to load embedded asset bundle '{resourceName}'.");
 
         loadedBundles[resourceName] = bundle;
-        TBRLogger.Log($"Embedded asset bundle '{resourceName}' loaded successfully.");
+        Logger.Log($"Embedded asset bundle '{resourceName}' loaded successfully.");
         return bundle;
     }
 
@@ -135,14 +135,14 @@ public class AssetBundleManager : MonoBehaviour
     private void HandleError(Exception e)
     {
         _errored = true;
-        TBRLogger.Error($"Error loading assets: {e.Message}");
+        Logger.Error($"Error loading assets: {e.Message}");
         this.StartCoroutine(ShowErrorDialog(e));
     }
 
     private static IEnumerator ShowErrorDialog(Exception e)
     {
         // Placeholder for custom error dialog implementation.
-        TBRLogger.Log("Displaying error dialog.");
+        Logger.Log("Displaying error dialog.");
         yield return null;
     }
 }

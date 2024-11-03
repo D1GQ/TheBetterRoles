@@ -186,20 +186,20 @@ public class PlayerPhysicsPatch
     private static void BootFromVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has been booted from vent: {ventId}", "EventLog");
+        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has been booted from vent: {ventId}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerPhysics.CoEnterVent))]
     [HarmonyPostfix]
     private static void CoEnterVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {ventId}", "EventLog");
+        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {ventId}", "EventLog");
     }
     [HarmonyPatch(nameof(PlayerPhysics.CoExitVent))]
     [HarmonyPostfix]
     private static void CoExitVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
     {
 
-        TBRLogger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {ventId}", "EventLog");
+        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {ventId}", "EventLog");
     }
 }

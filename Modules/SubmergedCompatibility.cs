@@ -83,7 +83,7 @@ public static class SubmergedCompatibility
     {
         try
         {
-            TBRLogger.Log("Trying to load Submerged...");
+            Logger.Log("Trying to load Submerged...");
             var thisAsm = Assembly.GetCallingAssembly();
             var resourceName = thisAsm.GetManifestResourceNames().FirstOrDefault(s => s.EndsWith("Submerged.dll"));
             if (resourceName == null) return false;
@@ -106,7 +106,7 @@ public static class SubmergedCompatibility
         }
         catch (Exception e)
         {
-            TBRLogger.Error(e);
+            Logger.Error(e);
             return false;
         }
     }

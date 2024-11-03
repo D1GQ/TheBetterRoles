@@ -40,12 +40,12 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
 
     protected override void SetUpRole()
     {
-        TBRLogger.LogMethodPrivate("Setting up Role Base!", GetType());
+        Logger.LogMethodPrivate("Setting up Role Base!", GetType());
         SetUpSettings();
 
-        TBRLogger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
+        Logger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
         OnSetUpRole();
-        TBRLogger.LogPrivate($"Finished setting up Role({RoleName})!");
+        Logger.LogPrivate($"Finished setting up Role({RoleName})!");
 
         _player.DirtyName();
     }

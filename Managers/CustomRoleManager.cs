@@ -116,7 +116,7 @@ public static class CustomRoleManager
         }
         catch (Exception ex)
         {
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 
@@ -288,7 +288,7 @@ public static class CustomRoleManager
 
     private static void SyncPlayerRole(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
     {
-        TBRLogger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
+        Logger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
 
         // Sync main role
         player.SetRoleSync(selectedRole._role.RoleType);
@@ -296,7 +296,7 @@ public static class CustomRoleManager
         // Sync addons
         foreach (var addon in selectedAddons)
         {
-            TBRLogger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
+            Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
             player.SetRoleSync(addon._role.RoleType);
         }
     }
@@ -305,7 +305,7 @@ public static class CustomRoleManager
     {
         foreach (var assignment in assignments)
         {
-            TBRLogger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
+            Logger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
         }
     }
 
@@ -367,7 +367,7 @@ public static class CustomRoleManager
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
                 player.SetRoleSync(selectedGhostRole._role.RoleType);
-                TBRLogger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
+                Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
     }
@@ -455,7 +455,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.LogMethodPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    if (log) Logger.LogMethodPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -477,7 +477,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    if (log) Logger.LogMethodPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -497,7 +497,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    if (log) Logger.LogMethodPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }
@@ -520,7 +520,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) TBRLogger.LogMethodPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    if (log) Logger.LogMethodPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }

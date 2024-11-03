@@ -244,7 +244,7 @@ public class GuessTab
     public string TabName { get; private set; } = string.Empty;
     private int RoleIndex { get; set; } = 0;
     private int pageButtonsIndex = 0;
-    private int rolesPerPage = 42;
+    private int rolesPerPage = 4;
     private GuessManager? guessManager;
     private PassiveButton? nextPageButton;
     private PassiveButton? previousPageButton;
@@ -321,8 +321,6 @@ public class GuessTab
     {
         nextPageButton.enabled = false;
         previousPageButton.enabled = false;
-        nextPageButton.OnMouseOut.Invoke();
-        previousPageButton.OnMouseOut.Invoke();
         nextPageButton.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
         previousPageButton.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
 
@@ -331,10 +329,19 @@ public class GuessTab
             previousPageButton.enabled = true;
             previousPageButton.GetComponent<SpriteRenderer>().color = Color.white;
         }
+        else
+        {
+            previousPageButton.OnMouseOut.Invoke();
+        }
+
         if (pageIndex < pageButtonsIndex)
         {
             nextPageButton.enabled = true;
             nextPageButton.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        else
+        {
+            nextPageButton.OnMouseOut.Invoke();
         }
 
         UpdateButtons();

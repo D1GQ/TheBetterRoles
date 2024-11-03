@@ -183,7 +183,7 @@ static class ActionRPCs
 
         if (!player.RoleChecksAny(role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive())
         {
-            TBRLogger.Log($"Canceled Murder Action: Invalid");
+            Logger.Log($"Canceled Murder Action: Invalid");
             return false;
         }
 
@@ -372,7 +372,7 @@ static class ActionRPCs
 
         if (ShipStatus.Instance == null)
         {
-            TBRLogger.Log($"Canceled Vent Action: ShipStatus Null");
+            Logger.Log($"Canceled Vent Action: ShipStatus Null");
         }
 
         return true;

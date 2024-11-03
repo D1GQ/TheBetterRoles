@@ -17,7 +17,7 @@ class LateTask
             action();
 
             if (shouldLog == true)
-                TBRLogger.Log($"{name} has finished", "LateTask");
+                Logger.Log($"{name} has finished", "LateTask");
             return true;
         }
         return false;
@@ -45,7 +45,7 @@ class LateTask
             catch (Exception ex)
             {
                 TasksToRemove.Add(task);
-                TBRLogger.Error(ex);
+                Logger.Error(ex);
             }
         }
         TasksToRemove.ForEach(task => Tasks.Remove(task));

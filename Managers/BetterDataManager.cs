@@ -324,7 +324,7 @@ class BetterDataManager
         }
         catch (Exception ex)
         {
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 }

@@ -224,14 +224,14 @@ public class CustomGameManager
             {
                 case CustomRoleTeam.Impostor:
                     __instance.WinText.text += $"{Translator.GetString(StringNames.ImpostorsCategory)}\n<size=75%>";
-                    TBRLogger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    Logger.Log($"Game Has Ended: Team -> Impostors, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Crewmate:
                     __instance.WinText.text += $"{Translator.GetString(StringNames.Crewmates)}\n<size=75%>";
-                    TBRLogger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    Logger.Log($"Game Has Ended: Team -> Crewmates, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     break;
                 case CustomRoleTeam.Neutral:
-                    TBRLogger.Log($"Game Has Ended: Team -> Neutral, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
+                    Logger.Log($"Game Has Ended: Team -> Neutral, Reason: {Enum.GetName(winReason)}, Players: {string.Join(" - ", players.Select(d => d.PlayerName))}");
                     __instance.WinText.text += $"{Utils.GetCustomRoleName(role)}\n<size=75%>";
                     break;
                 case CustomRoleTeam.None:
@@ -240,11 +240,11 @@ public class CustomGameManager
                         __instance.WinText.text = Translator.GetString("Game.Summary.Abandoned");
                         __instance.WinText.color = Color.gray;
                         teamColor = Color.gray;
-                        TBRLogger.Log($"Game Has Ended: By Host");
+                        Logger.Log($"Game Has Ended: By Host");
                     }
                     break;
                 default:
-                    TBRLogger.Log($"Game Has Ended: Error");
+                    Logger.Log($"Game Has Ended: Error");
                     __instance.WinText.text = Translator.GetString("Game.Summary.Error");
                     __instance.WinText.color = Color.red;
                     teamColor = Color.red;
@@ -329,9 +329,9 @@ public class CustomGameManager
             var role = first?.BetterData()?.RoleInfo?.Role;
             if (role == null) return;
 
-            TBRLogger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
+            Logger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
 
-            TBRLogger.LogHeader("Game Summary Start", "GameSummary");
+            Logger.LogHeader("Game Summary Start", "GameSummary");
 
             GameObject SummaryObj = UnityEngine.Object.Instantiate(endGameManager.WinText.gameObject, endGameManager.WinText.transform.parent.transform);
             SummaryObj.name = "SummaryObj (TMP)";
@@ -406,7 +406,7 @@ public class CustomGameManager
                         break;
                 }
 
-                TBRLogger.Log($"{winteam}: {winTag}", "GameSummary");
+                Logger.Log($"{winteam}: {winTag}", "GameSummary");
 
                 string SummaryHeader = $"<align=\"center\"><size=150%>   {Translator.GetString("GameSummary")}</size></align>";
                 SummaryHeader += $"\n\n<size=90%><color={winColor}>{winteam} {Translator.GetString("Game.Summary.Won")}</color></size>" +
@@ -448,18 +448,18 @@ public class CustomGameManager
                         deathReason = $"『<color=#838383<b>Unknown</b></color>』";
                     }
 
-                    TBRLogger.Log($"{name} {roleInfo} {deathReason}", "GameSummary");
+                    Logger.Log($"{name} {roleInfo} {deathReason}", "GameSummary");
 
                     sb.AppendLine($"- {name} {roleInfo} {deathReason}\n");
                 }
 
                 SummaryText.text = $"{SummaryHeader}\n\n<size=58%>{sb}</size>";
-                TBRLogger.LogHeader("Game Summary End", "GameSummary");
+                Logger.LogHeader("Game Summary End", "GameSummary");
             }
         }
         catch (Exception ex)
         {
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
         }
     }
 
@@ -575,14 +575,14 @@ public class CustomGameManager
         {
             team = CustomRoleTeam.Impostor;
             var Impostors = GetPlayerIdsFromTeam(team);
-            TBRLogger.Log("Ending Game As Host: Critical Sabotage");
+            Logger.Log("Ending Game As Host: Critical Sabotage");
             ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage, team);
             GameHasEnded = true;
         }
         else if (CheckCustomWin() is PlayerControl player && player != null)
         {
             team = CustomRoleTeam.Neutral;
-            TBRLogger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
+            Logger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
             List<byte> players = [player.Data.PlayerId];
             ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole, team);
             GameHasEnded = true;
@@ -590,7 +590,7 @@ public class CustomGameManager
         else if (CheckPlayerAmount(ref team))
         {
             var players = GetPlayerIdsFromTeam(team);
-            TBRLogger.Log($"Ending Game As Host: {Utils.GetCustomRoleTeamName(team)} Outnumbered");
+            Logger.Log($"Ending Game As Host: {Utils.GetCustomRoleTeamName(team)} Outnumbered");
             ActionRPCs.EndGameSync(players, EndGameReason.Outnumbered, team);
             GameHasEnded = true;
         }

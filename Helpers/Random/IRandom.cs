@@ -35,6 +35,6 @@ public interface IRandom
                 Instance = Activator.CreateInstance(type) as IRandom ?? Instance;
             }
         }
-        else TBRLogger.Error($"Invalid ID: {id}", "IRandom.SetInstanceById");
+        else Logger.Error($"Invalid ID: {id}", "IRandom.SetInstanceById");
     }
 }

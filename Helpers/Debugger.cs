@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 
-namespace TheBetterRoles.Helpers;
+namespace TheBetterRoles;
 
-class TBRLogger
+class Logger
 {
     public static void Log(string info, string tag = "Log", bool logConsole = true, ConsoleColor color = ConsoleColor.White, bool hostOnly = false)
     {

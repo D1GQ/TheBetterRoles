@@ -146,7 +146,7 @@ public static class Utils
         catch (Exception ex)
         {
             chat.chatBubblePool.Reclaim(pooledBubble);
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
             throw;
         }
     }
@@ -591,12 +591,12 @@ public static class Utils
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
             sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
 
-            TBRLogger.Log($"Successfully loaded sprite from {path}");
+            Logger.Log($"Successfully loaded sprite from {path}");
             return CachedSprites[path + pixelsPerUnit] = sprite;
         }
         catch (Exception ex)
         {
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
             return null;
         }
     }
@@ -617,12 +617,12 @@ public static class Utils
                     return null;
             }
 
-            TBRLogger.Log($"Successfully loaded texture from {path}");
+            Logger.Log($"Successfully loaded texture from {path}");
             return texture;
         }
         catch (Exception ex)
         {
-            TBRLogger.Error(ex);
+            Logger.Error(ex);
             return null;
         }
     }

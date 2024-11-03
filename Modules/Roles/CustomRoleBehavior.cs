@@ -437,12 +437,12 @@ public abstract class CustomRoleBehavior
         if (hasDeinitialize) return;
         hasDeinitialize = true;
 
-        TBRLogger.LogMethodPrivate("Deinitialize Role Base!", GetType());
+        Logger.LogMethodPrivate("Deinitialize Role Base!", GetType());
 
         try { OnResetAbilityState(false); }
-        catch (Exception ex) { TBRLogger.LogMethodPrivate(ex.ToString(), GetType()); }
+        catch (Exception ex) { Logger.LogMethodPrivate(ex.ToString(), GetType()); }
 
-        TBRLogger.LogPrivate($"Finished deinitialize Role Base, now deinitialize Role({RoleName})!");
+        Logger.LogPrivate($"Finished deinitialize Role Base, now deinitialize Role({RoleName})!");
         OnDeinitialize();
 
         // Remove Buttons
@@ -461,7 +461,7 @@ public abstract class CustomRoleBehavior
 
         Utils.DirtyAllNames();
 
-        TBRLogger.LogPrivate($"Finished deinitialize Role({RoleName})!");
+        Logger.LogPrivate($"Finished deinitialize Role({RoleName})!");
     }
 
     /// <summary>
@@ -473,7 +473,7 @@ public abstract class CustomRoleBehavior
         if (hasSetup) return;
         hasSetup = true;
 
-        TBRLogger.LogMethodPrivate("Setting up Role Base!", GetType());
+        Logger.LogMethodPrivate("Setting up Role Base!", GetType());
 
         SetUpSettings();
 
@@ -515,11 +515,11 @@ public abstract class CustomRoleBehavior
             VentButton.CanCancelDuration = true;
         }
 
-        TBRLogger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
+        Logger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
 
         OnSetUpRole();
 
-        TBRLogger.LogPrivate($"Finished setting up Role({RoleName})!");
+        Logger.LogPrivate($"Finished setting up Role({RoleName})!");
 
         _player.DirtyName();
     }
@@ -579,7 +579,7 @@ public abstract class CustomRoleBehavior
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type)
     {
-        TBRLogger.LogMethodPrivate($"Checking Ability({id}) usage on {Enum.GetName(type)}: {targetId}", GetType());
+        Logger.LogMethodPrivate($"Checking Ability({id}) usage on {Enum.GetName(type)}: {targetId}", GetType());
 
         PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
         Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
@@ -598,7 +598,7 @@ public abstract class CustomRoleBehavior
         DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
 
         SetCooldownAndUse(id);
-        TBRLogger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
+        Logger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
         OnAbilityUse(id, target, vent, body, null, type);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
@@ -638,7 +638,7 @@ public abstract class CustomRoleBehavior
 
                     if (CheckRoleAction(id, target, vent, body) == true)
                     {
-                        TBRLogger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
+                        Logger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
                         OnAbilityUse(id, target, vent, body, reader, type);
                     }
                 }
@@ -737,7 +737,7 @@ public abstract class CustomRoleBehavior
         writer.Write(syncId);
         OnSendRoleSync(syncId, writer, additionalParams);
 
-        TBRLogger.LogMethodPrivate($"Sync role({syncId}), Length: {writer.Length}", GetType());
+        Logger.LogMethodPrivate($"Sync role({syncId}), Length: {writer.Length}", GetType());
 
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
@@ -760,7 +760,7 @@ public abstract class CustomRoleBehavior
 
     public void TryOverrideTasks(bool overideOldTask = false)
     {
-        TBRLogger.LogMethodPrivate($"Overriding tasks for {GetType().Name}", GetType(), true);
+        Logger.LogMethodPrivate($"Overriding tasks for {GetType().Name}", GetType(), true);
 
         if (GameState.IsHost && TaskReliantRole && OverrideTasksOptionItem != null && OverrideTasksOptionItem.GetBool())
         {
@@ -778,7 +778,7 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public void SetAllCooldowns()
     {
-        TBRLogger.LogMethodPrivate("Setting all button cooldowns", GetType());
+        Logger.LogMethodPrivate("Setting all button cooldowns", GetType());
 
         foreach (var button in Buttons)
         {

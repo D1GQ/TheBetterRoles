@@ -28,7 +28,7 @@ public static class CustomSoundsManager
             if (resourceName.Contains("TheBetterRoles.Resources.Sounds.") && resourceName.Contains(".raw"))
             {
                 soundEffects.Add(resourceName, Utils.loadAudioClipFromResources(resourceName));
-                TBRLogger.Log($"Loaded AudioClip: {resourceName}");
+                Logger.Log($"Loaded AudioClip: {resourceName}");
             }
         }
     }
@@ -43,7 +43,7 @@ public static class CustomSoundsManager
     {
         if (clip == null)
         {
-            TBRLogger.Error("Missing audio clip");
+            Logger.Error("Missing audio clip");
             return null;
         }
 
@@ -149,7 +149,7 @@ public static class CustomSoundsManager
         }
         else
         {
-            TBRLogger.Error($"Unable to play dynamic sound: {path}");
+            Logger.Error($"Unable to play dynamic sound: {path}");
         }
     }
 

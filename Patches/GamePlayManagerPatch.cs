@@ -129,7 +129,7 @@ class GamePlayManager
         [HarmonyPrefix]
         private static void FinallyBegin_Prefix(/*GameStartManager __instance*/)
         {
-            TBRLogger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
+            Logger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
             CustomGameManager.GameStart();
         }
     }

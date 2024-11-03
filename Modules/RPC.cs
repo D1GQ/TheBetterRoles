@@ -267,7 +267,7 @@ internal static class RPC
                             player.BetterData().MismatchVersion = true;
                             player.BetterData().HasMod = true;
                             player.BetterData().Version = version;
-                            TBRLogger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
+                            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
                         }
 
                         Utils.DirtyAllNames();

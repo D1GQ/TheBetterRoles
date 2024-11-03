@@ -105,7 +105,7 @@ class ChatPatch
 
             // chatBubble.NameText.text = playerName;
             chatBubble.ColorBlindName.color = Palette.PlayerColors[sourcePlayer.Data.DefaultOutfit.ColorId];
-            TBRLogger.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
+            Logger.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
         }
 
         [HarmonyPatch(nameof(ChatController.AddChatNote))]

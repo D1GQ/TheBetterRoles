@@ -22,7 +22,7 @@ class OnGameJoinedPatch
                 host.SetColor(host.CurrentOutfit.ColorId);
             }
 
-            TBRLogger.Log($"Successfully joined {GameCode.IntToGameName(AmongUsClient.Instance.GameId)}", "OnGameJoinedPatch");
+            Logger.Log($"Successfully joined {GameCode.IntToGameName(AmongUsClient.Instance.GameId)}", "OnGameJoinedPatch");
         }
         catch { };
     }
@@ -140,7 +140,7 @@ class GameDataShowNotificationPatch
         {
             var ReasonText = $"<color=#ff0>{playerData.BetterData().RealName}</color> {forceReasonText}";
 
-            TBRLogger.Log(ReasonText);
+            Logger.Log(ReasonText);
 
             DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(ReasonText);
         }
@@ -176,7 +176,7 @@ class GameDataShowNotificationPatch
                     break;
             }
 
-            TBRLogger.Log(ReasonText);
+            Logger.Log(ReasonText);
 
             DestroyableSingleton<HudManager>.Instance.Notifier.AddDisconnectMessage(ReasonText);
         }

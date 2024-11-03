@@ -13,9 +13,9 @@ public static class Translator
     public const string LANGUAGE_FOLDER_NAME = "Language";
     public static void Init()
     {
-        TBRLogger.Log("Loading language files...", "Translator");
+        Logger.Log("Loading language files...", "Translator");
         LoadLangs();
-        TBRLogger.Log("Language file loaded successfully", "Translator");
+        Logger.Log("Language file loaded successfully", "Translator");
     }
     public static void LoadLangs()
     {
@@ -32,7 +32,7 @@ public static class Translator
 
             if (jsonFileNames.Length == 0)
             {
-                TBRLogger.Error("Json Translation files does not exist.", "Translator");
+                Logger.Error("Json Translation files does not exist.", "Translator");
                 return;
             }
             foreach (string jsonFileName in jsonFileNames)
@@ -58,7 +58,7 @@ public static class Translator
                     else
                     {
                         //Logger.Error(jsonDictionary["HostText"], "Translator");
-                        TBRLogger.Error($"Invalid JSON format in {jsonFileName}: Missing or invalid 'LanguageID' field.", "Translator");
+                        Logger.Error($"Invalid JSON format in {jsonFileName}: Missing or invalid 'LanguageID' field.", "Translator");
                     }
                 }
             }
@@ -71,7 +71,7 @@ public static class Translator
         }
         catch (Exception ex)
         {
-            TBRLogger.Error($"Error: {ex}", "Translator");
+            Logger.Error($"Error: {ex}", "Translator");
         }
         if (!Directory.Exists(LANGUAGE_FOLDER_NAME)) Directory.CreateDirectory(LANGUAGE_FOLDER_NAME);
     }
@@ -154,8 +154,8 @@ public static class Translator
         }
         catch (Exception Ex)
         {
-            TBRLogger.Error($"Error oucured at [{str}] in String.csv", "Translator");
-            TBRLogger.Error("Here was the error:\n" + Ex.ToString(), "Translator");
+            Logger.Error($"Error oucured at [{str}] in String.csv", "Translator");
+            Logger.Error("Here was the error:\n" + Ex.ToString(), "Translator");
         }
         return res;
     }
