@@ -40,7 +40,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
         _player.cosmetics.gameObject.SetActive(false);
-        _player.cosmetics.CurrentPet?.gameObject.SetActive(false);
         InteractableTarget = false;
         _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks(true);
@@ -52,21 +51,23 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         InteractableTarget = true;
         _player.BetterData().IsFakeAlive = false;
         if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
-        _player.BetterData().PlayerVisionModPlus -= 10;
         _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
-        _player.cosmetics.CurrentPet?.gameObject.SetActive(true);
     }
 
     public override void OnDeinitialize()
     {
+        _player.BetterData().PlayerVisionModPlus -= 10;
         ResetState();
     }
 
     public override void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData)
     {
-        SpawnInRandomVent();
+        if (!HasBeenClicked)
+        {
+            SpawnInRandomVent();
+        }
     }
 
     private void SpawnInRandomVent()
@@ -86,6 +87,14 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
                 vent.TryMoveToVent(vent, out string _);
                 vent.SetButtons(false);
             }
+        }
+    }
+
+    public override void Update()
+    {
+        if (!HasBeenClicked)
+        {
+            _player.Visible = true;
         }
     }
 
@@ -114,9 +123,9 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         if (Alpha > 0f && target == _player && player != _player)
         {
-            _player.Exiled();
-            ResetState();
             HasBeenClicked = true;
+            ResetState();
+            _player.Exiled();
         }
     }
 
