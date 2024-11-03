@@ -455,7 +455,7 @@ internal static class RPC
                 break;
             case RpcAction.Murder:
                 {
-                    var target = reader.ReadPlayerId();
+                    PlayerControl? target = reader.ReadPlayerId();
                     bool isAbility = reader.ReadBoolean();
                     byte flags = reader.ReadByte();
 

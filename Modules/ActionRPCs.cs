@@ -315,7 +315,7 @@ static class ActionRPCs
         if (IsRPC) return;
 
         var writer = AmongUsClient.Instance.StartActionSyncRpc(RpcAction.PlayerPress, player);
-        writer.WriteNetObject(target);
+        writer.WritePlayerId(target);
         AmongUsClient.Instance.EndActionSyncRpc(writer);
     }
 

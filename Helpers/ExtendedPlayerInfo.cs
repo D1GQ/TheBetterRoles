@@ -35,8 +35,6 @@ public class ExtendedPlayerInfo : MonoBehaviour
         var pc = _Data?.Object;
         if (pc != null)
         {
-            if (RoleInfo?.AllRoles == null) return;
-
             if (RoleInfo.AllRoles.Any())
             {
                 foreach (var role in RoleInfo.AllRoles)
@@ -52,8 +50,6 @@ public class ExtendedPlayerInfo : MonoBehaviour
         var pc = _Data?.Object;
         if (pc != null)
         {
-            if (RoleInfo?.AllRoles == null) return;
-
             if (RoleInfo.AllRoles.Any())
             {
                 foreach (var role in RoleInfo.AllRoles)
@@ -62,7 +58,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
 
                     if (pc.IsLocalPlayer())
                     {
-                        if (role?.Buttons != null)
+                        if (role.Buttons.Any())
                         {
                             foreach (var button in role.Buttons)
                             {

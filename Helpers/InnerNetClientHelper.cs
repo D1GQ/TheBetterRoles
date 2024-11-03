@@ -73,9 +73,9 @@ static class InnerNetClientHelper
 
     public static DeadBody? ReadDeadBodyId(this MessageReader reader) => Main.AllDeadBodys.FirstOrDefault(deadbody => deadbody.ParentId == reader.ReadByte());
 
-    public static void WriteVentId(this MessageWriter writer, Vent vent) => writer.Write(vent?.Id ?? 255);
+    public static void WriteVentId(this MessageWriter writer, Vent vent) => writer.Write(vent?.Id ?? -1);
 
-    public static Vent? ReadVentId(this MessageReader reader) => Main.AllVents.FirstOrDefault(vent => vent.Id == reader.ReadByte());
+    public static Vent? ReadVentId(this MessageReader reader) => Main.AllVents.FirstOrDefault(vent => vent.Id == reader.ReadInt32());
 
     public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {

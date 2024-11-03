@@ -271,8 +271,8 @@ public class GuessTab
 
         nextPageButton = guessManager.CreateButton("Next Page",
             PagesRoot,
-            AspectPosition.EdgeAlignments.Bottom,
-            new Vector3(3.5f, 0.8f, 0f),
+            AspectPosition.EdgeAlignments.LeftBottom,
+            new Vector3(1f, 0.8f, 0f),
             null,
             null);
         nextPageButton.OnClick.AddListener((Action)(() =>
@@ -282,8 +282,8 @@ public class GuessTab
 
         previousPageButton = guessManager.CreateButton("Previous Page",
             PagesRoot,
-            AspectPosition.EdgeAlignments.Bottom,
-            new Vector3(-3.5f, 0.8f, 0f),
+            AspectPosition.EdgeAlignments.LeftBottom,
+            new Vector3(-1f, 0.8f, 0f),
             null,
             null);
         previousPageButton.OnClick.AddListener((Action)(() =>
@@ -295,6 +295,7 @@ public class GuessTab
 
         CreateNewPage();
         Pages.First()?.SetActive(true);
+        UpdateButtonState();
         return this;
     }
 
@@ -397,17 +398,15 @@ public class GuessTab
         float xOffset = 1.2f; // Horizontal distance between buttons
         float yOffset = 0.5f; // Vertical distance between rows
 
-        // Calculate current column and row
-        int column = RoleIndex % columns; // Column index (0-5)
-        int row = RoleIndex / columns;    // Row index
+        int column = RoleIndex % columns;
+        int row = RoleIndex / columns;
 
-        RoleIndex++; // Increment RoleIndex for the next button
+        RoleIndex++;
 
-        // Calculate the new position
         float xPos = start.x + column * xOffset;
         float yPos = start.y - row * yOffset;
 
-        return new Vector3(xPos, yPos, start.z); // Return the calculated position
+        return new Vector3(xPos, yPos, start.z);
     }
 
     public void Remove()

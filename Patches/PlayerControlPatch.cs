@@ -87,6 +87,14 @@ class PlayerControlPatch
         }
     }
 
+    [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
+    [HarmonyPostfix]
+    [HarmonyPriority(Priority.First)]
+    public static void FixedUpdate_Postfix(PlayerControl __instance)
+    {
+        __instance.Visible = __instance.IsAlive(true) && !__instance.shouldAppearInvisible;
+    }
+
     public static void SetPlayerInfo(PlayerControl player)
     {
         if (player?.Data == null || player?.BetterData()?.DirtyName == false) return;
