@@ -143,6 +143,8 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     {
         IsChecked = !IsChecked;
 
+        OnValueChange.Invoke(this);
+
         BetterDataManager.SaveSetting(Id, IsChecked.ToString());
 
         if (VanillaOption != null)
@@ -199,6 +201,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     public override string FormatValueAsText()
     {
         Color color = IsChecked ? Color.green : Color.red;
-        return $"<color={Utils.Color32ToHex(color)}>{IsChecked}</color>";
+        string @bool = IsChecked ? "On" : "Off";
+        return $"<color={Utils.Color32ToHex(color)}>{@bool}</color>";
     }
 }

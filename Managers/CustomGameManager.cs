@@ -5,6 +5,7 @@ using InnerNet;
 using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
@@ -496,7 +497,7 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => false; // !GameStates.IsFreePlay && !GameStates.IsExilling && GameStates.IsInGamePlay && GameManager.Instance.GameHasStarted;
+    public static bool ShouldCheckConditions => !GameState.IsFreePlay && !GameState.IsExilling && GameState.IsInGamePlay && GameManager.Instance.GameHasStarted && !BetterGameSettings.NoGameEnd.GetBool();
 
     public static void GameStart()
     {

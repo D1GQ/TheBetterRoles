@@ -32,15 +32,15 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     public bool HasBeenClicked = false;
     public override void OnSetUpRole()
     {
-        _player.ClearAddons();
-        _player.BetterData().PlayerVisionModPlus += 10;
+        InteractableTarget = false;
         VentButton.VisibleCondition = _player.IsInVent;
         VentButton.UseAsDead = true;
         _player.BetterData().IsFakeAlive = true;
+        _player.ClearAddons();
+        _player.BetterData().PlayerVisionModPlus += 10;
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
         _player.cosmetics.gameObject.SetActive(false);
-        InteractableTarget = false;
         _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks(true);
         SpawnInRandomVent();

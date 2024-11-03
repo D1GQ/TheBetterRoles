@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
@@ -32,7 +33,9 @@ class VanillaGameSettings
 }
 
 class BetterGameSettings
-{    
+{
+    public static BetterOptionItem? Algorithm;
+    public static BetterOptionItem? NoGameEnd;
     public static BetterOptionItem? ImpostorAmount;
     public static BetterOptionItem? MaximumBenignNeutralAmount;
     public static BetterOptionItem? MinimumBenignNeutralAmount;
@@ -130,6 +133,14 @@ static class GameSettingMenuPatch
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.ModSettings")));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);
+        BetterGameSettings.Algorithm = new BetterOptionStringItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Algorithm"),
+        ["Default", "NetRandomWrapper", "HashRandomWrapper", "Xorshift", "MersenneTwister"], 0);
+        IRandom.SetInstanceById(BetterGameSettings.Algorithm.GetValue());
+        BetterGameSettings.Algorithm.OnValueChange = (BetterOptionItem opt) => 
+        {
+            IRandom.SetInstanceById(opt.GetValue());
+        };
+        BetterGameSettings.NoGameEnd = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, $"<#ff0400>{Translator.GetString("BetterSetting.NoGameEnd")}</color>", false);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.GuessSettings")));
         BetterGameSettings.OnlyShowEnabledRoles = new BetterOptionCheckboxItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.OnlyShowEnabledRoles"), false);

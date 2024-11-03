@@ -81,8 +81,6 @@ public static class CustomRoleManager
 
         try
         {
-            IRandom.SetInstanceById(0);
-
             int ImposterAmount = BetterGameSettings.ImpostorAmount.GetInt();
             int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
             int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
@@ -316,8 +314,6 @@ public static class CustomRoleManager
     public static void AssignGhostRoleOnDeath(PlayerControl player)
     {
         if (!GameState.IsHost || GameState.IsFreePlay) return;
-
-        IRandom.SetInstanceById(0);
 
         // Gather all available roles dynamically
         if (!availableGhostRoles.Any())

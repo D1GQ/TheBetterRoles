@@ -18,7 +18,7 @@ public interface IRandom
         { 4, typeof(MersenneTwister) },
     };
 
-    public static IRandom Instance { get; private set; }
+    public static IRandom? Instance { get; private set; }
     public static void SetInstance(IRandom instance)
     {
         if (instance != null)

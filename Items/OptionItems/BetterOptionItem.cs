@@ -22,6 +22,7 @@ public class BetterOptionItem
     protected float bottomDistance = 0.50f;
     public static int IdNum = 0;
     public float StaticSpacingNum => 1f;
+    public Action<BetterOptionItem> OnValueChange { get; set; } = (BetterOptionItem opt) => { };
     public float StaticSpacingNumPlus => 0.45f;
     public static Dictionary<int, int> TempPlayerOptionData = [];
     public static int TempPlayerOptionDataNum = 0;

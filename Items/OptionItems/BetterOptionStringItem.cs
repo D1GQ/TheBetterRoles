@@ -204,6 +204,8 @@ public class BetterOptionStringItem : BetterOptionItem
 
     public override void ValueChanged(int id, OptionBehaviour optionBehaviour)
     {
+        OnValueChange.Invoke(this);
+
         if (IsParent || IsChild)
         {
             bool Bool = ShowChildrenCondition();
