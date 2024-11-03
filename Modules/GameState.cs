@@ -79,6 +79,7 @@ public static class GameState
     }
     public static bool IsInGame => InGame;
     public static bool IsLobby => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Joined;
+    public static bool IsTBRLobby => IsHost || AmongUsClient.Instance?.GetHost()?.BetterData()?.HasMod == true;
     public static bool IsInIntro => IntroCutscene.Instance != null;
     public static bool IsInGamePlay => InGame && IsShip && !IsLobby && !IsInIntro || IsFreePlay;
     public static bool IsEnded => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Ended;

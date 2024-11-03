@@ -112,7 +112,7 @@ static class InnerNetClientHelper
     /// <param name="playerNetId">The network ID of the player.</param>
     /// <param name="callId">The RPC call ID.</param>
     /// <param name="option">The send option for the RPC.</param>
-    /// <param name="ignoreClientId">The client ID to ignore. Default is -1, which means no client is ignored.</param>
+    /// <param name="ignoreClientIds">The client ID to ignore. Default is -1, which means no client is ignored.</param>
     /// <returns>A list of MessageWriter instances for the RPC calls.</returns>
     /// <example>
     /// <code>
@@ -126,17 +126,17 @@ static class InnerNetClientHelper
             messageWriter.ForEach(mW => mW.Write("RPC TEST"));
             AmongUsClient.Instance.FinishRpcDesync(messageWriter);
     */
-    public static List<MessageWriter> StartRpcDesync(this InnerNetClient client, uint playerNetId, byte callId, SendOption option, int ignoreClientId = -1, Func<ClientData, bool> clientCheck = null)
+    public static List<MessageWriter> StartRpcDesync(this InnerNetClient client, uint playerNetId, byte callId, SendOption option, int[] ignoreClientIds, Func<ClientData, bool>? clientCheck = null)
     {
-        List<MessageWriter> messageWriters = new List<MessageWriter>();
+        List<MessageWriter> messageWriters = [];
 
-        if (ignoreClientId < 0)
+        if (ignoreClientIds.All(Int => Int < 0))
         {
             messageWriters.Add(client.StartRpcImmediately(playerNetId, callId, option, -1));
         }
         else
         {
-            foreach (var allClients in AmongUsClient.Instance.allClients.ToArray().Where(c => c.Id != ignoreClientId))
+            foreach (var allClients in AmongUsClient.Instance.allClients.ToArray().Where(c => !ignoreClientIds.Contains(c.Id)))
             {
                 if (clientCheck == null || clientCheck.Invoke(allClients))
                 {
@@ -147,8 +147,6 @@ static class InnerNetClientHelper
 
         return messageWriters;
     }
-
-
 
     public static void FinishRpcDesync(this InnerNetClient client, List<MessageWriter> messageWriters)
     {

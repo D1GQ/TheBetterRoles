@@ -116,11 +116,17 @@ public class UsablePatch
             bool condition = pc.Object.CanMove;
             var mask = Constants.ShipOnlyMask;
 
-            if (CastHelper.TryCast<OptionsConsole>(__instance))
+            if (CastHelper.TryCast<OptionsConsole>(__instance, out var options))
             {
                 canUseAsDead = true;
                 checkCollision = false;
                 condition &= true;
+
+                options.HostOnly = false;
+                if (!GameState.IsTBRLobby)
+                {
+                    condition = false;
+                }
             }
             else if (CastHelper.TryCast<Ladder>(__instance))
             {

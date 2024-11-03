@@ -413,29 +413,6 @@ static class GameOptionsMenuPatch
     }
 }
 
-[HarmonyPatch(typeof(OptionsConsole))]
-static class OptionsConsolePatch
-{
-    [HarmonyPatch(nameof(OptionsConsole.CanUse))]
-    [HarmonyPrefix]
-    public static bool CanUse_Prefix(OptionsConsole __instance, ref bool canUse, ref bool couldUse, ref float __result)
-    {
-        if (__instance != null)
-        {
-            __instance.HostOnly = false;
-            if (PlayerControl.LocalPlayer?.BetterData()?.HasMod == false && !GameState.IsHost)
-            {
-                couldUse = false;
-                canUse = false;
-                __result = float.MaxValue;
-                return false;
-            }
-        }
-
-        return true;
-    }
-}
-
 // Allow settings bypass
 [HarmonyPatch(typeof(NumberOption))]
 static class NumberOptionPatch
