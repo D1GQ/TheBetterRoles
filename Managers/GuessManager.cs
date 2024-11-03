@@ -177,27 +177,27 @@ public class GuessManager : MonoBehaviour
 
     public void ChangeTab(int id)
     {
-        TabCrewmates?.Inner?.SetActive(false);
-        TabImpostors?.Inner?.SetActive(false);
-        TabNeutrals?.Inner?.SetActive(false);
-        TabAddons?.Inner?.SetActive(false);
+        TabCrewmates?.PagesRoot?.SetActive(false);
+        TabImpostors?.PagesRoot?.SetActive(false);
+        TabNeutrals?.PagesRoot?.SetActive(false);
+        TabAddons?.PagesRoot?.SetActive(false);
 
         switch (id)
         {
             case 0:
-                TabCrewmates?.Inner?.SetActive(true);
+                TabCrewmates?.PagesRoot?.SetActive(true);
                 TabCrewmates?.UpdateButtons();
                 break;
             case 1:
-                TabImpostors?.Inner?.SetActive(true);
+                TabImpostors?.PagesRoot?.SetActive(true);
                 TabImpostors?.UpdateButtons();
                 break;
             case 2:
-                TabNeutrals?.Inner?.SetActive(true);
+                TabNeutrals?.PagesRoot?.SetActive(true);
                 TabNeutrals?.UpdateButtons();
                 break;
             case 3:
-                TabAddons?.Inner?.SetActive(true);
+                TabAddons?.PagesRoot?.SetActive(true);
                 TabAddons?.UpdateButtons();
                 break;
         }
@@ -230,42 +230,113 @@ public class GuessManager : MonoBehaviour
     }
 }
 
+
 public class GuessTab
 {
     public static List<GuessTab> AllTabs = [];
     public List<PassiveButton> allRoleButtons = [];
     public PassiveButton? TabButton;
     public TextMeshPro? TabText;
-    public GameObject? Root;
-    public GameObject? Inner;
+    public GameObject? TabRoot;
+    public GameObject? PagesRoot;
+    public List<GameObject> Pages = [];
     public int TabId { get; private set; }
     public string TabName { get; private set; } = string.Empty;
     private int RoleIndex { get; set; } = 0;
+    private int pageButtonsIndex = 0;
+    private int rolesPerPage = 42;
     private GuessManager? guessManager;
+    private PassiveButton? nextPageButton;
+    private PassiveButton? previousPageButton;
 
     public GuessTab Create(int id, string name, GuessManager guessManager, CustomRoleTeam team)
     {
         TabId = id;
         TabName = name;
         this.guessManager = guessManager;
-        Root = new GameObject($"Tab({name})");
-        Root.transform.SetParent(guessManager.Minigame.transform, false);
+        TabRoot = new GameObject($"Tab({name})");
+        TabRoot.transform.SetParent(guessManager.Minigame.transform, false);
+        PagesRoot = new GameObject($"Root");
+        PagesRoot.transform.SetParent(TabRoot.transform, false);
 
-        TabButton = guessManager.CreateButton(name, Root, AspectPosition.EdgeAlignments.LeftTop, new Vector3(2.5f + 1.6f * AllTabs.Count, 0.8f, 0f), Utils.HexToColor32(Utils.GetCustomRoleTeamColor(team)));
+        TabButton = guessManager.CreateButton(name, TabRoot, AspectPosition.EdgeAlignments.LeftTop, new Vector3(2.5f + 1.6f * AllTabs.Count, 0.8f, 0f), Utils.HexToColor32(Utils.GetCustomRoleTeamColor(team)));
         TabButton.transform.localScale = new Vector3(1.2f, 1.2f, 1f);
         TabButton.OnClick.AddListener((Action)(() =>
         {
             guessManager.ChangeTab(id);
         }));
 
-        Inner = new GameObject($"Inner");
-        Inner.transform.SetParent(Root.transform, false);
-
         TabText = TabButton.GetComponentInChildren<TextMeshPro>();
         TabText.text = name;
 
+        nextPageButton = guessManager.CreateButton("Next Page",
+            PagesRoot,
+            AspectPosition.EdgeAlignments.Bottom,
+            new Vector3(3.5f, 0.8f, 0f),
+            null,
+            null);
+        nextPageButton.OnClick.AddListener((Action)(() =>
+        {
+            SwitchPage(true);
+        }));
+
+        previousPageButton = guessManager.CreateButton("Previous Page",
+            PagesRoot,
+            AspectPosition.EdgeAlignments.Bottom,
+            new Vector3(-3.5f, 0.8f, 0f),
+            null,
+            null);
+        previousPageButton.OnClick.AddListener((Action)(() =>
+        {
+            SwitchPage(false);
+        }));
+
         AllTabs.Add(this);
+
+        CreateNewPage();
+        Pages.First()?.SetActive(true);
         return this;
+    }
+
+    private int pageIndex = 0;
+    private void SwitchPage(bool next)
+    {
+        Pages[pageIndex].SetActive(false);
+
+        if (next && pageIndex + 1 <= pageButtonsIndex)
+        {
+            pageIndex++;
+        }
+        else if (!next && pageIndex - 1 >= 0)
+        {
+            pageIndex--;
+        }
+
+        Pages[pageIndex].SetActive(true);
+        UpdateButtonState();
+    }
+
+    private void UpdateButtonState()
+    {
+        nextPageButton.enabled = false;
+        previousPageButton.enabled = false;
+        nextPageButton.OnMouseOut.Invoke();
+        previousPageButton.OnMouseOut.Invoke();
+        nextPageButton.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+        previousPageButton.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+
+        if (pageIndex > 0)
+        {
+            previousPageButton.enabled = true;
+            previousPageButton.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+        if (pageIndex < pageButtonsIndex)
+        {
+            nextPageButton.enabled = true;
+            nextPageButton.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+
+        UpdateButtons();
     }
 
     public void UpdateButtons()
@@ -278,8 +349,16 @@ public class GuessTab
 
     public void AddRole(CustomRoleBehavior role)
     {
+        // Check if the current page is full
+        if (RoleIndex >= rolesPerPage)
+        {
+            RoleIndex = 0;
+            CreateNewPage();
+            pageButtonsIndex++;
+        }
+
         var roleButton = guessManager.CreateButton(role.RoleName,
-            Inner,
+            Pages[pageButtonsIndex],
             AspectPosition.EdgeAlignments.Center,
             GetRoleButtonPos(),
             null,
@@ -299,6 +378,16 @@ public class GuessTab
             guessManager.Minigame.Close();
         }));
         allRoleButtons.Add(roleButton);
+
+        UpdateButtonState();
+    }
+
+    private void CreateNewPage()
+    {
+        var newPage = new GameObject($"Page({Pages.Count})");
+        newPage.SetActive(false);
+        newPage.transform.SetParent(PagesRoot.transform, false);
+        Pages.Add(newPage);
     }
 
     private Vector3 GetRoleButtonPos()
