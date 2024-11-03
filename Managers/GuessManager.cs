@@ -271,8 +271,8 @@ public class GuessTab
 
         nextPageButton = guessManager.CreateButton("Next Page",
             PagesRoot,
-            AspectPosition.EdgeAlignments.LeftBottom,
-            new Vector3(1f, 0.8f, 0f),
+            AspectPosition.EdgeAlignments.RightBottom,
+            new Vector3(2f, 0.8f, 0f),
             null,
             null);
         nextPageButton.OnClick.AddListener((Action)(() =>
@@ -283,7 +283,7 @@ public class GuessTab
         previousPageButton = guessManager.CreateButton("Previous Page",
             PagesRoot,
             AspectPosition.EdgeAlignments.LeftBottom,
-            new Vector3(-1f, 0.8f, 0f),
+            new Vector3(2f, 0.8f, 0f),
             null,
             null);
         previousPageButton.OnClick.AddListener((Action)(() =>

@@ -267,7 +267,12 @@ static class GameSettingMenuPatch
         }
 
         GameSettingMenu.Instance = __instance;
-        __instance.transform.position = new Vector3(__instance.transform.position.x, __instance.transform.position.y, -200f);
+        __instance.transform.localPosition = new Vector3(0f, 0.25f, -300f);
+        __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0.7834f, -0.3788f, -1f);
+        __instance.MenuDescriptionText.transform.parent.localScale = new Vector3(1.35f, 1.35f, 1f);
+        __instance.MenuDescriptionText.transform.parent.Find("InfoImage").gameObject.DestroyObj();
+        __instance.MenuDescriptionText.transform.localPosition = new Vector3(-3.045f, 0.62f, -2f);
+        __instance.MenuDescriptionText.fontSizeMin = 1.25f;
 
         return false;
     }
