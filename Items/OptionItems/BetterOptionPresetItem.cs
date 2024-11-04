@@ -1,7 +1,9 @@
-﻿using System.Text.Json;
+﻿using Reactor.Networking.Rpc;
+using System.Text.Json;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
@@ -87,7 +89,7 @@ public class BetterOptionPresetItem : BetterOptionItem
         _ = new LateTask(() =>
         {
             GameSettingMenu.Instance.ChangeTab(BetterTabs.SystemSettings.Id, false);
-            RPC.SyncAllSettings();
+            Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
         }, 0.25f, shoudLog: false);
     }
 

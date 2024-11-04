@@ -109,13 +109,13 @@ public class VentAbilityButton : BaseButton
             {
                 if (!_player.inVent)
                 {
-                    _player.VentSync(lastTargetVent.Id, false);
+                    _player.SendRpcVent(lastTargetVent.Id, false);
                     if (Duration > 0f)
                         SetDuration();
                 }
                 else
                 {
-                    _player.VentSync(lastTargetVent.Id, true);
+                    _player.SendRpcVent(lastTargetVent.Id, true);
                     ResetState();
                 }
             }

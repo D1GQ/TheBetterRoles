@@ -1,8 +1,10 @@
 ﻿using AmongUs.GameOptions;
+using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
@@ -153,7 +155,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Main.SetVanillaSettings();
         }
 
-        RPC.SyncOption(id, IsChecked.ToString(), FormatValueAsText());
+        Rpc<RpcSyncOption>.Instance.Send(new(Id, IsChecked.ToString(), FormatValueAsText()));
 
         if (IsParent || IsChild)
         {

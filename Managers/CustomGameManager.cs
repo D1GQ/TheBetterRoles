@@ -2,11 +2,13 @@
 using HarmonyLib;
 using Hazel;
 using InnerNet;
+using Reactor.Networking.Rpc;
 using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -503,7 +505,7 @@ public class CustomGameManager
     {
         if (GameState.IsHost)
         {
-            RPC.SyncAllSettings();
+            Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
         }
 
         GameHasEnded = false;
@@ -566,7 +568,10 @@ public class CustomGameManager
 
         if (GameState.IsHost)
         {
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
+            _ = new LateTask(() =>
+            {
+                GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
+            }, 1f, shoudLog: false);
         }
     }
 
@@ -581,7 +586,7 @@ public class CustomGameManager
             team = CustomRoleTeam.Impostor;
             var Impostors = GetPlayerIdsFromTeam(team);
             Logger.Log("Ending Game As Host: Critical Sabotage");
-            ActionRPCs.EndGameSync(Impostors, EndGameReason.Sabotage, team);
+            Rpc<RpcEndGame>.Instance.Send(PlayerControl.LocalPlayer, new(Impostors, EndGameReason.Sabotage, team));
             GameHasEnded = true;
         }
         else if (CheckCustomWin() is PlayerControl player && player != null)
@@ -589,14 +594,14 @@ public class CustomGameManager
             team = CustomRoleTeam.Neutral;
             Logger.Log($"Ending Game As Host: {player.Data.PlayerName} Role -> {player.GetRoleName()} Win Condition Met");
             List<byte> players = [player.Data.PlayerId];
-            ActionRPCs.EndGameSync(players, EndGameReason.CustomFromRole, team);
+            Rpc<RpcEndGame>.Instance.Send(PlayerControl.LocalPlayer, new(players, EndGameReason.CustomFromRole, team));
             GameHasEnded = true;
         }
         else if (CheckPlayerAmount(ref team))
         {
             var players = GetPlayerIdsFromTeam(team);
             Logger.Log($"Ending Game As Host: {Utils.GetCustomRoleTeamName(team)} Outnumbered");
-            ActionRPCs.EndGameSync(players, EndGameReason.Outnumbered, team);
+            Rpc<RpcEndGame>.Instance.Send(PlayerControl.LocalPlayer, new(players, EndGameReason.Outnumbered, team));
             GameHasEnded = true;
         }
     }
@@ -652,7 +657,7 @@ public class CustomGameManager
             team = CustomRoleTeam.Crewmate;
             return true;
         }
-        if (impostors.Count >= allPlayers.Length && killingPlayers.Count == 0)
+        if (impostors.Count >= allPlayers.Length - impostors.Count && killingPlayers.Count == 0)
         {
             team = CustomRoleTeam.Impostor;
             return true;

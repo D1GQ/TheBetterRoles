@@ -1,7 +1,9 @@
 ﻿using AmongUs.GameOptions;
+using Reactor.Networking.Rpc;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
@@ -156,7 +158,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
+        Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
     }
 
     public void Decrease()
@@ -177,7 +179,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         }
 
         AdjustButtonsActiveState();
-        RPC.SyncOption(Id, CurrentValue.ToString(), FormatValueAsText());
+        Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
     }
 
     public void Load(float DefaultValue)

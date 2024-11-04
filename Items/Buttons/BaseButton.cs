@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Helpers;
+﻿using Reactor.Networking.Rpc;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using TMPro;
@@ -171,7 +172,7 @@ public class BaseButton
             State = 0;
             SetCooldown();
             Text.SetText(Name);
-            _player.ResetAbilityStateSync(Id, (int)Role.RoleType, isTimeOut);
+            RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
             Role.OnDurationEnd(Id, isTimeOut);
         }
     }

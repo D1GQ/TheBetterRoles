@@ -101,7 +101,7 @@ public class PlaguebearerRole : CustomRoleBehavior
         CheckPestillenceCondition();
     }
 
-    public override void OnDisconnect(PlayerControl target, DisconnectReasons reason)
+    public override void OnDisconnect(PlayerControl player, DisconnectReasons reason)
     {
         CheckPestillenceCondition();
     }

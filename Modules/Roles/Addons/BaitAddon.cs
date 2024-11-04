@@ -44,7 +44,7 @@ public class BaitAddon : CustomAddonBehavior
             _ = new LateTask(() =>
             {
                 CustomSoundsManager.Play("Congrats", 3.5f);
-                killer.ReportBodySync(_data);
+                killer.SendRpcReportBody(_data.PlayerId);
             }, num + 1f, shoudLog: false);
         }
     }

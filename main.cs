@@ -3,7 +3,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
-using System.Diagnostics;
 using HarmonyLib;
 using Innersloth.IO;
 using System.Security.Cryptography;
@@ -13,6 +12,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
+using Reactor;
 
 namespace TheBetterRoles;
 
@@ -25,6 +25,7 @@ public enum ReleaseTypes : int
 
 [BepInPlugin(PluginGuid, "TheBetterRoles", PluginVersion)]
 [BepInProcess("Among Us.exe")]
+[BepInDependency(ReactorPlugin.Id)]
 public class Main : BasePlugin
 {
     public static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;
@@ -60,10 +61,11 @@ public class Main : BasePlugin
                 .Append(Github)
                 .Append(Discord)
                 .Append(string.Join(".", CustomRoleManager.allRoles.Select(role => role.GetType().Name)))
+                .Append(string.Join(".", CustomRoleManager.allRoles.Select(role => role.RoleId)))
                 .Append(string.Join(".", CustomRoleManager.allRoles.Select(role => role.RoleUID)))
                 .Append(string.Join(".", Enum.GetNames(typeof(TargetType))))
+                .Append(string.Join(".", Enum.GetNames(typeof(ReactorRPCs))))
                 .Append(string.Join(".", Enum.GetNames(typeof(CustomRPC))))
-                .Append(string.Join(".", Enum.GetNames(typeof(RpcAction))))
                 .Append(string.Join(".", Enum.GetNames(typeof(CustomRoles))))
                 .ToString();
 
@@ -136,7 +138,7 @@ public class Main : BasePlugin
     public static Vent[] AllVents => UnityEngine.Object.FindObjectsOfType<Vent>();
     public static Vent[] AllEnabledVents => UnityEngine.Object.FindObjectsOfType<Vent>().Where(vent => vent.IsEnabled()).ToArray();
 
-    public static ManualLogSource Logger;
+    public static ManualLogSource? Logger;
 
     public override void Load()
     {
@@ -150,7 +152,7 @@ public class Main : BasePlugin
 
             // Add custom components
             {
-                AddComponent<AssetBundleManager>();
+                AddComponent<Managers.AssetBundleManager>();
                 AddComponent<ExtendedPlayerInfo>();
                 AddComponent<GuessManager>();
             }

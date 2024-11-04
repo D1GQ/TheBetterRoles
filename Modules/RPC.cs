@@ -1,28 +1,27 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using InnerNet;
+using Reactor.Networking.Attributes;
+using Reactor.Networking.Rpc;
+using System.Numerics;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
-using static Il2CppSystem.Globalization.CultureInfo;
+using TheBetterRoles.RPCs;
+
 
 namespace TheBetterRoles.Modules;
 
-public enum RpcAction : int
+[Flags]
+enum MultiMurderFlags : short
 {
-    ResetAbilityState,
-    PlayIntro,
-    SetRole,
-    EndGame,
-    ReportBody,
-    Vent,
-    BootVent,
-    Revive,
-    Murder,
-    PlayerPress,
-    PlayerMenu,
-    GuessPlayer
+    snapToTarget = 1 << 1,  // 2  (0b00010)
+    spawnBody = 1 << 2,     // 4  (0b00100)
+    showAnimation = 1 << 3, // 8  (0b01000)
+    playSound = 1 << 4      // 16 (0b10000)
 }
 
 public enum CustomRPC : int
@@ -40,6 +39,39 @@ public enum CustomRPC : int
     RoleAction,
     SyncAction,
     SyncRole,
+
+    ResetAbilityState,
+    PlayIntro,
+    SetRole,
+    EndGame,
+    ReportBody,
+    Vent,
+    BootVent,
+    Revive,
+    Murder,
+    PlayerPress,
+    PlayerMenu,
+    GuessPlayer
+}
+
+public enum ReactorRPCs : uint
+{
+    SyncAllSettings,
+    SyncOption,
+    ResetAbilityState,
+    PlayIntro,
+    SetRole,
+    EndGame,
+    ReportBody,
+    StartMeeting,
+    Vent,
+    SnapTo,
+    BootVent,
+    Revive,
+    Murder,
+    PlayerPress,
+    PlayerMenu,
+    GuessPlayer
 }
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -84,6 +116,33 @@ public static class MessageReaderUpdateSystemPatch
 
 internal static class RPC
 {
+    static class RpcsPatch
+    {
+        [HarmonyPatch(typeof(PlayerControl))]
+        class PlayerActionPatch
+        {
+            [HarmonyPatch(nameof(PlayerControl.CmdReportDeadBody))]
+            [HarmonyPrefix]
+            public static bool CmdReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+            {
+                if (__instance.IsAlive())
+                    __instance.SendRpcReportBody(target?.PlayerId ?? 255);
+
+                return false;
+            }
+
+            [HarmonyPatch(nameof(PlayerControl.ReportDeadBody))]
+            [HarmonyPrefix]
+            public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+            {
+                if (__instance.IsAlive())
+                    __instance.SendRpcReportBody(target?.PlayerId ?? 255);
+
+                return false;
+            }
+        }
+    }
+
     public static void SendModRequest()
     {
         MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionRequest, SendOption.None, -1);
@@ -103,114 +162,6 @@ internal static class RPC
         Bool,
         Float,
         Int
-    }
-
-    public static void SyncAllSettings()
-    {
-        if (!GameState.IsHost) return;
-
-        var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncAllSettings, SendOption.Reliable);
-        writer.Write(Main.modSignature);
-
-        List<int> ids = [];
-        int count = 0;
-
-        // Main buffer for Float, Int, and Id data
-        using (var buffer = new MemoryStream())
-        using (var binaryWriter = new BinaryWriter(buffer))
-        {
-            // Buffer for Bool values
-            List<byte> boolBuffer = [];
-            byte boolByte = 0;
-            int boolIndex = 0;
-
-            foreach (var item in BetterOptionItem.BetterOptionItems)
-            {
-                if (ids.Contains(item.Id)) continue;
-
-                if (item is BetterOptionFloatItem floatItem && floatItem.CurrentValue != floatItem.defaultValue)
-                {
-                    binaryWriter.Write((byte)SettingType.Float);
-                    binaryWriter.Write(item.Id);
-                    binaryWriter.Write((float)Math.Round(floatItem.CurrentValue, 5));
-                    ids.Add(item.Id);
-                    count++;
-                }
-                else if (item is BetterOptionIntItem intItem && intItem.CurrentValue != intItem.defaultValue)
-                {
-                    binaryWriter.Write((byte)SettingType.Int);
-                    binaryWriter.Write(item.Id);
-                    binaryWriter.Write(intItem.CurrentValue);
-                    ids.Add(item.Id);
-                    count++;
-                }
-                else if (item is BetterOptionCheckboxItem checkboxItem && checkboxItem.IsChecked != checkboxItem.defaultValue)
-                {
-                    binaryWriter.Write((byte)SettingType.Bool);
-                    binaryWriter.Write(item.Id);
-                    // Pack the boolean into the boolByte
-                    if (checkboxItem.IsChecked)
-                    {
-                        boolByte |= (byte)(1 << boolIndex); // Set the bit for true
-                    }
-                    boolIndex++;
-
-                    // If we've packed 8 booleans, store the byte and reset
-                    if (boolIndex == 8)
-                    {
-                        boolBuffer.Add(boolByte);
-                        boolByte = 0; // Reset for the next byte
-                        boolIndex = 0;
-                    }
-
-                    ids.Add(item.Id);
-                    count++;
-                }
-                else if (item is BetterOptionPercentItem percentItem && percentItem.CurrentValue != percentItem.defaultValue)
-                {
-                    binaryWriter.Write((byte)SettingType.Float); // Percent treated as Float
-                    binaryWriter.Write(item.Id);
-                    binaryWriter.Write(percentItem.CurrentValue);
-                    ids.Add(item.Id);
-                    count++;
-                }
-                else if (item is BetterOptionStringItem stringItem && stringItem.CurrentValue != stringItem.defaultValue)
-                {
-                    binaryWriter.Write((byte)SettingType.Int); // StringItem treated as Int
-                    binaryWriter.Write(item.Id);
-                    binaryWriter.Write(stringItem.CurrentValue);
-                    ids.Add(item.Id);
-                    count++;
-                }
-            }
-
-            // If there are any remaining booleans that weren't added
-            if (boolIndex > 0)
-            {
-                boolBuffer.Add(boolByte); // Add the last byte if it's not full
-            }
-
-            writer.Write(count);
-            writer.Write(buffer.ToArray()); // Write main data buffer
-            writer.Write(boolBuffer.Count);  // Write the number of packed Bool bytes
-            writer.Write(boolBuffer.ToArray()); // Write the packed Bool buffer as separate data
-        }
-
-        writer.EndMessage();
-    }
-
-    public static void SyncOption(int id, string data, string value)
-    {
-        if (!GameState.IsHost) return;
-
-        var text = Utils.SettingsChangeNotifier(id, value);
-
-        var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncOption, SendOption.Reliable);
-        writer.Write(Main.modSignature);
-        writer.Write(id);
-        writer.Write(data);
-        writer.Write(text);
-        writer.EndMessage();
     }
 
     public static void HandleCustomRPC(PlayerControl player, byte callId, MessageReader oldReader)
@@ -258,7 +209,7 @@ internal static class RPC
 
                             if (GameState.IsHost)
                             {
-                                SyncAllSettings();
+                                Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
                             }
                         }
                         else
@@ -273,89 +224,6 @@ internal static class RPC
                         Utils.DirtyAllNames();
                     }
                     break;
-                case CustomRPC.SyncAllSettings:
-                    {
-                        var signature = reader.ReadString();
-                        if (!GameState.IsHost && signature == Main.modSignature && player.IsHost())
-                        {
-                            BetterDataManager.HostSettings.Clear();
-                            GameSettingMenuPatch.SetupSettings(true);
-
-                            int count = reader.ReadInt32(); // Read the number of settings
-
-                            // First, read the main data buffer
-                            Dictionary<int, string> settings = new Dictionary<int, string>();
-                            for (int i = 0; i < count; i++)
-                            {
-                                SettingType settingType = (SettingType)reader.ReadByte();
-                                int id = reader.ReadInt32();
-
-                                switch (settingType)
-                                {
-                                    case SettingType.Float:
-                                        float floatValue = reader.ReadSingle();
-                                        settings.Add(id, floatValue.ToString());
-                                        break;
-
-                                    case SettingType.Int:
-                                        int intValue = reader.ReadInt32();
-                                        settings.Add(id, intValue.ToString());
-                                        break;
-
-                                    case SettingType.Bool:
-                                        // We only read the Id here, the actual Bool value will be read from the Bool buffer later
-                                        settings.Add(id, "Bool"); // Placeholder to identify this as a Bool
-                                        break;
-                                }
-                            }
-
-                            // Next, read the Bool data buffer
-                            int boolBufferLength = reader.ReadInt32();
-                            byte[] boolData = reader.ReadBytes(boolBufferLength);
-
-                            // Process Bool values
-                            int boolByteCount = boolData.Length;
-                            int boolIndex = 0;
-
-                            foreach (var kvp in settings.ToList()) // Convert to list to allow modification
-                            {
-                                if (kvp.Value == "Bool") // Check for Bool placeholder
-                                {
-                                    // Calculate which byte and bit to read
-                                    int byteIndex = boolIndex / 8;
-                                    if (byteIndex < boolByteCount)
-                                    {
-                                        bool boolValue = (boolData[byteIndex] & 1 << boolIndex % 8) != 0; // Check the specific bit
-                                        settings[kvp.Key] = boolValue.ToString();
-                                    }
-                                    boolIndex++;
-                                }
-                            }
-
-                            // Save settings
-                            foreach (var kvp in settings)
-                            {
-                                BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
-                                BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
-                            }
-                        }
-                    }
-                    break;
-                case CustomRPC.SyncOption:
-                    {
-                        var signature = reader.ReadString();
-                        if (!GameState.IsHost && signature == Main.modSignature && player.IsHost())
-                        {
-                            int Id = reader.ReadInt32();
-                            string data = reader.ReadString();
-                            string text = reader.ReadString();
-
-                            BetterDataManager.SaveSetting(Id, data);
-                            BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue(data);
-                            Utils.SettingsChangeNotifierSync(Id, text);
-                        }
-                    }
-                    break;
                 case CustomRPC.RoleAction:
                 case CustomRPC.SyncRole:
                     {
@@ -367,9 +235,6 @@ internal static class RPC
                             CustomRoleManager.RoleListener(user, role => role.HandleRpc(oldReader, callId, user, player), role => role.RoleHash == hash);
                         }
                     }
-                    break;
-                case CustomRPC.SyncAction:
-                    HandleSyncActionRPC(player, oldReader, true);
                     break;
             }
         }
@@ -394,122 +259,325 @@ internal static class RPC
         return true;
     }
 
-    public static void HandleSyncActionRPC(PlayerControl sender, MessageReader oldReader, bool IsRPC = false)
+    [MethodRpc((uint)ReactorRPCs.PlayIntro, SendImmediately = true)]
+    public static void SendRpcPlayIntro(PlayerControl player)
     {
-        MessageReader reader = MessageReader.Get(oldReader);
-
-        var signature = reader.ReadString();
-        var action = reader.ReadInt32();
-        var player = reader.ReadPlayerId();
-
-        if (Main.modSignature != signature) return;
-
-        ActionRPCs.SenderPlayer = sender;
-
-        switch ((RpcAction)action)
+        if (player.IsHost())
         {
-            case RpcAction.EndGame:
-                {
-                    List<byte> winnersIds = [];
-                    var reason = (EndGameReason)reader.ReadByte();
-                    var team = (CustomRoleTeam)reader.ReadByte();
-                    int winnersAmount = reader.ReadInt32();
-                    for (int i = 0; i < winnersAmount; i++)
-                    {
-                        winnersIds.Add(reader.ReadByte());
-                    }
-
-                    ActionRPCs.EndGameSync(winnersIds, reason, team, IsRPC);
-                }
-                break;
-            case RpcAction.ResetAbilityState:
-                {
-                    var id = reader.ReadInt32();
-                    var roleType = reader.ReadInt32();
-                    var isTimeOut = reader.ReadBoolean();
-                    player.ResetAbilityStateSync(id, roleType, isTimeOut, IsRPC);
-                }
-                break;
-            case RpcAction.PlayIntro:
-                {
-                    ActionRPCs.PlayIntroSync(IsRPC);
-                }
-                break;
-            case RpcAction.SetRole:
-                {
-                    var role = reader.ReadInt32();
-                    var RemoveAddon = reader.ReadBoolean();
-                    player.SetRoleSync((CustomRoles)role, RemoveAddon, IsRPC);
-                }
-                break;
-            case RpcAction.ReportBody:
-                {
-                    var bodyInfo = reader.ReadPlayerDataId();
-                    player.ReportBodySync(bodyInfo, IsRPC);
-                }
-                break;
-            case RpcAction.Revive:
-                {
-                    player.ReviveSync(IsRPC);
-                }
-                break;
-            case RpcAction.Murder:
-                {
-                    PlayerControl? target = reader.ReadPlayerId();
-                    bool isAbility = reader.ReadBoolean();
-                    byte flags = reader.ReadByte();
-
-                    bool snapToTarget = (flags & (byte)MultiMurderFlags.snapToTarget) != 0;
-                    bool spawnBody = (flags & (byte)MultiMurderFlags.spawnBody) != 0;
-                    bool showAnimation = (flags & (byte)MultiMurderFlags.showAnimation) != 0;
-                    bool playSound = (flags & (byte)MultiMurderFlags.playSound) != 0;
-
-                    if (target != null)
-                    {
-                        player.MurderSync(target, isAbility, (MultiMurderFlags)flags, IsRPC);
-                    }
-                }
-                break;
-
-            case RpcAction.PlayerMenu:
-                {
-                    var Id = reader.ReadInt32();
-                    var roleType = reader.ReadInt32();
-                    var close = reader.ReadBoolean();
-                    var target = reader.ReadPlayerDataId();
-                    if (target != null)
-                    {
-                        player.PlayerMenuSync(Id, roleType, target, null, null, close, IsRPC);
-                    }
-                }
-                break;
-            case RpcAction.PlayerPress:
-                {
-                    var target = reader.ReadPlayerId();
-                    if (target != null)
-                    {
-                        player.PlayerPressSync(target, IsRPC);
-                    }
-                }
-                break;
-            case RpcAction.Vent:
-                {
-                    var ventId = reader.ReadInt32();
-                    var exit = reader.ReadBoolean();
-                    player.VentSync(ventId, exit, IsRPC);
-                }
-                break;
-            case RpcAction.GuessPlayer:
-                {
-                    var target = reader.ReadPlayerId();
-                    var roleType = (CustomRoles)reader.ReadInt32();
-                    if (target != null)
-                    {
-                        player.GuessPlayerSync(target, roleType, IsRPC);
-                    }
-                }
-                break;
+            CustomRoleManager.PlayIntro();
         }
     }
-}
 
+    [MethodRpc((uint)ReactorRPCs.ResetAbilityState, SendImmediately = true)]
+    public static void SendRpcResetAbilityState(this PlayerControl player, int id, bool isTimeOut, int roleHash)
+    {
+        if (CheckResetAbilityStateRpc(player, id) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleHash == roleHash);
+        }
+    }
+
+    private static bool CheckResetAbilityStateRpc(PlayerControl player, int id) => true;
+
+    [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
+    public static void SendRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool RemoveAddon = false)
+    {
+        var role = (CustomRoles)roleTypeInt;
+        if (CheckSetRoleRpc(player, role))
+        {
+            if (!Utils.GetCustomRoleClass(role).IsAddon)
+            {
+                CustomRoleManager.SetCustomRole(player, role);
+            }
+            else
+            {
+                if (!RemoveAddon)
+                {
+                    CustomRoleManager.AddAddon(player, role);
+                }
+                else
+                {
+                    CustomRoleManager.RemoveAddon(player, role);
+                }
+            }
+        }
+    }
+
+    private static bool CheckSetRoleRpc(PlayerControl player, CustomRoles role) => true;
+    
+    public static void SendRpcMurder(this PlayerControl player,
+        PlayerControl target,
+        bool isAbility = false,
+        MultiMurderFlags flags = MultiMurderFlags.snapToTarget | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation | MultiMurderFlags.playSound)
+    {
+        player.SendTrueRpcMurder(target, isAbility, (byte)flags);
+    }
+
+    [MethodRpc((uint)ReactorRPCs.Murder, SendImmediately = true)]
+    private static void SendTrueRpcMurder(this PlayerControl player,
+        PlayerControl target,
+        bool isAbility = false,
+        byte flags = (byte)(MultiMurderFlags.snapToTarget | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation | MultiMurderFlags.playSound))
+    {
+        if (CheckMurderRpc(player, target, isAbility))
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnMurder(player, target, player == target, isAbility));
+            CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
+            CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
+
+            player.BetterData().RoleInfo.Kills++;
+            target.BetterData().RoleInfo.RoleTypeWhenAlive = target.BetterData().RoleInfo.RoleType;
+
+            bool snapToTarget = (flags & (byte)MultiMurderFlags.snapToTarget) != 0;
+            bool spawnBody = (flags & (byte)MultiMurderFlags.spawnBody) != 0;
+            bool showAnimation = (flags & (byte)MultiMurderFlags.showAnimation) != 0;
+            bool playSound = (flags & (byte)MultiMurderFlags.playSound) != 0;
+
+            player.CustomMurderPlayer(target, snapToTarget, spawnBody, showAnimation, playSound);
+        }
+    }
+
+    private static bool CheckMurderRpc(PlayerControl player, PlayerControl target, bool isAbility)
+    {
+        if (!player.RoleChecks(role => role.CheckMurder(player, target, player == target, isAbility)))
+        {
+            return false;
+        }
+
+        if (!target.RoleChecks(role => role.CheckMurder(player, target, player == target, isAbility)))
+        {
+            return false;
+        }
+
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckMurderOther(player, target, player == target, isAbility)))
+        {
+            return false;
+        }
+
+        if (!player.RoleChecksAny(role => role.CanKill) && !isAbility || target.IsInVent() || !target.IsAlive())
+        {
+            Logger.Log($"Canceled Murder Action: Invalid");
+            return false;
+        }
+
+        return true;
+    }
+
+    [MethodRpc((uint)ReactorRPCs.Revive, SendImmediately = true)]
+    public static void SendRpcRevive(this PlayerControl player, bool setData = true)
+    {
+        if (CheckReviveRpc(player) == true)
+        {
+            player.CustomRevive(setData);
+            player.RawSetRole(RoleTypes.Crewmate);
+        }
+    }
+
+    private static bool CheckReviveRpc(PlayerControl player) => true;
+    
+    [MethodRpc((uint)ReactorRPCs.ReportBody, SendImmediately = true)]
+    public static void SendRpcReportBody(this PlayerControl player, int bodyInfoId)
+    {
+        var bodyInfo = Utils.PlayerDataFromPlayerId(bodyInfoId);
+        var flag = bodyInfo == null;
+
+        if (CheckReportBodyRpc(player, bodyInfo, flag) == true)
+        {
+            // Run after checks for roles
+            CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState(false));
+            CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, flag));
+            CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
+
+            if (GameState.IsHost)
+            {
+                MeetingRoomManager.Instance.AssignSelf(player, bodyInfo);
+                DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+            }
+            player.StartMeeting(bodyInfo);
+        }
+    }
+
+    private static bool CheckReportBodyRpc(PlayerControl player, NetworkedPlayerInfo? bodyInfo, bool isButton)
+    {
+        if (MeetingHud.Instance)
+        {
+            return false;
+        }
+        if (AmongUsClient.Instance.IsGameOver)
+        {
+            return false;
+        }
+        if (player == null)
+        {
+            return false;
+        }
+        if (!player.RoleChecks(role => role.CheckBodyReport(player, bodyInfo, isButton)))
+        {
+            return false;
+        }
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckBodyReportOther(player, bodyInfo, isButton)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    [MethodRpc((uint)ReactorRPCs.PlayerMenu, SendImmediately = true)]
+    public static void SendRpcPlayerMenu(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo? target, bool close)
+    {
+        var menu = PlayerMenu.AllPlayerMenus.FirstOrDefault(m => m.Id == Id);
+        if (CheckPlayerMenuRpc(player, target) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, menu, menu.PlayerMinigame.Cast<ShapeshifterPanel>(), close), role => role.RoleType == (CustomRoles)roleType);
+        }
+    }
+
+    private static bool CheckPlayerMenuRpc(PlayerControl player, NetworkedPlayerInfo? target) => true;
+
+    [MethodRpc((uint)ReactorRPCs.PlayerPress, SendImmediately = true)]
+    public static void SendRpcPlayerPress(this PlayerControl player, PlayerControl target)
+    {
+        if (CheckPlayerPressRpc(player, target) == true)
+        {
+            // Run after checks for roles
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerPress(player, target));
+            CustomRoleManager.RoleListener(target, role => role.OnPlayerPress(player, target));
+            CustomRoleManager.RoleListenerOther(role => role.OnPlayerPressOther(player, target));
+        }
+    }
+
+    private static bool CheckPlayerPressRpc(PlayerControl player, PlayerControl target) => true;
+
+
+    [MethodRpc((uint)ReactorRPCs.Vent, SendImmediately = true)]
+    public static void SendRpcVent(this PlayerControl player, int ventId, bool Exit)
+    {
+        if (CheckVentRpc(player, ventId, Exit) == true)
+        {
+            // Run after checks for roles
+            CustomRoleManager.RoleListener(player, role => role.OnVent(player, ventId, Exit));
+
+            CustomRoleManager.RoleListenerOther(role => role.OnVentOther(player, ventId, Exit));
+
+            if (!Exit)
+            {
+                player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
+                if (player.IsLocalPlayer())
+                {
+                    ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
+                        player.IsLocalPlayer() && player.RoleChecks(role => role.CanMoveInVents, false));
+                }
+            }
+            else
+            {
+                player.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
+                if (player.IsLocalPlayer())
+                {
+                    ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
+                }
+            }
+        }
+    }
+
+    private static bool CheckVentRpc(PlayerControl player, int ventId, bool Exit)
+    {
+        if (!player.RoleChecks(role => role.CheckVent(player, ventId, Exit)))
+        {
+            return false;
+        }
+
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckVentOther(player, ventId, Exit)))
+        {
+            return false;
+        }
+
+        if (ShipStatus.Instance == null)
+        {
+            Logger.Log($"Canceled Vent Action: ShipStatus Null");
+        }
+
+        return true;
+    }
+
+    [MethodRpc((uint)ReactorRPCs.SnapTo, SendImmediately = true)]
+    public static void SendSnapTo(this PlayerControl player, UnityEngine.Vector2 pos)
+    {
+        if (CheckSnapToRpc(player, pos) == true)
+        {
+            player.NetTransform.SnapTo(pos);
+        }
+    }
+
+    private static bool CheckSnapToRpc(PlayerControl player, UnityEngine.Vector2 pos) => true;
+
+    [MethodRpc((uint)ReactorRPCs.GuessPlayer, SendImmediately = true)]
+    public static void SendRpcGuessPlayer(this PlayerControl player, PlayerControl target, int roleTypeInt)
+    {
+        var roleType = (CustomRoles)roleTypeInt;
+        if (CheckGuessPlayerRpc(player, target, roleType) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnGuess(player, target, roleType));
+            CustomRoleManager.RoleListener(target, role => role.OnGuess(player, target, roleType));
+            CustomRoleManager.RoleListenerOther(role => role.OnGuessOther(player, target, roleType));
+
+            CustomSoundsManager.Play("Gunfire", 3.5f);
+            MeetingHud.Instance.ButtonParent.gameObject.SetActive(false);
+            _ = new LateTask(() =>
+            {
+                if (!DestroyableSingleton<HudManager>.Instance.KillOverlay.IsOpen)
+                {
+                    MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
+                }
+            }, 2.5f, shoudLog: false);
+            if (target.RoleChecksAny(role => role.RoleType == roleType, false))
+            {
+                DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
+                target.Exiled();
+                MeetingHudPatch.AdjustVotesOnGuess(target);
+                if (target.IsLocalPlayer())
+                {
+                    HudManager.Instance.AbilityButton.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
+                player.Exiled();
+                MeetingHudPatch.AdjustVotesOnGuess(player);
+                if (player.IsLocalPlayer())
+                {
+                    HudManager.Instance.AbilityButton.gameObject.SetActive(false);
+                }
+            }
+        }
+        else if (player.IsLocalPlayer())
+        {
+            _ = new LateTask(() =>
+            {
+                if (!DestroyableSingleton<HudManager>.Instance.KillOverlay.IsOpen)
+                {
+                    MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
+                }
+            }, 0.25f, shoudLog: false);
+        }
+    }
+
+    private static bool CheckGuessPlayerRpc(PlayerControl player, PlayerControl target, CustomRoles roleType)
+    {
+        if (!CustomRoleManager.RoleChecks(player, role => role.CheckGuess(player, target, roleType)))
+        {
+            return false;
+        }
+        if (!CustomRoleManager.RoleChecks(target, role => role.CheckGuess(player, target, roleType)))
+        {
+            return false;
+        }
+        if (!CustomRoleManager.RoleChecksOther(role => role.CheckGuessOther(player, target, roleType)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+}

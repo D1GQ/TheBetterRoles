@@ -77,19 +77,6 @@ static class InnerNetClientHelper
 
     public static Vent? ReadVentId(this MessageReader reader) => Main.AllVents.FirstOrDefault(vent => vent.Id == reader.ReadInt32());
 
-    public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
-    {
-        var LocalPlayer = PlayerControl.LocalPlayer;
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
-        writer.Write(Main.modSignature);
-        writer.Write((int)action);
-        writer.Write(asPlayer?.PlayerId ?? LocalPlayer.PlayerId);
-
-        return writer;
-    }
-
-    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
-
     public static MessageWriter Copy(this MessageWriter writer)
     {
         var list = new Il2CppSystem.Collections.Generic.Stack<int>();

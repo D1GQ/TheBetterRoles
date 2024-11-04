@@ -37,7 +37,7 @@ public class RolePatch
             {
                 passiveButton.OnClick.AddListener((Action)(() =>
                 {
-                    PlayerControl.LocalPlayer.PlayerPressSync(__instance);
+                    PlayerControl.LocalPlayer.SendRpcPlayerPress(__instance);
                 }));
             }
         }

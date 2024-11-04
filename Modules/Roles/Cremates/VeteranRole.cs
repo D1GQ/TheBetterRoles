@@ -81,7 +81,7 @@ public class VeteranRole : CustomRoleBehavior
     {
         if (OnAlert)
         {
-            _player.MurderSync(killer, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
+            _player.SendRpcMurder(killer, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
             return CanBeKilledOnAlert.GetBool();
         }
 

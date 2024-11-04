@@ -216,12 +216,15 @@ public class ArsonistRole : CustomRoleBehavior
         }
         else
         {
-            foreach (var data in doused)
+            if (_player.IsLocalPlayer())
             {
-                var player = data.Object;
-                if (player != null && player.IsAlive() && player != _player)
+                foreach (var data in doused)
                 {
-                    _player.MurderSync(player, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation, true);
+                    var player = data.Object;
+                    if (player != null && player.IsAlive() && player != _player)
+                    {
+                        _player.SendRpcMurder(player, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
+                    }
                 }
             }
         }

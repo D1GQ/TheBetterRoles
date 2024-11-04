@@ -52,7 +52,7 @@ public class AmnesiacRole : CustomRoleBehavior
                             {
                                 if (_player.IsLocalPlayer()) Utils.FlashScreen(RoleColor);
 
-                                _player.SetRoleSync(data.BetterData().RoleInfo.RoleTypeWhenAlive);
+                                _player.SendRpcSetCustomRole((int)data.BetterData().RoleInfo.RoleTypeWhenAlive);
 
                                 /*
                                 _player.ClearAddonsSync();

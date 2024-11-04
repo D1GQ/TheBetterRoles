@@ -1,6 +1,8 @@
-﻿using TheBetterRoles.Helpers;
+﻿using Reactor.Networking.Rpc;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
@@ -135,7 +137,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
             {
                 text = "<color=#ababab>Random</color>";
             }
-            RPC.SyncOption(Id, CurrentIndex.ToString(), text);
+            Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentIndex.ToString(), FormatValueAsText()));
         }
     }
 
@@ -155,7 +157,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
             {
                 text = "<color=#ababab>Random</color>";
             }
-            RPC.SyncOption(Id, CurrentIndex.ToString(), text);
+            Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentIndex.ToString(), FormatValueAsText()));
         }
     }
 

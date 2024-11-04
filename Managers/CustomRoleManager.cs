@@ -112,7 +112,7 @@ public static class CustomRoleManager
 
         yield return new WaitForSeconds(0.5f);
 
-        ActionRPCs.PlayIntroSync();
+        RPC.SendRpcPlayIntro(PlayerControl.LocalPlayer);
     }
 
     private static void AdjustImposterAmount(ref int ImposterAmount)
@@ -286,7 +286,7 @@ public static class CustomRoleManager
         if (selectedRole?._role != null)
         {
             Logger.Log($"{player.Data.PlayerName} -> {selectedRole._role.RoleName}");
-            player.SetRoleSync(selectedRole._role.RoleType);
+            player.SendRpcSetCustomRole((int)selectedRole._role.RoleType);
             yield return new WaitForSeconds(0.05f);
         }
 
@@ -295,7 +295,7 @@ public static class CustomRoleManager
             if (addon?._role != null)
             {
                 Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
-                player.SetRoleSync(addon._role.RoleType);
+                player.SendRpcSetCustomRole((int)addon._role.RoleType);
                 yield return new WaitForSeconds(0.05f);
             }
         }
@@ -366,7 +366,7 @@ public static class CustomRoleManager
             {
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
-                player.SetRoleSync(selectedGhostRole._role.RoleType);
+                player.SendRpcSetCustomRole((int)selectedGhostRole._role.RoleType);
                 Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
@@ -559,7 +559,7 @@ public static class CustomRoleManager
             var addonsCopy = Addons.ToList();
             foreach (var addon in addonsCopy)
             {
-                player.SetRoleSync(addon.RoleType, true);
+                player.SendRpcSetCustomRole((int)addon.RoleType, true);
             }
         }
     }

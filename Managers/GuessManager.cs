@@ -209,7 +209,7 @@ public class GuessManager : MonoBehaviour
         var player = targetData.Object;
         if (player != null)
         {
-            PlayerControl.LocalPlayer.GuessPlayerSync(player, role);
+            PlayerControl.LocalPlayer.SendRpcGuessPlayer(player, (int)role);
         }
     }
 

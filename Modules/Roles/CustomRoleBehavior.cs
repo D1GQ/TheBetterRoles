@@ -504,7 +504,7 @@ public abstract class CustomRoleBehavior
             {
                 if (KillButton.lastTarget != null)
                 {
-                    localPlayer.MurderSync(KillButton.lastTarget);
+                    localPlayer.SendRpcMurder(KillButton.lastTarget);
                     KillButton.SetCooldown();
                 }
             };
@@ -717,7 +717,7 @@ public abstract class CustomRoleBehavior
         {
             case 3:
                 {
-                    _player.VentSync(_player.GetPlayerVentId(), true);
+                    _player.SendRpcVent(_player.GetPlayerVentId(), true);
                 }
                 break;
         }

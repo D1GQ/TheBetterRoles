@@ -40,7 +40,7 @@ public class ButtonBerryAddon : CustomAddonBehavior
         {
             case 5:
                 _player.RemainingEmergencies++;
-                _player.ReportBodySync(null);
+                _player.SendRpcReportBody(255);
                 RemoveButton(MeetingButton);
                 break;
         }

@@ -114,14 +114,11 @@ public class AltruistRole : CustomRoleBehavior
     {
         if (isReviving)
         {
-            if (_player.IsLocalPlayer())
-            {
-                Utils.FlashScreen(RoleColor, 0f, 0.25f, 0.25f, true);
-                _player.MyPhysics.Animations.PlayScanner(false, false, _player.MyPhysics.FlipX);
-                _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Color.white);
-                SetMovement(_player, true);
-            }
-            _player.StopCoroutine(reviveCoroutine);
+            Utils.FlashScreen(RoleColor, 0f, 0.25f, 0.25f, true);
+            _player.MyPhysics.Animations.PlayScanner(false, false, _player.MyPhysics.FlipX);
+            _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Color.white);
+            SetMovement(_player, true);
+            _player.BetterData().StopCoroutine(reviveCoroutine);
             reviveCoroutine = null;
             isReviving = false;
         }
@@ -131,7 +128,7 @@ public class AltruistRole : CustomRoleBehavior
     {
         PlayerControl? target = Utils.PlayerFromPlayerId(body.ParentId);
 
-        if (target != null && body != null && !target.BetterData().RoleInfo.Role.IsGhostRole)
+        if (body != null && target?.Role()?.IsGhostRole == false)
         {
             isReviving = true;
             reviveCoroutine = _player.BetterData().StartCoroutine(CoStartRevive(target, body));
@@ -183,13 +180,18 @@ public class AltruistRole : CustomRoleBehavior
         if (target == null) return;
 
         isReviving = false;
-        target.NetTransform.SnapTo(body.transform.position);
-        if (_player.IsLocalPlayer() && KillOnRevive.GetBool())
+        if (_player.IsLocalPlayer())
         {
-            _player.MurderSync(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound);
+            target.SendSnapTo(body.TruePosition);
+            target.SendRpcRevive();
+            if (KillOnRevive.GetBool())
+            {
+                _player.SendRpcMurder(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound);
+            }
         }
         target.CustomRevive();
         body.DestroyObj();
+        SendRoleSync(0, [body]);
     }
 
     private void SetMovement(PlayerControl player, bool canMove)
@@ -207,11 +209,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    if (additionalParams[0].TryCast<PlayerControl>(out var target))
-                    {
-                        writer.WritePlayerId(target);
-                    }
-                    if (additionalParams[1].TryCast<DeadBody>(out var body))
+                    if (additionalParams[0].TryCast<DeadBody>(out var body))
                     {
                         writer.WriteDeadBodyId(body);
                     }
@@ -226,13 +224,8 @@ public class AltruistRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    var target = reader.ReadPlayerId();
                     var body = reader.ReadDeadBodyId();
-
-                    if (target != null && body != null) 
-                    {
-                        Revive(target, body);
-                    }
+                    body?.DestroyObj();
                 }
                 break;
         }

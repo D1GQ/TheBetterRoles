@@ -62,11 +62,11 @@ public class MoleRole : CustomRoleBehavior
                     {
                         if (!_player.inVent)
                         {
-                            _player.VentSync(vent.Id, false);
+                            _player.SendRpcVent(vent.Id, false);
                         }
                         else
                         {
-                            _player.VentSync(vent.Id, true);
+                            _player.SendRpcVent(vent.Id, true);
                         }
                     }
                 }

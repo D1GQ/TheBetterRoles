@@ -69,14 +69,14 @@ public class SheriffRole : CustomRoleBehavior
         {
             if (_player.IsLocalPlayer())
             {
-                _player.MurderSync(target, true, MultiMurderFlags.snapToTarget | MultiMurderFlags.spawnBody | MultiMurderFlags.playSound | MultiMurderFlags.showAnimation);
+                _player.SendRpcMurder(target, true, MultiMurderFlags.snapToTarget | MultiMurderFlags.spawnBody | MultiMurderFlags.playSound | MultiMurderFlags.showAnimation);
             }
         }
         else if (Misfire.GetValue() == 0)
         {
             if (_player.IsLocalPlayer())
             {
-                _player.MurderSync(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound | MultiMurderFlags.showAnimation);
+                _player.SendRpcMurder(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound | MultiMurderFlags.showAnimation);
             }
         }
     }

@@ -19,7 +19,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public bool MismatchVersion { get; set; }
 
     public bool IsFakeAlive { get; set; } = false;
-    public bool IsSelf => _Data?.AmOwner ?? false;
+    public bool IsSelf { get; set; } = false;
     public byte _PlayerId { get; set; }
     public NetworkedPlayerInfo? _Data { get; set; }
     public float PlayerVisionMod => RoleInfo?.Role?.BaseVisionMod != null ? RoleInfo.Role.BaseVisionMod : 1f;
@@ -123,6 +123,11 @@ public static class PlayerDataExtension
                     Role = new CrewmateRoleTBR(),
                     RoleType = CustomRoles.Crewmate
                 };
+
+                _ = new LateTask(() =>
+                {
+                    newBetterData.IsSelf = data?.Object?.IsLocalPlayer() ?? false;
+                }, 3f, shoudLog: false);
             }
         }
     }

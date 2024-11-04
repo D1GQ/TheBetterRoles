@@ -85,7 +85,6 @@ class CommandsPatch
         switch (command[0][1..].ToLower().Trim())
         {
             case "test":
-                Main.AllPlayerControls[1].SetRoleSync(CustomRoles.Snitch);
                 break;
             case var cmd when cmd == FormatCommandTranslation("Command.Helper.help"):
                 Utils.AddChatPrivate(
