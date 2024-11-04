@@ -60,6 +60,7 @@ static class PlayerControlHelper
         if (player.IsLocalPlayer())
         {
             DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(true);
+            DestroyableSingleton<HudManager>.Instance.AbilityButton.ToggleVisible(false);
             // DestroyableSingleton<HudManager>.Instance.KillButton.ToggleVisible(player.Data.Role.IsImpostor);
             // DestroyableSingleton<HudManager>.Instance.AdminButton.ToggleVisible(player.Data.Role.IsImpostor);
             // DestroyableSingleton<HudManager>.Instance.SabotageButton.ToggleVisible(player.Data.Role.IsImpostor);

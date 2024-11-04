@@ -60,7 +60,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             case 5:
                 {
-                    if (body != null)
+                    if (body != null && _player.IsLocalPlayer())
                     {
                         if (CheckRevive(body) == true)
                         {
@@ -101,7 +101,7 @@ public class AltruistRole : CustomRoleBehavior
 
     public override void OnResetAbilityState(bool isTimeOut)
     {
-        if (!isTimeOut)
+        if (!isTimeOut && _player.IsLocalPlayer())
         {
             CancelRevive();
         }
@@ -175,6 +175,7 @@ public class AltruistRole : CustomRoleBehavior
         }
 
         Revive(target, body);
+        SendRoleSync(0, [target, body]);
     }
 
     private void Revive(PlayerControl target, DeadBody body)
@@ -202,7 +203,21 @@ public class AltruistRole : CustomRoleBehavior
 
     public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
     {
-        base.OnSendRoleSync(syncId, writer, additionalParams);
+        switch (syncId)
+        {
+            case 0:
+                {
+                    if (additionalParams[0].TryCast<PlayerControl>(out var target))
+                    {
+                        writer.WritePlayerId(target);
+                    }
+                    if (additionalParams[1].TryCast<DeadBody>(out var body))
+                    {
+                        writer.WriteDeadBodyId(body);
+                    }
+                }
+                break;
+        }
     }
 
     public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
@@ -211,6 +226,13 @@ public class AltruistRole : CustomRoleBehavior
         {
             case 0:
                 {
+                    var target = reader.ReadPlayerId();
+                    var body = reader.ReadDeadBodyId();
+
+                    if (target != null && body != null) 
+                    {
+                        Revive(target, body);
+                    }
                 }
                 break;
         }

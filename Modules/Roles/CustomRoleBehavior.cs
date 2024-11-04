@@ -137,7 +137,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Checks if the role is a killing role.
     /// </summary>
-    public bool IsKillingRole =>
+    public virtual bool IsKillingRole =>
         RoleCategory == CustomRoleCategory.Killing ||
         Utils.GetCustomRoleClass(RoleType).CanKill;
 

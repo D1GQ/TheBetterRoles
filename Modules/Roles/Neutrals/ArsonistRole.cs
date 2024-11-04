@@ -14,6 +14,7 @@ namespace TheBetterRoles.Roles;
 public class ArsonistRole : CustomRoleBehavior
 {
     // Role Info
+    public override bool IsKillingRole => true;
     public override int RoleId => 32;
     public override string RoleColor => "#ff8900";
     public override CustomRoleBehavior Role => this;
