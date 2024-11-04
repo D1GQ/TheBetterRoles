@@ -80,7 +80,7 @@ static class InnerNetClientHelper
     public static MessageWriter StartActionSyncRpc(this InnerNetClient _, RpcAction action, PlayerControl? asPlayer = null)
     {
         var LocalPlayer = PlayerControl.LocalPlayer;
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable, -1);
+        MessageWriter writer = AmongUsClient.Instance.StartRpc(LocalPlayer.NetId, (byte)CustomRPC.SyncAction, SendOption.Reliable);
         writer.Write(Main.modSignature);
         writer.Write((int)action);
         writer.Write(asPlayer?.PlayerId ?? LocalPlayer.PlayerId);
@@ -88,7 +88,7 @@ static class InnerNetClientHelper
         return writer;
     }
 
-    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => client.FinishRpcImmediately(writer);
+    public static void EndActionSyncRpc(this InnerNetClient client, MessageWriter writer) => writer.EndMessage();
 
     public static MessageWriter Copy(this MessageWriter writer)
     {

@@ -258,7 +258,7 @@ internal static class RPC
 
                             if (GameState.IsHost)
                             {
-                                SyncAllSettings(player);
+                                SyncAllSettings();
                             }
                         }
                         else

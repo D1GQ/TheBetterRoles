@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
@@ -11,9 +12,9 @@ public class RoleManagerPatch
     // role algorithm
     [HarmonyPatch(nameof(RoleManager.SelectRoles))]
     [HarmonyPrefix]
-    public static bool RoleManager_Prefix(/*RoleManager __instance*/)
+    public static bool RoleManager_Prefix(RoleManager __instance)
     {
-        CustomRoleManager.AssignRoles();
+        __instance.StartCoroutine(CustomRoleManager.AssignRolesCoroutine());
 
         return false;
     }

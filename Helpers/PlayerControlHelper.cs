@@ -384,7 +384,7 @@ static class PlayerControlHelper
     // Check if player is role type
     public static bool Is(this PlayerControl player, RoleTypes role) => player?.Data?.RoleType == role;
     public static bool Is(this PlayerControl player, CustomRoles role) => player?.BetterData()?.RoleInfo?.RoleType == role;
-    public static bool Is(this PlayerControl player, CustomRoleTeam roleTeam) => player?.BetterData()?.RoleInfo?.Role?.RoleTeam == roleTeam;
+    public static bool Is(this PlayerControl player, CustomRoleTeam roleTeam) => player?.Role()?.RoleTeam == roleTeam;
     public static bool Is(this PlayerControl player, CustomRoleCategory roleCategory) => player?.BetterData()?.RoleInfo?.Role?.RoleCategory == roleCategory;
     // Check if player is Ghost role type
     public static bool IsGhostRole(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role.Role?.RoleCategory == CustomRoleCategory.Ghost;

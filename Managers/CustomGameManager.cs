@@ -193,7 +193,7 @@ public class CustomGameManager
                     __instance.RoleText.color = RoleColor;
                     __instance.RoleBlurbText.color = RoleColor;
                 }, 0.0001f, shoudLog: false);
-                HudManager.Instance.MapButton.gameObject.SetActive(true);
+                HudManager.Instance?.MapButton?.gameObject?.SetActive(true);
             }
             catch { }
         }
@@ -501,6 +501,11 @@ public class CustomGameManager
 
     public static void GameStart()
     {
+        if (GameState.IsHost)
+        {
+            RPC.SyncAllSettings();
+        }
+
         GameHasEnded = false;
         CustomRoleManager.availableGhostRoles.Clear();
         CustomRoleBehavior.SubTeam.Clear();

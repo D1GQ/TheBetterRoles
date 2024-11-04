@@ -1,11 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System.Collections;
 using System.Reflection;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
+using UnityEngine;
 
 namespace TheBetterRoles.Managers;
 
@@ -75,49 +77,42 @@ public static class CustomRoleManager
     }
 
 
-    public static void AssignRoles()
+    public static IEnumerator AssignRolesCoroutine()
     {
-        if (!GameState.IsHost) return;
+        if (!GameState.IsHost) yield break;
 
-        try
+        int ImposterAmount = BetterGameSettings.ImpostorAmount.GetInt();
+        int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
+        int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
+
+        AdjustImposterAmount(ref ImposterAmount);
+
+        var availableRoles = GatherRoles(false);
+        var availableAddons = GatherRoles(true);
+
+        List<PlayerControl> players = Main.AllPlayerControls.Shuffle().ToList();
+
+        Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = new Dictionary<PlayerControl, RoleAssignmentData?>();
+
+        foreach (var player in players)
         {
-            int ImposterAmount = BetterGameSettings.ImpostorAmount.GetInt();
-            int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
-            int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
+            if (player == null) continue;
 
-            // Adjust ImposterAmount based on player count
-            AdjustImposterAmount(ref ImposterAmount);
+            var selectedRole = SelectRole(ref availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+            playerRoleAssignments[player] = selectedRole;
 
-            // Gather all available roles
-            var availableRoles = GatherRoles(false);
-            var availableAddons = GatherRoles(true);
+            var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
 
-            List<PlayerControl> players = Main.AllPlayerControls.Shuffle().ToList();
-
-            // Prepare assignments
-            Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];
-
-            foreach (var player in players)
-            {
-                if (player == null) continue;
-
-                var selectedRole = SelectRole(ref availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
-                playerRoleAssignments[player] = selectedRole;
-
-                var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
-
-                SyncPlayerRole(player, selectedRole, selectedAddons);
-            }
-
-            // Log all assignments
-            LogAllAssignments(playerRoleAssignments);
-
-            ActionRPCs.PlayIntroSync();
+            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
+            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
+            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
         }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
-        }
+
+        LogAllAssignments(playerRoleAssignments);
+
+        yield return new WaitForSeconds(0.5f);
+
+        ActionRPCs.PlayIntroSync();
     }
 
     private static void AdjustImposterAmount(ref int ImposterAmount)
@@ -286,18 +281,23 @@ public static class CustomRoleManager
         return availableAddons.Where(role => selectedAddons.Contains(role.RoleType)).ToList();
     }
 
-    private static void SyncPlayerRole(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
+    private static IEnumerator SyncPlayerRoleCoroutine(PlayerControl player, RoleAssignmentData? selectedRole, List<RoleAssignmentData> selectedAddons)
     {
-        Logger.Log($"{player.Data.PlayerName} -> {selectedRole?._role.RoleName}");
+        if (selectedRole?._role != null)
+        {
+            Logger.Log($"{player.Data.PlayerName} -> {selectedRole._role.RoleName}");
+            player.SetRoleSync(selectedRole._role.RoleType);
+            yield return new WaitForSeconds(0.05f);
+        }
 
-        // Sync main role
-        player.SetRoleSync(selectedRole._role.RoleType);
-
-        // Sync addons
         foreach (var addon in selectedAddons)
         {
-            Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
-            player.SetRoleSync(addon._role.RoleType);
+            if (addon?._role != null)
+            {
+                Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
+                player.SetRoleSync(addon._role.RoleType);
+                yield return new WaitForSeconds(0.05f);
+            }
         }
     }
 
@@ -393,8 +393,7 @@ public static class CustomRoleManager
         if (list == null || list.Count == 0)
             throw new ArgumentException("List is null or empty!");
 
-        Random random = new();
-        return random.Next(0, list.Count); // Returns a random index from 0 to list.Count - 1
+        return IRandom.Instance.Next(0, list.Count);
     }
 
     public static string GetRoleMarks(PlayerControl target)
@@ -582,7 +581,7 @@ public static class CustomRoleManager
 
     public static void SetCustomRole(PlayerControl player, CustomRoles role)
     {
-        if (player == null) return;
+        if (player == null || player?.BetterData()?.RoleInfo?.Role.RoleType == role) return;
 
         player.RawSetRole(RoleTypes.Crewmate);
 

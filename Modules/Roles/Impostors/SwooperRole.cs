@@ -52,7 +52,7 @@ public class SwooperRole : CustomRoleBehavior
         {
             case 5:
                 isVisible = false;
-                SetInvisibility(true, false);
+                SetInvisibility(true);
                 InvisibilityButton.SetDuration();
                 break;
         }
@@ -68,21 +68,21 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    public override void FixedUpdate()
+    public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
-        SetInvisibility(!isVisible, true);
+        SetInvisibility(!isVisible);
     }
 
     public override void OnResetAbilityState(bool IsTimeOut)
     {
         isVisible = true;
-        InteractableTarget = true;
-        SetInvisibility(false, false);
+        SetInvisibility(false);
     }
 
-    private void SetInvisibility(bool isActive, bool isUpdate)
+    private void SetInvisibility(bool isActive)
     {
-        if (_player.IsLocalPlayer() || localPlayer.IsImpostorTeammate() || !localPlayer.IsAlive())
+        InteractableTarget = !isActive;
+        if (_player.IsLocalPlayer() || _player.IsImpostorTeammate() || !localPlayer.IsAlive())
         {
             _player.invisibilityAlpha = isActive ? 0.5f : 1f;
             SetNameTextAlpha(isActive ? 0.5f : 1f);
@@ -94,12 +94,12 @@ public class SwooperRole : CustomRoleBehavior
         }
 
         _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
-        if (isActive && (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Role.IsImpostor))
+        if (isActive && (localPlayer.Data.IsDead || _player.IsImpostorTeammate()))
         {
             return;
         }
 
-        if (!_player.IsLocalPlayer() && !isUpdate)
+        if (!_player.IsLocalPlayer())
         {
             SetTrueVisibility(!isActive);
         }
