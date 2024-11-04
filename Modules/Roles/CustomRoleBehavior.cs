@@ -1,6 +1,5 @@
 ﻿using AmongUs.GameOptions;
 using Hazel;
-using InnerNet;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
@@ -28,8 +27,8 @@ public class OptionAttributes
 
 public abstract class CustomRoleBehavior
 {
-    private bool hasSetup { get; set; } = false;
-    private bool hasDeinitialize { get; set; } = false;
+    protected bool hasSetup { get; set; } = false;
+    protected bool hasDeinitialize { get; set; } = false;
 
     /// <summary>
     /// A dictionary representing players recruited by this role to win together. 
@@ -161,7 +160,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Get automatically generated role Hash based on the role and player.
     /// </summary>
-    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player.BetterData().RoleInfo.AllRoles.IndexOf(Role)}{_player.PlayerId}");
+    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player.PlayerId}");
 
     /// <summary>
     /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 
@@ -598,7 +597,7 @@ public abstract class CustomRoleBehavior
         DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
 
         SetCooldownAndUse(id);
-        Logger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
+        Logger.LogMethodPrivate($"Using Ability({id}) as {Enum.GetName(type)}: {targetId}", GetType());
         OnAbilityUse(id, target, vent, body, null, type);
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
@@ -670,7 +669,7 @@ public abstract class CustomRoleBehavior
                 break;
             default:
                 {
-                    CustomRoleManager.RoleListener(_player, role => role.OnAbility(id, reader, this, target, vent, body), role => role == this);
+                    OnAbility(id, reader, this, target, vent, body);
                     CustomRoleManager.RoleListenerOther(role => role.OnAbilityOther(id, reader, this, target, vent, body));
                 }
                 break;
@@ -890,6 +889,12 @@ public abstract class CustomRoleBehavior
     /// Custom logic for what happens after the murder action is validated by the host can be placed here.
     /// </summary>
     public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
+
+    /// <summary>
+    /// Executes when a player disconnects.
+    /// Custom logic for handling disconnections.
+    /// </summary>
+    public virtual void OnDisconnect(PlayerControl target, DisconnectReasons reason) { }
 
     /// <summary>
     /// Check for an ability being used by another player. This checks if the action is allowed before execution.

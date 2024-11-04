@@ -3,12 +3,11 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
-using GameCore;
+using System.Diagnostics;
 using HarmonyLib;
 using Innersloth.IO;
 using System.Security.Cryptography;
 using System.Text;
-using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
@@ -98,6 +97,7 @@ public class Main : BasePlugin
 
         return text;
     }
+
     public static Harmony Harmony { get; } = new Harmony(PluginGuid);
 
     public static string TheBetterRolesVersion => PluginVersion;

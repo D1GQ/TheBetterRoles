@@ -105,11 +105,11 @@ internal static class RPC
         Int
     }
 
-    public static void SyncAllSettings(PlayerControl? player = null)
+    public static void SyncAllSettings()
     {
         if (!GameState.IsHost) return;
 
-        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncAllSettings, SendOption.Reliable, player != null ? player.Data.ClientId : -1);
+        var writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncAllSettings, SendOption.Reliable);
         writer.Write(Main.modSignature);
 
         List<int> ids = [];
@@ -196,7 +196,7 @@ internal static class RPC
             writer.Write(boolBuffer.ToArray()); // Write the packed Bool buffer as separate data
         }
 
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        writer.EndMessage();
     }
 
     public static void SyncOption(int id, string data, string value)

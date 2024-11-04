@@ -454,7 +454,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) Logger.LogMethodPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    // if (log) Logger.LogMethodPrivate($"RoleChecks check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -476,7 +476,7 @@ public static class CustomRoleManager
 
                 if (!predicate(role))
                 {
-                    if (log) Logger.LogMethodPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    // if (log) Logger.LogMethodPrivate($"RoleChecksOther check failed in {role.GetType().Name}.cs for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return false;
                 }
             }
@@ -496,7 +496,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) Logger.LogMethodPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    // if (log) Logger.LogMethodPrivate($"RoleChecksAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }
@@ -519,7 +519,7 @@ public static class CustomRoleManager
 
                 if (predicate(role))
                 {
-                    if (log) Logger.LogMethodPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
+                    // if (log) Logger.LogMethodPrivate($"RoleChecksOtherAny check passed in {role.GetType().Name} for player: {player.Data.PlayerName}", typeof(CustomRoleManager));
                     return true;
                 }
             }

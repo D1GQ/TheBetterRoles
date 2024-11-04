@@ -118,6 +118,7 @@ class GameDataHandleDisconnectPatch
 {
     public static void Prefix(/*GameData __instance,*/ [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] DisconnectReasons reason)
     {
+        CustomRoleManager.RoleListenerOther(role => role.OnDisconnect(player, reason));
         CustomRoleManager.RoleListener(player, role => role.OnResetAbilityState(false));
         player.BetterData().DisconnectReason = reason;
         RolePatch.ClearRoleData(player);

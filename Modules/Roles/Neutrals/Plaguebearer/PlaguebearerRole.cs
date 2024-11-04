@@ -96,6 +96,16 @@ public class PlaguebearerRole : CustomRoleBehavior
         CheckPestillenceCondition();
     }
 
+    public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    {
+        CheckPestillenceCondition();
+    }
+
+    public override void OnDisconnect(PlayerControl target, DisconnectReasons reason)
+    {
+        CheckPestillenceCondition();
+    }
+
     private void InfectPlayer(PlayerControl player)
     {
         infected.Add(player.Data);
@@ -112,6 +122,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     {
         if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(infected.Contains))
         {
+            SendRoleSync(0);
             CustomRoleManager.SetCustomRole(_player, CustomRoles.Pestillence);
             if (_player.Role() is PestillenceRole role)
             {

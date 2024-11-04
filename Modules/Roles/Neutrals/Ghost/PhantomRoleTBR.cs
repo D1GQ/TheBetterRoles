@@ -50,6 +50,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         InteractableTarget = true;
         _player.BetterData().IsFakeAlive = false;
+        _player.Data.IsDead = true;
         if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
         _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);

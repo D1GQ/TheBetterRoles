@@ -357,6 +357,7 @@ static class GameOptionsManagerPatch
     [HarmonyPostfix]
     public static void CreateSettings_Postfix(/*GameOptionsManager __instance*/)
     {
+        Main.CurrentOptions?.SetInt(Int32OptionNames.NumImpostors, 1);
         Main.CurrentOptions.SetInt(Int32OptionNames.RulePreset, 100);
         Main.CurrentOptions.SetBool(BoolOptionNames.IsDefaults, false);
 

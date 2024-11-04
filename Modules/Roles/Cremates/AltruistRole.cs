@@ -199,4 +199,20 @@ public class AltruistRole : CustomRoleBehavior
         player.MyPhysics.enabled = canMove;
         player.NetTransform.Halt();
     }
+
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        base.OnSendRoleSync(syncId, writer, additionalParams);
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                }
+                break;
+        }
+    }
 }

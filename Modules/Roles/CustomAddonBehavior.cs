@@ -40,6 +40,9 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
 
     protected override void SetUpRole()
     {
+        if (hasSetup) return;
+        hasSetup = true;
+
         Logger.LogMethodPrivate("Setting up Role Base!", GetType());
         SetUpSettings();
 

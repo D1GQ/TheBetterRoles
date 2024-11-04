@@ -95,7 +95,7 @@ class Logger
 #if DEBUG
         if (GameState.IsDev)
         {
-            Log(info, tag);
+            Log(info, tag, hostOnly: hostOnly);
             return;
         }
 #endif
