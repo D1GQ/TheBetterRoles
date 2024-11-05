@@ -175,8 +175,8 @@ public static class CustomRoleManager
 
             if (role._role.IsNeutral)
             {
-                if (role._role.CanKill && KillingNeutralAmount <= 0) continue;
-                if (!role._role.CanKill && BenignNeutralAmount <= 0) continue;
+                if (role._role.IsKillingRole && KillingNeutralAmount <= 0) continue;
+                if (!role._role.IsKillingRole && BenignNeutralAmount <= 0) continue;
             }
 
             validRoleTypes.Add(role.RoleType);

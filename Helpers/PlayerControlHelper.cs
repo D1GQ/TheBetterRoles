@@ -299,7 +299,7 @@ static class PlayerControlHelper
     // Set color outline on player
     public static void SetOutlineByHex(this PlayerControl player, bool active, string hexColor = "")
     {
-        Color color = Utils.HexToColor32(hexColor);
+        Color? color = Utils.HexToColor32(hexColor);
         player.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", active ? 1 : 0);
         SpriteRenderer[] longModeParts = player.cosmetics.currentBodySprite.LongModeParts;
         for (int i = 0; i < longModeParts.Length; i++)
@@ -317,7 +317,15 @@ static class PlayerControlHelper
         }
     }
 
-    public static void SetTrueVisorColor(this PlayerControl player, Color color) => player?.cosmetics?.bodySprites[0]?.BodySprite?.material?.SetColor(PlayerMaterial.VisorColor, color);
+    public static void SetTrueVisorColor(this PlayerControl player, Color color)
+    {
+        player?.cosmetics?.bodySprites[0]?.BodySprite?.material?.SetColor(PlayerMaterial.VisorColor, color);
+        var sprite = player.cosmetics.visor.GetComponent<SpriteRenderer>();
+        if (sprite != null)
+        {
+            sprite.color = color;
+        }
+    }
 
     public static void RawSetRole(this PlayerControl player, RoleTypes role) => DestroyableSingleton<RoleManager>.Instance.SetRole(player, role);
     // Check if player is selecting room to spawn in, for Airship
