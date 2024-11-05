@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
-using UnityEngine;
-using Reactor.Utilities;
+using System.Collections;
+using System.Reflection;
 using TheBetterRoles.Helpers;
-using Il2CppSystem.Linq.Expressions;
-using TheBetterRoles.Modules;
+using UnityEngine;
 
 namespace TheBetterRoles.Modules
 {

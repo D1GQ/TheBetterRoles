@@ -1,12 +1,10 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
-using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
-using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
