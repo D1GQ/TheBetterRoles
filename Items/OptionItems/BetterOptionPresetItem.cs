@@ -21,7 +21,7 @@ public class BetterOptionPresetItem : BetterOptionItem
 
     public BetterOptionPresetItem Create(BetterOptionTab gameOptionsMenu, int DefaultValue)
     {
-        intRange = new(1, 5);
+        intRange = new(1, 10);
         Increment = 1;
         if (DefaultValue < intRange.min) DefaultValue = intRange.min;
         if (DefaultValue > intRange.max) DefaultValue = intRange.max;
@@ -68,6 +68,8 @@ public class BetterOptionPresetItem : BetterOptionItem
 
     private void AdjustPreset()
     {
+        BetterDataManager.TempSettings.Clear();
+        BetterDataManager._settingsFileCache.Clear();
         if (!File.Exists(BetterDataManager.SettingsFile))
         {
             var initialData = new Dictionary<string, string>();
@@ -76,7 +78,6 @@ public class BetterOptionPresetItem : BetterOptionItem
         }
 
         GameSettingMenu.Instance.Close();
-
         PlayerControl localPlayer = PlayerControl.LocalPlayer;
         localPlayer.NetTransform.Halt();
         GameObject gameObject = UnityEngine.Object.Instantiate(GameStartManager.Instance.PlayerOptionsMenu);
@@ -89,7 +90,7 @@ public class BetterOptionPresetItem : BetterOptionItem
         _ = new LateTask(() =>
         {
             GameSettingMenu.Instance.ChangeTab(BetterTabs.SystemSettings.Id, false);
-            Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
+            Rpc<RpcSyncAllSettings>.Instance.Send(new());
         }, 0.25f, shoudLog: false);
     }
 

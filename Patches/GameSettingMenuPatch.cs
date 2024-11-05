@@ -1,10 +1,12 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -73,8 +75,13 @@ static class GameSettingMenuPatch
     public static int ActiveTab = 0;
     public static bool Preload = false;
 
-    public static void SetupSettings(bool IsPreload = false)
+    public static void SetupSettings(bool IsPreload = false, bool isSync = false)
     {
+        if (GameSettingMenu.Instance != null && IsPreload && isSync)
+        {
+            GameSettingMenu.Instance.Close();
+        }
+
         Preload = IsPreload;
         BetterOptionItem.IdNum = 0;
         BetterOptionItem.BetterOptionItems.Clear();

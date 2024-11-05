@@ -114,7 +114,7 @@ class BetterDataManager
         LoadSettingsIntoTemp();
     }
 
-    private static Dictionary<string, string> _settingsFileCache = [];
+    public static Dictionary<string, string> _settingsFileCache = [];
 
     private static Dictionary<string, string> LoadFileIfNeeded()
     {

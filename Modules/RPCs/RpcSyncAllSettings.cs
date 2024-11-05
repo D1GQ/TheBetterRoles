@@ -25,9 +25,10 @@ namespace TheBetterRoles.RPCs
         {
         }
 
-        public readonly struct Data(MessageReader? reader)
+        public readonly struct Data(Dictionary<int, string>? settings = null, byte[]? boolData = null)
         {
-            public readonly MessageReader? Reader = reader;
+            public readonly Dictionary<int, string>? Settings = settings;
+            public readonly byte[]? BoolData = boolData;
         }
 
         public override void Write(MessageWriter writer, Data data)
@@ -119,77 +120,71 @@ namespace TheBetterRoles.RPCs
 
         public override Data Read(MessageReader reader)
         {
-            return new Data(reader);
+            // Create a dictionary to store settings
+            Dictionary<int, string> settings = new Dictionary<int, string>();
+
+            // Read the number of settings
+            int count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                SettingType settingType = (SettingType)reader.ReadByte();
+                int id = reader.ReadInt32();
+
+                switch (settingType)
+                {
+                    case SettingType.Float:
+                        float floatValue = reader.ReadSingle();
+                        settings.Add(id, floatValue.ToString());
+                        break;
+
+                    case SettingType.Int:
+                        int intValue = reader.ReadInt32();
+                        settings.Add(id, intValue.ToString());
+                        break;
+
+                    case SettingType.Bool:
+                        settings.Add(id, "Bool"); // Placeholder to identify this as a Bool
+                        break;
+                }
+            }
+
+            // Read the Bool data buffer
+            int boolBufferLength = reader.ReadInt32();
+            byte[] boolData = reader.ReadBytes(boolBufferLength);
+
+            return new Data(settings, boolData);
         }
 
         public override void Handle(PlayerControl player, Data data)
         {
-            MessageReader? reader = data.Reader;
-
-            if (reader != null)
+            if (player.IsHost())
             {
-                if (player.IsHost())
+                BetterDataManager.HostSettings.Clear();
+                GameSettingMenuPatch.SetupSettings(true, true);
+
+                // Process Bool values from the Bool data buffer
+                int boolByteCount = data.BoolData.Length;
+                int boolIndex = 0;
+
+                foreach (var kvp in data.Settings.ToList()) // Convert to list to allow modification
                 {
-                    BetterDataManager.HostSettings.Clear();
-                    GameSettingMenuPatch.SetupSettings(true);
-
-                    int count = reader.ReadInt32(); // Read the number of settings
-
-                    // First, read the main data buffer
-                    Dictionary<int, string> settings = new Dictionary<int, string>();
-                    for (int i = 0; i < count; i++)
+                    if (kvp.Value == "Bool") // Check for Bool placeholder
                     {
-                        SettingType settingType = (SettingType)reader.ReadByte();
-                        int id = reader.ReadInt32();
-
-                        switch (settingType)
+                        int byteIndex = boolIndex / 8;
+                        if (byteIndex < boolByteCount)
                         {
-                            case SettingType.Float:
-                                float floatValue = reader.ReadSingle();
-                                settings.Add(id, floatValue.ToString());
-                                break;
-
-                            case SettingType.Int:
-                                int intValue = reader.ReadInt32();
-                                settings.Add(id, intValue.ToString());
-                                break;
-
-                            case SettingType.Bool:
-                                // We only read the Id here, the actual Bool value will be read from the Bool buffer later
-                                settings.Add(id, "Bool"); // Placeholder to identify this as a Bool
-                                break;
+                            bool boolValue = (data.BoolData[byteIndex] & (1 << (boolIndex % 8))) != 0;
+                            data.Settings[kvp.Key] = boolValue.ToString();
                         }
+                        boolIndex++;
                     }
+                }
 
-                    // Next, read the Bool data buffer
-                    int boolBufferLength = reader.ReadInt32();
-                    byte[] boolData = reader.ReadBytes(boolBufferLength);
-
-                    // Process Bool values
-                    int boolByteCount = boolData.Length;
-                    int boolIndex = 0;
-
-                    foreach (var kvp in settings.ToList()) // Convert to list to allow modification
-                    {
-                        if (kvp.Value == "Bool") // Check for Bool placeholder
-                        {
-                            // Calculate which byte and bit to read
-                            int byteIndex = boolIndex / 8;
-                            if (byteIndex < boolByteCount)
-                            {
-                                bool boolValue = (boolData[byteIndex] & 1 << boolIndex % 8) != 0; // Check the specific bit
-                                settings[kvp.Key] = boolValue.ToString();
-                            }
-                            boolIndex++;
-                        }
-                    }
-
-                    // Save settings
-                    foreach (var kvp in settings)
-                    {
-                        BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
-                        BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
-                    }
+                // Save settings
+                foreach (var kvp in data.Settings)
+                {
+                    BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
+                    BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
                 }
             }
         }
