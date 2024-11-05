@@ -3,7 +3,6 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TMPro;
 using UnityEngine;
-using static Il2CppSystem.Xml.XmlWellFormedWriter.AttributeValueCache;
 
 namespace TheBetterRoles.Items.OptionItems;
 

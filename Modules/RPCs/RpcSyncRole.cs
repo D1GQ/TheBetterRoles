@@ -1,11 +1,8 @@
 ﻿using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
-using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
-using TheBetterRoles.Roles;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.RPCs
 {
@@ -19,7 +16,7 @@ namespace TheBetterRoles.RPCs
         }
 
         public readonly struct Data(int syncId, int roleHash, object[]? writerParams = null, MessageReader? reader = null)
-        { 
+        {
             public readonly MessageReader? Reader = reader;
             public readonly object[]? WriterParams = writerParams;
 

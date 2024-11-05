@@ -4,7 +4,6 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Items.Buttons;
 

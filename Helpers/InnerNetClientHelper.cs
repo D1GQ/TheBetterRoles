@@ -1,6 +1,5 @@
 ﻿using Hazel;
 using InnerNet;
-using LibCpp2IL.Logging;
 using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Helpers;

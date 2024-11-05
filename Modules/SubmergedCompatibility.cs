@@ -4,7 +4,6 @@ using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System.Reflection;
-using TheBetterRoles.Helpers;
 using UnityEngine;
 
 namespace TheBetterRoles.Modules;

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using System.Collections;
 using System.Reflection;
-using BepInEx.Unity.IL2CPP.Utils;
 using TheBetterRoles.Helpers;
 using UnityEngine;
 

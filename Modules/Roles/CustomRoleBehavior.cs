@@ -502,7 +502,7 @@ public abstract class CustomRoleBehavior
             {
                 return !IsImpostor || !target.IsImpostorTeammate();
             };
-            KillButton.OnClick = () => 
+            KillButton.OnClick = () =>
             {
                 if (KillButton.lastTarget != null)
                 {

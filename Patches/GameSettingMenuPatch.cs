@@ -136,7 +136,7 @@ static class GameSettingMenuPatch
         BetterGameSettings.Algorithm = new BetterOptionStringItem().Create(-1, BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Algorithm"),
         ["Default", "NetRandomWrapper", "HashRandomWrapper", "Xorshift", "MersenneTwister"], 0);
         IRandom.SetInstanceById(BetterGameSettings.Algorithm.GetValue());
-        BetterGameSettings.Algorithm.OnValueChange = (BetterOptionItem opt) => 
+        BetterGameSettings.Algorithm.OnValueChange = (BetterOptionItem opt) =>
         {
             IRandom.SetInstanceById(opt.GetValue());
         };

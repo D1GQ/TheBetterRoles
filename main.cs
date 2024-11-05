@@ -5,6 +5,9 @@ using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Innersloth.IO;
+using Reactor;
+using Reactor.Networking;
+using Reactor.Networking.Attributes;
 using System.Security.Cryptography;
 using System.Text;
 using TheBetterRoles.Managers;
@@ -12,9 +15,6 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
-using Reactor;
-using Reactor.Networking.Attributes;
-using Reactor.Networking;
 
 namespace TheBetterRoles;
 

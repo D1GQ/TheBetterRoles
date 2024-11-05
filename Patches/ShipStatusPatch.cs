@@ -4,7 +4,6 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.Patches;
 

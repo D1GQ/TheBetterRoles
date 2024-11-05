@@ -54,7 +54,7 @@ internal class MainMenuPatch
                 settingsButton = CreateButton(
                     "SettingsButton",
                     new(0, 235, 255, byte.MaxValue),
-                    () => 
+                    () =>
                     {
                         UnityEngine.Object.Instantiate(GamePrefabHelper.GetPrefabByName("PlayerOptionsMenu"), parent: Camera.main.transform);
                     },

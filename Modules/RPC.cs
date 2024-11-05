@@ -1,17 +1,12 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
-using InnerNet;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
-using System.Numerics;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
-using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Patches;
 using TheBetterRoles.RPCs;
-using static UnityEngine.GraphicsBuffer;
 
 
 namespace TheBetterRoles.Modules;
@@ -250,7 +245,7 @@ internal static class RPC
     }
 
     private static bool CheckSetRoleRpc(PlayerControl player, CustomRoles role) => true;
-    
+
     public static void SendRpcMurder(this PlayerControl player,
         PlayerControl target,
         bool isAbility = false,
@@ -320,7 +315,7 @@ internal static class RPC
     }
 
     private static bool CheckReviveRpc(PlayerControl player) => true;
-    
+
     [MethodRpc((uint)ReactorRPCs.ReportBody, SendImmediately = true)]
     public static void SendRpcReportBody(this PlayerControl player, int bodyInfoId)
     {

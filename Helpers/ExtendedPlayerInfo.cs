@@ -12,7 +12,7 @@ namespace TheBetterRoles;
 public class ExtendedPlayerInfo : MonoBehaviour
 {
     // Mod Info
-    public bool DirtyName {  get; set; }
+    public bool DirtyName { get; set; }
     public float KickTimer { get; set; } = 8f;
     public bool HasMod { get; set; }
     public string Version { get; set; } = "";
