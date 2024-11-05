@@ -7,6 +7,13 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
+public enum SettingType
+{
+    Bool,
+    Float,
+    Int
+}
+
 namespace TheBetterRoles.RPCs
 {
     [RegisterCustomRpc((uint)ReactorRPCs.SyncAllSettings)]

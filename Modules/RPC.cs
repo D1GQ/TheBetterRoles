@@ -33,8 +33,6 @@ public enum CustomRPC : int
     AUMChat = 101,
 
     // The Better Roles RPC's
-    VersionRequest = 105,
-    VersionAccept,
     SyncAllSettings,
     SyncOption,
     RoleAction,
@@ -57,6 +55,8 @@ public enum CustomRPC : int
 
 public enum ReactorRPCs : uint
 {
+    VersionRequest,
+    VersionAccept,
     SyncAllSettings,
     SyncOption,
     ResetAbilityState,
@@ -144,27 +144,6 @@ internal static class RPC
         }
     }
 
-    public static void SendModRequest()
-    {
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionRequest, SendOption.None, -1);
-        messageWriter.Write(Main.GetVersionText().Replace(" ", "."));
-        AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
-    }
-
-    public static void SendModAccept()
-    {
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionAccept, SendOption.None, -1);
-        messageWriter.Write(Main.GetVersionText().Replace(" ", "."));
-        AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
-    }
-
-    public enum SettingType
-    {
-        Bool,
-        Float,
-        Int
-    }
-
     public static void HandleCustomRPC(PlayerControl player, byte callId, MessageReader oldReader)
     {
         if (player == null || player.IsLocalPlayer() || player.Data == null || Enum.IsDefined(typeof(RpcCalls), callId)) return;
@@ -175,56 +154,6 @@ internal static class RPC
 
             switch ((CustomRPC)callId)
             {
-                case CustomRPC.VersionRequest:
-                    {
-                        var version = reader.ReadString();
-
-                        player.BetterData().HasMod = true;
-                        player.BetterData().Version = version;
-
-                        if (version == Main.GetVersionText().Replace(" ", "."))
-                        {
-                            PlayerControl.LocalPlayer.BetterData().HasMod = true;
-                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
-                        }
-                        else
-                        {
-                            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
-                            PlayerControl.LocalPlayer.BetterData().MismatchVersion = true;
-                            PlayerControl.LocalPlayer.BetterData().HasMod = true;
-                            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
-                        }
-                        SendModAccept();
-
-                        Utils.DirtyAllNames();
-                    }
-                    break;
-                case CustomRPC.VersionAccept:
-                    {
-                        var version = reader.ReadString();
-
-                        if (version == Main.GetVersionText().Replace(" ", "."))
-                        {
-                            player.BetterData().HasMod = true;
-                            player.BetterData().Version = version;
-
-                            if (GameState.IsHost)
-                            {
-                                Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
-                            }
-                        }
-                        else
-                        {
-                            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
-                            player.BetterData().MismatchVersion = true;
-                            player.BetterData().HasMod = true;
-                            player.BetterData().Version = version;
-                            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
-                        }
-
-                        Utils.DirtyAllNames();
-                    }
-                    break;
                 case CustomRPC.RoleAction:
                 case CustomRPC.SyncRole:
                     {
@@ -258,6 +187,56 @@ internal static class RPC
         }
 
         return true;
+    }
+
+    [MethodRpc((uint)ReactorRPCs.VersionRequest, SendImmediately = true)]
+    public static void SendVersionRequest(this PlayerControl player, string version)
+    {
+        version = version.Replace(" ", ".");
+        player.BetterData().HasMod = true;
+        player.BetterData().Version = version;
+
+        if (version == Main.GetVersionText().Replace(" ", "."))
+        {
+            PlayerControl.LocalPlayer.BetterData().HasMod = true;
+            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
+        }
+        else
+        {
+            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
+            PlayerControl.LocalPlayer.BetterData().MismatchVersion = true;
+            PlayerControl.LocalPlayer.BetterData().HasMod = true;
+            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
+        }
+        player.SendVersionAccept(version);
+
+        Utils.DirtyAllNames();
+    }
+
+    [MethodRpc((uint)ReactorRPCs.VersionAccept, SendImmediately = true)]
+    public static void SendVersionAccept(this PlayerControl player, string version)
+    {
+        version = version.Replace(" ", ".");
+        if (version == Main.GetVersionText().Replace(" ", "."))
+        {
+            player.BetterData().HasMod = true;
+            player.BetterData().Version = version;
+
+            if (GameState.IsHost)
+            {
+                Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
+            }
+        }
+        else
+        {
+            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
+            player.BetterData().MismatchVersion = true;
+            player.BetterData().HasMod = true;
+            player.BetterData().Version = version;
+            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
+        }
+
+        Utils.DirtyAllNames();
     }
 
     [MethodRpc((uint)ReactorRPCs.PlayIntro, SendImmediately = true)]

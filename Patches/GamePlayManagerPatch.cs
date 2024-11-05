@@ -17,7 +17,7 @@ class GamePlayManager
         {
             _ = new LateTask(() =>
             {
-                RPC.SendModRequest();
+                PlayerControl.LocalPlayer.SendVersionRequest(Main.GetVersionText());
             }, 3f, shoudLog: false);
         }
 
