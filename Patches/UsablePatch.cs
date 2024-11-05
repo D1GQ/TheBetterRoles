@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
 
@@ -123,7 +124,7 @@ public class UsablePatch
                 condition &= true;
 
                 options.HostOnly = false;
-                if (!GameState.IsTBRLobby)
+                if (!GameState.IsTBRLobby || !GameState.IsHost && !BetterDataManager.HostSettings.Any())
                 {
                     condition = false;
                 }

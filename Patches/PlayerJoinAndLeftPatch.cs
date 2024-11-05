@@ -11,6 +11,8 @@ class OnGameJoinedPatch
 {
     public static void Postfix(/*AmongUsClient __instance*/)
     {
+        BetterDataManager.HostSettings.Clear();
+
         try
         {
             // Fix host icon in lobby on modded servers
