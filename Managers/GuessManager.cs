@@ -244,7 +244,7 @@ public class GuessTab
     public string TabName { get; private set; } = string.Empty;
     private int RoleIndex { get; set; } = 0;
     private int pageButtonsIndex = 0;
-    private int rolesPerPage = 4;
+    private int rolesPerPage = 42;
     private GuessManager? guessManager;
     private PassiveButton? nextPageButton;
     private PassiveButton? previousPageButton;

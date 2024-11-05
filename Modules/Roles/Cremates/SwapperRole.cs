@@ -213,8 +213,8 @@ public class SwapperRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    writer.Write(firstTargetData != null ? firstTargetData.PlayerId : (byte)255);
-                    writer.Write(secondTargetData != null ? secondTargetData.PlayerId : (byte)255);
+                    writer.WritePlayerDataId(firstTargetData);
+                    writer.WritePlayerDataId(secondTargetData);
                     writer.Write(hasSwapped);
                 }
                 break;
@@ -227,8 +227,8 @@ public class SwapperRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    firstTargetData = Utils.PlayerDataFromPlayerId(reader.ReadByte());
-                    secondTargetData = Utils.PlayerDataFromPlayerId(reader.ReadByte());
+                    firstTargetData = reader.ReadPlayerDataId();
+                    secondTargetData = reader.ReadPlayerDataId();
                     hasSwapped = reader.ReadBoolean();
                 }
                 break;
