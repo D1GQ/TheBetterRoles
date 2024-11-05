@@ -308,11 +308,11 @@ static class PlayerControlHelper
         }
         if (color != null)
         {
-            player.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", color);
+            player.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", (Color)color);
             longModeParts = player.cosmetics.currentBodySprite.LongModeParts;
             for (int i = 0; i < longModeParts.Length; i++)
             {
-                longModeParts[i].material.SetColor("_OutlineColor", color);
+                longModeParts[i].material.SetColor("_OutlineColor", (Color)color);
             }
         }
     }
