@@ -219,26 +219,26 @@ internal static class RPC
     }
     private static bool CheckResetAbilityStateRpc(PlayerControl player, int id) => true;
 
-    public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoles roleType, bool RemoveAddon = false)
+    public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoles roleType, bool removeAddon = false, bool isAssigned = false)
     {
-        player.SendTrueRpcSetCustomRole((int)roleType, RemoveAddon);
+        player.SendTrueRpcSetCustomRole((int)roleType, removeAddon, isAssigned);
     }
 
     [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
-    private static void SendTrueRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool RemoveAddon = false)
+    private static void SendTrueRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool removeAddon = false, bool isAssigned = false)
     {
         var role = (CustomRoles)roleTypeInt;
         if (CheckSetRoleRpc(player, role))
         {
             if (!Utils.GetCustomRoleClass(role).IsAddon)
             {
-                CustomRoleManager.SetCustomRole(player, role);
+                CustomRoleManager.SetCustomRole(player, role, isAssigned);
             }
             else
             {
-                if (!RemoveAddon)
+                if (!removeAddon)
                 {
-                    CustomRoleManager.AddAddon(player, role);
+                    CustomRoleManager.AddAddon(player, role, isAssigned);
                 }
                 else
                 {

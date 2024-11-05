@@ -403,7 +403,7 @@ public abstract class CustomRoleBehavior
         return RoleUID + num;
     }
 
-    public CustomRoleBehavior Initialize(PlayerControl player)
+    public CustomRoleBehavior Initialize(PlayerControl player, bool isAssigned = false)
     {
         if (player != null)
         {
@@ -413,6 +413,7 @@ public abstract class CustomRoleBehavior
             {
                 player.BetterData().RoleInfo.Role = this;
                 player.BetterData().RoleInfo.RoleType = RoleType;
+                if (isAssigned) OnRoleAssigned();
                 SetUpRole();
             }
             else
@@ -420,6 +421,7 @@ public abstract class CustomRoleBehavior
                 if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == RoleType))
                 {
                     player.BetterData().RoleInfo.Addons.Add((CustomAddonBehavior)this);
+                    if (isAssigned) OnRoleAssigned();
                     SetUpRole();
                 }
             }
@@ -740,6 +742,12 @@ public abstract class CustomRoleBehavior
     /// Determines the win condition for the role. This can be overridden by roles that have special win conditions.
     /// </summary>
     public virtual bool WinCondition() => false;
+
+    /// <summary>
+    /// A virtual method that can be overridden to include additional logic for the role on assigned.
+    /// This method is called at the end of role assignment to allow customization of role-specific behavior.
+    /// </summary>
+    public virtual void OnRoleAssigned() { }
 
     /// <summary>
     /// A virtual method that can be overridden to include additional setup logic for the role.

@@ -289,7 +289,7 @@ public static class CustomRoleManager
         if (selectedRole?._role != null)
         {
             Logger.Log($"{player.Data.PlayerName} -> {selectedRole._role.RoleName}");
-            player.SendRpcSetCustomRole(selectedRole._role.RoleType);
+            player.SendRpcSetCustomRole(selectedRole._role.RoleType, isAssigned: true);
             yield return new WaitForSeconds(0.05f);
         }
 
@@ -298,7 +298,7 @@ public static class CustomRoleManager
             if (addon?._role != null)
             {
                 Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
-                player.SendRpcSetCustomRole(addon._role.RoleType);
+                player.SendRpcSetCustomRole(addon._role.RoleType, isAssigned: true);
                 yield return new WaitForSeconds(0.05f);
             }
         }
@@ -369,7 +369,7 @@ public static class CustomRoleManager
             {
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
-                player.SendRpcSetCustomRole(selectedGhostRole._role.RoleType);
+                player.SendRpcSetCustomRole(selectedGhostRole._role.RoleType, isAssigned: true);
                 Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
@@ -582,7 +582,7 @@ public static class CustomRoleManager
         }
     }
 
-    public static void SetCustomRole(PlayerControl player, CustomRoles role)
+    public static void SetCustomRole(PlayerControl player, CustomRoles role, bool isAssigned = false)
     {
         if (player == null || player?.BetterData()?.RoleInfo?.Role.RoleType == role) return;
 
@@ -591,10 +591,10 @@ public static class CustomRoleManager
         player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
 
         CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
-        newRole?.Initialize(player);
+        newRole?.Initialize(player, isAssigned);
     }
 
-    public static void AddAddon(PlayerControl player, CustomRoles role)
+    public static void AddAddon(PlayerControl player, CustomRoles role, bool isAssigned = false)
     {
         if (player == null) return;
 
@@ -605,7 +605,7 @@ public static class CustomRoleManager
             if (roleClass.IsAddon && !player.BetterData().RoleInfo.Addons.Contains(roleClass))
             {
                 CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
-                newRole?.Initialize(player);
+                newRole?.Initialize(player, isAssigned);
             }
         }
     }
