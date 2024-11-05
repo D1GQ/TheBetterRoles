@@ -481,6 +481,7 @@ public abstract class CustomRoleBehavior
         if (_player != null)
         {
             SabotageButton = AddButton(new BaseAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, this, true));
+            SabotageButton.UseAsDead = true;
             SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
             SabotageButton.OnClick = () =>
             {
@@ -583,7 +584,7 @@ public abstract class CustomRoleBehavior
         Rpc<RpcRoleAbility>.Instance.Send(_player, new(RoleHash, id, targetId, type, this));
     }
 
-    private void SetCooldownAndUse(int id)
+    public void SetCooldownAndUse(int id)
     {
         Buttons.FirstOrDefault(b => b.Id == id)?.SetCooldown();
         Buttons.FirstOrDefault(b => b.Id == id)?.RemoveUse();

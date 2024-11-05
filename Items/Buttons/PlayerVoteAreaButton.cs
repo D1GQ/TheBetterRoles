@@ -12,7 +12,7 @@ public class PlayerVoteAreaButton
     public Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (button, pva, targetData) => { };
     public Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && !targetData.IsLocalData(); };
     public CustomRoleBehavior? Role;
-    public bool CanUseAsDead = false;
+    public bool CanUseAsDead { get; set; } = false;
     public bool Enabled = true;
 
     public PlayerVoteAreaButton? Create(string name, CustomRoleBehavior? role = null, Sprite? sprite = null)
@@ -31,8 +31,8 @@ public class PlayerVoteAreaButton
             Button.transform.position += new Vector3(0.35f * AllButtons.Count, 0f, 0f);
             Button.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
             Button.name = $"Button({name})";
-            Button.OnClick = new();
             var target = Utils.PlayerDataFromPlayerId(pva.TargetPlayerId);
+            Button.OnClick = new();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.Results)

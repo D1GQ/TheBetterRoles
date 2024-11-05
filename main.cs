@@ -1,4 +1,5 @@
-﻿using AmongUs.GameOptions;
+﻿using AmongUs.Data;
+using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -129,6 +130,8 @@ public class Main : BasePlugin
             if (GameOptionsManager.Instance?.GameHostOptions != null && GameOptionsManager.Instance?.CurrentGameOptions != null)
             {
                 GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
+                if (!GameState.IsHideNSeek) DataManager.Settings.Multiplayer.RawNormalHostOptions = GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.GameHostOptions, false);
+                else DataManager.Settings.Multiplayer.rawHideNSeekHostOptions = GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.GameHostOptions, false);
             }
         }
     }

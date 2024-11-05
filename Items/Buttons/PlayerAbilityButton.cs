@@ -51,7 +51,7 @@ public class PlayerAbilityButton : BaseButton
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
             OnClick = Click;
-            Button.OnClick.RemoveAllListeners();
+            Button.OnClick = new();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
@@ -100,7 +100,7 @@ public class PlayerAbilityButton : BaseButton
     {
         base.FixedUpdate();
 
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        Visible = (PlayerControl.LocalPlayer.IsAlive() || UseAsDead) && VisibleCondition() && BaseShow();
 
         PlayerControl? target = null;
 

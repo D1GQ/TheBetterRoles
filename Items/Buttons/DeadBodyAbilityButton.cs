@@ -50,7 +50,7 @@ public class DeadBodyAbilityButton : BaseButton
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
             OnClick = Click;
-            Button.OnClick.RemoveAllListeners();
+            Button.OnClick = new();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
@@ -99,7 +99,7 @@ public class DeadBodyAbilityButton : BaseButton
     {
         base.FixedUpdate();
 
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        Visible = (PlayerControl.LocalPlayer.IsAlive() || UseAsDead) && VisibleCondition() && BaseShow();
 
         DeadBody? target = null;
 

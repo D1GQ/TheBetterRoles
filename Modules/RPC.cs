@@ -221,13 +221,13 @@ internal static class RPC
 
     public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoles roleType, bool RemoveAddon = false)
     {
-        player.SendTrueRpcSetCustomRole((short)roleType, RemoveAddon);
+        player.SendTrueRpcSetCustomRole((int)roleType, RemoveAddon);
     }
 
     [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
-    private static void SendTrueRpcSetCustomRole(this PlayerControl player, short roleTypeInt16, bool RemoveAddon = false)
+    private static void SendTrueRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool RemoveAddon = false)
     {
-        var role = (CustomRoles)roleTypeInt16;
+        var role = (CustomRoles)roleTypeInt;
         if (CheckSetRoleRpc(player, role))
         {
             if (!Utils.GetCustomRoleClass(role).IsAddon)

@@ -1,5 +1,6 @@
 ﻿
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
@@ -51,7 +52,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         InteractableTarget = true;
         _player.BetterData().IsFakeAlive = false;
         _player.Data.IsDead = true;
-        if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(_player.IsAlive());
         _player.transform.Find("Names").gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
@@ -74,7 +74,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     private void SpawnInRandomVent()
     {
         if (HasBeenClicked) return;
-        var vent = Main.AllEnabledVents[UnityEngine.Random.Range(0, Main.AllEnabledVents.Length)];
+        var vent = Main.AllEnabledVents[IRandom.Instance.Next(0, Main.AllEnabledVents.Length)];
 
         if (vent != null)
         {
@@ -103,8 +103,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         if (!HasBeenClicked)
         {
-            if (_player.IsLocalPlayer()) DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
-
             if (_player.MyPhysics.Animations.IsPlayingRunAnimation() || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || _player.inMovingPlat)
             {
                 Alpha += 0.005f;

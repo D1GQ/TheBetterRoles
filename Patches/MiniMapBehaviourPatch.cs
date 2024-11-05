@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
 
@@ -17,12 +18,10 @@ public class MiniMapBehaviourPatch
         {
             if (opts != null && !GameState.IsMeeting && !GameState.IsExilling)
             {
-                if (PlayerControl.LocalPlayer.RoleAssigned())
+                if (CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.CanSabotage && role.SabotageButton != null && !role.SabotageButton.Hacked)
+                    && opts.Mode != MapOptions.Modes.CountOverlay)
                 {
-                    if (PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.CanSabotage && opts.Mode != MapOptions.Modes.CountOverlay)
-                    {
-                        opts.Mode = MapOptions.Modes.Sabotage;
-                    }
+                    opts.Mode = MapOptions.Modes.Sabotage;
                 }
             }
         }

@@ -67,7 +67,7 @@ public class VentAbilityButton : BaseButton
             ActionButton.graphic.SetCooldownNormalizedUvs();
 
             OnClick = Click;
-            Button.OnClick.RemoveAllListeners();
+            Button.OnClick = new();
             Button.OnClick.AddListener((Action)(() =>
             {
                 if (CanInteractOnPress())
@@ -141,7 +141,7 @@ public class VentAbilityButton : BaseButton
     {
         base.FixedUpdate();
 
-        Visible = UseAsDead == !PlayerControl.LocalPlayer.IsAlive() && VisibleCondition() && BaseShow();
+        Visible = (PlayerControl.LocalPlayer.IsAlive() || UseAsDead) && VisibleCondition() && BaseShow();
 
         Vent? targetVent = null;
 

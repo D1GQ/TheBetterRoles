@@ -19,6 +19,11 @@ class GamePlayManager
             {
                 PlayerControl.LocalPlayer?.SendVersionRequest(Main.GetVersionText());
             }, 3f, shoudLog: false);
+
+            _ = new LateTask(() =>
+            {
+                GameOptionsManager.Instance?.Initialize();
+            }, 2f, shoudLog: false);
         }
 
         // Disabled annoying music

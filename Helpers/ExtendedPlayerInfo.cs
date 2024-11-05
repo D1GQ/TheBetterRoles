@@ -70,6 +70,12 @@ public class ExtendedPlayerInfo : MonoBehaviour
                     }
                 }
             }
+
+            if (pc.IsLocalPlayer())
+            {
+                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(pc.IsAlive());
+                DestroyableSingleton<HudManager>.Instance?.AbilityButton.gameObject.SetActive(!pc.IsAlive(true) && pc.Role()?.IsGhostRole != true);
+            }
         }
     }
 }

@@ -57,6 +57,7 @@ namespace TheBetterRoles.RPCs
             if (data.Role.CheckRoleAction(data.ButtonId, target, vent, body) == true)
             {
                 Logger.LogMethodPrivate($"Using Ability({data.ButtonId}) on {Enum.GetName(data.TargetType)}: {data.TargetId}", GetType());
+                data.Role.SetCooldownAndUse(data.ButtonId);
                 data.Role.OnAbilityUse(data.ButtonId, target, vent, body, data.Reader, data.TargetType);
             }
         }
