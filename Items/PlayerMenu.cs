@@ -61,7 +61,7 @@ public class PlayerMenu
             shapeshifterPanel.transform.localPosition = new Vector3(PlayerMinigame.XStart + num * PlayerMinigame.XOffset, PlayerMinigame.YStart + num2 * PlayerMinigame.YOffset, -1f);
             shapeshifterPanel.SetPlayer(i, player, (Action)(() =>
             {
-                PlayerControl.LocalPlayer.SendRpcPlayerMenu(Id, (int)Role.RoleType, player, false);
+                PlayerControl.LocalPlayer.SendRpcPlayerMenu(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
             }));
             shapeshifterPanel.NameText.color = player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : Color.white;
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
@@ -96,7 +96,7 @@ public class MinigamePatch
             var menu = PlayerMenu.AllPlayerMenus.FirstOrDefault(m => m.PlayerMinigame == shapeshifterInstance);
             if (menu != null)
             {
-                PlayerControl.LocalPlayer.SendRpcPlayerMenu(menu.Id, (int)menu.Role.RoleType, null, true);
+                PlayerControl.LocalPlayer.SendRpcPlayerMenu(menu.Id, (int)menu.Role.RoleType, null, menu, null, true);
                 PlayerMenu.AllPlayerMenus.Remove(menu);
             }
         }

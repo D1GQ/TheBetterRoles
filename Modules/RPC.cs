@@ -11,6 +11,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches;
 using TheBetterRoles.RPCs;
+using static UnityEngine.GraphicsBuffer;
 
 
 namespace TheBetterRoles.Modules;
@@ -423,16 +424,26 @@ internal static class RPC
         return true;
     }
 
-    [MethodRpc((uint)ReactorRPCs.PlayerMenu, SendImmediately = true)]
-    public static void SendRpcPlayerMenu(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo? target, bool close)
+    public static void SendRpcPlayerMenu(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo? target, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool close)
     {
-        var menu = PlayerMenu.AllPlayerMenus.FirstOrDefault(m => m.Id == Id);
         if (CheckPlayerMenuRpc(player, target) == true)
         {
-            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, menu, menu.PlayerMinigame.Cast<ShapeshifterPanel>(), close), role => role.RoleType == (CustomRoles)roleType);
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, menu, playerPanel, close), role => role.RoleType == (CustomRoles)roleType);
         }
+
+        player.SendTrueRpcPlayerMenu(Id, roleType, target?.PlayerId ?? 255, close);
     }
 
+    [MethodRpc((uint)ReactorRPCs.PlayerMenu, SendImmediately = true, LocalHandling = RpcLocalHandling.None)]
+    public static void SendTrueRpcPlayerMenu(this PlayerControl player, int Id, int roleType, byte targetId, bool close)
+    {
+        var target = Utils.PlayerDataFromPlayerId(targetId);
+
+        if (CheckPlayerMenuRpc(player, target) == true)
+        {
+            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, null, null, close), role => role.RoleType == (CustomRoles)roleType);
+        }
+    }
     private static bool CheckPlayerMenuRpc(PlayerControl player, NetworkedPlayerInfo? target) => true;
 
     [MethodRpc((uint)ReactorRPCs.PlayerPress, SendImmediately = true)]
