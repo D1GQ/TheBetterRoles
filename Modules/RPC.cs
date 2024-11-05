@@ -468,12 +468,12 @@ internal static class RPC
         {
             // Run after checks for roles
             CustomRoleManager.RoleListener(player, role => role.OnVent(player, ventId, Exit));
-
             CustomRoleManager.RoleListenerOther(role => role.OnVentOther(player, ventId, Exit));
 
             if (!Exit)
             {
-                player.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
+                player.MyPhysics.StopAllCoroutines();
+                player.MyPhysics.StartCoroutine(player.MyPhysics.CoEnterVent(ventId));
                 if (player.IsLocalPlayer())
                 {
                     ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(
@@ -482,7 +482,8 @@ internal static class RPC
             }
             else
             {
-                player.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
+                player.MyPhysics.StopAllCoroutines();
+                player.MyPhysics.StartCoroutine(player.MyPhysics.CoExitVent(ventId));
                 if (player.IsLocalPlayer())
                 {
                     ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == ventId).SetButtons(false);
