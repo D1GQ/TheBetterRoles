@@ -227,6 +227,7 @@ public class SwapperRole : CustomRoleBehavior
         {
             case 0:
                 {
+                    Logger.InGame("TEST");
                     firstTargetData = reader.ReadPlayerDataId();
                     secondTargetData = reader.ReadPlayerDataId();
                     hasSwapped = reader.ReadBoolean();

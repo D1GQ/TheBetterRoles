@@ -1,11 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using Hazel;
+using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles;
@@ -160,7 +162,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Get automatically generated role Hash based on the role and player.
     /// </summary>
-    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player.PlayerId}");
+    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player?.PlayerId ?? 255}");
 
     /// <summary>
     /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 
@@ -578,36 +580,7 @@ public abstract class CustomRoleBehavior
 
     public void CheckAndUseAbility(int id, int targetId, TargetType type)
     {
-        Logger.LogMethodPrivate($"Checking Ability({id}) usage on {Enum.GetName(type)}: {targetId}", GetType());
-
-        PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
-        Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
-        DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
-
-        if (CheckRoleAction(id, target, vent, body) == true)
-        {
-            UseAbility(id, targetId, type);
-        }
-    }
-
-    private void UseAbility(int id, int targetId, TargetType type)
-    {
-        PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
-        Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
-        DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
-
-        SetCooldownAndUse(id);
-        Logger.LogMethodPrivate($"Using Ability({id}) as {Enum.GetName(type)}: {targetId}", GetType());
-        OnAbilityUse(id, target, vent, body, null, type);
-
-        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RoleAction, SendOption.Reliable, -1);
-        writer.WritePlayerId(_player);
-        writer.Write(RoleHash);
-        writer.Write((byte)id);
-        writer.Write(targetId);
-        writer.Write((byte)type);
-        AbilityWriter(id, this, ref writer);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        Rpc<RpcRoleAbility>.Instance.Send(_player, new(RoleHash, id, targetId, type, this));
     }
 
     private void SetCooldownAndUse(int id)
@@ -616,43 +589,7 @@ public abstract class CustomRoleBehavior
         Buttons.FirstOrDefault(b => b.Id == id)?.RemoveUse();
     }
 
-    public void HandleRpc(MessageReader reader, byte callId, PlayerControl player, PlayerControl realSender)
-    {
-        _ = reader.ReadPlayerId(); // Player Id
-        _ = reader.ReadInt32(); // Role hash
-
-        switch ((CustomRPC)callId)
-        {
-            case CustomRPC.RoleAction:
-                {
-                    var id = reader.ReadByte();
-                    var targetId = reader.ReadInt32();
-                    var type = (TargetType)reader.ReadByte();
-
-                    PlayerControl? target = type == TargetType.Player ? Utils.PlayerFromPlayerId(targetId) : null;
-                    Vent? vent = type == TargetType.Vent ? ShipStatus.Instance.AllVents.FirstOrDefault(v => v.Id == targetId) : null;
-                    DeadBody? body = type == TargetType.Body ? Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == targetId) : null;
-
-                    SetCooldownAndUse(id);
-
-                    if (CheckRoleAction(id, target, vent, body) == true)
-                    {
-                        Logger.LogMethodPrivate($"Using Ability({id}) on {Enum.GetName(type)}: {targetId}", GetType());
-                        OnAbilityUse(id, target, vent, body, reader, type);
-                    }
-                }
-                break;
-            case CustomRPC.SyncRole:
-                {
-                    var syncNum = reader.ReadInt32();
-                    OnReceiveRoleSync(syncNum, reader, realSender);
-                    Utils.DirtyAllNames();
-                }
-                break;
-        }
-    }
-
-    private void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body, MessageReader? reader, TargetType type)
+    public void OnAbilityUse(int id, PlayerControl? target, Vent? vent, DeadBody? body, MessageReader? reader, TargetType type)
     {
         if (target != null && type == TargetType.Player)
         {
@@ -678,7 +615,7 @@ public abstract class CustomRoleBehavior
         Utils.DirtyAllNames();
     }
 
-    private bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
+    public bool CheckRoleAction(int id, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
         {
@@ -730,15 +667,7 @@ public abstract class CustomRoleBehavior
     /// <param name="additionalParams">Optional additional parameters for the ability.</param>
     protected void SendRoleSync(int syncId, object[]? additionalParams = null)
     {
-        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncRole, SendOption.Reliable, -1);
-        writer.WritePlayerId(_player);
-        writer.Write(RoleHash);
-        writer.Write(syncId);
-        OnSendRoleSync(syncId, writer, additionalParams);
-
-        Logger.LogMethodPrivate($"Sync role({syncId}), Length: {writer.Length}", GetType());
-
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        Rpc<RpcSyncRole>.Instance.Send(_player, new(syncId, RoleHash, additionalParams));
     }
 
     /// <summary>

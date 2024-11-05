@@ -173,7 +173,6 @@ public class BaseButton
             SetCooldown();
             Text.SetText(Name);
             RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
-            Role.OnDurationEnd(Id, isTimeOut);
         }
     }
 

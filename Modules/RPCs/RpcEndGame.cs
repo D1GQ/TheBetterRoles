@@ -11,13 +11,11 @@ namespace TheBetterRoles.RPCs
     [RegisterCustomRpc((uint)ReactorRPCs.EndGame)]
     public class RpcEndGame : PlayerCustomRpc<Main, RpcEndGame.Data>
     {
+        public override SendOption SendOption => SendOption.Reliable;
+        public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
         public RpcEndGame(Main plugin, uint id) : base(plugin, id)
         {
         }
-
-        public override SendOption SendOption => SendOption.Reliable;
-
-        public override RpcLocalHandling LocalHandling => RpcLocalHandling.After;
 
         public struct Data(List<byte> winners, EndGameReason reason, CustomRoleTeam team)
         {

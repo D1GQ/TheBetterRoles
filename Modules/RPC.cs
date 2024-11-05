@@ -31,34 +31,20 @@ public enum CustomRPC : int
     Sicko = 420, // Results in 164
     AUM = 42069, // Results in 85
     AUMChat = 101,
-
-    // The Better Roles RPC's
-    SyncAllSettings,
-    SyncOption,
-    RoleAction,
-    SyncAction,
-    SyncRole,
-
-    ResetAbilityState,
-    PlayIntro,
-    SetRole,
-    EndGame,
-    ReportBody,
-    Vent,
-    BootVent,
-    Revive,
-    Murder,
-    PlayerPress,
-    PlayerMenu,
-    GuessPlayer
 }
 
 public enum ReactorRPCs : uint
 {
+    // Main
     VersionRequest,
     VersionRequestCallBack,
     SyncAllSettings,
     SyncOption,
+    RoleAbility,
+    SyncAction,
+    SyncRole,
+
+    // Sync
     ResetAbilityState,
     PlayIntro,
     SetRole,
@@ -154,18 +140,6 @@ internal static class RPC
 
             switch ((CustomRPC)callId)
             {
-                case CustomRPC.RoleAction:
-                case CustomRPC.SyncRole:
-                    {
-                        var user = reader.ReadPlayerId();
-                        var hash = reader.ReadInt32();
-
-                        if (user != null)
-                        {
-                            CustomRoleManager.RoleListener(user, role => role.HandleRpc(oldReader, callId, user, player), role => role.RoleHash == hash);
-                        }
-                    }
-                    break;
             }
         }
     }
@@ -245,10 +219,11 @@ internal static class RPC
         if (CheckResetAbilityStateRpc(player, id) == true)
         {
             CustomRoleManager.RoleListener(player, role => role.OnAbilityDurationEnd(id, isTimeOut), role => role.RoleHash == roleHash);
+            CustomRoleManager.RoleListener(player, role => role.OnDurationEnd(id, isTimeOut), role => role.RoleHash == roleHash);
         }
     }
-
     private static bool CheckResetAbilityStateRpc(PlayerControl player, int id) => true;
+
 
     [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
     public static void SendRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool RemoveAddon = false)

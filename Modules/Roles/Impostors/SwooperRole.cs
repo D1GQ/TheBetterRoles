@@ -70,7 +70,10 @@ public class SwooperRole : CustomRoleBehavior
 
     public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
-        SetInvisibility(!isVisible);
+        _ = new LateTask(() =>
+        {
+            SetInvisibility(!isVisible);
+        }, 1f, shoudLog: false);
     }
 
     public override void OnResetAbilityState(bool IsTimeOut)
@@ -82,24 +85,14 @@ public class SwooperRole : CustomRoleBehavior
     private void SetInvisibility(bool isActive)
     {
         InteractableTarget = !isActive;
-        if (_player.IsLocalPlayer() || _player.IsImpostorTeammate() || !localPlayer.IsAlive())
+        if (_player.IsImpostorTeammate() || !localPlayer.IsAlive())
         {
+            SetTrueVisibility(true);
             _player.invisibilityAlpha = isActive ? 0.5f : 1f;
             SetNameTextAlpha(isActive ? 0.5f : 1f);
+            _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
         }
         else
-        {
-            _player.invisibilityAlpha = isActive ? 0 : 1;
-            SetNameTextAlpha(isActive ? 0f : 1f);
-        }
-
-        _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
-        if (isActive && (localPlayer.Data.IsDead || _player.IsImpostorTeammate()))
-        {
-            return;
-        }
-
-        if (!_player.IsLocalPlayer())
         {
             SetTrueVisibility(!isActive);
         }
@@ -108,12 +101,11 @@ public class SwooperRole : CustomRoleBehavior
     private void SetTrueVisibility(bool @bool)
     {
         _player.Visible = @bool && !_player.inVent;
-        _player.shouldAppearInvisible = !@bool;
     }
 
     private void SetNameTextAlpha(float alpha)
     {
-        foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>())
+        foreach (var text in _player.cosmetics.nameText.gameObject.transform.parent.GetComponentsInChildren<TextMeshPro>(true))
         {
             text.color = new Color(1f, 1f, 1f, alpha);
         }

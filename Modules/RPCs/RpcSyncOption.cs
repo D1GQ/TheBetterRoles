@@ -11,13 +11,11 @@ namespace TheBetterRoles.RPCs
     [RegisterCustomRpc((uint)ReactorRPCs.SyncOption)]
     public class RpcSyncOption : PlayerCustomRpc<Main, RpcSyncOption.Data>
     {
+        public override SendOption SendOption => SendOption.Reliable;
+        public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
         public RpcSyncOption(Main plugin, uint id) : base(plugin, id)
         {
         }
-
-        public override SendOption SendOption => SendOption.Reliable;
-
-        public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
 
         public readonly struct Data(int Id, string value, string text)
         {

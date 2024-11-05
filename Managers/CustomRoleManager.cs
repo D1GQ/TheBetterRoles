@@ -64,6 +64,11 @@ public static class CustomRoleManager
         return null;
     }
 
+    public static CustomRoleBehavior? GetActiveRoleFromPlayers(Func<CustomRoleBehavior, bool> selector) => Main.AllPlayerControls
+        .Where(player => player.BetterData()?.RoleInfo?.AllRoles != null)
+        .SelectMany(player => player.BetterData().RoleInfo.AllRoles)
+        .FirstOrDefault(selector);
+
     public static int GetRNGAmount(int min, int max)
     {
         if (min >= max)
