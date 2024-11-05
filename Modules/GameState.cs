@@ -39,33 +39,41 @@ public static class GameState
             _ => false
         };
     }
-    public static bool IsCriticalSabotageActive()
+    public static bool IsCriticalSabotageActive
     {
-        var deathSabotages = new[]
+        get
         {
+            var deathSabotages = new[]
+            {
             SystemTypes.Reactor,
             SystemTypes.Laboratory,
             SystemTypes.LifeSupp,
             SystemTypes.HeliSabotage,
-        };
+            };
 
-        return deathSabotages.Any(IsSystemActive);
+            return deathSabotages.Any(IsSystemActive);
+        }
     }
-    public static bool IsNoneCriticalSabotageActive()
+    public static bool IsNoneCriticalSabotageActive
     {
-        var noneDeathSabotages = new[]
+        get
         {
+            var noneDeathSabotages = new[]
+            {
             SystemTypes.Electrical,
             SystemTypes.Comms,
             SystemTypes.MushroomMixupSabotage
-        };
+            };
 
-        return noneDeathSabotages.Any(IsSystemActive);
+            return noneDeathSabotages.Any(IsSystemActive);
+        }
     }
-    public static bool IsAnySabotageActive()
+    public static bool IsAnySabotageActive
     {
-        var allSabotages = new[]
+        get
         {
+            var allSabotages = new[]
+            {
             SystemTypes.Electrical,
             SystemTypes.Reactor,
             SystemTypes.Laboratory,
@@ -73,12 +81,13 @@ public static class GameState
             SystemTypes.HeliSabotage,
             SystemTypes.Comms,
             SystemTypes.MushroomMixupSabotage
-        };
+            };
 
-        return allSabotages.Any(IsSystemActive);
+            return allSabotages.Any(IsSystemActive);
+        }
     }
     public static bool IsInGame => InGame;
-    public static bool IsLobby => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Joined;
+    public static bool IsLobby => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Joined && InGame && !IsFreePlay;
     public static bool IsTBRLobby => IsHost || AmongUsClient.Instance?.GetHost()?.BetterData()?.HasMod == true;
     public static bool IsInIntro => IntroCutscene.Instance != null;
     public static bool IsInGamePlay => InGame && IsShip && !IsLobby && !IsInIntro || IsFreePlay;
