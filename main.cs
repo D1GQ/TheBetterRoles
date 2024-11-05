@@ -13,6 +13,8 @@ using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
 using Reactor;
+using Reactor.Networking.Attributes;
+using Reactor.Networking;
 
 namespace TheBetterRoles;
 
@@ -26,6 +28,7 @@ public enum ReleaseTypes : int
 [BepInPlugin(PluginGuid, "TheBetterRoles", PluginVersion)]
 [BepInProcess("Among Us.exe")]
 [BepInDependency(ReactorPlugin.Id)]
+[ReactorModFlags(ModFlags.RequireOnAllClients)]
 public class Main : BasePlugin
 {
     public static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;

@@ -38,7 +38,7 @@ public static class OnPlayerJoinedPatch
             {
                 var player = Utils.PlayerFromClientId(client.Id);
 
-                if (GameState.IsHost) PlayerControl.LocalPlayer.SendVersionRequest(Main.GetVersionText());
+                if (GameState.IsHost) PlayerControl.LocalPlayer?.SendVersionRequest(Main.GetVersionText());
 
                 /*
                 // Auto ban player on ban list

@@ -56,7 +56,7 @@ public enum CustomRPC : int
 public enum ReactorRPCs : uint
 {
     VersionRequest,
-    VersionAccept,
+    VersionRequestCallBack,
     SyncAllSettings,
     SyncOption,
     ResetAbilityState,
@@ -193,28 +193,27 @@ internal static class RPC
     public static void SendVersionRequest(this PlayerControl player, string version)
     {
         version = version.Replace(" ", ".");
-        player.BetterData().HasMod = true;
-        player.BetterData().Version = version;
-
         if (version == Main.GetVersionText().Replace(" ", "."))
         {
-            PlayerControl.LocalPlayer.BetterData().HasMod = true;
-            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
+            player.BetterData().HasMod = true;
+            player.BetterData().Version = version;
+
+            if (GameState.IsHost)
+            {
+                Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
+            }
         }
-        else
+
+        if (!player.IsLocalPlayer())
         {
-            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
-            PlayerControl.LocalPlayer.BetterData().MismatchVersion = true;
-            PlayerControl.LocalPlayer.BetterData().HasMod = true;
-            PlayerControl.LocalPlayer.BetterData().Version = Main.GetVersionText().Replace(" ", ".");
+            PlayerControl.LocalPlayer.SendVersionRequestCallBack(Main.GetVersionText());
         }
-        player.SendVersionAccept(version);
 
         Utils.DirtyAllNames();
     }
 
-    [MethodRpc((uint)ReactorRPCs.VersionAccept, SendImmediately = true)]
-    public static void SendVersionAccept(this PlayerControl player, string version)
+    [MethodRpc((uint)ReactorRPCs.VersionRequestCallBack, SendImmediately = true, LocalHandling = RpcLocalHandling.None)]
+    public static void SendVersionRequestCallBack(this PlayerControl player, string version)
     {
         version = version.Replace(" ", ".");
         if (version == Main.GetVersionText().Replace(" ", "."))
@@ -226,14 +225,6 @@ internal static class RPC
             {
                 Rpc<RpcSyncAllSettings>.Instance.Send(new(null));
             }
-        }
-        else
-        {
-            PlayerControl.LocalPlayer.BetterData().KickTimer = 8f;
-            player.BetterData().MismatchVersion = true;
-            player.BetterData().HasMod = true;
-            player.BetterData().Version = version;
-            Logger.InGame(string.Format(Translator.GetString("VersionMismatch"), player.Data.PlayerName, (int)player.BetterData().KickTimer));
         }
 
         Utils.DirtyAllNames();

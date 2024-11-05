@@ -61,6 +61,8 @@ public static class Zoom
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
             resetButtons = false;
         }
+
+        DestroyableSingleton<HudManager>.Instance?.ShadowQuad?.gameObject?.SetActive(Camera.main.orthographicSize == 3.0f && PlayerControl.LocalPlayer.IsAlive());
     }
 }
 

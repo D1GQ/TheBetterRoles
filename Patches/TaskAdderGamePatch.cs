@@ -77,7 +77,7 @@ class TaskAdderGamePatch
             {
                 var player = PlayerControl.LocalPlayer;
 
-                player.Revive();
+                player.CustomRevive();
                 if (!roleBehaviour.IsAddon)
                 {
                     CustomRoleManager.SetCustomRole(player, roleBehaviour.RoleType);
