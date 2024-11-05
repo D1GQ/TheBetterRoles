@@ -16,12 +16,12 @@ namespace TheBetterRoles.RPCs
         {
         }
 
-        public readonly struct Data(int roleHash, int buttonId, int targetId, TargetType targetType, CustomRoleBehavior? role = null, MessageReader? reader = null)
+        public readonly struct Data(ushort roleHash, int buttonId, int targetId, TargetType targetType, CustomRoleBehavior? role = null, MessageReader? reader = null)
         {
             public readonly CustomRoleBehavior? Role = role;
             public readonly MessageReader? Reader = reader;
 
-            public readonly int RoleHash = roleHash;
+            public readonly ushort RoleHash = roleHash;
             public readonly int ButtonId = buttonId;
             public readonly int TargetId = targetId;
             public readonly TargetType TargetType = targetType;
@@ -30,17 +30,17 @@ namespace TheBetterRoles.RPCs
         public override void Write(MessageWriter writer, Data data)
         {
             writer.Write(data.RoleHash);
-            writer.Write(data.ButtonId);
-            writer.Write(data.TargetId);
+            writer.WritePacked(data.ButtonId);
+            writer.WritePacked(data.TargetId);
             writer.Write((byte)data.TargetType);
             data.Role.AbilityWriter(data.ButtonId, data.Role, ref writer);
         }
 
         public override Data Read(MessageReader reader)
         {
-            var roleHash = reader.ReadInt32();
-            var buttonId = reader.ReadInt32();
-            var targetId = reader.ReadInt32();
+            var roleHash = reader.ReadUInt16();
+            var buttonId = reader.ReadPackedInt32();
+            var targetId = reader.ReadPackedInt32();
             var targetType = (TargetType)reader.ReadByte();
             var role = CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == roleHash);
 

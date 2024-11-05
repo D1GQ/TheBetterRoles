@@ -15,26 +15,26 @@ namespace TheBetterRoles.RPCs
         {
         }
 
-        public readonly struct Data(int syncId, int roleHash, object[]? writerParams = null, MessageReader? reader = null)
+        public readonly struct Data(int syncId, ushort roleHash, object[]? writerParams = null, MessageReader? reader = null)
         {
             public readonly MessageReader? Reader = reader;
             public readonly object[]? WriterParams = writerParams;
 
             public readonly int SyncId = syncId;
-            public readonly int RoleHash = roleHash;
+            public readonly ushort RoleHash = roleHash;
         }
 
         public override void Write(MessageWriter writer, Data data)
         {
-            writer.Write(data.SyncId);
+            writer.WritePacked(data.SyncId);
             writer.Write(data.RoleHash);
             CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == data.RoleHash)?.OnSendRoleSync(data.SyncId, writer, data.WriterParams);
         }
 
         public override Data Read(MessageReader reader)
         {
-            var SyncId = reader.ReadInt32();
-            var RoleHash = reader.ReadInt32();
+            var SyncId = reader.ReadPackedInt32();
+            var RoleHash = reader.ReadUInt16();
 
             return new Data(SyncId, RoleHash, null, reader);
         }

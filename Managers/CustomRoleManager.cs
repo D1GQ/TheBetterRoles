@@ -109,8 +109,6 @@ public static class CustomRoleManager
             var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
 
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
-            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
-            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
         }
 
         LogAllAssignments(playerRoleAssignments);
@@ -291,7 +289,7 @@ public static class CustomRoleManager
         if (selectedRole?._role != null)
         {
             Logger.Log($"{player.Data.PlayerName} -> {selectedRole._role.RoleName}");
-            player.SendRpcSetCustomRole((int)selectedRole._role.RoleType);
+            player.SendRpcSetCustomRole(selectedRole._role.RoleType);
             yield return new WaitForSeconds(0.05f);
         }
 
@@ -300,7 +298,7 @@ public static class CustomRoleManager
             if (addon?._role != null)
             {
                 Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
-                player.SendRpcSetCustomRole((int)addon._role.RoleType);
+                player.SendRpcSetCustomRole(addon._role.RoleType);
                 yield return new WaitForSeconds(0.05f);
             }
         }
@@ -371,7 +369,7 @@ public static class CustomRoleManager
             {
                 selectedGhostRole.Amount--;
                 player.ClearAddonsSync();
-                player.SendRpcSetCustomRole((int)selectedGhostRole._role.RoleType);
+                player.SendRpcSetCustomRole(selectedGhostRole._role.RoleType);
                 Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shoudLog: false);
@@ -564,7 +562,7 @@ public static class CustomRoleManager
             var addonsCopy = Addons.ToList();
             foreach (var addon in addonsCopy)
             {
-                player.SendRpcSetCustomRole((int)addon.RoleType, true);
+                player.SendRpcSetCustomRole(addon.RoleType, true);
             }
         }
     }

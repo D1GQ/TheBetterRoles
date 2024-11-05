@@ -366,13 +366,8 @@ public static class Utils
         return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
     }
 
-    public static int GetHashInt(string input)
-    {
-        using SHA256 sha256 = SHA256.Create();
-        byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-        int hashInt = BitConverter.ToInt32(hashBytes, 0);
-        return Math.Abs(hashInt % 100000);
-    }
+    public static ushort GetHashUInt16(string input) =>
+        (ushort)(BitConverter.ToUInt16(SHA256.HashData(Encoding.UTF8.GetBytes(input)), 0) % 65536);
 
     public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText = false)
     {

@@ -162,7 +162,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Get automatically generated role Hash based on the role and player.
     /// </summary>
-    public int RoleHash => Utils.GetHashInt($"{(int)RoleType}{RoleId}{RoleUID}{_player?.PlayerId ?? 255}");
+    public ushort RoleHash => Utils.GetHashUInt16($"{(int)RoleType}{RoleId}{RoleUID}{_player?.PlayerId ?? 255}");
 
     /// <summary>
     /// Determines whether the role can be assigned during the initial role assignment at the start of the game. 

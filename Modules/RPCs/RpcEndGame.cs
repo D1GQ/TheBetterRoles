@@ -25,25 +25,52 @@ namespace TheBetterRoles.RPCs
 
         public override void Write(MessageWriter writer, Data data)
         {
-            writer.Write((byte)data.Reason);
-            writer.Write((byte)data.Team);
+            // Pack Reason and Team into a single byte
+            byte reasonAndTeam = (byte)((((byte)data.Reason & 0x0F) << 4) | ((byte)data.Team & 0x0F));
+            writer.Write(reasonAndTeam);
+
+            // Write the count of winners
             writer.Write((byte)data.Winners.Count);
-            foreach (byte id in data.Winners)
+
+            // Pack each pair of winner IDs into a single byte
+            for (int i = 0; i < data.Winners.Count; i += 2)
             {
-                writer.Write(id);
+                byte packedIds;
+                if (i + 1 < data.Winners.Count)
+                {
+                    // Combine two IDs into one byte if there's a pair
+                    packedIds = (byte)((data.Winners[i] & 0x0F) << 4 | (data.Winners[i + 1] & 0x0F));
+                }
+                else
+                {
+                    // If there's an odd number, pack only one ID
+                    packedIds = (byte)((data.Winners[i] & 0x0F) << 4);
+                }
+                writer.Write(packedIds);
             }
         }
 
         public override Data Read(MessageReader reader)
         {
-            var reason = (EndGameReason)reader.ReadByte();
-            var team = (CustomRoleTeam)reader.ReadByte();
+            // Unpack Reason and Team from the single byte
+            byte reasonAndTeam = reader.ReadByte();
+            var reason = (EndGameReason)((reasonAndTeam >> 4) & 0x0F);
+            var team = (CustomRoleTeam)(reasonAndTeam & 0x0F);
+
             int count = reader.ReadByte();
 
-            List<byte> winners = [];
-            for (int i = 0; i < count; i++)
+            List<byte> winners = new List<byte>();
+            for (int i = 0; i < (count + 1) / 2; i++)
             {
-                winners.Add(reader.ReadByte());
+                // Read each packed byte
+                byte packedIds = reader.ReadByte();
+
+                // Unpack two 4-bit IDs from each byte
+                winners.Add((byte)((packedIds >> 4) & 0x0F));
+                if (winners.Count < count)
+                {
+                    winners.Add((byte)(packedIds & 0x0F));
+                }
             }
 
             return new Data(winners, reason, team);

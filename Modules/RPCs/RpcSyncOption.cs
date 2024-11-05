@@ -30,14 +30,14 @@ namespace TheBetterRoles.RPCs
             var value = data.value;
             var text = Utils.SettingsChangeNotifier(id, data.text);
 
-            writer.Write(id);
+            writer.WritePacked(id);
             writer.Write(value);
             writer.Write(text);
         }
 
         public override Data Read(MessageReader reader)
         {
-            return new Data(reader.ReadInt32(), reader.ReadString(), reader.ReadString());
+            return new Data(reader.ReadPackedInt32(), reader.ReadString(), reader.ReadString());
         }
 
         public override void Handle(PlayerControl player, Data data)

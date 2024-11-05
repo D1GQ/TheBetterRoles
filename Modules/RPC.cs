@@ -209,7 +209,7 @@ internal static class RPC
     }
 
     [MethodRpc((uint)ReactorRPCs.ResetAbilityState, SendImmediately = true)]
-    public static void SendRpcResetAbilityState(this PlayerControl player, int id, bool isTimeOut, int roleHash)
+    public static void SendRpcResetAbilityState(this PlayerControl player, int id, bool isTimeOut, ushort roleHash)
     {
         if (CheckResetAbilityStateRpc(player, id) == true)
         {
@@ -219,11 +219,15 @@ internal static class RPC
     }
     private static bool CheckResetAbilityStateRpc(PlayerControl player, int id) => true;
 
+    public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoles roleType, bool RemoveAddon = false)
+    {
+        player.SendTrueRpcSetCustomRole((short)roleType, RemoveAddon);
+    }
 
     [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
-    public static void SendRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool RemoveAddon = false)
+    private static void SendTrueRpcSetCustomRole(this PlayerControl player, short roleTypeInt16, bool RemoveAddon = false)
     {
-        var role = (CustomRoles)roleTypeInt;
+        var role = (CustomRoles)roleTypeInt16;
         if (CheckSetRoleRpc(player, role))
         {
             if (!Utils.GetCustomRoleClass(role).IsAddon)
