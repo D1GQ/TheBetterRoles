@@ -10,7 +10,7 @@ public class VersionShowerPatch
     [HarmonyPostfix]
     public static void Postfix(VersionShower __instance)
     {
-        string bau = Translator.GetString("TBR");
-        __instance.text.text = $"<color=#0dff00>{bau} {Main.GetVersionText()}</color> <color=#ababab>~</color> {Utils.GetPlatformName(Main.PlatformData.Platform)} v{Main.AmongUsVersion}";
+        string tbr = Translator.GetString("TBR");
+        __instance.text.text = $"<color=#00dbdb>{tbr} {Main.GetVersionText()}</color> <color=#ababab>~</color> {Utils.GetPlatformName(Main.PlatformData.Platform)} v{Main.AmongUsVersion}";
     }
 }

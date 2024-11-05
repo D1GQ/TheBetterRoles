@@ -1,5 +1,6 @@
 ﻿using AmongUs.Data;
 using InnerNet;
+using System.Collections;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -150,6 +151,13 @@ public static class Utils
             throw;
         }
     }
+
+    public static IList? createIList(Type myType)
+    {
+        Type genericListType = typeof(List<>).MakeGenericType(myType);
+        return (IList)Activator.CreateInstance(genericListType);
+    }
+
     public static bool SystemTypeIsSabotage(SystemTypes type) => type is SystemTypes.Reactor
                     or SystemTypes.Laboratory
                     or SystemTypes.Comms
