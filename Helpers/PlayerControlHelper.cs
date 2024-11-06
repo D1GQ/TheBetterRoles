@@ -123,7 +123,7 @@ static class PlayerControlHelper
     private static IEnumerator CoNewMurder(PlayerControl killer, PlayerControl target, KillAnimation killAnimation, bool snapToTarget, bool spawnBody, bool showAnimation)
     {
         FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
-        bool isParticipant = PlayerControl.LocalPlayer == killer || PlayerControl.LocalPlayer == target;
+        bool isParticipant = killer.IsLocalPlayer() || target.IsLocalPlayer();
         PlayerPhysics sourcePhys = killer.MyPhysics;
         if (showAnimation)
         {

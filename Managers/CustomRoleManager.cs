@@ -109,6 +109,8 @@ public static class CustomRoleManager
             var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
 
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
+            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
+            yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
         }
 
         LogAllAssignments(playerRoleAssignments);

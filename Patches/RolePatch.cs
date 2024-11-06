@@ -59,7 +59,7 @@ public class RolePatch
             {
                 __instance.myPlayer.cosmetics.AnimateSkinIdle();
                 __instance.Animations.PlayIdleAnimation();
-                __instance.myPlayer.Visible = true;
+                __instance.myPlayer.Visible = __instance.myPlayer.Visible;
                 __instance.myPlayer.SetHatAndVisorAlpha(1f);
                 return false;
             }

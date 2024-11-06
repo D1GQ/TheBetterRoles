@@ -51,20 +51,24 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         SpawnInRandomVent();
     }
 
-    private void ResetState()
+    private void OnClick()
     {
+        HasBeenClicked = true;
+        _player.Visible = false;
+        _player.Exiled();
         InteractableTarget = true;
         _player.BetterData().IsFakeAlive = false;
         _player.Data.IsDead = true;
         _player.cosmetics.gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.transform.Find("Names").gameObject.SetActive(true);
+        if (_player.IsLocalPlayer()) _player.ShieldBreakAnimation(RoleColor);
     }
 
     public override void OnDeinitialize()
     {
         _player.BetterData().PlayerVisionModPlus -= 10;
-        ResetState();
+        OnClick();
     }
 
     public override void OnExileEnd(PlayerControl? exiled, NetworkedPlayerInfo? exiledData)
@@ -126,9 +130,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         {
             if (player.IsLocalPlayer() && player.IsAlive())
             {
-                HasBeenClicked = true;
-                ResetState();
-                _player.Exiled();
+                OnClick();
                 SendRoleSync(0);
             }
         }
@@ -140,9 +142,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         {
             case 0:
                 {
-                    HasBeenClicked = true;
-                    ResetState();
-                    _player.Exiled();
+                    OnClick();
                 }
                 break;
         }

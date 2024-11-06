@@ -77,10 +77,13 @@ public class SwooperRole : CustomRoleBehavior
             OnResetAbilityState(false);
         }
 
-        _ = new LateTask(() =>
+        if (target.IsLocalPlayer())
         {
-            SetInvisibility(!isVisible);
-        }, 1f, shoudLog: false);
+            _ = new LateTask(() =>
+            {
+                SetInvisibility(!isVisible);
+            }, 1f, shoudLog: false);
+        }
     }
 
     public override void OnResetAbilityState(bool IsTimeOut)
@@ -107,6 +110,7 @@ public class SwooperRole : CustomRoleBehavior
 
     private void SetTrueVisibility(bool @bool)
     {
+        _player.shouldAppearInvisible = !@bool;
         _player.Visible = @bool && !_player.inVent;
     }
 
