@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
@@ -46,13 +47,6 @@ public class RolePatch
     [HarmonyPatch(typeof(PlayerPhysics))]
     class PlayerPhysicsPatch
     {
-        [HarmonyPatch(nameof(PlayerPhysics.HandleAnimation))]
-        [HarmonyPrefix]
-        public static void HandleAnimation_Prefix(PlayerPhysics __instance, ref bool amDead)
-        {
-            amDead = amDead && !__instance.myPlayer.BetterData().IsFakeAlive;
-        }
-
         [HarmonyPatch(nameof(PlayerPhysics.ResetAnimState))]
         [HarmonyPrefix]
         public static bool ResetAnimState_Prefix(PlayerPhysics __instance)

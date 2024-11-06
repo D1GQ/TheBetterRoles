@@ -1,4 +1,6 @@
 ﻿
+using AmongUs.GameOptions;
+using HarmonyLib;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
@@ -129,4 +131,18 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     }
 
     public override bool WinCondition() => _player.Data.Tasks.ToArray().All(task => task.Complete) && _player.Data.Tasks.ToArray().Length > 0;
+
+    [HarmonyPatch(typeof(PlayerPhysics))]
+    class PlayerPhysicsPhantomPatch
+    {
+        [HarmonyPatch(nameof(PlayerPhysics.HandleAnimation))]
+        [HarmonyPrefix]
+        public static void HandleAnimation_Prefix(PlayerPhysics __instance, ref bool amDead)
+        {
+            var player = __instance.myPlayer;
+            if (!player.Is(CustomRoles.Phantom)) return;
+
+            amDead = amDead && !__instance.myPlayer.BetterData().IsFakeAlive;
+        }
+    }
 }

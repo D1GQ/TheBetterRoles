@@ -158,7 +158,7 @@ public class Main : BasePlugin
 
             // Add custom components
             {
-                AddComponent<Managers.AssetBundleManager>();
+                AddComponent<AssetBundleManager>();
                 AddComponent<ExtendedPlayerInfo>();
                 AddComponent<GuessManager>();
             }

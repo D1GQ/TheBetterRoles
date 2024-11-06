@@ -10,12 +10,12 @@ public class AssetBundleManager : MonoBehaviour
 {
     private class Result<T>
     {
-        private T _value;
-        private Exception _error;
+        private T? _value;
+        private Exception? _error;
 
         public void SetValue(T value) => (_value, _error) = (value, null);
         public void SetError(Exception error) => (_value, _error) = (default, error);
-        public T GetValue() => _error != null ? throw _error : _value;
+        public T? GetValue() => _error != null ? throw _error : _value;
     }
 
     private static AssetBundleManager? Instance;

@@ -1,4 +1,5 @@
-﻿using AmongUs.GameOptions;
+﻿using AmongUs.Data;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using Reactor.Networking.Attributes;
@@ -40,6 +41,7 @@ public enum ReactorRPCs : uint
     SyncRole,
 
     // Sync
+    Chat,
     ResetAbilityState,
     PlayIntro,
     SetRole,
@@ -197,6 +199,12 @@ internal static class RPC
         }
 
         Utils.DirtyAllNames();
+    }
+
+    [MethodRpc((uint)ReactorRPCs.Chat, SendImmediately = true)]
+    public static void SendRpcChatMsg(this PlayerControl player, string text)
+    {
+        DestroyableSingleton<ChatController>.Instance.AddChat(player, text, DataManager.settings.Multiplayer.CensorChat);
     }
 
     [MethodRpc((uint)ReactorRPCs.PlayIntro, SendImmediately = true)]

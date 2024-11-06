@@ -1,4 +1,5 @@
 ﻿
+using HarmonyLib;
 using Hazel;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
@@ -70,6 +71,12 @@ public class SwooperRole : CustomRoleBehavior
 
     public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
+        if (target == _player)
+        {
+            InvisibilityButton?.SetCooldown();
+            OnResetAbilityState(false);
+        }
+
         _ = new LateTask(() =>
         {
             SetInvisibility(!isVisible);
@@ -110,5 +117,18 @@ public class SwooperRole : CustomRoleBehavior
             text.color = new Color(1f, 1f, 1f, alpha);
         }
         _player.cosmetics.colorBlindText.color = new Color(1f, 1f, 1f, alpha);
+    }
+
+    [HarmonyPatch(typeof(PlayerControl))]
+    class PlayerControlSwooperPatch
+    {
+        [HarmonyPatch(nameof(PlayerControl.SetHatAndVisorAlpha))]
+        [HarmonyPrefix]
+        public static bool SetHatAndVisorAlpha_Prefix(PlayerControl __instance)
+        {
+            if (__instance.Is(CustomRoles.Swooper) && __instance.IsAlive()) return false;
+
+            return true;
+        }
     }
 }

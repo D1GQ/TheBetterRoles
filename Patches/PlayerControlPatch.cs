@@ -154,6 +154,14 @@ class PlayerControlPatch
         player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTagBottom).ToString(), isBottom: true);
         player.SetPlayerTextInfo(Utils.FormatStringBuilder(sbTag).ToString(), isInfo: true);
     }
+
+    [HarmonyPatch(nameof(PlayerControl.RpcSendChat))]
+    [HarmonyPrefix]
+    public static bool RpcSendChat_Prefix(PlayerControl __instance, [HarmonyArgument(0)] string chatText)
+    {
+        __instance.SendRpcChatMsg(chatText);
+        return false;
+    }
 }
 
 [HarmonyPatch(typeof(PlayerPhysics))]

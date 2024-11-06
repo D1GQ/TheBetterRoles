@@ -391,12 +391,11 @@ static class PlayerControlHelper
     public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam));
 
     // Check if player is role type
-    public static bool Is(this PlayerControl player, RoleTypes role) => player?.Data?.RoleType == role;
     public static bool Is(this PlayerControl player, CustomRoles role) => player?.BetterData()?.RoleInfo?.RoleType == role;
     public static bool Is(this PlayerControl player, CustomRoleTeam roleTeam) => player?.Role()?.RoleTeam == roleTeam;
-    public static bool Is(this PlayerControl player, CustomRoleCategory roleCategory) => player?.BetterData()?.RoleInfo?.Role?.RoleCategory == roleCategory;
+    public static bool Is(this PlayerControl player, CustomRoleCategory roleCategory) => player?.Role()?.RoleCategory == roleCategory;
     // Check if player is Ghost role type
-    public static bool IsGhostRole(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role.Role?.RoleCategory == CustomRoleCategory.Ghost;
+    public static bool IsGhostRole(this PlayerControl player) => player?.Role()?.IsGhostRole == true;
     // Check if player is a imposter teammate
     public static bool IsImpostorTeammate(this PlayerControl player) =>
         player != null && PlayerControl.LocalPlayer != null &&
