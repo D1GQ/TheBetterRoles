@@ -122,18 +122,6 @@ public class Main : BasePlugin
         "8f23c48e2+3e249bee5",
     ];
 
-    public static void SetVanillaSettings()
-    {
-        if (GameState.IsInGame)
-        {
-            if (GameOptionsManager.Instance?.GameHostOptions != null && GameOptionsManager.Instance?.CurrentGameOptions != null)
-            {
-                GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                if (!GameState.IsHideNSeek) DataManager.Settings.Multiplayer.RawNormalHostOptions = GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.GameHostOptions, false);
-                else DataManager.Settings.Multiplayer.rawHideNSeekHostOptions = GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.GameHostOptions, false);
-            }
-        }
-    }
     public static IGameOptions? CurrentOptions => GameOptionsManager.Instance?.CurrentGameOptions;
     public static NormalGameOptionsV08? NormalOptions => GameOptionsManager.Instance?.currentNormalGameOptions;
     public static HideNSeekGameOptionsV08? HideNSeekOptions => GameOptionsManager.Instance?.currentHideNSeekGameOptions;

@@ -114,7 +114,7 @@ static class GameSettingMenuPatch
         new BetterOptionDividerItem().Create(BetterTabs.GameSettings);
         TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Crewmate")}</color>"));
         VanillaGameSettings.PlayerVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerVision"), [0.25f, 5f, 0.25f], 0.75f, "", "x", vanillaOption: FloatOptionNames.CrewLightMod);
-        VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
+        VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.MeetingSettings")));
 
@@ -362,7 +362,6 @@ static class GameOptionsManagerPatch
     [HarmonyPostfix]
     public static void CreateSettings_Postfix(/*GameOptionsManager __instance*/)
     {
-        Main.CurrentOptions?.SetInt(Int32OptionNames.NumImpostors, 1);
         Main.CurrentOptions.SetInt(Int32OptionNames.RulePreset, 100);
         Main.CurrentOptions.SetBool(BoolOptionNames.IsDefaults, false);
 
@@ -468,6 +467,17 @@ static class NumberOptionPatch
         __instance.UpdateValue();
         __instance.OnValueChanged.Invoke(__instance);
         __instance.AdjustButtonsActiveState();
+        return false;
+    }
+}
+
+[HarmonyPatch(typeof(NotificationPopper))]
+static class NotificationPopperPatch
+{
+    [HarmonyPatch(nameof(NotificationPopper.AddSettingsChangeMessage))]
+    [HarmonyPrefix]
+    public static bool AddSettingsChangeMessage_Prefix(/*NotificationPopper __instance*/)
+    {
         return false;
     }
 }

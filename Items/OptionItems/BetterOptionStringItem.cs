@@ -136,7 +136,7 @@ public class BetterOptionStringItem : BetterOptionItem
             if (VanillaOption != null)
             {
                 Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-                Main.SetVanillaSettings();
+                GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
             }
             Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
         }
@@ -151,7 +151,7 @@ public class BetterOptionStringItem : BetterOptionItem
             if (VanillaOption != null)
             {
                 Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-                Main.SetVanillaSettings();
+                GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
             }
             Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
         }
@@ -179,7 +179,7 @@ public class BetterOptionStringItem : BetterOptionItem
         if (VanillaOption != null)
         {
             Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-            Main.SetVanillaSettings();
+            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
         }
     }
 
@@ -246,7 +246,7 @@ public class BetterOptionStringItem : BetterOptionItem
         if (VanillaOption != null)
         {
             Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
-            Main.SetVanillaSettings();
+            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
         }
     }
 
