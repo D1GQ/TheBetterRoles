@@ -62,7 +62,7 @@ public static class Zoom
             resetButtons = false;
         }
 
-        DestroyableSingleton<HudManager>.Instance?.ShadowQuad?.gameObject?.SetActive(Camera.main.orthographicSize == 3.0f && PlayerControl.LocalPlayer.IsAlive());
+        DestroyableSingleton<HudManager>.Instance?.ShadowQuad?.gameObject?.SetActive(Camera.main.orthographicSize == 3.0f && PlayerControl.LocalPlayer.IsAlive(true));
     }
 }
 

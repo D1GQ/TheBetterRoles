@@ -128,7 +128,7 @@ public class AltruistRole : CustomRoleBehavior
     {
         PlayerControl? target = Utils.PlayerFromPlayerId(body.ParentId);
 
-        if (body != null && target?.Role()?.IsGhostRole == false)
+        if (body != null && !CustomRoleManager.RoleChecksAny(target, role => role.IsGhostRole))
         {
             isReviving = true;
             reviveCoroutine = _player.BetterData().StartCoroutine(CoStartRevive(target, body));

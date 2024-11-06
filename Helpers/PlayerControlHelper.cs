@@ -59,14 +59,10 @@ static class PlayerControlHelper
         player.cosmetics.SetNameMask(true);
         if (player.IsLocalPlayer())
         {
-            DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(true);
             DestroyableSingleton<HudManager>.Instance.AbilityButton.ToggleVisible(false);
-            // DestroyableSingleton<HudManager>.Instance.KillButton.ToggleVisible(player.Data.Role.IsImpostor);
-            // DestroyableSingleton<HudManager>.Instance.AdminButton.ToggleVisible(player.Data.Role.IsImpostor);
-            // DestroyableSingleton<HudManager>.Instance.SabotageButton.ToggleVisible(player.Data.Role.IsImpostor);
-            // DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.ToggleVisible(player.Data.Role.IsImpostor);
             DestroyableSingleton<HudManager>.Instance.Chat.ForceClosed();
             DestroyableSingleton<HudManager>.Instance.Chat.SetVisible(false);
+            DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(true);
         }
     }
 

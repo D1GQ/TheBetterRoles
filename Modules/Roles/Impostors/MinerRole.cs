@@ -1,5 +1,6 @@
 ﻿
 using Hazel;
+using Il2CppInterop.Generator.Extensions;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
@@ -49,30 +50,55 @@ public class MinerRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                Vector2 pos = reader != null ? NetHelpers.ReadVector2(reader) : _player.GetTruePosition();
-                SpawnVent(pos);
+                if (_player.IsLocalPlayer())
+                {
+                    tempVentId++;
+                    if (tempVentId >= 50) tempVentId = 0;
+                    var nextId = GetRoleVentId() + tempVentId;
+                    Vector2 pos = _player.GetTruePosition();
+
+                    SpawnVent(pos, nextId);
+                    SendRoleSync(0, [pos, nextId]);
+                }
                 break;
         }
     }
 
-    public override void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer)
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
     {
-        switch (id)
+        switch (syncId)
         {
-            case 5:
-                NetHelpers.WriteVector2(_player.GetTruePosition(), writer);
+            case 0:
+                {
+                    NetHelpers.WriteVector2((Vector2)additionalParams[0], writer);
+                    writer.WritePacked((int)additionalParams[1]);
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    var pos = NetHelpers.ReadVector2(reader);
+                    var ventId = reader.ReadPackedInt32();
+                    SpawnVent(pos, ventId);
+                }
                 break;
         }
     }
 
     private List<Vent> Vents = [];
-    private void SpawnVent(Vector2 Pos)
+    private void SpawnVent(Vector2 Pos, int ventId)
     {
         var ventPrefab = ShipStatus.Instance.AllVents.First();
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Miner)";
 
-        vent.Id = GetRoleVentId();
+        vent.Id = ventId;
         var pos = Pos;
         float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
@@ -109,5 +135,6 @@ public class MinerRole : CustomRoleBehavior
         Vents.Add(vent);
     }
 
-    private int GetRoleVentId() => 100 * (_player.PlayerId + 1) + Vents.Count;
+    private int tempVentId;
+    private int GetRoleVentId() => 100 * (_player.PlayerId + 1);
 }

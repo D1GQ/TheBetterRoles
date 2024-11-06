@@ -7,6 +7,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles;
@@ -72,18 +73,42 @@ public class MoleRole : CustomRoleBehavior
                 }
                 break;
             case 6:
-                Vector2 pos = reader != null ? NetHelpers.ReadVector2(reader) : _player.GetTruePosition();
-                SpawnVent(pos);
+                if (_player.IsLocalPlayer())
+                {
+                    tempVentId++;
+                    if (tempVentId >= 50) tempVentId = 0;
+                    var nextId = GetRoleVentId() + tempVentId;
+                    Vector2 pos = _player.GetTruePosition();
+                    SpawnVent(pos, nextId);
+                    SendRoleSync(0, [pos, nextId]);
+                }
                 break;
         }
     }
 
-    public override void AbilityWriter(int id, CustomRoleBehavior role, ref MessageWriter writer)
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
     {
-        switch (id)
+        switch (syncId)
         {
-            case 6:
-                NetHelpers.WriteVector2(_player.GetTruePosition(), writer);
+            case 0:
+                {
+                    NetHelpers.WriteVector2((Vector2)additionalParams[0], writer);
+                    writer.WritePacked((int)additionalParams[1]);
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    var pos = NetHelpers.ReadVector2(reader);
+                    var ventId = reader.ReadPackedInt32();
+                    SpawnVent(pos, ventId);
+                }
                 break;
         }
     }
@@ -117,12 +142,8 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    private void SpawnVent(Vector2 Pos)
+    private void SpawnVent(Vector2 Pos, int ventId)
     {
-        tempVentId++;
-        if (tempVentId >= 50) tempVentId = 0;
-        var nextId = GetRoleVentId() + tempVentId;
-
         if (Vents.Count >= MaximumVents.GetInt())
         {
             RemoveVent(Vents.First());
@@ -158,7 +179,7 @@ public class MoleRole : CustomRoleBehavior
             vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
         }, 0.00005f, shoudLog: false);
 
-        vent.Id = nextId;
+        vent.Id = ventId;
         var pos = Pos;
         float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);

@@ -77,7 +77,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     private void SpawnInRandomVent()
     {
         if (HasBeenClicked) return;
-        var vent = Main.AllEnabledVents[IRandom.Instance.Next(0, Main.AllEnabledVents.Length)];
+        var vent = _player.IsLocalPlayer() ? Main.AllEnabledVents[IRandom.Instance.Next(0, Main.AllEnabledVents.Length)] : Main.AllEnabledVents.First();
 
         if (vent != null)
         {
@@ -125,7 +125,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         if (Alpha > 0f && target == _player && player != _player)
         {
-            if (player.IsLocalPlayer())
+            if (player.IsLocalPlayer() && player.IsAlive())
             {
                 HasBeenClicked = true;
                 ResetState();
