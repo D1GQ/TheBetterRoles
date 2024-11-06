@@ -1,6 +1,7 @@
 ﻿
 using AmongUs.GameOptions;
 using HarmonyLib;
+using Hazel;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
@@ -124,9 +125,27 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         if (Alpha > 0f && target == _player && player != _player)
         {
-            HasBeenClicked = true;
-            ResetState();
-            _player.Exiled();
+            if (player.IsLocalPlayer())
+            {
+                HasBeenClicked = true;
+                ResetState();
+                _player.Exiled();
+                SendRoleSync(0);
+            }
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    HasBeenClicked = true;
+                    ResetState();
+                    _player.Exiled();
+                }
+                break;
         }
     }
 
@@ -142,7 +161,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
             var player = __instance.myPlayer;
             if (!player.Is(CustomRoles.Phantom)) return;
 
-            amDead = amDead && !__instance.myPlayer.BetterData().IsFakeAlive;
+            amDead = player?.IsAlive(true) == false;
         }
     }
 }

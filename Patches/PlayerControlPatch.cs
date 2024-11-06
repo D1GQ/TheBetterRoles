@@ -89,7 +89,7 @@ class PlayerControlPatch
 
     public static void SetPlayerInfo(PlayerControl player)
     {
-        if (player?.Data == null || player?.BetterData()?.DirtyName == false) return;
+        if (player?.Data == null || player?.BetterData()?.DirtyName != true) return;
 
         var playerData = player.BetterData();
         var cosmetics = player.cosmetics;

@@ -73,8 +73,14 @@ public class ExtendedPlayerInfo : MonoBehaviour
 
             if (pc.IsLocalPlayer())
             {
-                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(pc.IsAlive() && !GameState.IsLobby);
-                DestroyableSingleton<HudManager>.Instance?.AbilityButton.gameObject.SetActive(!pc.IsAlive(true) && pc.Role()?.IsGhostRole != true && !GameState.IsLobby);
+                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(
+                    pc.IsAlive() && GameState.IsInGamePlay && !(GameState.IsMeeting || GameState.IsExilling)
+                    && (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen));
+
+                DestroyableSingleton<HudManager>.Instance?.AbilityButton.gameObject.SetActive(
+                    !pc.IsAlive(true) && pc.Role()?.IsGhostRole != true && GameState.IsInGamePlay && pc.Data.RoleType == AmongUs.GameOptions.RoleTypes.CrewmateGhost
+                    && !(GameState.IsMeeting || GameState.IsExilling)
+                    && (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen));
             }
         }
     }

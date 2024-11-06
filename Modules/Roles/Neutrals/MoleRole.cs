@@ -119,6 +119,10 @@ public class MoleRole : CustomRoleBehavior
 
     private void SpawnVent(Vector2 Pos)
     {
+        tempVentId++;
+        if (tempVentId >= 50) tempVentId = 0;
+        var nextId = GetRoleVentId() + tempVentId;
+
         if (Vents.Count >= MaximumVents.GetInt())
         {
             RemoveVent(Vents.First());
@@ -154,7 +158,7 @@ public class MoleRole : CustomRoleBehavior
             vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
         }, 0.00005f, shoudLog: false);
 
-        vent.Id = GetAvailableId();
+        vent.Id = nextId;
         var pos = Pos;
         float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
@@ -188,16 +192,9 @@ public class MoleRole : CustomRoleBehavior
         Vents.Add(vent);
     }
 
-    private int GetAvailableId()
-    {
-        var id = 0;
+    private int tempVentId;
+    private int GetRoleVentId() => 100 * (_player.PlayerId + 1);
 
-        while (true)
-        {
-            if (ShipStatus.Instance.AllVents.All(v => v.Id != id)) return id;
-            id++;
-        }
-    }
     // Fix meeting breaking
     private void RemoveVent(Vent vent, bool shrink = true)
     {

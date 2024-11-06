@@ -72,7 +72,7 @@ public class MinerRole : CustomRoleBehavior
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Miner)";
 
-        vent.Id = GetAvailableId();
+        vent.Id = GetRoleVentId();
         var pos = Pos;
         float z = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new Vector3(pos.x, pos.y, z);
@@ -104,22 +104,10 @@ public class MinerRole : CustomRoleBehavior
         ShipStatus.Instance.AllVents = allVents.ToArray();
 
         // Play animation
-        if (vent.myAnim != null)
-        {
-            vent.myAnim.Play(vent.ExitVentAnim, 1);
-        }
+        vent.myAnim?.Play(vent.ExitVentAnim, 1);
 
         Vents.Add(vent);
     }
 
-    private int GetAvailableId()
-    {
-        var id = 0;
-
-        while (true)
-        {
-            if (ShipStatus.Instance.AllVents.All(v => v.Id != id)) return id;
-            id++;
-        }
-    }
+    private int GetRoleVentId() => 100 * (_player.PlayerId + 1) + Vents.Count;
 }

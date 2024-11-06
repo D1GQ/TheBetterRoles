@@ -41,7 +41,7 @@ public abstract class CustomGhostRoleBehavior : CustomRoleBehavior
     {
         [HarmonyPatch(nameof(PlayerPhysics.HandleAnimation))]
         [HarmonyPrefix]
-        public static bool HandleAnimation_Prefix(PlayerPhysics __instance, bool amDead)
+        public static bool HandleAnimation_Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] bool amDead)
         {
             var player = __instance.myPlayer;
             if (player?.Role()?.IsGhostRole != true || player?.IsAlive(true) != false) return true;
@@ -56,14 +56,14 @@ public abstract class CustomGhostRoleBehavior : CustomRoleBehavior
                     if (!__instance.Animations.IsPlayingGuardianAngelIdleAnimation())
                     {
                         __instance.Animations.PlayGuardianAngelIdleAnimation();
-                        __instance.myPlayer.SetHatAndVisorAlpha(0.5f);
                     }
                 }
                 else if (!__instance.Animations.IsPlayingGhostIdleAnimation())
                 {
                     __instance.Animations.PlayGhostIdleAnimation();
-                    __instance.myPlayer.SetHatAndVisorAlpha(0.5f);
                 }
+
+                __instance.myPlayer.SetHatAndVisorAlpha(0.5f);
 
                 if (velocity.x < -0.01f) __instance.FlipX = true;
                 else if (velocity.x > 0.01f) __instance.FlipX = false;

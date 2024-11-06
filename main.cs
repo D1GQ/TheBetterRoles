@@ -29,7 +29,7 @@ public enum ReleaseTypes : int
 [BepInPlugin(PluginGuid, "TheBetterRoles", PluginVersion)]
 [BepInProcess("Among Us.exe")]
 [BepInDependency(ReactorPlugin.Id)]
-[ReactorModFlags(ModFlags.RequireOnAllClients)]
+[ReactorModFlags(ModFlags.RequireOnAllClients | ModFlags.DisableServerAuthority)]
 public class Main : BasePlugin
 {
     public static readonly ReleaseTypes ReleaseBuildType = ReleaseTypes.Beta;
