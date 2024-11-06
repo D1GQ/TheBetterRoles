@@ -44,6 +44,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         _player.BetterData().PlayerVisionModPlus += 10;
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
+        _player.cosmetics.SetPhantomRoleAlpha(0f);
         _player.cosmetics.gameObject.SetActive(false);
         _player.transform.Find("Names").gameObject.SetActive(false);
         TryOverrideTasks(true);
@@ -55,9 +56,9 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         InteractableTarget = true;
         _player.BetterData().IsFakeAlive = false;
         _player.Data.IsDead = true;
-        _player.transform.Find("Names").gameObject.SetActive(true);
-        _player.cosmetics.SetPhantomRoleAlpha(1f);
         _player.cosmetics.gameObject.SetActive(true);
+        _player.cosmetics.SetPhantomRoleAlpha(1f);
+        _player.transform.Find("Names").gameObject.SetActive(true);
     }
 
     public override void OnDeinitialize()
@@ -81,8 +82,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
 
         if (vent != null)
         {
-            _player.transform.Find("Names").gameObject.SetActive(false);
-            _player.cosmetics.SetPhantomRoleAlpha(0f);
             _player.inVent = true;
             _player.Visible = false;
             _player.moveable = false;
