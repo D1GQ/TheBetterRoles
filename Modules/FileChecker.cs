@@ -19,7 +19,7 @@ class FileChecker
     // Set up if unauthorized files have been found.
     public static void UpdateUnauthorizedFiles()
     {
-#if DEBUG
+#if DEBUG || DEBUG_MULTIACCOUNTS
         if (GameState.IsDev)
         {
             HasTrySpoofFriendCode = false;
@@ -128,7 +128,7 @@ class FileChecker
             }
         }
 
-#if DEBUG
+#if DEBUG || DEBUG_MULTIACCOUNTS
         if (GameState.IsDev)
         {
             Enabled = false;

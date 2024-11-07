@@ -29,9 +29,14 @@ public class OptionAttributes
 
 public abstract class CustomRoleBehavior
 {
-    protected bool IsDirty { get; set; } = false;
     protected bool HasSetup { get; set; } = false;
     protected bool HasDeinitialize { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the object's data has changed and needs to be synchronized.
+    /// When set to true, the data is marked as "dirty," triggering serialization and synchronization.
+    /// </summary>
+    protected bool IsDirty { get; set; } = false;
 
     /// <summary>
     /// A dictionary representing players recruited by this role to win together. 

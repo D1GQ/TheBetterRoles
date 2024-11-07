@@ -40,7 +40,7 @@ class CommandsPatch
     };
     public static string[] DebugCommandListHelper() => new string[]
     {
-#if DEBUG
+#if DEBUG || DEBUG_MULTIACCOUNTS
         FormatCommandTranslation("Command.DebugHelper.getposition", false),
         FormatCommandTranslation("Command.DebugHelper.role", false),
         FormatCommandTranslation("Command.DebugHelper.setrole", false),
@@ -297,7 +297,7 @@ class CommandsPatch
                 break;
         }
 
-#if DEBUG
+#if DEBUG || DEBUG_MULTIACCOUNTS
         // DeBug Commands
         if (checkDebugCommand)
         {

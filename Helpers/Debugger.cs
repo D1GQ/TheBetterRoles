@@ -11,15 +11,19 @@ class Logger
 {
     public static void Log(string info, string tag = "Log", bool logConsole = true, ConsoleColor color = ConsoleColor.White, bool hostOnly = false)
     {
-        if (hostOnly && !GameState.IsHost) return;
+        try
+        {
+            if (hostOnly && !GameState.IsHost) return;
 
-        string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][{tag}]";
-        string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
-        string newLine = $"{mark}: {Utils.RemoveHtmlText(info)}";
-        File.AppendAllText(logFilePath, newLine + Environment.NewLine);
-        Main.Logger.LogInfo($"[{tag}] {info}");
-        ConsoleManager.SetConsoleColor(color);
-        if (logConsole) ConsoleManager.ConsoleStream.WriteLine($"{DateTime.Now:HH:mm} TheBetterRoles[{tag}]: {Utils.RemoveHtmlText(info)}");
+            string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][{tag}]";
+            string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
+            string newLine = $"{mark}: {Utils.RemoveHtmlText(info)}";
+            File.AppendAllText(logFilePath, newLine + Environment.NewLine);
+            Main.Logger.LogInfo($"[{tag}] {info}");
+            ConsoleManager.SetConsoleColor(color);
+            if (logConsole) ConsoleManager.ConsoleStream.WriteLine($"{DateTime.Now:HH:mm} TheBetterRoles[{tag}]: {Utils.RemoveHtmlText(info)}");
+        }
+        catch { }
     }
 
     public static void LogMethod(
@@ -90,20 +94,24 @@ class Logger
 
     public static void LogPrivate(string info, string tag = "Log", bool hostOnly = false)
     {
-        if (hostOnly && !GameState.IsHost) return;
-
-#if DEBUG
-        if (GameState.IsDev)
+        try
         {
-            Log(info, tag, hostOnly: hostOnly);
-            return;
-        }
+            if (hostOnly && !GameState.IsHost) return;
+
+#if DEBUG || DEBUG_MULTIACCOUNTS
+            if (GameState.IsDev)
+            {
+                Log(info, tag, hostOnly: hostOnly);
+                return;
+            }
 #endif
 
-        string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][PrivateLog][{tag}]";
-        string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
-        string newLine = $"{mark}: " + Encryptor.Encrypt($"{info}");
-        File.AppendAllText(logFilePath, newLine + Environment.NewLine);
+            string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][PrivateLog][{tag}]";
+            string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
+            string newLine = $"{mark}: " + Encryptor.Encrypt($"{info}");
+            File.AppendAllText(logFilePath, newLine + Environment.NewLine);
+        }
+        catch { }
     }
 }
 
