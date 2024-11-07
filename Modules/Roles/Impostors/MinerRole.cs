@@ -1,6 +1,5 @@
 ﻿
 using Hazel;
-using Il2CppInterop.Generator.Extensions;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;

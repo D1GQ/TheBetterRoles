@@ -1,8 +1,6 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.OptionItems;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using UnityEngine;
 

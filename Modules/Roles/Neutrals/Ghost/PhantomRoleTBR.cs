@@ -1,6 +1,4 @@
-﻿
-using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Hazel;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;

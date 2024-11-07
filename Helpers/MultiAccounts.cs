@@ -1,8 +1,4 @@
 ﻿using HarmonyLib;
-using AmongUs.Data;
-using UnityEngine;
-using System;
-using System.Security.Cryptography;
 
 namespace TheBetterRoles.Helpers;
 
@@ -18,7 +14,7 @@ public class MultiAccounts
     {
         public static bool Prefix(EOSManager __instance)
         {
-            __instance.DeleteDeviceID(new System.Action(__instance.EndMergeGuestAccountFlow));
+            __instance.DeleteDeviceID(new Action(__instance.EndMergeGuestAccountFlow));
 
             __instance.StartTempAccountFlow();
             __instance.CloseStartupWaitScreen();
@@ -30,37 +26,25 @@ public class MultiAccounts
     [HarmonyPatch(typeof(EOSManager), nameof(EOSManager.IsFreechatAllowed))]
     public static class EOSManager_IsFreechatAllowed
     {
-        public static void Postfix(ref bool __result)
-        {
-            __result = true;
-        }
+        public static void Postfix(ref bool __result) => __result = true;
     }
 
     [HarmonyPatch(typeof(EOSManager), nameof(EOSManager.IsFriendsListAllowed))]
     public static class EOSManager_IsFriendsListAllowed
     {
-        public static void Postfix(ref bool __result)
-        {
-            __result = true;
-        }
+        public static void Postfix(ref bool __result) => __result = true;
     }
 
     [HarmonyPatch(typeof(EOSManager), nameof(EOSManager.IsAllowedOnline))]
     public static class EOSManager_IsAllowedOnline
     {
-        public static void Prefix(ref bool canOnline)
-        {
-            canOnline = true;
-        }
+        public static void Prefix(ref bool canOnline) => canOnline = true;
     }
 
     [HarmonyPatch(typeof(EOSManager), nameof(EOSManager.IsMinorOrWaiting))]
     public static class EOSManager_IsMinorOrWaiting
     {
-        public static void Postfix(ref bool __result)
-        {
-            __result = false;
-        }
+        public static void Postfix(ref bool __result) => __result = false;
     }
 
 #endif

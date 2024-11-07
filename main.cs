@@ -1,5 +1,4 @@
-﻿using AmongUs.Data;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
