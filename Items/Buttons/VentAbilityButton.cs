@@ -3,6 +3,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items.Buttons;

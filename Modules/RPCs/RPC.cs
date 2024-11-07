@@ -7,10 +7,9 @@ using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
-using TheBetterRoles.RPCs;
+using TheBetterRoles.Modules;
 
-
-namespace TheBetterRoles.Modules;
+namespace TheBetterRoles.RPCs;
 
 [Flags]
 enum MultiMurderFlags : short
@@ -529,11 +528,11 @@ internal static class RPC
 
     private static bool CheckGuessPlayerRpc(PlayerControl player, PlayerControl target, CustomRoles roleType)
     {
-        if (!CustomRoleManager.RoleChecks(player, role => role.CheckGuess(player, target, roleType)))
+        if (!player.RoleChecks(role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }
-        if (!CustomRoleManager.RoleChecks(target, role => role.CheckGuess(player, target, roleType)))
+        if (!target.RoleChecks(role => role.CheckGuess(player, target, roleType)))
         {
             return false;
         }

@@ -1,7 +1,4 @@
-﻿using AmongUs.Data;
-using HarmonyLib;
-
-namespace TheBetterRoles.Helpers;
+﻿namespace TheBetterRoles.Helpers;
 
 // Use guest account on Account Startup. Only use when testing on vanilla servers for multiple client instances!
 // DO NOT RELEASE A BUILD WITH THIS ENABLED!

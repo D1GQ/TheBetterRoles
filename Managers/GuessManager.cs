@@ -2,6 +2,7 @@
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using TMPro;
 using UnityEngine;
 

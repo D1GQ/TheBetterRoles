@@ -2,6 +2,7 @@
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -111,7 +112,7 @@ class GamePlayManager
         [HarmonyPrefix]
         private static bool BeginGame_Prefix(GameStartManager __instance)
         {
-            if (Main.AllPlayerControls.Where(pc => !pc.IsHost()).Any(pc => pc.BetterData().MismatchVersion || !pc.BetterData().HasMod)) return false;
+            if (!Main.AllPlayerControls.Where(pc => !pc.IsHost()).All(pc => pc.BetterData().HasMod)) return false;
 
             if (__instance.startState == GameStartManager.StartingStates.Countdown)
             {

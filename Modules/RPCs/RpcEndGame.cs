@@ -3,7 +3,6 @@ using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.RPCs
 {

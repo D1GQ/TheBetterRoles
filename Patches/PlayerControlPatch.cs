@@ -3,6 +3,7 @@ using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using TMPro;
 using UnityEngine;
 
@@ -68,23 +69,6 @@ class PlayerControlPatch
         {
             __instance.cosmetics.colorBlindText.text = string.Empty;
         }
-
-        if (GameState.IsHost && GameState.IsLobby)
-        {
-            ExtendedPlayerInfo? betterData = __instance?.BetterData();
-
-            if (!__instance.IsHost())
-            {
-                if (betterData?.HasMod == false || betterData?.MismatchVersion == true)
-                {
-                    betterData.KickTimer -= Time.deltaTime;
-                    if (betterData?.KickTimer <= 0)
-                    {
-                        __instance.Kick();
-                    }
-                }
-            }
-        }
     }
 
     public static void SetPlayerInfo(PlayerControl player)
@@ -107,14 +91,6 @@ class PlayerControlPatch
             cosmetics.nameText.color = playerData.HasMod || isLocalPlayer
                 ? new Color(0.47f, 1f, 0.95f, 1f)
                 : Color.white;
-
-            if (playerData.MismatchVersion)
-            {
-                sbTag.Append($"<color=#FF0800>{playerData.Version}");
-                if (GameState.IsHost)
-                    sbTag.Append($" - {(int)playerData.KickTimer}s");
-                sbTag.Append("</color>+++");
-            }
         }
         else
         {

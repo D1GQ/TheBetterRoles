@@ -10,10 +10,12 @@ using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using System.Security.Cryptography;
 using System.Text;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles;
@@ -146,7 +148,6 @@ public class Main : BasePlugin
 
             // Add custom components
             {
-                AddComponent<AssetBundleManager>();
                 AddComponent<ExtendedPlayerInfo>();
                 AddComponent<GuessManager>();
             }
@@ -160,6 +161,7 @@ public class Main : BasePlugin
             Harmony.PatchAll();
             GameSettingMenuPatch.SetupSettings(true);
             CustomColors.Load();
+            AssetBundles.LoadAssetBundles();
             CustomSoundsManager.Load();
             SubmergedCompatibility.Initialize();
 

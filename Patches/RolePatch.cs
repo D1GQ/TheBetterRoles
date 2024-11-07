@@ -2,6 +2,7 @@
 using HarmonyLib;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;

@@ -1,6 +1,7 @@
 ﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using TMPro;
 using UnityEngine;
 

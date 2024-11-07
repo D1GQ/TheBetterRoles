@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Items;

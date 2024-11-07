@@ -4,7 +4,6 @@ using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 
 public enum SettingType
