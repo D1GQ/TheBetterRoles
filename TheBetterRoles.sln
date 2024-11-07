@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheBetterRoles", "TheBetter
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_MultiAccounts|Any CPU = Debug_MultiAccounts|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B3A0A91-B5B2-47DB-9488-2E611AAB31E6}.Debug_MultiAccounts|Any CPU.ActiveCfg = Debug_MultiAccounts|Any CPU
+		{8B3A0A91-B5B2-47DB-9488-2E611AAB31E6}.Debug_MultiAccounts|Any CPU.Build.0 = Debug_MultiAccounts|Any CPU
 		{8B3A0A91-B5B2-47DB-9488-2E611AAB31E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8B3A0A91-B5B2-47DB-9488-2E611AAB31E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B3A0A91-B5B2-47DB-9488-2E611AAB31E6}.Release|Any CPU.ActiveCfg = Release|Any CPU

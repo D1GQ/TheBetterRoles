@@ -11,8 +11,10 @@
 		<LangVersion>preview</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Optimize>True</Optimize>
+		<Configurations>Debug;Release;Debug_MultiAccounts</Configurations>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MultiAccounts|AnyCPU'" />
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
 
 	<ItemGroup>
@@ -36,10 +38,5 @@
 	<ItemGroup>
 		<!-- Embed all files in the Resources folder -->
 		<EmbeddedResource Include="Resources\**\*" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Resources\AssetBundles\shaders" />
-	  <None Remove="Resources\Sounds\Douse.raw" />
 	</ItemGroup>
 </Project>

@@ -41,7 +41,7 @@ public class Main : BasePlugin
     public const string ReleaseDate = "10.12.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
-    public static bool IsGuestBuild => false;
+    public static bool IsGuestBuild { get; private set; } = false;
 
     public static string modSignature
     {
@@ -98,8 +98,13 @@ public class Main : BasePlugin
                 break;
         }
 
+
         if (IsHotFix)
             text += $" Hotfix {HotfixNum}";
+
+#if DEBUG_MULTIACCOUNTS
+        text += $"{newLineText}<color=#dc00ff>MultiAccounts</color>";
+#endif
 
         return text;
     }
