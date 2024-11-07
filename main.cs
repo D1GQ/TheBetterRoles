@@ -101,10 +101,6 @@ public class Main : BasePlugin
         if (IsHotFix)
             text += $" Hotfix {HotfixNum}";
 
-#if DEBUG_MULTIACCOUNTS
-        text += $"{newLineText}<color=#dc00ff>MultiAccounts</color>";
-#endif
-
         return text;
     }
 

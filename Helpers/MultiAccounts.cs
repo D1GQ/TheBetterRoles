@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using AmongUs.Data;
+using HarmonyLib;
 
 namespace TheBetterRoles.Helpers;
 
@@ -23,6 +24,12 @@ public class MultiAccounts
         }
     }
 
+    [HarmonyPatch(typeof(InnerNet.InnerNetClient), nameof(InnerNet.InnerNetClient.JoinGame))]
+    public static class InnerNet_InnerNetClient_JoinGame
+    {
+        public static void Prefix() => DataManager.Player.Account.LoginStatus = EOSManager.AccountLoginStatus.LoggedIn;
+    }
+
     [HarmonyPatch(typeof(EOSManager), nameof(EOSManager.IsFreechatAllowed))]
     public static class EOSManager_IsFreechatAllowed
     {
@@ -45,6 +52,18 @@ public class MultiAccounts
     public static class EOSManager_IsMinorOrWaiting
     {
         public static void Postfix(ref bool __result) => __result = false;
+    }
+
+    [HarmonyPatch(typeof(FullAccount), nameof(FullAccount.CanSetCustomName))]
+    public static class FullAccount_CanSetCustomName
+    {
+        public static void Prefix(ref bool canSetName) => canSetName = true;
+    }
+
+    [HarmonyPatch(typeof(AccountManager), nameof(AccountManager.CanPlayOnline))]
+    public static class AccountManager_CanPlayOnline
+    {
+        public static void Postfix(ref bool __result) => __result = true;
     }
 
 #endif

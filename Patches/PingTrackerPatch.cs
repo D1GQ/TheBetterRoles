@@ -22,6 +22,10 @@ public class PingTrackerPatch
 
             StringBuilder sb = new();
 
+#if DEBUG_MULTIACCOUNTS
+            sb.AppendFormat("<#800094>MultiAccounts</color>\n");
+#endif
+
             sb.AppendFormat("{0}: <b>{1}</b>\n", Translator.GetString("Ping").ToUpper(), GetPingColor(AmongUsClient.Instance.Ping));
 
             if (GameState.IsLobby && GameState.IsHost && GameState.IsVanillaServer && !GameState.IsLocalGame)
