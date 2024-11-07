@@ -76,7 +76,7 @@ public class SwapperRole : CustomRoleBehavior
 
         hasSwapped = firstTargetData != null && secondTargetData != null;
 
-        SendRoleSync(0);
+        IsDirty = true;
     }
 
     public override void FixedUpdate()
@@ -105,7 +105,7 @@ public class SwapperRole : CustomRoleBehavior
         button.GetComponent<SpriteRenderer>().color = Color.white;
         hasSwapped = false;
 
-        SendRoleSync(0);
+        IsDirty = true;
     }
 
     private void UnsetTargets()
@@ -128,7 +128,7 @@ public class SwapperRole : CustomRoleBehavior
     public override void OnEndVoting(MeetingHud meetingHud)
     {
         SwapVotes(meetingHud);
-        SendRoleSync(1);
+        SendRoleSync(0);
     }
 
     private void SwapVotes(MeetingHud meetingHud, bool onlyAnimate = false)
@@ -206,19 +206,10 @@ public class SwapperRole : CustomRoleBehavior
         pva2.transform.position = startPosition1;
     }
 
-
-    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
     {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    writer.WritePlayerDataId(firstTargetData);
-                    writer.WritePlayerDataId(secondTargetData);
-                    writer.Write(hasSwapped);
-                }
-                break;
-        }
+        maxAmount = AmountOfSwaps.GetInt();
+        currentAmount = swaps;
     }
 
     public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
@@ -227,23 +218,23 @@ public class SwapperRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    Logger.InGame("TEST");
-                    firstTargetData = reader.ReadPlayerDataId();
-                    secondTargetData = reader.ReadPlayerDataId();
-                    hasSwapped = reader.ReadBoolean();
-                }
-                break;
-            case 1:
-                {
                     SwapVotes(MeetingHud.Instance, true);
                 }
                 break;
         }
     }
 
-    public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
+    public override void Serialize(MessageWriter writer)
     {
-        maxAmount = AmountOfSwaps.GetInt();
-        currentAmount = swaps;
+        writer.WritePlayerDataId(firstTargetData);
+        writer.WritePlayerDataId(secondTargetData);
+        writer.Write(hasSwapped);
+    }
+
+    public override void Deserialize(MessageReader reader)
+    {
+        firstTargetData = reader.ReadPlayerDataId();
+        secondTargetData = reader.ReadPlayerDataId();
+        hasSwapped = reader.ReadBoolean();
     }
 }

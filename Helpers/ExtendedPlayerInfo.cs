@@ -37,7 +37,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
             {
                 foreach (var role in RoleInfo.AllRoles)
                 {
-                    role?.Update();
+                    role?.BaseUpdate();
                 }
             }
         }
@@ -52,7 +52,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
             {
                 foreach (var role in RoleInfo.AllRoles)
                 {
-                    role?.FixedUpdate();
+                    role?.BaseFixedUpdate();
 
                     if (pc.IsLocalPlayer())
                     {

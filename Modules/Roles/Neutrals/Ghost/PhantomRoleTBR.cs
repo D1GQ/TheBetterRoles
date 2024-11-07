@@ -134,18 +134,6 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         }
     }
 
-    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
-    {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    OnClick();
-                }
-                break;
-        }
-    }
-
     public override bool WinCondition() => _player.Data.Tasks.ToArray().All(task => task.Complete) && _player.Data.Tasks.ToArray().Length > 0;
 
     [HarmonyPatch(typeof(PlayerPhysics))]
@@ -159,6 +147,18 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
             if (!player.Is(CustomRoles.Phantom)) return;
 
             amDead = player?.IsAlive(true) == false;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    OnClick();
+                }
+                break;
         }
     }
 }

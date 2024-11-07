@@ -69,7 +69,8 @@ public class MayorRole : CustomRoleBehavior
             lastSound = MeetingHud.Instance.VoteLockinSound;
             SoundManager.instance.PlaySound(lastSound, false);
         }
-        SendRoleSync(0);
+
+        IsDirty = true;
     }
 
     public override void OnEndVoting(MeetingHud meetingHud)
@@ -126,38 +127,25 @@ public class MayorRole : CustomRoleBehavior
         currentAmount = additionalVotes;
     }
 
-    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    public override void Serialize(MessageWriter writer)
     {
-        switch (syncId)
+        writer.Write(additionalVotes);
+        writer.Write(voted.Count);
+        foreach (var vote in voted)
         {
-            case 0:
-                {
-                    writer.Write(additionalVotes);
-                    writer.Write(voted.Count);
-                    foreach (var vote in voted)
-                    {
-                        writer.Write(vote);
-                    }
-                }
-                break;
+            writer.Write(vote);
         }
     }
-    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+
+    public override void Deserialize(MessageReader reader)
     {
-        switch (syncId)
+        additionalVotes = reader.ReadInt32();
+        int count = reader.ReadInt32();
+        List<byte> bytes = [];
+        for (int i = 0; i < count; i++)
         {
-            case 0:
-                {
-                    additionalVotes = reader.ReadInt32();
-                    int count = reader.ReadInt32();
-                    List<byte> bytes = [];
-                    for (int i = 0; i < count; i++)
-                    {
-                        bytes.Add(reader.ReadByte());
-                    }
-                    voted = bytes;
-                }
-                break;
+            bytes.Add(reader.ReadByte());
         }
+        voted = bytes;
     }
 }

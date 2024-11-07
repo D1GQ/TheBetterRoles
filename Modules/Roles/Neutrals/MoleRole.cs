@@ -86,33 +86,6 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
-    {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    NetHelpers.WriteVector2((Vector2)additionalParams[0], writer);
-                    writer.WritePacked((int)additionalParams[1]);
-                }
-                break;
-        }
-    }
-
-    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
-    {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    var pos = NetHelpers.ReadVector2(reader);
-                    var ventId = reader.ReadPackedInt32();
-                    SpawnVent(pos, ventId);
-                }
-                break;
-        }
-    }
-
     private List<Vent> Vents = [];
 
     public override void OnDeinitialize()
@@ -270,4 +243,30 @@ public class MoleRole : CustomRoleBehavior
         vent.DestroyObj();
     }
 
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    NetHelpers.WriteVector2((Vector2)additionalParams[0], writer);
+                    writer.WritePacked((int)additionalParams[1]);
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    var pos = NetHelpers.ReadVector2(reader);
+                    var ventId = reader.ReadPackedInt32();
+                    SpawnVent(pos, ventId);
+                }
+                break;
+        }
+    }
 }

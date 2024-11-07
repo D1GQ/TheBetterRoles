@@ -29,8 +29,9 @@ public class OptionAttributes
 
 public abstract class CustomRoleBehavior
 {
-    protected bool hasSetup { get; set; } = false;
-    protected bool hasDeinitialize { get; set; } = false;
+    protected bool IsDirty { get; set; } = false;
+    protected bool HasSetup { get; set; } = false;
+    protected bool HasDeinitialize { get; set; } = false;
 
     /// <summary>
     /// A dictionary representing players recruited by this role to win together. 
@@ -437,8 +438,8 @@ public abstract class CustomRoleBehavior
 
     public void Deinitialize()
     {
-        if (hasDeinitialize) return;
-        hasDeinitialize = true;
+        if (HasDeinitialize) return;
+        HasDeinitialize = true;
 
         Logger.LogMethodPrivate("Deinitialize Role Base!", GetType());
 
@@ -473,8 +474,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     protected virtual void SetUpRole()
     {
-        if (hasSetup) return;
-        hasSetup = true;
+        if (HasSetup) return;
+        HasSetup = true;
 
         Logger.LogMethodPrivate("Setting up Role Base!", GetType());
 
@@ -564,6 +565,26 @@ public abstract class CustomRoleBehavior
             LongTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
             ShortTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
+    }
+
+    public void BaseUpdate() 
+    {
+        Update();
+    }
+
+    public void BaseFixedUpdate() 
+    { 
+        if (IsDirty)
+        {
+            if (_player.IsLocalPlayer())
+            {
+                Rpc<RpcDirtyRole>.Instance.Send(_player, new(RoleHash));
+            }
+
+            IsDirty = false;
+        }
+
+        FixedUpdate();
     }
 
     protected T AddButton<T>(T button) where T : BaseButton
@@ -725,6 +746,20 @@ public abstract class CustomRoleBehavior
     /// <param name="size">The size to scale the loaded sprite to, with a default value of 115.</param>
     /// <returns>A <see cref="Sprite"/> representing the ability icon, or null if the sprite could not be loaded.</returns>
     public Sprite? LoadAbilitySprite(string name, float size = 115) => Utils.LoadSprite($"TheBetterRoles.Resources.Images.Ability.{name}.png", size);
+
+    /// <summary>
+    /// Serializes the object's data into a <see cref="MessageWriter"/> for network transmission 
+    /// when the role is marked as "dirty," indicating data changes that need to be synchronized.
+    /// </summary>
+    /// <param name="writer">The <see cref="MessageWriter"/> to which data will be written for synchronization.</param>
+    public virtual void Serialize(MessageWriter writer) { }
+
+    /// <summary>
+    /// Deserializes object data from a <see cref="MessageReader"/> to update the object's state
+    /// when synchronizing data marked as "dirty" on the receiving end.
+    /// </summary>
+    /// <param name="reader">The <see cref="MessageReader"/> from which data will be read to update the object state.</param>
+    public virtual void Deserialize(MessageReader reader) { }
 
     /// <summary>
     /// Called once per frame to update the state of the role or perform actions.

@@ -82,37 +82,6 @@ public class UndertakerRole : CustomRoleBehavior
         }
     }
 
-    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
-    {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    NetHelpers.WriteVector2(rigidbody.position, writer);
-                }
-                break;
-        }
-    }
-
-    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
-    {
-        switch (syncId)
-        {
-            case 0:
-                {
-                    Vector2 pos = NetHelpers.ReadVector2(reader);
-                    Dragging.transform.position = pos;
-                    OnResetAbilityState(false);
-                }
-                break;
-            case 1:
-                {
-                    HideBody();
-                }
-                break;
-        }
-    }
-
     private void SetSpeed()
     {
         if (!hasSpeed)
@@ -232,6 +201,37 @@ public class UndertakerRole : CustomRoleBehavior
         if (_player.IsLocalPlayer())
         {
             vent?.SetButtons(CustomRoleManager.RoleChecks(_player, role => role.CanMoveInVents));
+        }
+    }
+
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    NetHelpers.WriteVector2(rigidbody.position, writer);
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    Vector2 pos = NetHelpers.ReadVector2(reader);
+                    Dragging.transform.position = pos;
+                    OnResetAbilityState(false);
+                }
+                break;
+            case 1:
+                {
+                    HideBody();
+                }
+                break;
         }
     }
 }

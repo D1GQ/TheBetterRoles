@@ -38,6 +38,7 @@ public enum ReactorRPCs : uint
     RoleAbility,
     SyncAction,
     SyncRole,
+    DirtyRole,
 
     // Sync
     Chat,

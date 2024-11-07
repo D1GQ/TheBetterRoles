@@ -115,32 +115,32 @@ public class ArsonistRole : CustomRoleBehavior
     private Coroutine? douseCoroutine;
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
-        switch (id)
+        if (_player.IsLocalPlayer())
         {
-            case 5:
-                {
-                    if (target != null)
+            switch (id)
+            {
+                case 5:
                     {
-                        if (DousingDuration.GetFloat() > 0f)
+                        if (target != null)
                         {
-                            if (_player.IsLocalPlayer())
+                            if (DousingDuration.GetFloat() > 0f)
                             {
                                 DouseButton?.SetDuration();
                                 douseCoroutine = _player.BetterData().StartCoroutine(CoDousePlayer(target));
                             }
-                        }
-                        else
-                        {
-                            DousePlayer(target);
+                            else
+                            {
+                                DousePlayer(target);
+                            }
                         }
                     }
-                }
-                break;
-            case 6:
-                {
-                    Ignite();
-                }
-                break;
+                    break;
+                case 6:
+                    {
+                        Ignite();
+                    }
+                    break;
+            }
         }
     }
 
@@ -180,10 +180,10 @@ public class ArsonistRole : CustomRoleBehavior
             yield return new WaitForSeconds(waitTime);
         }
 
-        DousePlayer(target, true);
+        DousePlayer(target);
     }
 
-    private void DousePlayer(PlayerControl target, bool sync = false)
+    private void DousePlayer(PlayerControl target)
     {
         DouseButton?.SetCooldown(state: 0);
         doused.Add(target.Data);
@@ -194,63 +194,44 @@ public class ArsonistRole : CustomRoleBehavior
             target.BetterData().NameColor = "#59360d";
         }
 
-        if (sync)
-        {
-            SendRoleSync(0);
-        }
+        IsDirty = true;
     }
 
     private void Ignite()
     {
         DouseButton?.SetCooldown();
 
-        if (_player.IsLocalPlayer())
+        foreach (var data in doused)
         {
-            foreach (var data in doused)
+            var player = data.Object;
+            if (player != null && player.IsAlive() && player != _player)
             {
-                var player = data.Object;
-                if (player != null && player.IsAlive() && player != _player)
-                {
-                    _player.SendRpcMurder(player, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
-                }
+                _player.SendRpcMurder(player, true, MultiMurderFlags.playSound | MultiMurderFlags.spawnBody | MultiMurderFlags.showAnimation);
             }
         }
     }
 
-    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    public override void Serialize(MessageWriter writer)
     {
-        switch (syncId)
+        writer.WritePacked(doused.Count);
+        foreach (var data in doused)
         {
-            case 0:
-                {
-                    writer.Write(doused.Count);
-                    foreach (var data in doused)
-                    {
-                        writer.Write(data.PlayerId);
-                    }
-                }
-                break;
+            writer.Write(data.PlayerId);
         }
     }
 
-    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    public override void Deserialize(MessageReader reader)
     {
-        switch (syncId)
+        int count = reader.ReadPackedInt32();
+        doused.Clear();
+        for (int i = 0; i < count; i++)
         {
-            case 0:
-                int count = reader.ReadInt32();
-                doused.Clear();
-                for (int i = 0; i < count; i++)
-                {
-                    byte playerId = reader.ReadByte();
-                    var playerData = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.PlayerId == playerId);
-                    if (playerData != null)
-                    {
-                        doused.Add(playerData);
-                    }
-                }
-                break;
+            byte playerId = reader.ReadByte();
+            var playerData = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.PlayerId == playerId);
+            if (playerData != null)
+            {
+                doused.Add(playerData);
+            }
         }
     }
-
 }
