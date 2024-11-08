@@ -49,6 +49,7 @@ public class BlackmailerRole : CustomRoleBehavior
                     if (target != null)
                     {
                         blackmailed = target.Data;
+                        target.DirtyName();
                     }
                 }
                 break;
@@ -77,7 +78,7 @@ public class BlackmailerRole : CustomRoleBehavior
 
     public override string SetNameMark(PlayerControl target)
     {
-        if (blackmailed != null && GameState.IsMeeting)
+        if (blackmailed != null && (GameState.IsMeeting || _player.IsLocalPlayer()))
         {
             if (blackmailed == target.Data)
             {
@@ -91,7 +92,7 @@ public class BlackmailerRole : CustomRoleBehavior
     public override string AddMeetingText(ref CustomClip? clip)
     {
         var Blackmailed = blackmailed.Object;
-        if (Blackmailed != null)
+        if (Blackmailed != null && Blackmailed.IsAlive())
         {
             if (Blackmailed.IsLocalPlayer())
             {

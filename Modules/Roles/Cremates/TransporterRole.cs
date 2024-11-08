@@ -76,12 +76,19 @@ public class TransporterRole : CustomRoleBehavior
                     if (playerPanel != null)
                     {
                         playerPanel.Background.color = new(1f, 1f, 1f, 0.5f);
-                        playerPanel.Button.enabled = false;
                     }
 
                     if (firstTarget == null)
                     {
                         firstTarget = target;
+                    }
+                    else if (firstTarget == target)
+                    {
+                        firstTarget = null;
+                        if (playerPanel != null)
+                        {
+                            playerPanel.Background.color = new(1f, 1f, 1f, 1f);
+                        }
                     }
                     else
                     {

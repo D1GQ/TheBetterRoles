@@ -30,6 +30,7 @@ public class TaskPatch
                 {
                     __instance.taskDirtyTimer = 0f;
                     Il2CppSystem.Text.StringBuilder sb = new();
+                    sb.Append("<size=75%>");
 
                     if (PlayerControl.LocalPlayer.BetterData()?.RoleInfo?.RoleAssigned == true)
                     {
@@ -88,6 +89,7 @@ public class TaskPatch
                             sb.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
                         }
                         */
+                        sb.Append("</size>");
                         sb.TrimEnd();
                     }
                     __instance.TaskPanel.SetTaskText(sb.ToString());

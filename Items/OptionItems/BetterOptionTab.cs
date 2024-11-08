@@ -42,6 +42,9 @@ public class BetterOptionTab
         var BetterSettingsButton = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsButton, GameSettingMenu.Instance.GameSettingsButton.transform.parent);
         TabButton = BetterSettingsButton;
 
+        var aspectPosition = BetterSettingsButton.gameObject.AddComponent<AspectPosition>();
+        aspectPosition.Alignment = AspectPosition.EdgeAlignments.Left;
+
         BetterSettingsButton.gameObject.SetActive(true);
         BetterSettingsButton.name = Name;
         BetterSettingsButton.OnClick.RemoveAllListeners();
@@ -74,7 +77,7 @@ public class BetterOptionTab
     {
         int buttonCount = allTabs.Count;
         float buttonHeight = 0.4f; // The height offset between buttons
-        Vector3 startingPosition = GameSettingMenu.Instance.GameSettingsButton.transform.position + new Vector3(-0.15f, 0.3f, 0f); // Starting position from GameSettingsButton
+        Vector3 startingPosition = new Vector3(2.2f, -0.8f, 0f); // Starting position from GameSettingsButton
         float xOffset = 0.75f; // Horizontal offset for columns
 
         // Loop through each button and calculate its position
@@ -94,7 +97,8 @@ public class BetterOptionTab
             float yPosition = startingPosition.y - rowIndex * buttonHeight; // Adjust y based on row
 
             // Set the position
-            tab.TabButton.transform.position = new Vector3(xPosition, yPosition, startingPosition.z);
+            tab.TabButton.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(xPosition, yPosition, startingPosition.z);
+            tab.TabButton.GetComponent<AspectPosition>().AdjustPosition();
 
             // Set button scale
             tab.TabButton.transform.localScale = new Vector3(0.55f, 0.55f, 1f);
