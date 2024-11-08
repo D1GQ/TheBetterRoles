@@ -111,7 +111,7 @@ public abstract class CustomRoleBehavior
         {
             string str = string.Empty;
             int max = -1, current = -1;
-            SetAbilityAmountTextForMeeting(ref max, ref current);
+            SetAbilityAmountText(ref max, ref current);
             if (max > -1 || current > -1)
             {
                 string hex = Utils.Color32ToHex(Utils.HexToColor32(RoleColor) - new Color(0.15f, 0.15f, 0.15f));
@@ -816,7 +816,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Returns icon next to player name.
     /// </summary>
-    public virtual void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount) { }
+    public virtual void SetAbilityAmountText(ref int maxAmount, ref int currentAmount) { }
 
     /// <summary>
     /// Returns text that will appear on the meeting hud on start.

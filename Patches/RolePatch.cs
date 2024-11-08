@@ -42,6 +42,18 @@ public class RolePatch
                 }));
             }
         }
+
+        [HarmonyPatch(nameof(PlayerControl.CompleteTask))]
+        [HarmonyPostfix]
+        public static void CompleteTask_Postfix(PlayerControl __instance, [HarmonyArgument(0)] uint idx)
+        {
+            PlayerTask playerTask = __instance.myTasks.ToArray().FirstOrDefault(p => p.Id == idx);
+            if (playerTask)
+            {
+                CustomRoleManager.RoleListener(__instance, role => role.OnTaskComplete(__instance, idx));
+                __instance?.DirtyName();
+            }
+        }
     }
 
     [HarmonyPatch(typeof(PlayerPhysics))]

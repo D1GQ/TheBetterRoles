@@ -75,7 +75,8 @@ class PlayerControlPatch
     {
         if (player?.Data == null || player?.BetterData()?.DirtyName != true) return;
 
-        var playerData = player.BetterData();
+        var betterData = player.BetterData();
+        betterData.DirtyName = false;
         var cosmetics = player.cosmetics;
 
         var sbTag = new StringBuilder();
@@ -88,15 +89,15 @@ class PlayerControlPatch
 
         if (isLobbyState)
         {
-            cosmetics.nameText.color = playerData.HasMod || isLocalPlayer
+            cosmetics.nameText.color = betterData.HasMod || isLocalPlayer
                 ? new Color(0.47f, 1f, 0.95f, 1f)
                 : Color.white;
         }
         else
         {
-            if (!string.IsNullOrEmpty(playerData.NameColor))
+            if (!string.IsNullOrEmpty(betterData.NameColor))
             {
-                var color = Utils.HexToColor32(playerData.NameColor);
+                var color = Utils.HexToColor32(betterData.NameColor);
                 cosmetics.nameText.color = new Color(color.r, color.g, color.b, cosmetics.nameText.color.a);
             }
             else
@@ -109,7 +110,7 @@ class PlayerControlPatch
 
             if (canRevealRole)
             {
-                sbTag.Append($"{player.GetRoleNameAndColor()}{player.FormatTasksToText()}---");
+                sbTag.Append($"{player.Role()?.RoleNameAndAbilityAmount}{player.FormatTasksToText()}---");
             }
 
             bool canRevealAddons = isLocalPlayer || !isLocalPlayerAlive || player.IsImpostorTeammate() ||
@@ -117,9 +118,9 @@ class PlayerControlPatch
 
             if (canRevealAddons)
             {
-                foreach (var addon in playerData.RoleInfo.Addons)
+                foreach (var addon in betterData.RoleInfo.Addons)
                 {
-                    sbTagTop.Append($"<size=55%><color={addon.RoleColor}>{addon.RoleName}</color></size>+++");
+                    sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
                 }
             }
         }

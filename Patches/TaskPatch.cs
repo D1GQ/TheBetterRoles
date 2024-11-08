@@ -210,21 +210,6 @@ public class TaskPatch
         }
     }
 
-    [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.NextStep))]
-    public class NormalPlayerTask_NextStep
-    {
-        public static void Postfix(NormalPlayerTask __instance)
-        {
-            if (__instance.taskStep >= __instance.MaxStep)
-            {
-                if (PlayerControl.LocalPlayer)
-                {
-                    CustomRoleManager.RoleListener(__instance.Owner, role => role.OnTaskComplete(__instance.Owner, __instance.Id));
-                }
-            }
-        }
-    }
-
     [HarmonyPatch(typeof(Console), nameof(Console.CanUse))]
     public class Console_CanUse
     {

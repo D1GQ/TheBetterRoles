@@ -59,6 +59,7 @@ public class CustomGameManager
         private static void OnDestroy_Prefix(/*IntroCutscene __instance*/)
         {
             CustomRoleManager.RoleListenerOther(role => role.OnIntroCutsceneEnd());
+            Utils.DirtyAllNames();
         }
 
         [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate))]

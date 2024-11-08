@@ -122,7 +122,7 @@ public class MayorRole : CustomRoleBehavior
         }
     }
 
-    public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
+    public override void SetAbilityAmountText(ref int maxAmount, ref int currentAmount)
     {
         currentAmount = additionalVotes;
     }

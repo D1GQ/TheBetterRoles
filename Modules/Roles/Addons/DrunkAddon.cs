@@ -43,7 +43,7 @@ public class DrunkAddon : CustomAddonBehavior
         {
             var player = __instance.myPlayer;
             if (!player.IsLocalPlayer()) return;
-            if (!player.HasAddon(CustomRoles.Drunk)) return;
+            if (!player.Has(CustomRoles.Drunk)) return;
 
             bool flag = !player.CanMove;
             __instance.body.velocity *= flag ? 1 : -1;

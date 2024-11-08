@@ -51,4 +51,62 @@ public class GamePrefabHelper
 
         return null;
     }
+
+    public static UnityEngine.Object? GetPrefabByPath(string objectPath)
+    {
+        string[] pathSegments = objectPath.Split('/');
+        UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll(Il2CppType.Of<UnityEngine.GameObject>());
+
+        foreach (GameObject rootObject in allObjects)
+        {
+            if (rootObject.hideFlags != HideFlags.None) continue;
+
+            if (rootObject.name == pathSegments[0])
+            {
+                GameObject current = rootObject;
+
+                for (int i = 1; i < pathSegments.Length; i++)
+                {
+                    Transform childTransform = current.transform.Find(pathSegments[i]);
+
+                    if (childTransform == null)
+                        return null;
+
+                    current = childTransform.gameObject;
+                }
+
+                return current;
+            }
+        }
+
+        return null;
+    }
+
+
+    public static T? GetComponentPrefabByName<T>(string objectName) where T : Component
+    {
+        UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll(Il2CppType.Of<GameObject>());
+
+        var obj = allObjects.FirstOrDefault(o => o.hideFlags == HideFlags.None && o.name == objectName) as GameObject;
+
+        if (obj != null)
+        {
+            return obj.GetComponent<T>();
+        }
+
+        return null;
+    }
+
+    public static T? GetComponentPrefabByPath<T>(string objectPath) where T : Component
+    {
+        GameObject? prefab = GetPrefabByPath(objectPath) as GameObject;
+
+        if (prefab != null)
+        {
+            return prefab.GetComponent<T>();
+        }
+
+        return null;
+    }
+
 }

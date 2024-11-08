@@ -35,6 +35,7 @@ class ExileControllerPatch
     {
         CustomRoleManager.RoleListenerOther(role => role.OnExileEnd(__instance?.initData?.networkedPlayer?.Object, __instance?.initData?.networkedPlayer));
         CustomRoleManager.RoleListener(PlayerControl.LocalPlayer, role => role.SetAllCooldowns());
+        Utils.DirtyAllNames();
 
         if (__instance.initData.networkedPlayer != null)
         {

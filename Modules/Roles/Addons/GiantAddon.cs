@@ -1,5 +1,6 @@
 ﻿using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
@@ -50,6 +51,23 @@ public class GiantAddon : CustomAddonBehavior
     public override void OnUndisguise(PlayerControl player)
     {
         SetSize();
+    }
+
+    public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    {
+        if (target == _player && IsBig)
+        {
+            _ = new LateTask(SetDeadBodySize, 0.005f, shoudLog: false);
+        }
+    }
+
+    private void SetDeadBodySize()
+    {
+        var body = Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == _player.PlayerId);
+        if (body != null)
+        {
+            body.transform.localScale = body.transform.localScale * 1.25f;
+        }
     }
 
     private void SetSize()

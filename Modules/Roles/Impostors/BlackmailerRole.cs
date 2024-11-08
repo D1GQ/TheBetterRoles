@@ -74,7 +74,6 @@ public class BlackmailerRole : CustomRoleBehavior
             DestroyableSingleton<HudManager>.Instance.Chat.chatButton.enabled = true;
             DestroyableSingleton<HudManager>.Instance.Chat.chatButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         }
-        blackmailed?.Object?.DirtyName();
         blackmailed = null;
         BlackmailButton?.SetUses(1);
     }

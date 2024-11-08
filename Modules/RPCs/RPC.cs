@@ -110,7 +110,7 @@ internal static class RPC
             public static bool CmdReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
             {
                 if (__instance.IsAlive())
-                    __instance.SendRpcReportBody(target?.PlayerId ?? 255);
+                    __instance.SendRpcReportBody(target);
 
                 return false;
             }
@@ -120,7 +120,7 @@ internal static class RPC
             public static bool ReportDeadBody_Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
             {
                 if (__instance.IsAlive())
-                    __instance.SendRpcReportBody(target?.PlayerId ?? 255);
+                    __instance.SendRpcReportBody(target);
 
                 return false;
             }
@@ -328,8 +328,13 @@ internal static class RPC
 
     private static bool CheckReviveRpc(PlayerControl player) => true;
 
+    public static void SendRpcReportBody(this PlayerControl player, NetworkedPlayerInfo bodyInfo)
+    {
+        SendTrueRpcReportBody(player, bodyInfo?.PlayerId ?? 255);
+    }
+
     [MethodRpc((uint)ReactorRPCs.ReportBody, SendImmediately = true)]
-    public static void SendRpcReportBody(this PlayerControl player, int bodyInfoId)
+    private static void SendTrueRpcReportBody(this PlayerControl player, byte bodyInfoId)
     {
         var bodyInfo = Utils.PlayerDataFromPlayerId(bodyInfoId);
         var flag = bodyInfo == null;

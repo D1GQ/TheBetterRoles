@@ -41,9 +41,14 @@ public class SwapperRole : CustomRoleBehavior
     private bool isSwapping;
     private int swaps = 0;
 
-    public override void OnMeetingStart(MeetingHud meetingHud)
+    public override void OnSetUpRole()
     {
         swaps = AmountOfSwaps.GetInt();
+        isSwapping = false;
+    }
+
+    public override void OnMeetingStart(MeetingHud meetingHud)
+    {
         isSwapping = false;
         if (_player.IsLocalPlayer())
         {
@@ -206,7 +211,7 @@ public class SwapperRole : CustomRoleBehavior
         pva2.transform.position = startPosition1;
     }
 
-    public override void SetAbilityAmountTextForMeeting(ref int maxAmount, ref int currentAmount)
+    public override void SetAbilityAmountText(ref int maxAmount, ref int currentAmount)
     {
         maxAmount = AmountOfSwaps.GetInt();
         currentAmount = swaps;
