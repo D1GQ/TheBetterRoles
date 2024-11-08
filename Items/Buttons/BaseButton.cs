@@ -162,6 +162,7 @@ public class BaseButton : MonoBehaviour
         }
 
         OnRemoveButton();
+        this.DestroyMono();
     }
 
     public virtual void OnRemoveButton() { }

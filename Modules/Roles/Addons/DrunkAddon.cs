@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Helpers;
+﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
@@ -33,12 +34,19 @@ public class DrunkAddon : CustomAddonBehavior
         _player.MyPhysics.body.velocity *= 1;
     }
 
-    public override void FixedUpdate()
+    [HarmonyPatch(typeof(PlayerPhysics))]
+    class PlayerPhysicsDrunkPatch
     {
-        if (_player.IsLocalPlayer())
+        [HarmonyPatch(nameof(PlayerPhysics.FixedUpdate))]
+        [HarmonyPostfix]
+        public static void FixedUpdate_Postfix(PlayerPhysics __instance)
         {
-            bool flag = !_player.CanMove;
-            _player.MyPhysics.body.velocity *= flag ? 1 : -1;
+            var player = __instance.myPlayer;
+            if (!player.IsLocalPlayer()) return;
+            if (!player.HasAddon(CustomRoles.Drunk)) return;
+
+            bool flag = !player.CanMove;
+            __instance.body.velocity *= flag ? 1 : -1;
         }
     }
 }

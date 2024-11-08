@@ -122,10 +122,10 @@ public class PlaguebearerRole : CustomRoleBehavior
     {
         if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(infected.Contains))
         {
-            CustomRoleManager.SetCustomRole(_player, CustomRoles.Pestillence);
-            if (_player.Role() is PestillenceRole role)
+            var role = CustomRoleManager.SetCustomRole(_player, CustomRoles.Pestillence);
+            if (role.TryCast<PestillenceRole>(out var Pestillence))
             {
-                role.WasTransformed = true;
+                Pestillence.WasTransformed = true;
             }
         }
     }

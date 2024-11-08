@@ -21,7 +21,7 @@ public class BaseAbilityButton : BaseButton
             buttonObj.transform.SetSiblingIndex(index);
         }
 
-        var AbilityButton = buttonObj.AddComponent<BaseAbilityButton>();
+        var AbilityButton = HudManager.Instance.gameObject.AddComponent<BaseAbilityButton>();
         AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, buttonObj);
 
         return AbilityButton;

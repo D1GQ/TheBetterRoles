@@ -585,32 +585,44 @@ public static class CustomRoleManager
         }
     }
 
-    public static void SetCustomRole(PlayerControl player, CustomRoles role, bool isAssigned = false)
+    public static CustomRoleBehavior? SetCustomRole(PlayerControl player, CustomRoles role, bool isAssigned = false)
     {
-        if (player == null || player?.BetterData()?.RoleInfo?.Role.RoleType == role) return;
-
-        player.RawSetRole(RoleTypes.Crewmate);
+        if (player == null || player?.BetterData()?.RoleInfo?.Role.RoleType == role) return null;
 
         player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
 
+        player.RawSetRole(RoleTypes.Crewmate);
+
         CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
         newRole?.Initialize(player, isAssigned);
+
+        return newRole;
     }
 
-    public static void AddAddon(PlayerControl player, CustomRoles role, bool isAssigned = false)
+    public static CustomRoleBehavior? AddAddon(PlayerControl player, CustomRoles role, bool isAssigned = false)
     {
-        if (player == null) return;
+        if (player == null) return null;
 
         CustomRoleBehavior? roleClass = allRoles.FirstOrDefault(r => r.RoleType == role);
 
         if (roleClass != null)
         {
-            if (roleClass.IsAddon && !player.BetterData().RoleInfo.Addons.Contains(roleClass))
+            if (roleClass.IsAddon)
             {
-                CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
-                newRole?.Initialize(player, isAssigned);
+                if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == role))
+                {
+                    CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
+                    newRole?.Initialize(player, isAssigned);
+                    return newRole;
+                }
+                else
+                {
+                    return player.BetterData().RoleInfo.Addons.FirstOrDefault(addon => addon.RoleType == role);
+                }
             }
         }
+
+        return null;
     }
 
     public static void RemoveAddon(PlayerControl player, CustomRoles role)

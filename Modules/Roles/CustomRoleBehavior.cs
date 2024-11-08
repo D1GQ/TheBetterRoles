@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
@@ -416,6 +417,7 @@ public abstract class CustomRoleBehavior
         {
             _player = player;
             _data = player.Data;
+
             if (!IsAddon)
             {
                 player.BetterData().RoleInfo.Role = this;

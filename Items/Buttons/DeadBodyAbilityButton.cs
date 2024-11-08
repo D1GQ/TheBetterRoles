@@ -23,7 +23,7 @@ public class DeadBodyAbilityButton : BaseButton
             buttonObj.transform.SetSiblingIndex(index);
         }
 
-        var AbilityButton = buttonObj.AddComponent<DeadBodyAbilityButton>();
+        var AbilityButton = HudManager.Instance.gameObject.AddComponent<DeadBodyAbilityButton>();
         AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, range, buttonObj);
         return AbilityButton;
     }

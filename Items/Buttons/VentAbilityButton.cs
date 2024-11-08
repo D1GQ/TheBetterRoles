@@ -28,7 +28,7 @@ public class VentAbilityButton : BaseButton
             buttonObj.transform.SetSiblingIndex(index);
         }
 
-        var AbilityButton = buttonObj.AddComponent<VentAbilityButton>();
+        var AbilityButton = HudManager.Instance.gameObject.AddComponent<VentAbilityButton>();
         AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, role, sprite, isAbility, buttonObj);
 
         return AbilityButton;
