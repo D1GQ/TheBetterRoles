@@ -11,6 +11,7 @@ using Reactor.Networking.Attributes;
 using System.Security.Cryptography;
 using System.Text;
 using TheBetterRoles.Items;
+using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
@@ -154,8 +155,13 @@ public class Main : BasePlugin
 
             // Add custom components
             {
-                AddComponent<ExtendedPlayerInfo>();
-                AddComponent<GuessManager>();
+                AddComponent<ExtendedPlayerInfo>().enabled = false;
+                AddComponent<GuessManager>().enabled = false;
+                AddComponent<BaseButton>().enabled = false;
+                AddComponent<BaseAbilityButton>().enabled = false;
+                AddComponent<PlayerAbilityButton>().enabled = false;
+                AddComponent<VentAbilityButton>().enabled = false;
+                AddComponent<DeadBodyAbilityButton>().enabled = false;
             }
 
             CheckRoleIds();

@@ -683,6 +683,7 @@ public enum CustomRoles
     Bait,
     ButtonBerry,
     Giant,
+    Drunk,
     Lantern,
     NoiseMaker,
     Swift,

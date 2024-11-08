@@ -14,6 +14,24 @@ public class PlayerAbilityButton : BaseButton
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
     public PlayerAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
+        if (role?._player?.IsLocalPlayer() is false or null) return this;
+
+        var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
+        buttonObj.name = $"CustomAbility({name})";
+
+        if (index > -1)
+        {
+            buttonObj.transform.SetSiblingIndex(index);
+        }
+
+        var AbilityButton = buttonObj.AddComponent<PlayerAbilityButton>();
+        AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, range, buttonObj);
+
+        return AbilityButton;
+    }
+
+    private void SetUp(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, float range, GameObject buttonObj)
+    {
         Role = role;
         Id = id;
         Distance = range * 0.5f + 1f;
@@ -22,16 +40,6 @@ public class PlayerAbilityButton : BaseButton
         Duration = duration;
         Uses = abilityUses;
         Visible = true;
-
-        if (!_player.IsLocalPlayer()) return this;
-
-        var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
-        buttonObj.name = $"CustomAbility({name})";
-
-        if (index > -1)
-        {
-            buttonObj.transform.SetSiblingIndex(index);
-        }
 
         if (buttonObj != null)
         {
@@ -81,7 +89,6 @@ public class PlayerAbilityButton : BaseButton
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
         allButtons.Add(this);
-        return this;
     }
 
     public override void Click()
@@ -96,10 +103,8 @@ public class PlayerAbilityButton : BaseButton
         }
     }
 
-    public override void FixedUpdate()
+    public override void ButtonUpdate()
     {
-        base.FixedUpdate();
-
         Visible = (PlayerControl.LocalPlayer.IsAlive() || UseAsDead) && VisibleCondition() && BaseShow();
 
         PlayerControl? target = null;

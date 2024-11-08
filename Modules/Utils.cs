@@ -257,22 +257,18 @@ public static class Utils
         vent.myRend.material.SetColor("_AddColor", showMain ? color : Color.clear);
     }
 
-    public static bool IsEnabled(this Vent vent) => vent?.GetComponent<BoxCollider2D>()?.enabled == true;
+    public static bool IsEnabled(this Vent vent) => vent?.enabled == true;
 
     public static void SetEnabled(this Vent vent, bool @bool)
     {
         if (vent != null)
         {
-            var ventCollider2D = vent?.GetComponent<BoxCollider2D>();
-            if (ventCollider2D != null)
-            {
-                ventCollider2D.enabled = @bool;
+            vent.enabled = @bool;
 
-                if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out var system))
-                {
-                    VentilationSystem ventilationSystem = system.Cast<VentilationSystem>();
-                    ventilationSystem?.UpdateVentArrows();
-                }
+            if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out var system))
+            {
+                VentilationSystem ventilationSystem = system.Cast<VentilationSystem>();
+                ventilationSystem?.UpdateVentArrows();
             }
         }
     }

@@ -53,19 +53,6 @@ public class ExtendedPlayerInfo : MonoBehaviour
                 foreach (var role in RoleInfo.AllRoles)
                 {
                     role?.BaseFixedUpdate();
-
-                    if (pc.IsLocalPlayer())
-                    {
-                        if (role.Buttons.Any())
-                        {
-                            foreach (var button in role.Buttons)
-                            {
-                                if (button?.ActionButton == null) continue;
-
-                                button?.FixedUpdate();
-                            }
-                        }
-                    }
                 }
             }
 

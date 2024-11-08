@@ -18,6 +18,24 @@ public class VentAbilityButton : BaseButton
     public Func<Vent, bool> VentCondition { get; set; } = (target) => true;
     public VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
+        if (role?._player?.IsLocalPlayer() is false or null) return this;
+
+        var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
+        buttonObj.name = $"CustomVent({name})";
+
+        if (index > -1)
+        {
+            buttonObj.transform.SetSiblingIndex(index);
+        }
+
+        var AbilityButton = buttonObj.AddComponent<VentAbilityButton>();
+        AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, role, sprite, isAbility, buttonObj);
+
+        return AbilityButton;
+    }
+
+    private void SetUp(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility, GameObject buttonObj)
+    {
         this.isAbility = isAbility;
         Distance = 0.8f;
         Role = role;
@@ -28,16 +46,6 @@ public class VentAbilityButton : BaseButton
         Uses = abilityUses;
         Visible = true;
         IsAbility = isAbility;
-
-        if (!_player.IsLocalPlayer()) return this;
-
-        var buttonObj = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
-        buttonObj.name = $"CustomVent({name})";
-
-        if (index > -1)
-        {
-            buttonObj.transform.SetSiblingIndex(index);
-        }
 
         if (buttonObj != null)
         {
@@ -98,7 +106,6 @@ public class VentAbilityButton : BaseButton
         ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
 
         allButtons.Add(this);
-        return this;
     }
 
     public override void Click()
@@ -138,10 +145,8 @@ public class VentAbilityButton : BaseButton
         InteractCondition() &&
         (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
 
-    public override void FixedUpdate()
+    public override void ButtonUpdate()
     {
-        base.FixedUpdate();
-
         Visible = (PlayerControl.LocalPlayer.IsAlive() || UseAsDead) && VisibleCondition() && BaseShow();
 
         Vent? targetVent = null;

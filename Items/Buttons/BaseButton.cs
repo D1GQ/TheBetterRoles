@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.Buttons;
 
-public class BaseButton
+public class BaseButton : MonoBehaviour
 {
     public static List<BaseButton> allButtons = [];
 
@@ -123,7 +123,7 @@ public class BaseButton
 
     public virtual void Click() { }
 
-    public virtual void FixedUpdate()
+    public void FixedUpdate()
     {
         if (Hacked) return;
 
@@ -148,7 +148,10 @@ public class BaseButton
         {
             ActionButton.SetCoolDown(-1, 0);
         }
+
+        ButtonUpdate();
     }
+    public virtual void ButtonUpdate() { }
 
     public void RemoveButton()
     {
