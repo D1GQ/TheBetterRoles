@@ -48,16 +48,17 @@ public class Main : BasePlugin
     public const string Discord = "https://discord.gg/ten";
     public static bool IsGuestBuild { get; private set; } = false;
 
-    public static string modSignature
+    public static uint modSignature
     {
         get
         {
-            string GetHash(string hash)
+            uint getHash(string hash)
             {
                 using SHA256 sha256 = SHA256.Create();
                 byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(hash));
                 string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
-                return sha256Hash[..8];
+                string hashSubstring = sha256Hash[..8];
+                return Convert.ToUInt32(hashSubstring, 16);
             }
 
             var versionData = new StringBuilder()
@@ -78,9 +79,10 @@ public class Main : BasePlugin
                 .Append(string.Join(".", Enum.GetNames(typeof(CustomRoles))))
                 .ToString();
 
-            return GetHash(versionData);
+            return getHash(versionData);
         }
     }
+
 
     public static string GetVersionText(bool newLine = false)
     {

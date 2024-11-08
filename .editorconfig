@@ -24,6 +24,18 @@ dotnet_diagnostic.CS8604.severity = silent
 # CS8602: Dereference of a possibly null reference.
 dotnet_diagnostic.CS8602.severity = none
 
+# CS8625: Cannot convert null literal to non-nullable reference type.
+dotnet_diagnostic.CS8625.severity = silent
+
+# CS8600: Converting null literal or possible null value to non-nullable type.
+dotnet_diagnostic.CS8600.severity = silent
+
+# CS1522: Empty switch block
+dotnet_diagnostic.CS1522.severity = suggestion
+
+# CS8618: Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+dotnet_diagnostic.CS8618.severity = silent
+
 [*.{cs,vb}]
 #### Naming styles ####
 
