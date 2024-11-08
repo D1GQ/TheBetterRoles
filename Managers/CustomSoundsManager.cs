@@ -10,6 +10,7 @@ namespace TheBetterRoles.Managers;
 
 public class CustomClip
 {
+    public AudioClip? Clip;
     public string ClipName = string.Empty;
     public float Volume = 1f;
 }

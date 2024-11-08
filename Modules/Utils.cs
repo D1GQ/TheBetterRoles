@@ -352,6 +352,7 @@ public static class Utils
 
         string puid = player.Data.Puid;
 
+        if (string.IsNullOrEmpty(puid)) return "";
         using SHA256 sha256 = SHA256.Create();
         byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(puid));
         string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
@@ -360,14 +361,20 @@ public static class Utils
     // Get HashPuid from puid
     public static string GetHashPuid(string puid)
     {
+        if (string.IsNullOrEmpty(puid)) return "";
+
         using SHA256 sha256 = SHA256.Create();
         byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(puid));
         string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
         return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
     }
 
-    public static ushort GetHashUInt16(string input) =>
-        (ushort)(BitConverter.ToUInt16(SHA256.HashData(Encoding.UTF8.GetBytes(input)), 0) % 65536);
+    public static ushort GetHashUInt16(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return 0;
+
+        return (ushort)(BitConverter.ToUInt16(SHA256.HashData(Encoding.UTF8.GetBytes(input)), 0) % 65536);
+    }
 
     public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText = false)
     {

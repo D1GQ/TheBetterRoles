@@ -159,7 +159,14 @@ namespace TheBetterRoles
                 var clip = kvp.Value;
                 if (clip != null)
                 {
-                    CustomSoundsManager.Play(clip.ClipName, clip.Volume);
+                    if (!string.IsNullOrEmpty(clip.ClipName))
+                    {
+                        CustomSoundsManager.Play(clip.ClipName, clip.Volume);
+                    }
+                    else if (clip.Clip != null)
+                    {
+                        DestroyableSingleton<SoundManager>.Instance.PlaySound(clip.Clip, false, clip.Volume);
+                    }
                 }
 
                 yield return instance.StartCoroutine(FadeText(textPro));

@@ -6,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using UnityEngine;
 
 namespace TheBetterRoles.Roles;
 
@@ -62,6 +63,7 @@ public class BlackmailerRole : CustomRoleBehavior
         {
             DestroyableSingleton<HudManager>.Instance.Chat.ForceClosed();
             DestroyableSingleton<HudManager>.Instance.Chat.chatButton.enabled = false;
+            DestroyableSingleton<HudManager>.Instance.Chat.chatButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
         }
     }
 
@@ -70,6 +72,7 @@ public class BlackmailerRole : CustomRoleBehavior
         if (blackmailed.IsLocalData())
         {
             DestroyableSingleton<HudManager>.Instance.Chat.chatButton.enabled = true;
+            DestroyableSingleton<HudManager>.Instance.Chat.chatButton.inactiveSprites.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         }
         blackmailed?.Object?.DirtyName();
         blackmailed = null;
@@ -94,6 +97,7 @@ public class BlackmailerRole : CustomRoleBehavior
         var Blackmailed = blackmailed.Object;
         if (Blackmailed != null && Blackmailed.IsAlive())
         {
+            clip = new() { Clip = DestroyableSingleton<MeetingIntroAnimation>.Instance.PlayerDeadSound };
             if (Blackmailed.IsLocalPlayer())
             {
                 return $"<{RoleColor}>{Translator.GetString("Role.Blackmailer.YouMsg")}</color>";
