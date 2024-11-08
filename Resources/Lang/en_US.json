@@ -154,6 +154,14 @@
   "Role.Impostor.Info": "Kill and sabotage Crewmates",
   "Role.Impostor.LongInfo": "As an Impostor, you're able to kill and sabotage.",
 
+  "Role.Blackmailer": "Blackmailer",
+  "Role.Blackmailer.Info": "Blackmail the crewmates",
+  "Role.Blackmailer.LongInfo": "As the Blackmailer, you can choose a player to Blackmail, within a meeting that blackmailed player is not able to speak.",
+  "Role.Blackmailer.Ability.1": "Blackmail",
+  "Role.Blackmailer.Option.BlackmailCooldown": "Blackmail Cooldown",
+  "Role.Blackmailer.YouMsg": "You have been Blackmailed from speaking!",
+  "Role.Blackmailer.AllMsg": "{0} has been Blackmailed from speaking!",
+
   "Role.Morphling": "Morphling",
   "Role.Morphling.Info": "Change your appearance to deceive others",
   "Role.Morphling.LongInfo": "As the Morphling, you're able to sample a player of your choice. when sampled temporarily change your appearance to that player for a set amount of time.",

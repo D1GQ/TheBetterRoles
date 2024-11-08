@@ -7,6 +7,7 @@ using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Patches;
 using TheBetterRoles.RPCs;
 using UnityEngine;
 
@@ -155,7 +156,7 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
-    /// Use id 33 for the next role!
+    /// Use id 34 for the next role!
     /// Get automatically generated role ID based on the role type. Each role is assigned a unique ID derived from its type.
     /// </summary>
     public abstract int RoleId { get; }
@@ -505,7 +506,7 @@ public abstract class CustomRoleBehavior
                 }
             };
 
-            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown, 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, GameOptionsManager.Instance.currentNormalGameOptions.KillDistance));
+            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), VanillaGameSettings.KillCooldown.GetFloat(), 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, VanillaGameSettings.KillDistance.GetValue()));
             KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
             KillButton.TargetCondition = (PlayerControl target) =>
             {

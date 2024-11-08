@@ -43,7 +43,7 @@ public class JanitorRole : CustomRoleBehavior
     public DeadBodyAbilityButton? CleanButton = new();
     public override void OnSetUpRole()
     {
-        CleanButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0f));
+        CleanButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0));
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
