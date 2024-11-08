@@ -25,7 +25,6 @@ public class DeadBodyAbilityButton : BaseButton
 
         var AbilityButton = buttonObj.AddComponent<DeadBodyAbilityButton>();
         AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, range, buttonObj);
-        Logger.InGame("TEST 2");
         return AbilityButton;
     }
 
