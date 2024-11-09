@@ -150,7 +150,7 @@ public class MoleRole : CustomRoleBehavior
         _ = new LateTask(() =>
         {
             vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
-        }, 0.00005f, shoudLog: false);
+        }, 0.00005f, shouldLog: false);
 
         vent.Id = ventId;
         var pos = Pos;

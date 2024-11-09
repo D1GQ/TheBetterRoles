@@ -79,7 +79,7 @@ public class BetterOptionItem
                     item.TitleText.DestroyTextTranslator();
                     item.TitleText.text = item.Name;
                 }
-            }, 0.025f, shoudLog: false);
+            }, 0.025f, shouldLog: false);
 
             SpacingNum += item switch
             {
@@ -93,7 +93,7 @@ public class BetterOptionItem
         {
             BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
             BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.ScrollRelative(new(0f, 0f));
-        }, 0.005f, shoudLog: false);
+        }, 0.005f, shouldLog: false);
     }
 
     public void SetUp(OptionBehaviour optionBehaviour)

@@ -129,7 +129,7 @@ public class MayorRole : CustomRoleBehavior
 
     public override void Serialize(MessageWriter writer)
     {
-        writer.Write(additionalVotes);
+        writer.WritePacked(additionalVotes);
         writer.Write(voted.Count);
         foreach (var vote in voted)
         {
@@ -139,7 +139,7 @@ public class MayorRole : CustomRoleBehavior
 
     public override void Deserialize(MessageReader reader)
     {
-        additionalVotes = reader.ReadInt32();
+        additionalVotes = reader.ReadPackedInt32();
         int count = reader.ReadInt32();
         List<byte> bytes = [];
         for (int i = 0; i < count; i++)

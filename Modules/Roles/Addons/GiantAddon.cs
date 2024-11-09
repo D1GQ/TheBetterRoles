@@ -57,7 +57,7 @@ public class GiantAddon : CustomAddonBehavior
     {
         if (target == _player && IsBig)
         {
-            _ = new LateTask(SetDeadBodySize, 0.005f, shoudLog: false);
+            _ = new LateTask(SetDeadBodySize, 0.005f, shouldLog: false);
         }
     }
 

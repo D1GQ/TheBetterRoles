@@ -154,6 +154,14 @@
   "Role.Impostor.Info": "Kill and sabotage Crewmates",
   "Role.Impostor.LongInfo": "As an Impostor, you're able to kill and sabotage.",
 
+  "Role.Grenadier": "Grenadier",
+  "Role.Grenadier.Info": "Blind crewmates temporarily",
+  "Role.Grenadier.LongInfo": "As the Grenadier, you can throw flash bangs to temporarily blind cremates within a set radius.",
+  "Role.Grenadier.Ability.1": "Flashbang",
+  "Role.Grenadier.Option.FlashGrenadeCooldown": "Flash Grenade Cooldown",
+  "Role.Grenadier.Option.FlashGrenadeDuration": "Flash Grenade Duration",
+  "Role.Grenadier.Option.FlashGrenadeRadius": "Flash Grenade Radius",
+
   "Role.Blackmailer": "Blackmailer",
   "Role.Blackmailer.Info": "Blackmail the crewmates",
   "Role.Blackmailer.LongInfo": "As the Blackmailer, you can choose a player to Blackmail, within a meeting that blackmailed player is not able to speak.",

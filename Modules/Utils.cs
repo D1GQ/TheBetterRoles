@@ -190,31 +190,28 @@ public static class Utils
 
     // Flash screen color with custom fade in, fade out, and total duration (max alpha 50% for transparency)
     private static Coroutine? activeFadeCoroutine;
-    public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false)
+    public static void FlashScreen(Color color, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false, bool fullColor = false)
     {
         var hud = DestroyableSingleton<HudManager>.Instance;
         if (hud.FullScreen == null) return;
 
-        var obj = hud.transform.FindChild("FlashColor_FullScreen")?.gameObject;
+        var obj = hud.transform.Find("FlashColor_FullScreen")?.gameObject;
         if (obj == null)
         {
             obj = UnityEngine.Object.Instantiate(hud.FullScreen.gameObject, hud.transform);
             obj.name = "FlashColor_FullScreen";
         }
 
-        // Ensure fade in and fade out do not exceed effect duration
         float totalDuration = fadeInDuration + fadeOutDuration;
         fadeInDuration = Mathf.Clamp(fadeInDuration, 0, effectDuration);
         fadeOutDuration = Mathf.Clamp(fadeOutDuration, 0, effectDuration - fadeInDuration);
 
-        // If an override is requested, stop any active fade coroutine
         if (Override && activeFadeCoroutine != null)
         {
             hud.StopCoroutine(activeFadeCoroutine);
-            obj.SetActive(false); // Optionally hide the object immediately when overriding
+            obj.SetActive(false);
         }
 
-        // Start the new fade coroutine
         activeFadeCoroutine = hud.StartCoroutine(Effects.Lerp(effectDuration, new Action<float>((t) =>
         {
             obj.SetActive(t != 1f);
@@ -222,18 +219,19 @@ public static class Utils
             float alpha;
             if (t < fadeInDuration / effectDuration)
             {
-                // Fade in with max 50% transparency
-                alpha = Mathf.Lerp(0, color.a / 2, t / (fadeInDuration / effectDuration));
+                alpha = fullColor
+                    ? Mathf.Lerp(0, color.a, t / (fadeInDuration / effectDuration))
+                    : Mathf.Lerp(0, color.a / 2, t / (fadeInDuration / effectDuration));
             }
             else if (t > (effectDuration - fadeOutDuration) / effectDuration)
             {
-                // Fade out with max 50% transparency
-                alpha = Mathf.Lerp(color.a / 2, 0, (t - (effectDuration - fadeOutDuration) / effectDuration) / (fadeOutDuration / effectDuration));
+                alpha = fullColor
+                    ? Mathf.Lerp(color.a, 0, (t - (effectDuration - fadeOutDuration) / effectDuration) / (fadeOutDuration / effectDuration))
+                    : Mathf.Lerp(color.a / 2, 0, (t - (effectDuration - fadeOutDuration) / effectDuration) / (fadeOutDuration / effectDuration));
             }
             else
             {
-                // Maintain 50% transparency during the middle of the effect
-                alpha = color.a / 2;
+                alpha = fullColor ? color.a : color.a / 2;
             }
 
             obj.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, alpha);
@@ -242,10 +240,10 @@ public static class Utils
 
 
     // Flash screen hex color with custom fade in, fade out, and total duration (max alpha 50%)
-    public static void FlashScreen(string hex, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false)
+    public static void FlashScreen(string hex, float fadeInDuration = 0.25f, float fadeOutDuration = 0.25f, float effectDuration = 1f, bool Override = false, bool fullColor = false)
     {
         Color color = HexToColor32(hex);
-        FlashScreen(color, fadeInDuration, fadeOutDuration, effectDuration, Override);
+        FlashScreen(color, fadeInDuration, fadeOutDuration, effectDuration, Override, fullColor);
     }
 
     // Set Out line on vent

@@ -195,7 +195,7 @@ public class CustomGameManager
                     __instance.YouAreText.color = RoleColor;
                     __instance.RoleText.color = RoleColor;
                     __instance.RoleBlurbText.color = RoleColor;
-                }, 0.0001f, shoudLog: false);
+                }, 0.0001f, shouldLog: false);
                 HudManager.Instance?.MapButton?.gameObject?.SetActive(true);
             }
             catch { }
@@ -546,7 +546,7 @@ public class CustomGameManager
             {
                 SceneManager.MoveGameObjectToScene(data.gameObject, SceneManager.GetActiveScene());
             }
-        }, 0.6f, shoudLog: false);
+        }, 0.6f, shouldLog: false);
 
         // AmongUsClient.Instance.GameState = InnerNetClient.GameStates.Ended;
         List<ClientData> obj2 = AmongUsClient.Instance.allClients.ToArray().ToList();
@@ -572,7 +572,7 @@ public class CustomGameManager
             _ = new LateTask(() =>
             {
                 GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
-            }, 1f, shoudLog: false);
+            }, 1f, shouldLog: false);
         }
     }
 

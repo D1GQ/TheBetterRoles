@@ -43,7 +43,7 @@ public class BlackmailerRole : CustomRoleBehavior
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
-        switch (id) 
+        switch (id)
         {
             case 5:
                 {

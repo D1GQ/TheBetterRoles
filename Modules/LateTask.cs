@@ -20,12 +20,12 @@ class LateTask
         }
         return false;
     }
-    public LateTask(Action action, float time, string name = "No Name Task", bool shoudLog = true)
+    public LateTask(Action action, float time, string name = "No Name Task", bool shouldLog = true)
     {
         this.action = action;
         timer = time;
         this.name = name;
-        shouldLog = shoudLog;
+        this.shouldLog = shouldLog;
         Tasks.Add(this);
     }
     public static void Update(float deltaTime)

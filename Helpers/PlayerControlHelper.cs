@@ -316,7 +316,7 @@ static class PlayerControlHelper
     public static void SetTrueVisorColor(this PlayerControl player, Color color)
     {
         player?.cosmetics?.bodySprites[0]?.BodySprite?.material?.SetColor(PlayerMaterial.VisorColor, color);
-        var sprite = player.cosmetics.visor.GetComponent<SpriteRenderer>();
+        var sprite = player?.cosmetics?.visor?.GetComponent<SpriteRenderer>();
         if (sprite != null)
         {
             sprite.color = color;

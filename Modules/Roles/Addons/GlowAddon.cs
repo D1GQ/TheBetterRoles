@@ -28,7 +28,7 @@ public class GlowAddon : CustomAddonBehavior
 
     public override void OnSetUpRole()
     {
-        foreach (var item in _player.cosmetics.gameObject.GetComponentsInChildren<SpriteRenderer>(true)) 
+        foreach (var item in _player.cosmetics.gameObject.GetComponentsInChildren<SpriteRenderer>(true))
         {
             item.sortingOrder = 1;
         }

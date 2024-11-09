@@ -375,7 +375,7 @@ public static class CustomRoleManager
                 player.SendRpcSetCustomRole(selectedGhostRole._role.RoleType, isAssigned: true);
                 Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
-        }, 2.5f, shoudLog: false);
+        }, 2.5f, shouldLog: false);
     }
 
     public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)
@@ -674,6 +674,7 @@ public enum CustomRoles
     // Impostors
     Impostor,
     Blackmailer,
+    Grenadier,
     Janitor,
     Miner,
     Morphling,

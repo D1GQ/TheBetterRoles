@@ -21,8 +21,8 @@ public class SwooperRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Swooper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override bool DefaultVentOption => false;
     public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override bool DefaultVentOption => false;
 
     public BetterOptionItem? InvisibilityCooldown;
     public BetterOptionItem? InvisibilityDuration;
@@ -82,7 +82,7 @@ public class SwooperRole : CustomRoleBehavior
             _ = new LateTask(() =>
             {
                 SetInvisibility(!isVisible);
-            }, 1f, shoudLog: false);
+            }, 1f, shouldLog: false);
         }
     }
 

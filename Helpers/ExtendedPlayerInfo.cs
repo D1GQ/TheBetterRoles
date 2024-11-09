@@ -124,7 +124,7 @@ public static class PlayerDataExtension
                 _ = new LateTask(() =>
                 {
                     newBetterData.IsSelf = data?.Object?.IsLocalPlayer() ?? false;
-                }, 3f, shoudLog: false);
+                }, 3f, shouldLog: false);
             }
         }
     }

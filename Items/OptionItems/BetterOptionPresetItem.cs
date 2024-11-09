@@ -91,7 +91,7 @@ public class BetterOptionPresetItem : BetterOptionItem
         {
             GameSettingMenu.Instance.ChangeTab(BetterTabs.SystemSettings.Id, false);
             Rpc<RpcSyncAllSettings>.Instance.Send(new());
-        }, 0.25f, shoudLog: false);
+        }, 0.25f, shouldLog: false);
     }
 
     private void AdjustButtonsActiveState()

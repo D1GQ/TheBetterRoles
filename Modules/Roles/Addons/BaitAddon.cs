@@ -46,7 +46,7 @@ public class BaitAddon : CustomAddonBehavior
             {
                 CustomSoundsManager.Play("Congrats", 3.5f);
                 killer.SendRpcReportBody(_data);
-            }, num + 1f, shoudLog: false);
+            }, num + 1f, shouldLog: false);
         }
     }
 }

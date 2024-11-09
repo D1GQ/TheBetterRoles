@@ -1,5 +1,4 @@
 ﻿using AmongUs.GameOptions;
-using HarmonyLib;
 using Hazel;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
@@ -157,7 +156,7 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
-    /// <code>Use id 36 for the next role!</code>
+    /// <code>Use id 37 for the next role!</code>
     /// Each role is assigned a unique ID.
     /// </summary>
     public abstract int RoleId { get; }
@@ -437,7 +436,7 @@ public abstract class CustomRoleBehavior
 
             if (!GameState.IsFreePlay)
             {
-                SetAllCooldowns();
+                SetAllCooldownsHalf();
             }
         }
 
@@ -575,13 +574,13 @@ public abstract class CustomRoleBehavior
         }
     }
 
-    public void BaseUpdate() 
+    public void BaseUpdate()
     {
         Update();
     }
 
-    public void BaseFixedUpdate() 
-    { 
+    public void BaseFixedUpdate()
+    {
         if (IsDirty)
         {
             if (_player.IsLocalPlayer())
@@ -743,6 +742,20 @@ public abstract class CustomRoleBehavior
         foreach (var button in Buttons)
         {
             button.SetCooldown();
+        }
+    }
+
+    /// <summary>
+    /// Sets the cooldown to half for all ability buttons associated with the current role.
+    /// This loops through all local ability buttons and applies the appropriate cooldowns.
+    /// </summary>
+    public void SetAllCooldownsHalf()
+    {
+        Logger.LogMethodPrivate("Setting all button cooldowns", GetType());
+
+        foreach (var button in Buttons)
+        {
+            button.SetCooldown(button.Cooldown * 0.5f);
         }
     }
 

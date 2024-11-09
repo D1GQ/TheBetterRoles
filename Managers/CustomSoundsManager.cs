@@ -123,9 +123,9 @@ public static class CustomSoundsManager
         }
     }
 
-    public static void PlayDynamic(string path, Vector2 position, float range = 10f, float volume = 1f, bool loop = false)
+    public static void PlayDynamic(string name, Vector2 position, float range = 10f, float volume = 1f, bool loop = false)
     {
-        AudioClip? clipToPlay = Pet(path);
+        AudioClip? clipToPlay = Pet(name);
         if (clipToPlay != null && Constants.ShouldPlaySfx())
         {
             GameObject soundObject = new("DynamicSound");
@@ -150,7 +150,7 @@ public static class CustomSoundsManager
         }
         else
         {
-            Logger.Error($"Unable to play dynamic sound: {path}");
+            Logger.Error($"Unable to play dynamic sound: {name}");
         }
     }
 
@@ -176,9 +176,9 @@ public static class CustomSoundsManager
         audioSource.volume = volume;
     }
 
-    public static void Stop(string path)
+    public static void Stop(string name)
     {
-        AudioClip? soundToStop = Pet(path);
+        AudioClip? soundToStop = Pet(name);
         if (soundToStop != null && Constants.ShouldPlaySfx())
         {
             SoundManager.Instance.StopSound(soundToStop);

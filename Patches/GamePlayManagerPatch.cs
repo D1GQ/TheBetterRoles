@@ -4,8 +4,6 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
 using UnityEngine;
-using UnityEngine.UI;
-using static Il2CppSystem.Xml.Schema.FacetsChecker.FacetsCompiler;
 
 namespace TheBetterRoles.Patches;
 
@@ -21,12 +19,12 @@ class GamePlayManager
             _ = new LateTask(() =>
             {
                 PlayerControl.LocalPlayer?.SendVersionRequest(Main.GetVersionText());
-            }, 3f, shoudLog: false);
+            }, 3f, shouldLog: false);
 
             _ = new LateTask(() =>
             {
                 GameOptionsManager.Instance?.Initialize();
-            }, 2f, shoudLog: false);
+            }, 2f, shouldLog: false);
         }
 
         // Disabled annoying music

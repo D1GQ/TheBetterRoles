@@ -1,11 +1,8 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
-using TheBetterRoles.RPCs;
 
 namespace TheBetterRoles.Roles;
 

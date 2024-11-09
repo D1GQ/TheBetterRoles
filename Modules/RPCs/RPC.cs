@@ -498,7 +498,7 @@ internal static class RPC
                 {
                     MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
                 }
-            }, 2.5f, shoudLog: false);
+            }, 2.5f, shouldLog: false);
             if (target.RoleChecksAny(role => role.RoleType == roleType, false))
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
@@ -528,7 +528,7 @@ internal static class RPC
                 {
                     MeetingHud.Instance.ButtonParent.gameObject.SetActive(true);
                 }
-            }, 0.25f, shoudLog: false);
+            }, 0.25f, shouldLog: false);
         }
     }
 
