@@ -87,7 +87,7 @@ public class GrenadierRole : CustomRoleBehavior
                 && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), target.GetTruePosition(), Constants.ShipOnlyMask, false)
                 || Vector2.Distance(_player.GetTruePosition(), target.GetTruePosition()) < FlashGrenadeRadius.GetFloat() * 0.72f)
             {
-                target.SetTrueVisorColor(UnityEngine.Color.white);
+                target.SetTrueVisorColor(Color.white);
                 flashed.Add(target.PlayerId);
                 SendRoleSync(0, [target]);
             }

@@ -201,6 +201,7 @@
   "Role.Undertaker.Ability.1": "Drag Body",
   "Role.Undertaker.Ability.2": "Drop Body",
   "Role.Undertaker.Option.DragSlowdown": "Drag Slowdown",
+  "Role.Undertaker.Option.CanHideBodyInVent": "Can Hide Body In Vent",
 
   "Role.Miner": "Miner",
   "Role.Miner.Info": "Dig up vents",

@@ -23,6 +23,7 @@ public class UndertakerRole : CustomRoleBehavior
     public override bool CanMoveInVents => !IsDragging;
 
     public BetterOptionItem? DragSlowdown;
+    public BetterOptionItem? CanHideBodyInVent;
 
     public override BetterOptionItem[]? OptionItems
     {
@@ -31,6 +32,7 @@ public class UndertakerRole : CustomRoleBehavior
             return
             [
                 DragSlowdown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Undertaker.Option.DragSlowdown"), [0.1f, 1f, 0.1f], 0.5f, "", "x", RoleOptionItem),
+                CanHideBodyInVent = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Undertaker.Option.CanHideBodyInVent"), false, RoleOptionItem),
             ];
         }
     }
@@ -45,6 +47,7 @@ public class UndertakerRole : CustomRoleBehavior
     public override void OnSetUpRole()
     {
         KillButton.TargetCondition = (PlayerControl target) => { return !IsDragging; };
+        VentButton.VentCondition = (Vent vent) => { return !IsDragging || CanHideBodyInVent.GetBool(); };
 
         DragButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
         DragButton.VisibleCondition = () => Dragging == null;
