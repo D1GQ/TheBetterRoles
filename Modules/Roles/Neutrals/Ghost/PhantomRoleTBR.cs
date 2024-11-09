@@ -107,7 +107,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     {
         if (!HasBeenClicked)
         {
-            if (_player.MyPhysics.Animations.IsPlayingRunAnimation() || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || _player.inMovingPlat)
+            if (_player.MyPhysics.Animations.IsPlayingRunAnimation() || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
             {
                 Alpha += 0.005f;
             }

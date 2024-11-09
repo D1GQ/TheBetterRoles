@@ -4,6 +4,8 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
 using UnityEngine;
+using UnityEngine.UI;
+using static Il2CppSystem.Xml.Schema.FacetsChecker.FacetsCompiler;
 
 namespace TheBetterRoles.Patches;
 
@@ -137,6 +139,25 @@ class GamePlayManager
         {
             Logger.LogHeader($"Game Has Started - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
             CustomGameManager.GameStart();
+        }
+
+        [HarmonyPatch(nameof(GameStartManager.UpdateMapImage))]
+        [HarmonyPrefix]
+        private static bool UpdateMapImage_Prefix(GameStartManager __instance, [HarmonyArgument(0)] MapNames map)
+        {
+            if (__instance.AllMapIcons.ToArray().FirstOrDefault(m => m.Name == map).MapIcon == null)
+            {
+                __instance.MapImage.sprite = __instance.AllMapIcons.ToArray().First().MapIcon;
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPatch(nameof(GameStartManager.CheckSettingsDiffs))]
+        [HarmonyPrefix]
+        private static bool CheckSettingsDiffs_Prefix(GameStartManager __instance)
+        {
+            return false;
         }
     }
     [HarmonyPatch(typeof(EndGameManager))]

@@ -38,8 +38,6 @@ public static class OnPlayerJoinedPatch
         {
             if (GameState.IsInGame)
             {
-                var player = Utils.PlayerFromClientId(client.Id);
-
                 if (GameState.IsHost) PlayerControl.LocalPlayer?.SendVersionRequest(Main.GetVersionText());
             }
         }, 2.5f, "OnPlayerJoinedPatch", false);

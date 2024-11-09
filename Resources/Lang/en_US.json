@@ -159,8 +159,8 @@
   "Role.Blackmailer.LongInfo": "As the Blackmailer, you can choose a player to Blackmail, within a meeting that blackmailed player is not able to speak.",
   "Role.Blackmailer.Ability.1": "Blackmail",
   "Role.Blackmailer.Option.BlackmailCooldown": "Blackmail Cooldown",
-  "Role.Blackmailer.YouMsg": "You have been Blackmailed from speaking!",
-  "Role.Blackmailer.AllMsg": "{0} has been Blackmailed from speaking!",
+  "Role.Blackmailer.YouMsg": "<b>You</b> have been Blackmailed from speaking!",
+  "Role.Blackmailer.AllMsg": "<b>{0}</b> has been Blackmailed from speaking!",
 
   "Role.Morphling": "Morphling",
   "Role.Morphling.Info": "Change your appearance to deceive others",
@@ -272,21 +272,25 @@
 
   "Role.Giant": "Giant",
   "Role.Giant.Info": "Become a giant",
-  "Role.Giant.LongInfo": "As the Giant, you become twice the size of a normal crewmate, with the downside of being slower and unable to move inside vents.",
+  "Role.Giant.LongInfo": "As Giant, you become twice the size of a normal crewmate, with the downside of being slower and unable to move inside vents.",
+
+  "Role.Glow": "Glow",
+  "Role.Glow.Info": "Glow in the dark",
+  "Role.Glow.LongInfo": "As Glow, your body glows when out of a player's vision.",
 
   "Role.ButtonBerry": "Button Berry",
   "Role.ButtonBerry.Ability.1": "Button",
   "Role.ButtonBerry.Info": "Call a meeting",
-  "Role.ButtonBerry.LongInfo": "As the Button Berry, you can call 1 meeting at any point in the game.",
+  "Role.ButtonBerry.LongInfo": "As Button Berry, you can call 1 meeting at any point in the game.",
 
   "Role.NoiseMaker": "Noise Maker",
   "Role.NoiseMaker.Info": "Notify players when you die",
-  "Role.NoiseMaker.LongInfo": "As the Noise Maker, on death release a loud sound that will notify all players of your location.",
+  "Role.NoiseMaker.LongInfo": "As Noise Maker, on death release a loud sound that will notify all players of your location.",
   "Role.NoiseMaker.Option.ArrowDuration": "Arrow Duration",
 
   "Role.Bait": "Bait",
   "Role.Bait.Info": "Bait-out killers",
-  "Role.Bait.LongInfo": "As the Bait, on death force the killer to report your body!",
+  "Role.Bait.LongInfo": "As Bait, on death force the killer to report your body!",
   "Role.Bait.Option.Delay": "Delay",
   "Role.Bait.Option.MaximumDelay": "Maximum Delay",
   "Role.Bait.Option.MinimumDelay": "Minimum Delay",
@@ -297,11 +301,11 @@
 
   "Role.Tracker": "Tracker",
   "Role.Tracker.Info": "Track players around you",
-  "Role.Tracker.LongInfo": "As the Tracker, you will always have an arrow pointing to the closest player.",
+  "Role.Tracker.LongInfo": "As Tracker, you will always have an arrow pointing to the closest player.",
 
   "Role.Lantern": "Lantern",
   "Role.Lantern.Info": "Place down lanterns for vision",
-  "Role.Lantern.LongInfo": "As the Lantern, your vision no longer follows you. Place a lantern for vision, only one lantern can be on the map at a time.",
+  "Role.Lantern.LongInfo": "As Lantern, your vision no longer follows you. Place a lantern for vision, only one lantern can be on the map at a time.",
   "Role.Lantern.Ability.1": "Lantern",
 
   "Role.None": "None",

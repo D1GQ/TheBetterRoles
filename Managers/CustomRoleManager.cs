@@ -694,6 +694,7 @@ public enum CustomRoles
     // Addons
     Bait,
     ButtonBerry,
+    Glow,
     Giant,
     Drunk,
     Lantern,
