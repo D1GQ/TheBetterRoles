@@ -885,6 +885,18 @@ public abstract class CustomRoleBehavior
     public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
 
     /// <summary>
+    /// Executes when a player is successfully murdered.
+    /// Custom logic for what happens to the body.
+    /// </summary>
+    public virtual void OnDeadBodyDropOther(PlayerControl killer, DeadBody body) { }
+
+    /// <summary>
+    /// Executes when the player is successfully murdered.
+    /// Custom logic for what happens to the body.
+    /// </summary>
+    public virtual void OnDeadBodyDrop(PlayerControl killer, DeadBody myBody) { }
+
+    /// <summary>
     /// Executes when a player disconnects.
     /// Custom logic for handling disconnections.
     /// </summary>

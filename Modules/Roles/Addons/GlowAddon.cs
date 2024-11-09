@@ -1,5 +1,6 @@
 ﻿using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using UnityEngine;
 
@@ -16,12 +17,14 @@ public class GlowAddon : CustomAddonBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.GeneralAddon;
     public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
 
+    public BetterOptionItem? DeadBodyGlow;
     public override BetterOptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                DeadBodyGlow = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Glow.Option.DeadBodyGlow"), false, RoleOptionItem),
             ];
         }
     }
@@ -35,6 +38,17 @@ public class GlowAddon : CustomAddonBehavior
         foreach (var item in _player.MyPhysics.gameObject.GetComponentsInChildren<SpriteRenderer>(true))
         {
             item.sortingOrder = 1;
+        }
+    }
+
+    public override void OnDeadBodyDrop(PlayerControl killer, DeadBody myBody)
+    {
+        if (DeadBodyGlow.GetBool())
+        {
+            foreach (var item in myBody.gameObject.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                item.sortingOrder = 1;
+            }
         }
     }
 

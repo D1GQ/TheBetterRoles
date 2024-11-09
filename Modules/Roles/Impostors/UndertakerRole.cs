@@ -44,9 +44,11 @@ public class UndertakerRole : CustomRoleBehavior
     public BaseAbilityButton? DropButton = new();
     public override void OnSetUpRole()
     {
+        KillButton.TargetCondition = (PlayerControl target) => { return !IsDragging; };
+
         DragButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
         DragButton.VisibleCondition = () => Dragging == null;
-        DragButton.DeadBodyCondition = (DeadBody body) => body.GetComponentInChildren<SpriteAnim>().FrameTime >= 32;
+        DragButton.DeadBodyCondition = (DeadBody body) => body.GetComponentInChildren<SpriteAnim>().FrameTime >= 32 && body.GetComponent<Rigidbody2D>() == null;
 
         DropButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
         DropButton.VisibleCondition = () => Dragging != null;
@@ -68,7 +70,7 @@ public class UndertakerRole : CustomRoleBehavior
                         rigidbody = body.gameObject.AddComponent<Rigidbody2D>();
                         rigidbody.gravityScale = 0f;
                         rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-                        rigidbody.freezeRotation = true;
+                        rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
                         SetSpeed();
                     }
 
@@ -120,7 +122,6 @@ public class UndertakerRole : CustomRoleBehavior
             ResetSpeed();
             return;
         }
-
         if (Dragging == null || rigidbody == null || boxCollider == null || _player == null || _player.MyPhysics == null || _player.MyPhysics.Animations == null)
         {
             if (IsDragging)
@@ -131,12 +132,12 @@ public class UndertakerRole : CustomRoleBehavior
             return;
         }
 
-        bool SnapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
-        boxCollider.enabled = !SnapToPlayer;
+        bool snapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
+        boxCollider.enabled = !snapToPlayer;
 
         Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
         if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f
-            && !SnapToPlayer && Vector2.Distance(vent.transform.position, rigidbody.position) < 0.5f)
+            && !snapToPlayer && Vector2.Distance(vent.transform.position, rigidbody.position) < 0.5f)
         {
             if (_player.IsLocalPlayer())
             {
@@ -147,18 +148,14 @@ public class UndertakerRole : CustomRoleBehavior
         }
 
         Vector2 truePosition = _player.GetTruePosition();
-        Vector2 objectPosition = Dragging.transform.position;
+        Vector2 offset = new(
+            _player.MyPhysics.FlipX ? +0.4f : -0.15f,
+            !snapToPlayer ? +0.18f : 0.05f
+        );
+        Vector2 targetPosition = truePosition + (_player.IsInVent() || snapToPlayer ? Vector2.zero : offset);
 
-        float offsetX = _player.MyPhysics.FlipX ? +0.4f : -0.15f;
-        if (_player.IsInVent() || SnapToPlayer) offsetX = 0f;
-        Vector2 offset = new(offsetX, !SnapToPlayer ? +0.18f : 0.05f);
-
-        Vector2 targetPosition = truePosition + offset;
-        Vector2 difference = targetPosition - objectPosition;
-
-        float followSpeed = 3f * _player.MyPhysics.Speed;
-        float smoothFactor = 1f;
-        float snapThreshold = 0.65f + (_player.MyPhysics.Speed * 0.8f);
+        Vector2 difference = targetPosition - rigidbody.position;
+        float snapThreshold = 1.5f;
 
         if (difference.magnitude > snapThreshold)
         {
@@ -173,9 +170,11 @@ public class UndertakerRole : CustomRoleBehavior
                 rigidbody.velocity = Vector2.zero;
             }
         }
-        else if (!SnapToPlayer)
+        else if (!snapToPlayer)
         {
-            rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, difference * followSpeed, smoothFactor);
+            float followSmoothTime = 0.2f;
+            Vector2 desiredVelocity = difference / followSmoothTime;
+            rigidbody.velocity = Vector2.Lerp(rigidbody.velocity, desiredVelocity, Time.deltaTime * 10f);
         }
         else
         {
@@ -183,7 +182,6 @@ public class UndertakerRole : CustomRoleBehavior
             rigidbody.velocity = Vector2.zero;
         }
     }
-
 
     private void HideBody()
     {

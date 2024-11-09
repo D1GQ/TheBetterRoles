@@ -285,6 +285,7 @@
   "Role.Glow": "Glow",
   "Role.Glow.Info": "Glow in the dark",
   "Role.Glow.LongInfo": "As Glow, your body glows when out of a player's vision.",
+  "Role.Glow.Option.DeadBodyGlow": "Dead Body Glows",
 
   "Role.ButtonBerry": "Button Berry",
   "Role.ButtonBerry.Ability.1": "Button",

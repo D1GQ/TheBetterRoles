@@ -7,6 +7,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Helpers;
 
@@ -51,12 +52,15 @@ static class PlayerControlHelper
 
     public static void CustomRevive(this PlayerControl player, bool SetData = true)
     {
+        if (player.IsAlive(true)) return;
+
         if (SetData) player.Data.IsDead = false;
         player.gameObject.layer = LayerMask.NameToLayer("Players");
         player.MyPhysics.ResetMoveState(true);
         player.clickKillCollider.enabled = true;
         player.cosmetics.SetPetSource(player);
         player.cosmetics.SetNameMask(true);
+        player.Visible = true;
         if (player.IsLocalPlayer())
         {
             DestroyableSingleton<HudManager>.Instance.AbilityButton.ToggleVisible(false);
@@ -146,6 +150,9 @@ static class PlayerControlHelper
             Vector3 vector = target.transform.position + killAnimation.BodyOffset;
             vector.z = vector.y / 1000f;
             deadBody.transform.position = vector;
+
+            CustomRoleManager.RoleListener(target, role => role.OnDeadBodyDrop(killer, deadBody));
+            CustomRoleManager.RoleListenerOther(role => role.OnDeadBodyDropOther(killer, deadBody));
         }
         if (isParticipant)
         {

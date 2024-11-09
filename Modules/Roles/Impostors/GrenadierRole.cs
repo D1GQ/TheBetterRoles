@@ -76,7 +76,7 @@ public class GrenadierRole : CustomRoleBehavior
         if (_player != null && _player.IsLocalPlayer())
         {
             CustomSoundsManager.Play("FlashBang", 0.25f);
-            Utils.FlashScreen(new UnityEngine.Color(0.8f, 0.8f, 0.8f, 0.35f), 0.15f, 2f, FlashGrenadeDuration.GetFloat(), fullColor: true);
+            Utils.FlashScreen(new Color(0.8f, 0.8f, 0.8f, 0.35f), 0.15f, 2f, FlashGrenadeDuration.GetFloat(), true, true);
         }
 
         foreach (var target in Main.AllPlayerControls)
@@ -84,7 +84,8 @@ public class GrenadierRole : CustomRoleBehavior
             if (target == null || target == _player || !target.IsAlive(true)) continue;
 
             if (Vector2.Distance(_player.GetTruePosition(), target.GetTruePosition()) < FlashGrenadeRadius.GetFloat()
-                && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), target.GetTruePosition(), Constants.ShipOnlyMask, false))
+                && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), target.GetTruePosition(), Constants.ShipOnlyMask, false)
+                || Vector2.Distance(_player.GetTruePosition(), target.GetTruePosition()) < FlashGrenadeRadius.GetFloat() * 0.72f)
             {
                 target.SetTrueVisorColor(UnityEngine.Color.white);
                 flashed.Add(target.PlayerId);
@@ -102,7 +103,7 @@ public class GrenadierRole : CustomRoleBehavior
         if (target.IsLocalPlayer())
         {
             CustomSoundsManager.Play("FlashBang");
-            Utils.FlashScreen(new UnityEngine.Color(0.8f, 0.8f, 0.8f), 0.15f, 2f, FlashGrenadeDuration.GetFloat(), fullColor: true);
+            Utils.FlashScreen(new Color(0.8f, 0.8f, 0.8f), 0.15f, 2f, FlashGrenadeDuration.GetFloat(), true, true);
             _ = new LateTask(Clear, FlashGrenadeDuration.GetFloat(), shouldLog: false);
         }
     }
@@ -111,7 +112,7 @@ public class GrenadierRole : CustomRoleBehavior
     {
         if (_player.IsLocalPlayer())
         {
-            Utils.FlashScreen(new UnityEngine.Color(0.8f, 0.8f, 0.8f, 0.35f), 0f, 0f, 0f, true, true);
+            Utils.FlashScreen(new Color(0.8f, 0.8f, 0.8f, 0.35f), 0f, 0f, 0f, true, true);
         }
 
         if (flashed.Any())

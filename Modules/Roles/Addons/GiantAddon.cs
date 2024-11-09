@@ -53,20 +53,11 @@ public class GiantAddon : CustomAddonBehavior
         SetSize();
     }
 
-    public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    public override void OnDeadBodyDrop(PlayerControl killer, DeadBody myBody)
     {
-        if (target == _player && IsBig)
+        if (IsBig)
         {
-            _ = new LateTask(SetDeadBodySize, 0.005f, shouldLog: false);
-        }
-    }
-
-    private void SetDeadBodySize()
-    {
-        var body = Main.AllDeadBodys.FirstOrDefault(b => b.ParentId == _player.PlayerId);
-        if (body != null)
-        {
-            body.transform.localScale = body.transform.localScale * 1.25f;
+            myBody.transform.localScale = myBody.transform.localScale * 1.25f;
         }
     }
 
