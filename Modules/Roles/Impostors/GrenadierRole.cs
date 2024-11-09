@@ -43,6 +43,12 @@ public class GrenadierRole : CustomRoleBehavior
         FlashGrenadeButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Grenadier.Ability.1"), FlashGrenadeCooldown.GetFloat(), 0, 0, null, this, true));
     }
 
+    public override void OnDeinitialize()
+    {
+        CustomSoundsManager.Stop("FlashBang");
+        Clear();
+    }
+
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
