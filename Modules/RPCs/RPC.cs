@@ -69,6 +69,7 @@ internal class PlayerControlRPCHandlerPatch
 
         return true;
     }
+
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
         RPC.HandleCustomRPC(__instance, callId, reader);
@@ -78,6 +79,16 @@ internal class PlayerControlRPCHandlerPatch
 [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.HandleRpc))]
 internal class PlayerPhysicsRPCHandlerPatch
 {
+    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+    {
+        if (RPC.HandleRPC(__instance, callId, reader) == false)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public static void Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
         RPC.HandleRPC(__instance.myPlayer, callId, reader);
@@ -145,6 +156,24 @@ internal static class RPC
         if (player == null || player.Data == null) return true;
 
         MessageReader reader = MessageReader.Get(oldReader);
+
+        // Unused vanilla rpcs for TBR
+        if ((RpcCalls)callId is RpcCalls.MurderPlayer 
+            or RpcCalls.CheckMurder
+            or RpcCalls.ProtectPlayer
+            or RpcCalls.CheckProtect
+            or RpcCalls.Shapeshift
+            or RpcCalls.RejectShapeshift
+            or RpcCalls.CheckShapeshift
+            or RpcCalls.StartVanish
+            or RpcCalls.CheckVanish
+            or RpcCalls.StartAppear
+            or RpcCalls.CheckAppear
+            or RpcCalls.ReportDeadBody
+            or RpcCalls.StartMeeting
+            or RpcCalls.EnterVent
+            or RpcCalls.ExitVent
+            or RpcCalls.SendChat) return false;
 
         switch ((RpcCalls)callId)
         {
