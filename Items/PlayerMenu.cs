@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
 using TheBetterRoles.Roles;
 using TheBetterRoles.RPCs;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace TheBetterRoles.Items;
 
@@ -61,7 +63,7 @@ public class PlayerMenu
             shapeshifterPanel.transform.localPosition = new Vector3(PlayerMinigame.XStart + num * PlayerMinigame.XOffset, PlayerMinigame.YStart + num2 * PlayerMinigame.YOffset, -1f);
             shapeshifterPanel.SetPlayer(i, player, (Action)(() =>
             {
-                PlayerControl.LocalPlayer.SendRpcPlayerMenu(Id, (int)Role.RoleType, player, this, shapeshifterPanel, false);
+                CustomRoleManager.RoleListener(PlayerControl.LocalPlayer, role => role.OnPlayerMenu(Id, player?.Object, player, this, shapeshifterPanel, false), role => role.RoleHash == Role.RoleHash);
             }));
             shapeshifterPanel.NameText.color = player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : Color.white;
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
@@ -96,7 +98,7 @@ public class MinigamePatch
             var menu = PlayerMenu.AllPlayerMenus.FirstOrDefault(m => m.PlayerMinigame == shapeshifterInstance);
             if (menu != null)
             {
-                PlayerControl.LocalPlayer.SendRpcPlayerMenu(menu.Id, (int)menu.Role.RoleType, null, menu, null, true);
+                CustomRoleManager.RoleListener(PlayerControl.LocalPlayer, role => role.OnPlayerMenu(menu.Id, null, null, menu, null, true), role => role.RoleHash == menu.Role.RoleHash);
                 PlayerMenu.AllPlayerMenus.Remove(menu);
             }
         }

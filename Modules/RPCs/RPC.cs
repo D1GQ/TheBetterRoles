@@ -54,7 +54,6 @@ public enum ReactorRPCs : uint
     Revive,
     Murder,
     PlayerPress,
-    PlayerMenu,
     GuessPlayer
 }
 
@@ -380,28 +379,6 @@ internal static class RPC
 
         return true;
     }
-
-    public static void SendRpcPlayerMenu(this PlayerControl player, int Id, int roleType, NetworkedPlayerInfo? target, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool close)
-    {
-        if (CheckPlayerMenuRpc(player, target) == true)
-        {
-            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, menu, playerPanel, close), role => role.RoleType == (CustomRoles)roleType);
-        }
-
-        player.SendTrueRpcPlayerMenu(Id, roleType, target?.PlayerId ?? 255, close);
-    }
-
-    [MethodRpc((uint)ReactorRPCs.PlayerMenu, SendImmediately = true, LocalHandling = RpcLocalHandling.None)]
-    public static void SendTrueRpcPlayerMenu(this PlayerControl player, int Id, int roleType, byte targetId, bool close)
-    {
-        var target = Utils.PlayerDataFromPlayerId(targetId);
-
-        if (CheckPlayerMenuRpc(player, target) == true)
-        {
-            CustomRoleManager.RoleListener(player, role => role.OnPlayerMenu(Id, target?.Object, target, null, null, close), role => role.RoleType == (CustomRoles)roleType);
-        }
-    }
-    private static bool CheckPlayerMenuRpc(PlayerControl player, NetworkedPlayerInfo? target) => true;
 
     [MethodRpc((uint)ReactorRPCs.PlayerPress, SendImmediately = true)]
     public static void SendRpcPlayerPress(this PlayerControl player, PlayerControl target)

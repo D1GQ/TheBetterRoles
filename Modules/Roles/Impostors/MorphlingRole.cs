@@ -109,7 +109,7 @@ public class MorphlingRole : CustomRoleBehavior
 
     private void SetOutfit(NetworkedPlayerInfo.PlayerOutfit outfit)
     {
-        _player.SetOutfit(outfit, PlayerOutfitType.Default);
+        _player.RawSetOutfit(outfit, PlayerOutfitType.Default);
     }
 
     public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)

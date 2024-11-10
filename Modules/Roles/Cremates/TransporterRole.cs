@@ -52,10 +52,12 @@ public class TransporterRole : CustomRoleBehavior
         {
             case 5:
                 {
-                    TransportButton.AddUse();
-                    TransportButton.SetCooldown(0);
                     if (_player.IsLocalPlayer())
+                    {
+                        TransportButton.AddUse();
+                        TransportButton.SetCooldown(0);
                         menu = new PlayerMenu().Create(id, this, false, false, true);
+                    }
                 }
                 break;
         }
@@ -93,6 +95,7 @@ public class TransporterRole : CustomRoleBehavior
                     else
                     {
                         TryToTransport(firstTarget, target);
+                        SendRoleSync(0, [firstTarget, target]);
                         menu?.PlayerMinigame?.Close();
                     }
                 }
@@ -137,16 +140,44 @@ public class TransporterRole : CustomRoleBehavior
     private float gainedUses = 0f;
     public override void OnTaskComplete(PlayerControl player, uint taskId)
     {
-        int currentUses = TransportButton.Uses;
-        gainedUses += TransportsGainFromTask.GetFloat();
-        if (gainedUses % 1 != 0)
+        if (_player.IsLocalPlayer())
         {
-            return;
+            int currentUses = TransportButton.Uses;
+            gainedUses += TransportsGainFromTask.GetFloat();
+            if (gainedUses % 1 != 0)
+            {
+                return;
+            }
+            int maxTransports = MaximumNumberOfTransports.GetInt();
+            int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxTransports);
+            TransportButton.SetUses(newUses);
+            gainedUses = 0f;
         }
-        int maxTransports = MaximumNumberOfTransports.GetInt();
-        int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxTransports);
-        TransportButton.SetUses(newUses);
-        gainedUses = 0f;
     }
 
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    if (additionalParams[0].TryCast<PlayerControl>(out var target1))
+                    {
+                        writer.WritePlayerId(target1);
+                    }
+                    if (additionalParams[1].TryCast<PlayerControl>(out var target2))
+                    {
+                        writer.WritePlayerId(target2);
+                    }
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        var target1 = reader.ReadPlayerId();
+        var target2 = reader.ReadPlayerId();
+        TryToTransport(target1, target2);
+    }
 }

@@ -1023,7 +1023,7 @@ public abstract class CustomRoleBehavior
 
     /// <summary>
     /// Called when the player chooses an target in player list menu.
-    /// Menu will be null if not ran by local player!
+    /// Only ran by the local player!
     /// </summary>
     public virtual void OnPlayerMenu(int id, PlayerControl? target, NetworkedPlayerInfo? targetData, PlayerMenu? menu, ShapeshifterPanel? playerPanel, bool close) { }
 

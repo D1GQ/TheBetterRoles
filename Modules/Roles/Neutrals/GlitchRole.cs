@@ -146,12 +146,9 @@ public class GlitchRole : CustomRoleBehavior
                     if (target != null)
                     {
                         menu?.PlayerMinigame.Close();
-                        DisguisedTargetId = targetData.PlayerId;
-                        IsDisguised = true;
-                        originalData = CopyOutfit(_data);
-                        SetOutfit(targetData.DefaultOutfit);
+                        SetMimic(targetData);
+                        SendRoleSync(0, [targetData]);
                         MimicButton.SetDuration();
-                        _player.RawSetName(Utils.FormatPlayerName(_player.Data));
                     }
                 }
                 break;
@@ -187,7 +184,7 @@ public class GlitchRole : CustomRoleBehavior
 
     private void SetOutfit(NetworkedPlayerInfo.PlayerOutfit outfit)
     {
-        _player.SetOutfit(outfit, PlayerOutfitType.Default);
+        _player.RawSetOutfit(outfit, PlayerOutfitType.Default);
     }
 
     public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
@@ -209,6 +206,15 @@ public class GlitchRole : CustomRoleBehavior
         }
     }
 
+    private void SetMimic(NetworkedPlayerInfo target)
+    {
+        DisguisedTargetId = target.PlayerId;
+        IsDisguised = true;
+        originalData = CopyOutfit(_data);
+        SetOutfit(target.DefaultOutfit);
+        _player.RawSetName(Utils.FormatPlayerName(_player.Data));
+    }
+
     private void ResetMimic()
     {
         if (!IsDisguised) return;
@@ -223,5 +229,29 @@ public class GlitchRole : CustomRoleBehavior
             MimicButton.SetCooldown(state: 0);
         }
         originalData = null;
+    }
+
+    public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
+    {
+        switch (syncId)
+        {
+            case 0:
+                {
+                    if (additionalParams[0].TryCast<NetworkedPlayerInfo>(out var data))
+                    {
+                        writer.WritePlayerDataId(data);
+                    }
+                }
+                break;
+        }
+    }
+
+    public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    {
+        var data = reader.ReadPlayerDataId();
+        if (data != null)
+        {
+            SetMimic(data);
+        }
     }
 }

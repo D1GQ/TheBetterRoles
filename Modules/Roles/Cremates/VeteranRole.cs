@@ -1,5 +1,6 @@
 ﻿
 using Hazel;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
@@ -92,15 +93,18 @@ public class VeteranRole : CustomRoleBehavior
     private float gainedUses = 0f;
     public override void OnTaskComplete(PlayerControl player, uint taskId)
     {
-        int currentUses = AlertButton.Uses;
-        gainedUses += AlertsGainFromTask.GetFloat();
-        if (gainedUses % 1 != 0)
+        if (_player.IsLocalPlayer())
         {
-            return;
+            int currentUses = AlertButton.Uses;
+            gainedUses += AlertsGainFromTask.GetFloat();
+            if (gainedUses % 1 != 0)
+            {
+                return;
+            }
+            int maxAlerts = MaximumNumberOfAlerts.GetInt();
+            int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxAlerts);
+            AlertButton.SetUses(newUses);
+            gainedUses = 0f;
         }
-        int maxAlerts = MaximumNumberOfAlerts.GetInt();
-        int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxAlerts);
-        AlertButton.SetUses(newUses);
-        gainedUses = 0f;
     }
 }

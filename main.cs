@@ -8,6 +8,7 @@ using Innersloth.IO;
 using Reactor;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
+using Reactor.Utilities;
 using System.Security.Cryptography;
 using System.Text;
 using TheBetterRoles.Items;
