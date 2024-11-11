@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Modules;
+﻿using System.Reflection;
+using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Commands;
 
@@ -6,6 +7,7 @@ public enum ArgumentType
 {
     None,
     Player,
+    Name,
 }
 
 public enum CommandType
@@ -20,13 +22,20 @@ public abstract class BaseArgument (BaseCommand? command)
     public BaseCommand? Command { get; } = command;
     public abstract string Suggestion { get; }
     public abstract ArgumentType Type { get; }
-    public string Arg { protected get; set; } = string.Empty;
-    public object? Target { get; private set; }
+    public string Arg { get; set; } = string.Empty;
     public abstract T? TryGetTarget<T>() where T : class;
 }
 
 public abstract class BaseCommand
 {
+    public static readonly BaseCommand?[] allCommands = GetAllCustomRoleInstances();
+
+    public static BaseCommand?[] GetAllCustomRoleInstances() => Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .Where(t => t.IsSubclassOf(typeof(BaseCommand)) && !t.IsAbstract)
+        .Select(t => (BaseCommand)Activator.CreateInstance(t))
+        .ToArray();
+
     public virtual CommandType Type => CommandType.Normal;
     public abstract string Name { get; }
     public abstract string Description { get; }

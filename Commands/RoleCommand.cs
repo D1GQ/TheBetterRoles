@@ -1,0 +1,46 @@
+﻿using System.Text;
+using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
+
+namespace TheBetterRoles.Commands;
+
+public class RoleCommand : BaseCommand
+{
+    public override string Name => "role";
+    public override string Description => "Get information about a role";
+
+    public RoleCommand()
+    {
+        _arguments = new Lazy<BaseArgument[]>(() => new BaseArgument[]
+        {
+            new NameArgument(this),
+        });
+
+        
+    }
+    private readonly Lazy<BaseArgument[]> _arguments;
+    public override BaseArgument[]? Arguments => _arguments.Value;
+
+    private NameArgument? nameArgument => (NameArgument)Arguments[0];
+
+    public virtual bool IsAddon => false;
+
+    public override void Run()
+    {
+        var role = CustomRoleManager.allRoles.Where(role => role.IsAddon == IsAddon)
+            .FirstOrDefault(role => role.RoleName.StartsWith(nameArgument.Arg, StringComparison.OrdinalIgnoreCase));
+        if (role != null)
+        {
+            StringBuilder sb = new();
+            sb.Append($"<size=125%>{string.Format(Translator.GetString("Role"), Utils.GetCustomRoleNameAndColor(role.RoleType))}\n");
+            sb.Append($"{string.Format(Translator.GetString("Role.Team"), $"<{Utils.GetCustomRoleTeamColor(role.RoleTeam)}>{Utils.GetCustomRoleTeamName(role.RoleTeam)}</color>")}\n");
+            sb.Append(string.Format(Translator.GetString("Role.Category"), $"{Utils.GetCustomRoleCategoryName(role.RoleCategory)}\n\n"));
+            sb.Append($"{Utils.GetCustomRoleInfo(role.RoleType, true)}</size>");
+            CommandResultText(sb.ToString());
+        }
+        else
+        {
+            CommandErrorText("Unable to find role");
+        }
+    }
+}

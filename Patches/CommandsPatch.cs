@@ -1,13 +1,7 @@
-﻿using AmongUs.Data;
-using HarmonyLib;
-using Hazel;
-using Il2CppSystem.Text;
-using System.Reflection;
+﻿using HarmonyLib;
 using TheBetterRoles.Commands;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
-using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
 
@@ -18,14 +12,6 @@ class CommandsPatch
 {
     private static bool _enabled = true;
     public static string CommandPrefix => Main.CommandPrefix.Value;
-
-    public static readonly BaseCommand?[] allCommands = GetAllCustomRoleInstances();
-
-    public static BaseCommand?[] GetAllCustomRoleInstances() => Assembly.GetExecutingAssembly()
-        .GetTypes()
-        .Where(t => t.IsSubclassOf(typeof(BaseCommand)) && !t.IsAbstract)
-        .Select(t => (BaseCommand)Activator.CreateInstance(t))
-        .ToArray();
 
     // Run code for specific commands
     private static void HandleCommand()
@@ -208,13 +194,13 @@ class CommandsPatch
 
     public static BaseCommand? GetClosestCommand(string typedCommand)
     {
-        var closestCommand = allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Normal);
-        closestCommand ??= allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Sponsor);
+        var closestCommand = BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Normal);
+        closestCommand ??= BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Sponsor);
 
 #if DEBUG || DEBUG_MULTIACCOUNTS
         if (GameState.IsDev)
         {
-            closestCommand ??= allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Debug);
+            closestCommand ??= BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Debug);
         }
 #endif
 
