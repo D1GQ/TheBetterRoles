@@ -19,12 +19,13 @@ public class BetterOptionFloatItem : BetterOptionItem
     public float Increment = 2.5f;
     private string? PostFix;
     private string? PreFix;
+    public bool CanBeInfinite;
 
     public override bool ShowChildrenCondition() => CurrentValue > floatRange.min;
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionFloatItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, FloatOptionNames? vanillaOption = null)
+    public BetterOptionFloatItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, FloatOptionNames? vanillaOption = null, bool canBeInfinite = false)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         floatRange = new(values[0], values[1]);
@@ -35,6 +36,7 @@ public class BetterOptionFloatItem : BetterOptionItem
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
         VanillaOption = vanillaOption;
+        CanBeInfinite = canBeInfinite;
 
         if (GameSettingMenuPatch.Preload || gameOptionsMenu?.Tab == null)
         {
@@ -115,6 +117,10 @@ public class BetterOptionFloatItem : BetterOptionItem
         if (ThisOption == null) return;
 
         ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
+        if (CanBeInfinite && CurrentValue == 0f)
+        {
+            ThisOption.ValueText.text = InfiniteIcon;
+        }
 
         if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
         {
@@ -290,6 +296,6 @@ public class BetterOptionFloatItem : BetterOptionItem
 
     public override string FormatValueAsText()
     {
-        return $"{PreFix}{CurrentValue}{PostFix}";
+        return !CanBeInfinite || CurrentValue > 0 ? $"{PreFix}{CurrentValue}{PostFix}" : "<b>∞</b>";
     }
 }

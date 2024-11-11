@@ -17,6 +17,7 @@ public enum SettingType
 
 public class BetterOptionItem
 {
+    public static string InfiniteIcon => "<b><size=150%>∞</size></b>";
     protected float topDistance = 0.15f;
     protected float bottomDistance = 0.50f;
     public static int IdNum = 0;

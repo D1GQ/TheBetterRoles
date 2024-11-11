@@ -141,7 +141,7 @@ public class BaseButton : MonoBehaviour
                     ActionButton.SetFillUp(TempCooldown, Duration);
                 }
             }
-            else if (State == 1)
+            else if (State == 1 && (Duration > 0f || !CanCancelDuration))
             {
                 ResetState(true);
             }
