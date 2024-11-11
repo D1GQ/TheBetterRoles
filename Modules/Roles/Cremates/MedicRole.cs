@@ -55,6 +55,22 @@ public class MedicRole : CustomRoleBehavior
         RemoveShield();
     }
 
+    private NetworkedPlayerInfo? Shielded;
+    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
+    {
+        switch (id)
+        {
+            case 5:
+                {
+                    if (target != null)
+                    {
+                        AddShield(target);
+                    }
+                }
+                break;
+        }
+    }
+
     private void AddShield(PlayerControl player)
     {
         Shielded = player.Data;
@@ -76,22 +92,6 @@ public class MedicRole : CustomRoleBehavior
         }
     }
 
-    private NetworkedPlayerInfo? Shielded;
-    public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
-    {
-        switch (id)
-        {
-            case 5:
-                {
-                    if (target != null)
-                    {
-                        AddShield(target);
-                    }
-                }
-                break;
-        }
-    }
-
     public override bool CheckMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
     {
         if (target.Data == Shielded)
@@ -106,7 +106,7 @@ public class MedicRole : CustomRoleBehavior
             {
                 target.ShieldBreakAnimation(RoleColor);
             }
-            killer.Role().KillButton.SetCooldown();
+            killer?.Role()?.KillButton?.SetCooldown();
 
             return false;
         }

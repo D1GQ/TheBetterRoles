@@ -55,7 +55,7 @@ public class VeteranRole : CustomRoleBehavior
         {
             case 5:
                 {
-                    AlertButton.SetDuration();
+                    AlertButton?.SetDuration();
                     OnAlert = true;
                 }
                 break;
@@ -103,7 +103,7 @@ public class VeteranRole : CustomRoleBehavior
             }
             int maxAlerts = MaximumNumberOfAlerts.GetInt();
             int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxAlerts);
-            AlertButton.SetUses(newUses);
+            AlertButton?.SetUses(newUses);
             gainedUses = 0f;
         }
     }

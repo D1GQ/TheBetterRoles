@@ -26,7 +26,7 @@ public class OpportunistRole : CustomRoleBehavior
     }
     public override void OnGameEnd(ref List<byte> OtherWinnerIds)
     {
-        if (_player.IsAlive())
+        if (_player.IsAlive() && !OtherWinnerIds.Contains(_player.PlayerId))
         {
             OtherWinnerIds.Add(_data.PlayerId);
         }

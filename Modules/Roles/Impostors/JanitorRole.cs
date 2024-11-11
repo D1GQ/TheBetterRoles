@@ -54,7 +54,7 @@ public class JanitorRole : CustomRoleBehavior
                 _player.BetterData().StartCoroutine(CoFadeBodyOut(body));
                 if (KillCooldownClean.GetBool())
                 {
-                    KillButton.SetCooldown(SetKillCooldown.GetFloat());
+                    KillButton?.SetCooldown(SetKillCooldown.GetFloat());
                 }
                 break;
         }

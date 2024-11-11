@@ -65,7 +65,7 @@ public class AltruistRole : CustomRoleBehavior
                     {
                         if (CheckRevive(body) == true)
                         {
-                            ReviveButton.SetDuration();
+                            ReviveButton?.SetDuration();
                         }
                         else
                         {
@@ -210,10 +210,7 @@ public class AltruistRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    if (additionalParams[0].TryCast<DeadBody>(out var body))
-                    {
-                        writer.WriteDeadBodyId(body);
-                    }
+                    writer.WriteDeadBodyId((DeadBody)additionalParams[0]);
                 }
                 break;
         }

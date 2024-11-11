@@ -111,7 +111,7 @@ public class MoleRole : CustomRoleBehavior
         foreach (Vent vent in ventsToRemove)
         {
             RemoveVent(vent, false);
-            DigButton.AddUse();
+            DigButton?.AddUse();
         }
     }
 

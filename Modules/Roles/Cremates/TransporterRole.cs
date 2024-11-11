@@ -54,8 +54,8 @@ public class TransporterRole : CustomRoleBehavior
                 {
                     if (_player.IsLocalPlayer())
                     {
-                        TransportButton.AddUse();
-                        TransportButton.SetCooldown(0);
+                        TransportButton?.AddUse();
+                        TransportButton?.SetCooldown(0);
                         menu = new PlayerMenu().Create(id, this, false, false, true);
                     }
                 }
@@ -123,8 +123,8 @@ public class TransporterRole : CustomRoleBehavior
             target1.NetTransform.SnapTo(pos2);
             target2.NetTransform.SnapTo(pos1);
 
-            TransportButton.RemoveUse();
-            TransportButton.SetCooldown();
+            TransportButton?.RemoveUse();
+            TransportButton?.SetCooldown();
         }
         else
         {
@@ -150,7 +150,7 @@ public class TransporterRole : CustomRoleBehavior
             }
             int maxTransports = MaximumNumberOfTransports.GetInt();
             int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxTransports);
-            TransportButton.SetUses(newUses);
+            TransportButton?.SetUses(newUses);
             gainedUses = 0f;
         }
     }
@@ -161,14 +161,8 @@ public class TransporterRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    if (additionalParams[0].TryCast<PlayerControl>(out var target1))
-                    {
-                        writer.WritePlayerId(target1);
-                    }
-                    if (additionalParams[1].TryCast<PlayerControl>(out var target2))
-                    {
-                        writer.WritePlayerId(target2);
-                    }
+                    writer.WritePlayerId((PlayerControl)additionalParams[0]);
+                    writer.WritePlayerId((PlayerControl)additionalParams[1]);
                 }
                 break;
         }
@@ -176,8 +170,15 @@ public class TransporterRole : CustomRoleBehavior
 
     public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
     {
-        var target1 = reader.ReadPlayerId();
-        var target2 = reader.ReadPlayerId();
-        TryToTransport(target1, target2);
+        switch (syncId)
+        {
+            case 0:
+                {
+                    var target1 = reader.ReadPlayerId();
+                    var target2 = reader.ReadPlayerId();
+                    TryToTransport(target1, target2);
+                }
+                break;
+        }
     }
 }

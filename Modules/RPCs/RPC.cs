@@ -5,7 +5,6 @@ using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 
@@ -158,7 +157,7 @@ internal static class RPC
         MessageReader reader = MessageReader.Get(oldReader);
 
         // Unused vanilla rpcs for TBR
-        if ((RpcCalls)callId is RpcCalls.MurderPlayer 
+        if ((RpcCalls)callId is RpcCalls.MurderPlayer
             or RpcCalls.CheckMurder
             or RpcCalls.ProtectPlayer
             or RpcCalls.CheckProtect

@@ -73,7 +73,7 @@ public class GlitchRole : CustomRoleBehavior
                 break;
             case 6:
                 {
-                    MimicButton.SetCooldown(0);
+                    MimicButton?.SetCooldown(0);
                     if (_player.IsLocalPlayer())
                         Menu = new PlayerMenu().Create(id, this, true, true, false);
                 }
@@ -148,7 +148,7 @@ public class GlitchRole : CustomRoleBehavior
                         menu?.PlayerMinigame.Close();
                         SetMimic(targetData);
                         SendRoleSync(0, [targetData]);
-                        MimicButton.SetDuration();
+                        MimicButton?.SetDuration();
                     }
                 }
                 break;
@@ -237,10 +237,7 @@ public class GlitchRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    if (additionalParams[0].TryCast<NetworkedPlayerInfo>(out var data))
-                    {
-                        writer.WritePlayerDataId(data);
-                    }
+                    writer.WritePlayerDataId((NetworkedPlayerInfo)additionalParams[0]);
                 }
                 break;
         }
@@ -248,10 +245,17 @@ public class GlitchRole : CustomRoleBehavior
 
     public override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
     {
-        var data = reader.ReadPlayerDataId();
-        if (data != null)
+        switch (syncId)
         {
-            SetMimic(data);
+            case 0:
+                {
+                    var data = reader.ReadPlayerDataId();
+                    if (data != null)
+                    {
+                        SetMimic(data);
+                    }
+                }
+                break;
         }
     }
 }

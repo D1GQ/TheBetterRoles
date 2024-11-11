@@ -142,10 +142,7 @@ public class GrenadierRole : CustomRoleBehavior
         {
             case 0:
                 {
-                    if (additionalParams[0].TryCast<PlayerControl>(out var player))
-                    {
-                        writer.WritePlayerId(player);
-                    }
+                    writer.WritePlayerId((PlayerControl)additionalParams[0]);
                 }
                 break;
         }

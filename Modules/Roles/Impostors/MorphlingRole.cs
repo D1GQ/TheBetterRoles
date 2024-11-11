@@ -62,7 +62,7 @@ public class MorphlingRole : CustomRoleBehavior
                 {
                     DisguisedTargetId = target.Data.PlayerId;
                     sampleData = CopyOutfit(target.Data);
-                    TransformButton.SetCooldown();
+                    TransformButton?.SetCooldown();
                 }
                 break;
             case 6:
@@ -72,7 +72,7 @@ public class MorphlingRole : CustomRoleBehavior
                     CustomRoleManager.RoleListener(_player, role => role.OnDisguise(_player));
                     originalData = CopyOutfit(_data);
                     SetOutfit(sampleData);
-                    TransformButton.SetDuration();
+                    TransformButton?.SetDuration();
                     _player.RawSetName(Utils.FormatPlayerName(_player.Data));
                 }
                 break;
@@ -143,8 +143,8 @@ public class MorphlingRole : CustomRoleBehavior
             }
             sampleData = null;
             originalData = null;
-            TransformButton.SetCooldown(state: 0);
+            TransformButton?.SetCooldown(state: 0);
         }
-        SampleButton.SetCooldown();
+        SampleButton?.SetCooldown();
     }
 }

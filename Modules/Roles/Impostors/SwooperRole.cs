@@ -54,7 +54,7 @@ public class SwooperRole : CustomRoleBehavior
             case 5:
                 isVisible = false;
                 SetInvisibility(true);
-                InvisibilityButton.SetDuration();
+                InvisibilityButton?.SetDuration();
                 break;
         }
     }
