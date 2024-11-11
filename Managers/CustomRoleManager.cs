@@ -26,9 +26,9 @@ public class RoleAssignmentData
 
 public static class CustomRoleManager
 {
-    public static readonly CustomRoleBehavior[] allRoles = GetAllCustomRoleInstances();
+    public static readonly CustomRoleBehavior?[] allRoles = GetAllCustomRoleInstances();
 
-    public static CustomRoleBehavior[] GetAllCustomRoleInstances() => Assembly.GetExecutingAssembly()
+    public static CustomRoleBehavior?[] GetAllCustomRoleInstances() => Assembly.GetExecutingAssembly()
         .GetTypes()
         .Where(t => t.IsSubclassOf(typeof(CustomRoleBehavior)) && !t.IsAbstract)
         .Select(t => (CustomRoleBehavior)Activator.CreateInstance(t))
