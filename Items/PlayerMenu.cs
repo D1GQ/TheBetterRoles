@@ -2,7 +2,9 @@
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace TheBetterRoles.Items;
 

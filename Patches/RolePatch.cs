@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
@@ -81,7 +82,8 @@ public class RolePatch
             PlayerTask playerTask = __instance.myTasks.ToArray().FirstOrDefault(p => p.Id == idx);
             if (playerTask)
             {
-                CustomRoleManager.RoleListener(__instance, role => role.OnTaskComplete(__instance, idx));
+                if (__instance.IsLocalPlayer()) CustomRoleManager.RoleListener(__instance, role => role.OnTaskComplete(__instance, idx));
+                CustomRoleManager.RoleListener(__instance, role => role.OnTaskCompleteOther(__instance, idx));
                 __instance?.DirtyName();
             }
         }

@@ -7,6 +7,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TheBetterRoles.Helpers;
 

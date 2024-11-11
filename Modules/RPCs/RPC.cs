@@ -5,6 +5,7 @@ using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 
@@ -157,7 +158,7 @@ internal static class RPC
         MessageReader reader = MessageReader.Get(oldReader);
 
         // Unused vanilla rpcs for TBR
-        if ((RpcCalls)callId is RpcCalls.MurderPlayer
+        if ((RpcCalls)callId is RpcCalls.MurderPlayer 
             or RpcCalls.CheckMurder
             or RpcCalls.ProtectPlayer
             or RpcCalls.CheckProtect
@@ -176,12 +177,6 @@ internal static class RPC
 
         switch ((RpcCalls)callId)
         {
-            case RpcCalls.CompleteTask:
-                {
-                    uint Id = reader.ReadUInt32();
-                    CustomRoleManager.RoleListenerOther(role => role.OnTaskCompleteOther(player, Id));
-                }
-                break;
         }
 
         return true;

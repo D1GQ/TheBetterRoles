@@ -714,7 +714,7 @@ public abstract class CustomRoleBehavior
     /// </summary>
     /// <param name="syncId">The synchronization identifier for the ability.</param>
     /// <param name="additionalParams">Optional additional parameters for the ability.</param>
-    protected void SendRoleSync(int syncId, object[]? additionalParams = null)
+    protected void SendRoleSync(int syncId = 0, object[]? additionalParams = null)
     {
         Rpc<RpcSyncRole>.Instance.Send(_player, new(syncId, RoleHash, additionalParams));
     }
