@@ -126,28 +126,29 @@ public class BaseButton : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if (Hacked) return;
-
-        if (TempCooldown > 0)
+        if (!Hacked)
         {
-            if (BaseCooldown()) TempCooldown -= Time.deltaTime;
-
-            if (State == 0)
+            if (TempCooldown > 0)
             {
-                ActionButton.SetCoolDown(TempCooldown, Cooldown);
+                if (BaseCooldown()) TempCooldown -= Time.deltaTime;
+
+                if (State == 0)
+                {
+                    ActionButton.SetCoolDown(TempCooldown, Cooldown);
+                }
+                else if (State == 1)
+                {
+                    ActionButton.SetFillUp(TempCooldown, Duration);
+                }
             }
             else if (State == 1)
             {
-                ActionButton.SetFillUp(TempCooldown, Duration);
+                ResetState(true);
             }
-        }
-        else if (State == 1)
-        {
-            ResetState(true);
-        }
-        else
-        {
-            ActionButton.SetCoolDown(-1, 0);
+            else
+            {
+                ActionButton.SetCoolDown(-1, 0);
+            }
         }
 
         ButtonUpdate();

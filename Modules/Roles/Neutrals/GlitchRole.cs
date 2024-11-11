@@ -115,8 +115,8 @@ public class GlitchRole : CustomRoleBehavior
                 button.Hacked = true;
             }
 
+            ReportButton.Hacked = true;
             HudManager.Instance.UseButton.GetComponent<ActionButton>().enabled = false;
-            HudManager.Instance.ReportButton.GetComponent<ActionButton>().enabled = false;
         }
     }
 
@@ -130,8 +130,8 @@ public class GlitchRole : CustomRoleBehavior
                 button.Hacked = false;
             }
 
+            ReportButton.Hacked = false;
             HudManager.Instance.UseButton.GetComponent<ActionButton>().enabled = true;
-            HudManager.Instance.ReportButton.GetComponent<ActionButton>().enabled = true;
         }
         tempHackDuration = 0f;
         hacked = null;
