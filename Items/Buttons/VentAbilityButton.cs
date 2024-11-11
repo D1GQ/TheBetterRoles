@@ -18,7 +18,7 @@ public class VentAbilityButton : BaseButton
     public Func<Vent, bool> VentCondition { get; set; } = (target) => true;
     public VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
-        if (role?._player?.IsLocalPlayer() is false or null) return this;
+        if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
 
         var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomVent({name})";
@@ -86,11 +86,12 @@ public class VentAbilityButton : BaseButton
             }));
         }
 
+        ActionButton.SetDisabled();
         ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
-        ActionButton.buttonLabelText.SetOutlineColor(Utils.HexToColor32(!isAbility ? Utils.GetCustomRoleTeamColor(Role.RoleTeam) : Role.RoleColor));
+        ActionButton.buttonLabelText.SetOutlineColor(Role != null && !isAbility ? Utils.GetCustomRoleColor(Role.RoleType) : Color.black);
 
         if (abilityUses <= 0)
         {
@@ -103,7 +104,7 @@ public class VentAbilityButton : BaseButton
         }
 
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
-        ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
+        ActionButton.usesRemainingSprite.color = Role != null ? Utils.GetCustomRoleColor(Role.RoleType) : Color.gray;
 
         allButtons.Add(this);
     }
@@ -171,7 +172,7 @@ public class VentAbilityButton : BaseButton
         lastTargetVent?.SetOutline(Color.white, false, false);
         targetVent?.SetOutline(Utils.HexToColor32(Utils.GetCustomRoleTeamColor(Role.RoleTeam)), distanceFlag1, distanceFlag2);
 
-        if (Visible)
+        if (Visible && ShowHighLight)
         {
             lastTargetVent = targetVent;
         }

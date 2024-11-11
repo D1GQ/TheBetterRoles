@@ -58,9 +58,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
 
             if (pc.IsLocalPlayer())
             {
-                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(
-                    pc.IsAlive() && GameState.IsInGamePlay && !(GameState.IsMeeting || GameState.IsExilling)
-                    && (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen));
+                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(false);
 
                 DestroyableSingleton<HudManager>.Instance?.AbilityButton.gameObject.SetActive(
                     !pc.IsAlive(true) && pc.Role()?.IsGhostRole != true && GameState.IsInGamePlay && pc.Data.RoleType == AmongUs.GameOptions.RoleTypes.CrewmateGhost
@@ -115,14 +113,16 @@ public static class PlayerDataExtension
 
                 newBetterData._PlayerId = data.PlayerId;
                 newBetterData._Data = data;
+                var newRole = CustomRoleManager.CreateNewRoleInstance(role => role.RoleType == CustomRoles.Crewmate);
                 newBetterData.RoleInfo = new()
                 {
-                    Role = new CrewmateRoleTBR(),
+                    Role = newRole,
                     RoleType = CustomRoles.Crewmate
                 };
 
                 _ = new LateTask(() =>
                 {
+                    newBetterData.DirtyName = true;
                     newBetterData.IsSelf = data?.Object?.IsLocalPlayer() ?? false;
                 }, 3f, shouldLog: false);
             }

@@ -48,8 +48,9 @@ public class PestillenceRole : CustomRoleBehavior
         return true;
     }
 
-    public override string AddMeetingText(ref CustomClip? clip)
+    public override string AddMeetingText(ref CustomClip? clip, out uint priority)
     {
+        priority = 0;
         if (WasTransformed)
         {
             clip = new CustomClip() { ClipName = "Transform", Volume = 2f };

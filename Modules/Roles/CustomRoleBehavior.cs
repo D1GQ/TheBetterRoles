@@ -278,6 +278,11 @@ public abstract class CustomRoleBehavior
     public List<BaseButton> Buttons { get; set; } = [];
 
     /// <summary>
+    /// The report button for the role, allowing the player to report a body.
+    /// </summary>
+    public DeadBodyAbilityButton? ReportButton => RolePatch.ReportButton;
+
+    /// <summary>
     /// The kill button for the role, allowing the player to perform kills if applicable.
     /// </summary>
     public PlayerAbilityButton? KillButton { get; set; }
@@ -490,41 +495,9 @@ public abstract class CustomRoleBehavior
 
         if (_player != null)
         {
-            SabotageButton = AddButton(new BaseAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, this, true));
-            SabotageButton.UseAsDead = true;
-            SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
-            SabotageButton.OnClick = () =>
-            {
-                if (SabotageButton.ActionButton.canInteract)
-                {
-                    if (Role.CanSabotage)
-                    {
-                        DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
-                        {
-                            Mode = MapOptions.Modes.Sabotage
-                        });
-                    }
-                }
-            };
-
-            KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), VanillaGameSettings.KillCooldown.GetFloat(), 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, VanillaGameSettings.KillDistance.GetValue()));
-            KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
-            KillButton.TargetCondition = (PlayerControl target) =>
-            {
-                return !IsImpostor || !target.IsImpostorTeammate();
-            };
-            KillButton.OnClick = () =>
-            {
-                if (KillButton.lastTarget != null)
-                {
-                    localPlayer.SendRpcMurder(KillButton.lastTarget);
-                    KillButton.SetCooldown();
-                }
-            };
-
-            VentButton = AddButton(new VentAbilityButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
-            VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
-            VentButton.CanCancelDuration = true;
+            SetUpSabotageButton();
+            SetUpKillButton();
+            SetUpVentButton();
         }
 
         Logger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
@@ -534,6 +507,51 @@ public abstract class CustomRoleBehavior
         Logger.LogPrivate($"Finished setting up Role({RoleName})!");
 
         _player.DirtyName();
+    }
+
+    public void SetUpSabotageButton()
+    {
+        SabotageButton = AddButton(new BaseAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, this, true));
+        SabotageButton.UseAsDead = true;
+        SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
+        SabotageButton.OnClick = () =>
+        {
+            if (SabotageButton.ActionButton.canInteract)
+            {
+                if (Role.CanSabotage)
+                {
+                    DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
+                    {
+                        Mode = MapOptions.Modes.Sabotage
+                    });
+                }
+            }
+        };
+    }
+
+    public void SetUpKillButton()
+    {
+        KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), VanillaGameSettings.KillCooldown.GetFloat(), 0, 0, HudManager.Instance.KillButton.graphic.sprite, this, true, VanillaGameSettings.KillDistance.GetValue()));
+        KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
+        KillButton.TargetCondition = (PlayerControl target) =>
+        {
+            return !IsImpostor || !target.IsImpostorTeammate();
+        };
+        KillButton.OnClick = () =>
+        {
+            if (KillButton.lastTarget != null)
+            {
+                localPlayer.SendRpcMurder(KillButton.lastTarget);
+                KillButton.SetCooldown();
+            }
+        };
+    }
+
+    public void SetUpVentButton()
+    {
+        VentButton = AddButton(new VentAbilityButton().Create(3, Translator.GetString(StringNames.VentLabel), VentCooldownOptionItem?.GetFloat() ?? 0, VentDurationOptionItem?.GetFloat() ?? 0, 0, this, null, false, true));
+        VentButton.VisibleCondition = () => { return CustomRoleManager.RoleChecksAny(_player, role => role.CanVent, false); };
+        VentButton.CanCancelDuration = true;
     }
 
     public void LoadSettings()
@@ -833,8 +851,13 @@ public abstract class CustomRoleBehavior
 
     /// <summary>
     /// Returns text that will appear on the meeting hud on start.
+    /// Priority is a output parameter representing the priority of this text entry, where higher values indicate a higher display priority.
     /// </summary>
-    public virtual string AddMeetingText(ref CustomClip? clip) => string.Empty;
+    public virtual string AddMeetingText(ref CustomClip? clip, out uint priority)
+    {
+        priority = uint.MinValue;
+        return string.Empty;
+    }
 
     /// <summary>
     /// Check for a player guessing another player's role.
@@ -956,12 +979,24 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Check when another player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
-    public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+    public virtual bool CheckBodyReportOther(PlayerControl reporter, NetworkedPlayerInfo? bodyData, bool isButton) => true;
 
     /// <summary>
     /// Check when the local player attempts to report a body. If the check fails, the report action will be canceled.
     /// </summary>
-    public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? body, bool isButton) => true;
+    public virtual bool CheckBodyReport(PlayerControl reporter, NetworkedPlayerInfo? bodyData, bool isButton) => true;
+
+    /// <summary>
+    /// Check when another player attempts to report a body. If the check fails, the report action will be canceled.
+    /// This code is only ran by the local client!
+    /// </summary>
+    public virtual bool CheckBodyOther(DeadBody body) => true;
+
+    /// <summary>
+    /// Check when the local player attempts to report a body. If the check fails, the report action will be canceled.
+    /// This code is only ran by the local client!
+    /// </summary>
+    public virtual bool CheckBody(DeadBody body) => true;
 
     /// <summary>
     /// Called after the host has allowed another player to report a body. This executes the logic after the report is approved.

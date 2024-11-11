@@ -118,15 +118,24 @@ namespace TheBetterRoles
 
             Dictionary<string, CustomClip?> texts = [];
 
+            List<(string text, CustomClip? clip, uint priority)> roleTexts = new();
+
             CustomRoleManager.RoleListenerOther(role =>
             {
                 CustomClip? clip = null;
-                string text = role.AddMeetingText(ref clip);
+                string text = role.AddMeetingText(ref clip, out uint priority);
                 if (!string.IsNullOrEmpty(text))
                 {
-                    texts[text] = clip;
+                    roleTexts.Add((text, clip, priority));
                 }
             });
+
+            roleTexts.Sort((a, b) => b.priority.CompareTo(a.priority));
+
+            foreach (var (sortedText, sortedClip, _) in roleTexts)
+            {
+                texts[sortedText] = sortedClip;
+            }
 
             List<TextMeshPro> textPros = [];
 

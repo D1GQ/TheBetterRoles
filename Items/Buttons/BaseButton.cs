@@ -14,8 +14,8 @@ public class BaseButton : MonoBehaviour
     // Player and Role information
     public int Id { get; protected set; }
     public CustomRoleBehavior? Role { get; protected set; }
-    public PlayerControl? _player => Role._player;
-    public List<CustomAddonBehavior>? Addons => Role._player.BetterData().RoleInfo.Addons;
+    public PlayerControl? _player => Role != null ? Role._player : PlayerControl.LocalPlayer;
+    public List<CustomAddonBehavior>? Addons => Role?._player?.BetterData()?.RoleInfo?.Addons;
 
     // Button and UI elements
     public ActionButton? ActionButton { get; protected set; }
@@ -25,6 +25,7 @@ public class BaseButton : MonoBehaviour
     public Func<bool> InteractCondition = () => true;
 
     // Properties related to visibility and interaction
+    public bool ShowHighLight { get; set; } = true;
     public bool UseAsDead { get; set; }
     public bool Visible { get; set; }
     public bool Hacked { get; set; }
@@ -67,7 +68,7 @@ public class BaseButton : MonoBehaviour
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
-        if (!checkVent && !_player.CanMove && !_player.IsInVent() ||
+        if (_player == null || !checkVent && !_player.CanMove && !_player.IsInVent() ||
             checkVent && _player.IsInVent() || Uses <= 0 && !InfiniteUses || State > 0 && !CanCancelDuration
             || !BaseInteractable())
         {
@@ -176,7 +177,7 @@ public class BaseButton : MonoBehaviour
             State = 0;
             SetCooldown();
             Text.SetText(Name);
-            RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
+            if (Role != null) RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
         }
     }
 

@@ -14,7 +14,7 @@ public class PlayerAbilityButton : BaseButton
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
     public PlayerAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
-        if (role?._player?.IsLocalPlayer() is false or null) return this;
+        if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
 
         var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomAbility({name})";
@@ -69,11 +69,12 @@ public class PlayerAbilityButton : BaseButton
             }));
         }
 
+        ActionButton.SetDisabled();
         ActionButton.transform.Find("CommsDown").GetComponent<SpriteRenderer>().sprite = new();
         ActionButton.OverrideText(name);
         ActionButton.buttonLabelText.fontSizeMin = 4f;
         ActionButton.buttonLabelText.enableWordWrapping = false;
-        ActionButton.buttonLabelText.SetOutlineColor(Utils.GetCustomRoleColor(Role.RoleType));
+        ActionButton.buttonLabelText.SetOutlineColor(Role != null ? Utils.GetCustomRoleColor(Role.RoleType) : Color.black);
 
         if (abilityUses <= 0)
         {
@@ -86,7 +87,7 @@ public class PlayerAbilityButton : BaseButton
         }
 
         ActionButton.usesRemainingSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Ability.Counter.png", 100f);
-        ActionButton.usesRemainingSprite.color = Utils.GetCustomRoleColor(Role.RoleType);
+        ActionButton.usesRemainingSprite.color = Role != null ? Utils.GetCustomRoleColor(Role.RoleType) : Color.gray;
 
         allButtons.Add(this);
     }
@@ -126,7 +127,7 @@ public class PlayerAbilityButton : BaseButton
         target = distanceFlag ? target : null;
 
         lastTarget?.SetOutline(false);
-        if (target != null && Visible)
+        if (target != null && Visible && ShowHighLight)
         {
             target.SetOutline(true, PlayerControl.LocalPlayer.GetRoleColor());
         }

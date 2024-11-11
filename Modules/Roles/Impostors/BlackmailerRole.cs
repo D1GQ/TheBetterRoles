@@ -91,9 +91,10 @@ public class BlackmailerRole : CustomRoleBehavior
         return string.Empty;
     }
 
-    public override string AddMeetingText(ref CustomClip? clip)
+    public override string AddMeetingText(ref CustomClip? clip, out uint priority)
     {
-        var Blackmailed = blackmailed.Object;
+        priority = 100;
+        var Blackmailed = blackmailed?.Object;
         if (Blackmailed != null && Blackmailed.IsAlive())
         {
             clip = new() { Clip = DestroyableSingleton<MeetingIntroAnimation>.Instance.PlayerDeadSound };

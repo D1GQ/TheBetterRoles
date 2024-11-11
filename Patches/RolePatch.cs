@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using HarmonyLib;
+using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
@@ -9,8 +10,38 @@ namespace TheBetterRoles.Patches;
 
 public class RolePatch
 {
+    public static DeadBodyAbilityButton? ReportButton { get; private set; }
+
+    [HarmonyPatch(typeof(HudManager))]
+    class HudManagerRolePatch
+    {
+        [HarmonyPatch(nameof(HudManager.Start))]
+        [HarmonyPostfix]
+        public static void Start_Postfix(HudManager __instance)
+        {
+            ReportButton = new DeadBodyAbilityButton().Create(0, Translator.GetString(StringNames.ReportButton), 0f, 0f, 0, __instance.ReportButton.graphic.sprite, null, true, 4f, 1);
+            ReportButton.Text.SetOutlineColor(Color.black);
+            ReportButton.ShowHighLight = false;
+            ReportButton.VisibleCondition = () => { return !GameState.IsLobby; };
+            ReportButton.OnClick = () =>
+            {
+                if (ReportButton.lastDeadBody != null)
+                {
+                    var data = Utils.PlayerDataFromPlayerId(ReportButton.lastDeadBody.ParentId);
+                    if (data != null)
+                    {
+                        if (CustomRoleManager.RoleChecks(PlayerControl.LocalPlayer, role => role.CheckBody(ReportButton.lastDeadBody)) == false) return;
+                        if (CustomRoleManager.RoleChecksOther(role => role.CheckBodyOther(ReportButton.lastDeadBody)) == false) return;
+
+                        PlayerControl.LocalPlayer.SendRpcReportBody(data);
+                    }
+                }
+            };
+        }
+    }
+
     [HarmonyPatch(typeof(PlayerControl))]
-    class PlayerControlPatch
+    class PlayerControlRolePatch
     {
         [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
         [HarmonyPrefix]
@@ -57,7 +88,7 @@ public class RolePatch
     }
 
     [HarmonyPatch(typeof(PlayerPhysics))]
-    class PlayerPhysicsPatch
+    class PlayerPhysicsRolePatch
     {
         [HarmonyPatch(nameof(PlayerPhysics.ResetAnimState))]
         [HarmonyPrefix]
@@ -94,7 +125,7 @@ public class RolePatch
     }
 
     [HarmonyPatch(typeof(Vent))]
-    class VentPatch
+    class VentRolePatch
     {
         [HarmonyPatch(nameof(Vent.SetButtons))]
         [HarmonyPostfix]
