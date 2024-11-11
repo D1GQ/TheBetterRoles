@@ -16,7 +16,7 @@ class CommandsPatch
     // Run code for specific commands
     private static void HandleCommand()
     {
-        if (closestCommand != null)
+        if (closestCommand != null && isTypedOut)
         {
             string[] typedParts = typedCommand.Split(' ');
 
@@ -63,10 +63,11 @@ class CommandsPatch
         if (ChatPatch.ChatHistory.Count == 0 || ChatPatch.ChatHistory[^1] != text) ChatPatch.ChatHistory.Add(text);
         ChatPatch.CurrentHistorySelection = ChatPatch.ChatHistory.Count;
 
-        if (closestCommand.SetChatTimer())
+        if (closestCommand?.SetChatTimer() == true)
         {
             __instance.timeSinceLastMessage = 0f;
         }
+
         __instance.freeChatField.Clear();
         __instance.quickChatMenu.Clear();
         __instance.quickChatField.Clear();
@@ -116,6 +117,7 @@ class CommandsPatch
         }
     }
 
+    private static bool isTypedOut;
     private static string typedCommand;
     private static BaseCommand? closestCommand;
 
@@ -143,6 +145,7 @@ class CommandsPatch
                 closestCommand = GetClosestCommand(typedCommand.Split(' ')[0]);
                 if ((closestCommand != null && (typedParts[0].ToLower() == closestCommand.Name.ToLower() || typedParts.Length == 1)) && closestCommand?.ShowSuggestion() != false)
                 {
+                    isTypedOut = true;
                     string CommandInfo = closestCommand.Description;
 
                     string suggestion = string.Empty;
@@ -190,12 +193,14 @@ class CommandsPatch
                 else
                 {
                     // Clear the suggestion if there is a mismatch
+                    isTypedOut = false;
                     commandText.GetComponent<TextMeshPro>().text = string.Empty;
                     commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
                 }
             }
             else
             {
+                isTypedOut = false;
                 commandText.GetComponent<TextMeshPro>().text = string.Empty;
                 commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
             }
