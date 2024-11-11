@@ -4,7 +4,6 @@ namespace TheBetterRoles.Commands;
 
 public class PlayerArgument(BaseCommand? command) : BaseArgument(command)
 {
-    public override ArgumentType Type => ArgumentType.Player;
     public override string Suggestion => "{Id}";
     public override T? TryGetTarget<T>() where T : class
     {

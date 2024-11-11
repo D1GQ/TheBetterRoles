@@ -41,7 +41,8 @@ public class AllCommandsCommand : BaseCommand
                 }
             }
         }
-        if (GameState.IsDev && Main.ReleaseBuildType == ReleaseTypes.Dev && allDebugCommands.Length > 0)
+#if DEBUG || DEBUG_MULTIACCOUNTS
+        if (GameState.IsDev && allDebugCommands.Length > 0)
         {
             list += "\n" + close + "\n";
             list += "<color=#00751f><b><size=150%>Debug Command List</size></b></color>\n" + open;
@@ -53,6 +54,7 @@ public class AllCommandsCommand : BaseCommand
                 }
             }
         }
+#endif
         list += "\n" + close;
         CommandResultText(list);
     }

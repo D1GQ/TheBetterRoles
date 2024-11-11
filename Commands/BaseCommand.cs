@@ -3,13 +3,6 @@ using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Commands;
 
-public enum ArgumentType
-{
-    None,
-    Player,
-    Name,
-}
-
 public enum CommandType
 {
     Normal,
@@ -21,7 +14,6 @@ public abstract class BaseArgument (BaseCommand? command)
 {
     public BaseCommand? Command { get; } = command;
     public abstract string Suggestion { get; }
-    public abstract ArgumentType Type { get; }
     public string Arg { get; set; } = string.Empty;
     public abstract T? TryGetTarget<T>() where T : class;
 }
@@ -40,6 +32,8 @@ public abstract class BaseCommand
     public abstract string Name { get; }
     public abstract string Description { get; }
     public virtual BaseArgument[]? Arguments { get; } = [];
+    public virtual bool ShowCommand() => true;
+    public virtual bool ShowSuggestion() => true;
     public abstract void Run();
 
     public static void CommandResultText(string text)

@@ -13,21 +13,20 @@ public class RoleCommand : BaseCommand
     {
         _arguments = new Lazy<BaseArgument[]>(() => new BaseArgument[]
         {
-            new NameArgument(this),
+            new StringArgument(this),
         });
-
-        
+        nameArgument.suggestion = "{Name}";
     }
     private readonly Lazy<BaseArgument[]> _arguments;
     public override BaseArgument[]? Arguments => _arguments.Value;
 
-    private NameArgument? nameArgument => (NameArgument)Arguments[0];
+    private StringArgument? nameArgument => (StringArgument)Arguments[0];
 
-    public virtual bool IsAddon => false;
+    public virtual bool IsAddonCommand => false;
 
     public override void Run()
     {
-        var role = CustomRoleManager.allRoles.Where(role => role.IsAddon == IsAddon)
+        var role = CustomRoleManager.allRoles.Where(role => role.IsAddon == IsAddonCommand)
             .FirstOrDefault(role => role.RoleName.StartsWith(nameArgument.Arg, StringComparison.OrdinalIgnoreCase));
         if (role != null)
         {

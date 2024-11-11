@@ -137,7 +137,7 @@ class CommandsPatch
                 string[] typedParts = typedCommand.Split(' ');
 
                 closestCommand = GetClosestCommand(typedCommand.Split(' ')[0]);
-                if (closestCommand != null && (typedParts[0].ToLower() == closestCommand.Name.ToLower() || typedParts.Length == 1))
+                if ((closestCommand != null && (typedParts[0].ToLower() == closestCommand.Name.ToLower() || typedParts.Length == 1)) && closestCommand?.ShowSuggestion() != false)
                 {
                     string CommandInfo = closestCommand.Description;
 
@@ -175,7 +175,13 @@ class CommandsPatch
                         commandText.GetComponent<TextMeshPro>().text = string.Empty;
                     }
 
-                    commandInfo.GetComponent<TextMeshPro>().text = CommandInfo;
+                    string argumentInfo = string.Empty;
+                    if (closestCommand.Arguments.Length > 0)
+                    {
+                        argumentInfo = $" - <#a6a6a6>{string.Join(" <#626262>|</color> ", closestCommand.Arguments.Select(arg => arg.Suggestion))}</color>";
+                    }
+
+                    commandInfo.GetComponent<TextMeshPro>().text = $"{CommandInfo}{argumentInfo}";
                 }
                 else
                 {
@@ -194,13 +200,13 @@ class CommandsPatch
 
     public static BaseCommand? GetClosestCommand(string typedCommand)
     {
-        var closestCommand = BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Normal);
-        closestCommand ??= BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Sponsor);
+        var closestCommand = BaseCommand.allCommands.OrderBy(c => c.Name).FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Normal && c.ShowCommand());
+        closestCommand ??= BaseCommand.allCommands.OrderBy(c => c.Name).FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Sponsor && c.ShowCommand());
 
 #if DEBUG || DEBUG_MULTIACCOUNTS
         if (GameState.IsDev)
         {
-            closestCommand ??= BaseCommand.allCommands.FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Debug);
+            closestCommand ??= BaseCommand.allCommands.OrderBy(c => c.Name).FirstOrDefault(c => c.Name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase) && c.Type == CommandType.Debug && c.ShowCommand());
         }
 #endif
 
