@@ -48,7 +48,7 @@ class CommandsPatch
 
         string text = __instance.freeChatField.textArea.text;
 
-        if (string.IsNullOrEmpty(text) || text.Length <= 1 || text[0].ToString() != CommandPrefix || 3f - __instance.timeSinceLastMessage > 0f)
+        if (!text.StartsWith(CommandPrefix) || 3f - __instance.timeSinceLastMessage > 0f)
         {
             if (GameState.InGame && !GameState.IsLobby && !GameState.IsFreePlay && !GameState.IsMeeting && !GameState.IsExilling && PlayerControl.LocalPlayer.IsAlive())
                 return false;
@@ -63,10 +63,14 @@ class CommandsPatch
         if (ChatPatch.ChatHistory.Count == 0 || ChatPatch.ChatHistory[^1] != text) ChatPatch.ChatHistory.Add(text);
         ChatPatch.CurrentHistorySelection = ChatPatch.ChatHistory.Count;
 
-        __instance.timeSinceLastMessage = 0f;
+        if (closestCommand.SetChatTimer())
+        {
+            __instance.timeSinceLastMessage = 0f;
+        }
         __instance.freeChatField.Clear();
         __instance.quickChatMenu.Clear();
         __instance.quickChatField.Clear();
+
         return false;
     }
 
@@ -131,7 +135,7 @@ class CommandsPatch
 
         if (commandText != null && commandInfo != null)
         {
-            if (text.Length > 0)
+            if (text.Length > 0 && text.StartsWith(CommandPrefix))
             {
                 typedCommand = text.Length > 1 ? text[1..] : string.Empty;
                 string[] typedParts = typedCommand.Split(' ');
@@ -178,7 +182,7 @@ class CommandsPatch
                     string argumentInfo = string.Empty;
                     if (closestCommand.Arguments.Length > 0)
                     {
-                        argumentInfo = $" - <#a6a6a6>{string.Join(" <#626262>|</color> ", closestCommand.Arguments.Select(arg => arg.Suggestion))}</color>";
+                        argumentInfo = $" - <#a6a6a6>{string.Join(" ", closestCommand.Arguments.Select(arg => arg.Suggestion))}</color>";
                     }
 
                     commandInfo.GetComponent<TextMeshPro>().text = $"{CommandInfo}{argumentInfo}";

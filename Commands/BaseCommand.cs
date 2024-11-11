@@ -32,6 +32,7 @@ public abstract class BaseCommand
     public abstract string Name { get; }
     public abstract string Description { get; }
     public virtual BaseArgument[]? Arguments { get; } = [];
+    public virtual bool SetChatTimer() => false;
     public virtual bool ShowCommand() => true;
     public virtual bool ShowSuggestion() => true;
     public abstract void Run();

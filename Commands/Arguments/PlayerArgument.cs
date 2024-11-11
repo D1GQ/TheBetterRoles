@@ -27,7 +27,7 @@ public class PlayerArgument(BaseCommand? command) : BaseArgument(command)
         {
             if (!isDigitFlag)
             {
-                BaseCommand.CommandErrorText($"Improper syntax!");
+                BaseCommand.CommandErrorText($"Invalid Syntax!");
             }
             else if (!playerFound)
             {
