@@ -46,8 +46,8 @@ public class UndertakerRole : CustomRoleBehavior
     public BaseAbilityButton? DropButton = new();
     public override void OnSetUpRole()
     {
-        KillButton.TargetCondition = (PlayerControl target) => { return !IsDragging; };
-        VentButton.VentCondition = (Vent vent) => { return !IsDragging || CanHideBodyInVent.GetBool(); };
+        KillButton?.AddTargetCondition((PlayerControl target) => { return !IsDragging; });
+        VentButton?.AddVentCondition((Vent vent) => { return !IsDragging || CanHideBodyInVent.GetBool(); });
 
         DragButton = AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
         DragButton.VisibleCondition = () => Dragging == null;

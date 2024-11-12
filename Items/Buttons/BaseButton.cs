@@ -49,6 +49,15 @@ public class BaseButton : MonoBehaviour
     public bool CanCancelDuration { get; set; } = false;
     public bool HasDuration => Duration > 0f;
 
+    public void AddVisibleCondition(Func<bool> additionalCondition)
+    {
+        var originalCondition = VisibleCondition;
+        VisibleCondition = () =>
+        {
+            return originalCondition() && additionalCondition();
+        };
+    }
+
     // Core interaction logic
     public virtual bool BaseShow() =>
         !(GameState.IsMeeting || GameState.IsExilling) &&

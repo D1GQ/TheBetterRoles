@@ -12,6 +12,15 @@ public class PlayerAbilityButton : BaseButton
     public Action? OnClick;
     public PlayerControl? lastTarget { get; set; }
     public Func<PlayerControl, bool> TargetCondition { get; set; } = (target) => true;
+    public void AddTargetCondition(Func<PlayerControl, bool> additionalCondition)
+    {
+        var originalCondition = TargetCondition;
+        TargetCondition = (PlayerControl target) =>
+        {
+            return originalCondition(target) && additionalCondition(target);
+        };
+    }
+
     public PlayerAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         if (role != null && role._player?.IsLocalPlayer() is false or null) return this;

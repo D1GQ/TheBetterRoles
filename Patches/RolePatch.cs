@@ -20,7 +20,7 @@ public class RolePatch
         [HarmonyPostfix]
         public static void Start_Postfix(HudManager __instance)
         {
-            ReportButton = new DeadBodyAbilityButton().Create(0, Translator.GetString(StringNames.ReportButton), 0f, 0f, 0, __instance.ReportButton.graphic.sprite, null, true, 4f, 1);
+            ReportButton = new DeadBodyAbilityButton().Create(0, Translator.GetString(StringNames.ReportButton), 0f, 0f, 0, __instance.ReportButton.graphic.sprite, null, true, 4f, 2);
             ReportButton.Text.SetOutlineColor(Color.black);
             ReportButton.ShowHighLight = false;
             ReportButton.VisibleCondition = () => { return !GameState.IsLobby; };

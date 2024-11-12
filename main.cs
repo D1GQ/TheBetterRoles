@@ -163,6 +163,7 @@ public class Main : BasePlugin
                 AddComponent<PlayerAbilityButton>().enabled = false;
                 AddComponent<VentAbilityButton>().enabled = false;
                 AddComponent<DeadBodyAbilityButton>().enabled = false;
+                AddComponent<CustomHatManager>();
             }
 
             CheckRoleIds();
@@ -176,7 +177,8 @@ public class Main : BasePlugin
             CustomColors.Load();
             AssetBundles.LoadAssetBundles();
             CustomSoundsManager.Load();
-            SubmergedCompatibility.Initialize();
+            CustomHatManager.LoadAll();
+            // SubmergedCompatibility.Initialize();
 
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)
                 File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "steam_appid.txt"), "945360");

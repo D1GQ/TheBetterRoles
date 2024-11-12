@@ -16,6 +16,15 @@ public class VentAbilityButton : BaseButton
     public float HighlightDistance { get; set; } = 3.5f;
     public bool IsAbility { get; set; }
     public Func<Vent, bool> VentCondition { get; set; } = (target) => true;
+    public void AddVentCondition(Func<Vent, bool> additionalCondition)
+    {
+        var originalCondition = VentCondition;
+        VentCondition = (Vent vent) =>
+        {
+            return originalCondition(vent) && additionalCondition(vent);
+        };
+    }
+
     public VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, CustomRoleBehavior role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
         if (role != null && role._player?.IsLocalPlayer() is false or null) return this;

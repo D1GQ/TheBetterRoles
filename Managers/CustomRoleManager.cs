@@ -709,6 +709,7 @@ public enum CustomRoleTeam
     Crewmate,
     Impostor,
     Neutral,
+    Apocalypse, // Planned
     None
 }
 

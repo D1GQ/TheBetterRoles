@@ -11,6 +11,15 @@ public class DeadBodyAbilityButton : BaseButton
     public Action? OnClick;
     public DeadBody? lastDeadBody { get; set; }
     public Func<DeadBody, bool> DeadBodyCondition { get; set; } = (body) => true;
+    public void AddDeadBodyCondition(Func<DeadBody, bool> additionalCondition)
+    {
+        var originalCondition = DeadBodyCondition;
+        DeadBodyCondition = (DeadBody body) =>
+        {
+            return originalCondition(body) && additionalCondition(body);
+        };
+    }
+
     public DeadBodyAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, CustomRoleBehavior role, bool Right = true, float range = 1f, int index = -1)
     {
         if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
