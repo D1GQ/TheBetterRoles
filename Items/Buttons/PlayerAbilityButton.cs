@@ -103,11 +103,11 @@ public class PlayerAbilityButton : BaseButton
 
     public override void Click()
     {
-        if (State == 0)
+        if (!IsDuration)
         {
             Role.CheckAndUseAbility(Id, lastTarget.PlayerId, TargetType.Player);
         }
-        else if (State == 1)
+        else if (IsDuration)
         {
             ResetState();
         }

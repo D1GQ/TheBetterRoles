@@ -90,11 +90,11 @@ public class BaseAbilityButton : BaseButton
 
     public override void Click()
     {
-        if (State == 0)
+        if (!IsDuration)
         {
             Role.CheckAndUseAbility(Id, 0, TargetType.None);
         }
-        else if (State == 1)
+        else if (IsDuration)
         {
             ResetState();
         }

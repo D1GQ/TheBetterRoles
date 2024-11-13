@@ -139,11 +139,11 @@ public class VentAbilityButton : BaseButton
         }
         else
         {
-            if (State == 0)
+            if (!IsDuration)
             {
                 Role.CheckAndUseAbility(Id, lastTargetVent.Id, TargetType.Vent);
             }
-            else if (State == 1)
+            else if (IsDuration)
             {
                 ResetState();
             }
@@ -153,7 +153,7 @@ public class VentAbilityButton : BaseButton
     public override bool BaseInteractable() =>
         !_player.inMovingPlat && !_player.IsOnLadder() &&
         InteractCondition() &&
-        (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
+        (!ActionButton.isCoolingDown || IsDuration && CanCancelDuration);
 
     public override void ButtonUpdate()
     {

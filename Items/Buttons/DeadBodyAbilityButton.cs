@@ -101,11 +101,11 @@ public class DeadBodyAbilityButton : BaseButton
 
     public override void Click()
     {
-        if (State == 0)
+        if (!IsDuration)
         {
             Role.CheckAndUseAbility(Id, lastDeadBody.ParentId, TargetType.Body);
         }
-        else if (State == 1)
+        else if (IsDuration)
         {
             ResetState();
         }
@@ -142,7 +142,7 @@ public class DeadBodyAbilityButton : BaseButton
 
         bool flag = Uses != 0 || InfiniteUses;
 
-        if (distanceFlag && flag && BaseInteractable() || State > 0 && CanCancelDuration)
+        if (distanceFlag && flag && BaseInteractable() || IsDuration && CanCancelDuration)
         {
             ActionButton.SetEnabled();
         }

@@ -37,7 +37,7 @@ public class BaseButton : MonoBehaviour
     // Ability configuration
     public string? Name { get; protected set; } = "Ability";
     public IntRange Range = new(0, 100);
-    public int State = 0;
+    public bool IsDuration { get; set; }
     public bool InfiniteUses { get; protected set; } = true;
     public int Uses { get; protected set; } = 0;
 
@@ -65,20 +65,20 @@ public class BaseButton : MonoBehaviour
 
     public virtual bool CanInteractOnPress() =>
         (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() ||
-        CanCancelDuration && State > 0) && !Hacked;
+        CanCancelDuration && IsDuration) && !Hacked;
 
     public virtual bool BaseInteractable() =>
         !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() &&
         InteractCondition() &&
-        (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
+        (!ActionButton.isCoolingDown || IsDuration && CanCancelDuration);
 
     public virtual bool BaseCooldown() =>
-        !(State == 1 && (_player.inMovingPlat || _player.IsOnLadder()) && TempTimer <= 3f) && GameManager.Instance.GameHasStarted;
+        !(IsDuration && (_player.inMovingPlat || _player.IsOnLadder()) && TempTimer <= 3f) && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
         if (_player == null || !checkVent && !_player.CanMove && !_player.IsInVent() ||
-            checkVent && _player.IsInVent() || Uses <= 0 && !InfiniteUses || State > 0 && !CanCancelDuration
+            checkVent && _player.IsInVent() || Uses <= 0 && !InfiniteUses || IsDuration && !CanCancelDuration
             || !BaseInteractable())
         {
             return [];
@@ -141,16 +141,16 @@ public class BaseButton : MonoBehaviour
             {
                 if (BaseCooldown()) TempTimer -= Time.deltaTime;
 
-                if (State == 0)
+                if (!IsDuration)
                 {
                     ActionButton.SetCoolDown(TempTimer, Cooldown);
                 }
-                else if (State == 1)
+                else if (IsDuration)
                 {
                     ActionButton.SetFillUp(TempTimer, Duration);
                 }
             }
-            else if (State == 1 && (Duration > 0 || !CanCancelDuration))
+            else if (IsDuration && (Duration > 0 || !CanCancelDuration))
             {
                 ResetState(true);
             }
@@ -180,22 +180,22 @@ public class BaseButton : MonoBehaviour
 
     protected void ResetState(bool isTimeOut = false)
     {
-        if (State == 1)
+        if (IsDuration)
         {
             if (!_player.IsLocalPlayer()) return;
 
-            State = 0;
+            IsDuration = false;
             SetCooldown();
             Text.SetText(Name);
             if (Role != null) RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
         }
     }
 
-    public virtual void SetCooldown(float amount = -1, int state = -1)
+    public virtual void SetCooldown(float amount = -1, int durationState = -1)
     {
-        if (state >= 0) State = state;
-        if (State == 0) ActionButton?.OverrideText(Name);
-        if (State > 0) return;
+        if (durationState >= 0) IsDuration = durationState > 0;
+        if (!IsDuration) ActionButton?.OverrideText(Name);
+        if (IsDuration) return;
 
         if (amount <= -1)
         {
@@ -221,7 +221,7 @@ public class BaseButton : MonoBehaviour
         }
 
         if (DurationName != "") ActionButton.OverrideText(DurationName);
-        State = 1;
+        IsDuration = true;
     }
 
     public void SetUses(int Amount)

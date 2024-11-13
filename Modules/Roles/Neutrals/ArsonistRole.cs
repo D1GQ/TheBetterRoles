@@ -185,7 +185,7 @@ public class ArsonistRole : CustomRoleBehavior
 
     private void DousePlayer(PlayerControl target)
     {
-        DouseButton?.SetCooldown(state: 0);
+        DouseButton?.SetCooldown(durationState: 0);
         doused.Add(target.Data);
         if (_player.IsLocalPlayer())
         {

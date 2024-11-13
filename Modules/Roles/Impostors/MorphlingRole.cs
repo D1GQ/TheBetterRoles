@@ -143,7 +143,7 @@ public class MorphlingRole : CustomRoleBehavior
             }
             sampleData = null;
             originalData = null;
-            TransformButton?.SetCooldown(state: 0);
+            TransformButton?.SetCooldown(durationState: 0);
         }
         SampleButton?.SetCooldown();
     }

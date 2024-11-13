@@ -226,7 +226,7 @@ public class GlitchRole : CustomRoleBehavior
         {
             CustomRoleManager.RoleListener(_player, role => role.OnUndisguise(_player));
             SetOutfit(originalData);
-            MimicButton.SetCooldown(state: 0);
+            MimicButton.SetCooldown(durationState: 0);
         }
         originalData = null;
     }
