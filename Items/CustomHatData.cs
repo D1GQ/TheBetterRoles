@@ -13,6 +13,7 @@ public class CustomHatData
     [JsonPropertyName("sprite")] public string Sprite { get; set; }
     [JsonPropertyName("backsprite")] public string BackSprite { get; set; }
     [JsonPropertyName("climbsprite")] public string ClimbSprite { get; set; }
+    [JsonPropertyName("behind")] public bool Behind { get; set; }
     [JsonPropertyName("bounce")] public bool Bounce { get; set; }
     [JsonPropertyName("colorbase")] public bool ColorBase { get; set; }
 

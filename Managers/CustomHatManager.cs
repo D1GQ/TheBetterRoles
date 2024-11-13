@@ -57,6 +57,7 @@ public static class CustomHatManager
         if (!string.IsNullOrEmpty(ch.BackSprite))
         {
             viewData.BackImage = LoadHatSprite(ch.Folder, ch.BackSprite);
+            ch.Behind = true;
         }
 
         if (!string.IsNullOrEmpty(ch.ClimbSprite))
@@ -69,7 +70,7 @@ public static class CustomHatManager
         hat.name = ch.Name;
         hat.displayOrder = 99;
         hat.ProductId = "hat_" + ch.Id;
-        hat.InFront = !viewData.BackImage;
+        hat.InFront = !ch.Behind;
         hat.NoBounce = !ch.Bounce;
         hat.ChipOffset = new Vector2(0f, 0.2f);
         hat.Free = true;
