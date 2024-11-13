@@ -1,0 +1,223 @@
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using Il2CppInterop.Runtime.Attributes;
+using System.Collections;
+using System.Text.Json;
+using TheBetterRoles.Managers;
+using UnityEngine;
+using UnityEngine.Networking;
+using TheBetterRoles.Items;
+
+namespace TheBetterRoles.Modules
+{
+    public class CustomHatLoader : MonoBehaviour
+    {
+        private bool isRunning;
+
+        private const string RepositoryUrl = "https://raw.githubusercontent.com/D1GQ/TBR_Hats/main";
+        private const string ManifestFileName = "manifest.json";
+        private readonly string HatsDirectory = BetterDataManager.filePathFolderHats;
+
+        public void Start()
+        {
+            FetchHats();
+        }
+
+        public void FetchHats()
+        {
+            if (isRunning) return;
+            this.StartCoroutine(CoFetchHats());
+        }
+
+        [HideFromIl2Cpp]
+        private IEnumerator CoFetchHats()
+        {
+            isRunning = true;
+
+            var www = new UnityWebRequest($"{RepositoryUrl}/{ManifestFileName}", UnityWebRequest.kHttpVerbGET)
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Logger.Error($"Error downloading manifest: {www.error}");
+                isRunning = false;
+                Destroy(this);
+                yield break;
+            }
+
+            var options = new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true,
+            };
+
+            var response = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(www.downloadHandler.text, options);
+
+            www.Dispose();
+
+            if (response == null || !response.ContainsKey("Hats"))
+            {
+                Logger.Error("Manifest deserialization failed or no 'Hats' key found.");
+                isRunning = false;
+                Destroy(this);
+                yield break;
+            }
+
+            Logger.Log($"Hats Manifest loaded. Hats available: {response["Hats"].Count}");
+
+            if (!Directory.Exists(HatsDirectory)) Directory.CreateDirectory(HatsDirectory);
+
+            List<string> toDownload = GenerateDownloadList(response["Hats"]);
+
+            Logger.Log($"Downloading {toDownload.Count} hats.");
+
+            foreach (var folderName in toDownload)
+            {
+                yield return CoDownloadHatFolder(folderName);
+            }
+
+            isRunning = false;
+            Destroy(this);
+        }
+
+        private List<string> GenerateDownloadList(IEnumerable<string> availableFolders)
+        {
+            var toDownload = new List<string>();
+
+            foreach (var folderName in availableFolders)
+            {
+                var folderPath = Path.Combine(HatsDirectory, folderName);
+                var configFilePath = Path.Combine(folderPath, "config.json");
+                var spritesFolderPath = Path.Combine(folderPath, "sprites");
+
+                if (!Directory.Exists(folderPath) || !File.Exists(configFilePath))
+                {
+                    toDownload.Add(folderName);
+                    continue;
+                }
+
+                try
+                {
+                    var config = JsonSerializer.Deserialize<CustomHatData>(File.ReadAllText(configFilePath));
+
+                    if (!string.IsNullOrEmpty(config.Sprite) && !File.Exists(Path.Combine(spritesFolderPath, config.Sprite)) ||
+                        !string.IsNullOrEmpty(config.BackSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.BackSprite)) ||
+                        !string.IsNullOrEmpty(config.ClimbSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.ClimbSprite)))
+                    {
+                        toDownload.Add(folderName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Error reading config for '{folderName}': {ex.Message}");
+                    toDownload.Add(folderName);
+                }
+            }
+
+            return toDownload;
+        }
+
+
+        private IEnumerator CoDownloadHatFolder(string folderName)
+        {
+            string configUrl = $"{RepositoryUrl}/Hats/{folderName}/config.json";
+            // Logger.Log($"Fetching config file from: {configUrl}");
+
+            var wwwConfig = new UnityWebRequest(configUrl, UnityWebRequest.kHttpVerbGET)
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
+            yield return wwwConfig.SendWebRequest();
+
+            if (wwwConfig.result != UnityWebRequest.Result.Success)
+            {
+                Logger.Error($"Error fetching config file for '{folderName}': {wwwConfig.error}");
+                yield break;
+            }
+
+            CustomHatData config;
+            try
+            {
+                config = JsonSerializer.Deserialize<CustomHatData>(wwwConfig.downloadHandler.text);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Failed to deserialize config.json for '{folderName}': {ex.Message}");
+                yield break;
+            }
+
+            var folderPath = Path.Combine(HatsDirectory, folderName);
+            var spritesPath = Path.Combine(folderPath, "sprites");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            if (!Directory.Exists(spritesPath))
+            {
+                Directory.CreateDirectory(spritesPath);
+            }
+
+            string configFilePath = Path.Combine(folderPath, "config.json");
+            File.WriteAllText(configFilePath, wwwConfig.downloadHandler.text);
+            // Logger.Log($"Saved config file: {configFilePath}");
+
+            wwwConfig.Dispose();
+
+            var filesToDownload = new Dictionary<string, string>
+            {
+                { config.Sprite, "sprite" },
+                { config.BackSprite, "backsprite" },
+                { config.ClimbSprite, "climbsprite" }
+            };
+
+            foreach (var fileEntry in filesToDownload)
+            {
+                string fileName = fileEntry.Key;
+                if (string.IsNullOrEmpty(fileName)) continue;
+
+                string fileUrl = $"{RepositoryUrl}/Hats/{folderName}/sprites/{fileName}";
+                string localFilePath = Path.Combine(spritesPath, fileName);
+
+                if (File.Exists(localFilePath))
+                {
+                    // Logger.Log($"File already exists: {fileName}. Skipping download.");
+                    continue;
+                }
+
+                Logger.Log($"Downloading file from: {fileUrl}");
+                yield return CoDownloadFile(fileUrl, localFilePath, fileName);
+            }
+
+            CustomHatManager.LoadAll();
+            Destroy(gameObject);
+        }
+
+        private IEnumerator CoDownloadFile(string fileUrl, string localFilePath, string fileName)
+        {
+            var www = new UnityWebRequest(fileUrl, UnityWebRequest.kHttpVerbGET)
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Logger.Error($"Error downloading file '{fileName}' from URL '{fileUrl}': {www.error} (Response Code: {(int)www.responseCode})");
+                yield break;
+            }
+
+            File.WriteAllBytes(localFilePath, www.downloadHandler.data);
+
+            Logger.Log($"Saved file: {localFilePath}");
+            www.Dispose();
+        }
+
+        public class GitHubFile
+        {
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public string Download_Url { get; set; }
+        }
+    }
+}

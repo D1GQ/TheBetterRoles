@@ -1,7 +1,5 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
+﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

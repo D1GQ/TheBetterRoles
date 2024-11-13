@@ -581,6 +581,35 @@ public static class Utils
         */
     }
 
+    public static Texture2D? loadTextureFromDisk(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, false); // Initial size doesn't matter; LoadImage will resize
+                byte[] byteTexture = System.IO.File.ReadAllBytes(path);
+
+                // Load PNG data into the texture, without generating mipmaps
+                bool isLoaded = ImageConversion.LoadImage(texture, byteTexture, false);
+
+                if (isLoaded)
+                    return texture;
+                else
+                    Logger.Error("Failed to load image data into texture.");
+            }
+            else
+            {
+                Logger.Error("File does not exist: " + path);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("Exception while loading texture: " + ex);
+        }
+        return null;
+    }
+
     public static Sprite? LoadSprite(string path, float pixelsPerUnit = 1f)
     {
         try

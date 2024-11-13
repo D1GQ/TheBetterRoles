@@ -1,5 +1,4 @@
-﻿using System.Text;
-using TheBetterRoles.Modules;
+﻿using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Commands;
 

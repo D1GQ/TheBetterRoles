@@ -1,8 +1,4 @@
-﻿using System.Text;
-using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
-
-namespace TheBetterRoles.Commands;
+﻿namespace TheBetterRoles.Commands;
 
 public class SetPrefixCommand : BaseCommand
 {

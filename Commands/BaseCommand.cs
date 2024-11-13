@@ -10,7 +10,7 @@ public enum CommandType
     Debug,
 }
 
-public abstract class BaseArgument (BaseCommand? command)
+public abstract class BaseArgument(BaseCommand? command)
 {
     public BaseCommand? Command { get; } = command;
     public abstract string Suggestion { get; }
