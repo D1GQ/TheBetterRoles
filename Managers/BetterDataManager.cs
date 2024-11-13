@@ -5,7 +5,6 @@ namespace TheBetterRoles.Managers;
 
 class BetterDataManager
 {
-    private static string filePath = GetFilePath("BetterRoleData");
     public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), "BetterRole_Data");
     public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, "SaveInfo");
     public static string filePathFolderSettings = Path.Combine(filePathFolder, "Settings");
@@ -16,11 +15,6 @@ class BetterDataManager
     public static string banWordListFile = Path.Combine(filePathFolderSaveInfo, "BanWordList.txt");
     public static Dictionary<int, string> TempSettings = [];
     public static Dictionary<int, string> HostSettings = [];
-
-    public static string GetFilePath(string name)
-    {
-        return Path.Combine(Main.GetDataPathToAmongUs(), $"{name}.json");
-    }
 
     public static void SetUp()
     {
@@ -64,48 +58,6 @@ class BetterDataManager
             var initialData = new Dictionary<string, string>();
             string json = JsonSerializer.Serialize(initialData, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(SettingsFile, json);
-        }
-
-        if (!File.Exists(filePath))
-        {
-            // Initialize with predefined categories
-            var initialData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>
-        {
-            { "Data", new Dictionary<string, Dictionary<string, string>>() }, // Default category
-        };
-
-            string json = JsonSerializer.Serialize(initialData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(filePath, json);
-        }
-        else
-        {
-            // Load the existing JSON data
-            string json = File.ReadAllText(filePath);
-
-            try
-            {
-                using (JsonDocument.Parse(json))
-                {
-                }
-            }
-            catch (JsonException)
-            {
-                // JSON is invalid, reformat by writing an empty JSON object.
-                json = "{}";
-
-            }
-
-            var jsonData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Dictionary<string, string>>>>(json) ?? new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-
-            // Check and add missing categories
-            if (!jsonData.ContainsKey("Data"))
-            {
-                jsonData["Data"] = new Dictionary<string, Dictionary<string, string>>();
-            }
-
-            // Write the updated JSON data back to the file
-            json = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(filePath, json);
         }
     }
 
@@ -285,45 +237,6 @@ class BetterDataManager
                 // Append the new string to the file if it's not already present
                 File.AppendAllText(banPlayerListFile, Environment.NewLine + newText);
             }
-        }
-    }
-
-    public static void SaveCheatData(string puid, string friendCode, string name, string category = "cheatData", string reason = "None")
-    {
-        string filePath = GetFilePath("BetterData");
-
-        string json = File.ReadAllText(filePath);
-        var jsonData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Dictionary<string, string>>>>(json) ?? new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-
-        if (!jsonData.ContainsKey(category))
-        {
-            jsonData[category] = new Dictionary<string, Dictionary<string, string>>();
-        }
-
-        if (!jsonData[category].ContainsKey(name))
-        {
-            jsonData[category][name] = new Dictionary<string, string>();
-        }
-
-        jsonData[category][name]["FriendCode"] = friendCode;
-        jsonData[category][name]["HashPUID"] = puid;
-        jsonData[category][name]["Reason"] = reason;
-
-        json = JsonSerializer.Serialize(jsonData, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(filePath, json);
-    }
-
-    public static void LoadCheatData()
-    {
-        try
-        {
-            string filePath = GetFilePath("BetterData");
-            string json = File.ReadAllText(filePath);
-            var jsonData = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Dictionary<string, string>>>>(json);
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex);
         }
     }
 }

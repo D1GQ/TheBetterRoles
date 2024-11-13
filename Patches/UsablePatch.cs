@@ -42,7 +42,7 @@ public class UsablePatch
     {
         public static bool Prefix(Ladder __instance)
         {
-            __instance.Destination.CoolDown = 0f;
+            __instance.Destination.CoolDown = 1f;
             return false;
         }
     }

@@ -15,7 +15,6 @@ public static class OptionsMenuBehaviourPatch
     private static ClientOptionItem? DisableLobbyTheme;
     private static ClientOptionItem? UnlockFPS;
     private static ClientOptionItem? ShowFPS;
-    private static ClientOptionItem? OpenSaveData;
     private static ClientOptionItem? SwitchToVanilla;
 
     [HarmonyPatch(nameof(OptionsMenuBehaviour.Start))]
@@ -85,24 +84,6 @@ public static class OptionsMenuBehaviourPatch
         {
             string title = Translator.GetString("BetterOption.ShowFPS");
             ShowFPS = ClientOptionItem.Create(title, Main.ShowFPS, __instance);
-        }
-
-        if (OpenSaveData == null || OpenSaveData.ToggleButton == null)
-        {
-            string title = Translator.GetString("BetterOption.SaveData");
-            OpenSaveData = ClientOptionItem.Create(title, null, __instance, OpenSaveDataButtonToggle, IsToggle: false);
-            static void OpenSaveDataButtonToggle()
-            {
-                if (File.Exists(BetterDataManager.GetFilePath("BetterData")))
-                {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
-                    {
-                        FileName = BetterDataManager.GetFilePath("BetterRoleData"),
-                        UseShellExecute = true,
-                        Verb = "open"
-                    });
-                }
-            }
         }
 
         if (SwitchToVanilla == null || SwitchToVanilla.ToggleButton == null)

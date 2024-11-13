@@ -43,7 +43,7 @@ public class BaseButton : MonoBehaviour
 
     // Cooldown and duration settings
     public float Cooldown { get; set; } = 25;
-    public float TempCooldown { get; protected set; } = 0f;
+    public float TempTimer { get; protected set; } = 0f;
     public string DurationName { get; set; } = "";
     public float Duration { get; set; } = 0f;
     public bool CanCancelDuration { get; set; } = false;
@@ -73,7 +73,7 @@ public class BaseButton : MonoBehaviour
         (!ActionButton.isCoolingDown || State > 0 && CanCancelDuration);
 
     public virtual bool BaseCooldown() =>
-        !_player.inMovingPlat && !_player.IsOnLadder() && GameManager.Instance.GameHasStarted;
+        !(State == 1 && (_player.inMovingPlat || _player.IsOnLadder()) && TempTimer <= 3f) && GameManager.Instance.GameHasStarted;
 
     public List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
@@ -137,20 +137,20 @@ public class BaseButton : MonoBehaviour
     {
         if (!Hacked)
         {
-            if (TempCooldown > 0)
+            if (TempTimer > 0)
             {
-                if (BaseCooldown()) TempCooldown -= Time.deltaTime;
+                if (BaseCooldown()) TempTimer -= Time.deltaTime;
 
                 if (State == 0)
                 {
-                    ActionButton.SetCoolDown(TempCooldown, Cooldown);
+                    ActionButton.SetCoolDown(TempTimer, Cooldown);
                 }
                 else if (State == 1)
                 {
-                    ActionButton.SetFillUp(TempCooldown, Duration);
+                    ActionButton.SetFillUp(TempTimer, Duration);
                 }
             }
-            else if (State == 1 && (Duration > 0f || !CanCancelDuration))
+            else if (State == 1 && (Duration > 0 || !CanCancelDuration))
             {
                 ResetState(true);
             }
@@ -199,11 +199,11 @@ public class BaseButton : MonoBehaviour
 
         if (amount <= -1)
         {
-            TempCooldown = Cooldown;
+            TempTimer = Cooldown;
         }
         else
         {
-            TempCooldown = amount;
+            TempTimer = amount;
         }
     }
 
@@ -213,11 +213,11 @@ public class BaseButton : MonoBehaviour
 
         if (amount <= -1)
         {
-            TempCooldown = Duration;
+            TempTimer = Duration;
         }
         else
         {
-            TempCooldown = amount;
+            TempTimer = amount;
         }
 
         if (DurationName != "") ActionButton.OverrideText(DurationName);
