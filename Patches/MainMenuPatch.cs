@@ -36,8 +36,10 @@ internal class MainMenuPatch
 
     // Replace AU logo with BAU logo
     [HarmonyPatch(typeof(MainMenuManager))]
-    internal class MainMenuManagerPatch
+    public class MainMenuManagerPatch
     {
+        private static GameObject? logo;
+
         [HarmonyPatch(nameof(MainMenuManager.Start))]
         [HarmonyPostfix]
         public static void Postfix(MainMenuManager __instance)
@@ -45,6 +47,17 @@ internal class MainMenuPatch
             if (template == null) template = __instance.quitButton;
 
             if (template == null) return;
+
+            if (logo == null)
+            {
+                logo = new GameObject("TheBetterRoles_Logo");
+                var sprite = logo.AddComponent<SpriteRenderer>();
+                var aspect = logo.AddComponent<AspectPosition>();
+                sprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.TheBetterRoles.png", 150);
+                aspect.Alignment = AspectPosition.EdgeAlignments.Right;
+                aspect.DistanceFromEdge = new Vector3(3.25f, -0.25f, 0f);
+                aspect.AdjustPosition();
+            }
 
             buttons.Clear();
             buttonsObj.Clear();
@@ -91,6 +104,8 @@ internal class MainMenuPatch
             {
                 item.SetActive(Flag);
             }
+
+            logo.SetActive(Flag);
         }
 
         public static PassiveButton CreateButton(string name, Color32 color, Action action, string label, Vector2? scale = null)

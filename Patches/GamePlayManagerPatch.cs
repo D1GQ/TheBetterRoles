@@ -4,6 +4,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace TheBetterRoles.Patches;
 
@@ -12,6 +13,7 @@ class GamePlayManager
     [HarmonyPatch(typeof(LobbyBehaviour))]
     public class LobbyBehaviourPatch
     {
+        private static GameObject? logoSpray;
         [HarmonyPatch(nameof(LobbyBehaviour.Start))]
         [HarmonyPostfix]
         private static void Start_Postfix(/*LobbyBehaviour __instance*/)
@@ -25,6 +27,14 @@ class GamePlayManager
             {
                 GameOptionsManager.Instance?.Initialize();
             }, 2f, shouldLog: false);
+
+            if (logoSpray == null)
+            {
+                logoSpray = new GameObject("TheBetterRoles_Spray");
+                logoSpray.transform.position = new Vector3(0f, -2.35f, -1f);
+                var sprite = logoSpray.AddComponent<SpriteRenderer>();
+                sprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.TBR_Spray.png", 170);
+            }
         }
 
         // Disabled annoying music
