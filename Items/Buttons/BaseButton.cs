@@ -64,8 +64,8 @@ public class BaseButton : MonoBehaviour
         (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen);
 
     public virtual bool CanInteractOnPress() =>
-        (ActionButton.canInteract && !ActionButton.isCoolingDown && BaseInteractable() ||
-        CanCancelDuration && IsDuration) && !Hacked;
+        (ActionButton.canInteract && !ActionButton.isCoolingDown ||
+        CanCancelDuration && IsDuration) && BaseInteractable() && !Hacked;
 
     public virtual bool BaseInteractable() =>
         !_player.IsInVent() && !_player.inMovingPlat && !_player.IsOnLadder() &&

@@ -7,6 +7,11 @@ namespace TheBetterRoles.Managers;
 
 public static class CustomHatManager
 {
+    private static List<string> developerHatIdList =
+    [
+        "d1gq"
+    ];
+
     public const string ResourcesDirectory = "TheBetterHats";
     public const string InnerslothPackageName = "Innersloth Hats";
     public const string DeveloperPackageName = "Developer Hats";
@@ -31,6 +36,7 @@ public static class CustomHatManager
                     if (File.Exists(configPath))
                     {
                         var customHat = CustomHatData.Serialize(configPath);
+                        if (customHat.Package == DeveloperPackageName && !developerHatIdList.Contains(customHat.Id)) return;
                         UnregisteredHats.Add(customHat);
                         loaded.Add(subDir);
                     }

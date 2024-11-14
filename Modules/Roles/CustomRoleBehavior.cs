@@ -703,7 +703,10 @@ public abstract class CustomRoleBehavior
         {
             case 3:
                 {
-                    _player.SendRpcVent(_player.GetPlayerVentId(), true);
+                    if (isTimeOut)
+                    {
+                        _player.SendRpcVent(_player.GetPlayerVentId(), true);
+                    }
                 }
                 break;
         }
