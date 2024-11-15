@@ -190,7 +190,6 @@ namespace TheBetterRoles.Modules
             }
 
             CustomHatManager.LoadAll();
-            Destroy(gameObject);
         }
 
         private IEnumerator CoDownloadFile(string fileUrl, string localFilePath, string fileName)
