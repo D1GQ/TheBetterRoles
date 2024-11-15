@@ -6,7 +6,7 @@ using TheBetterRoles.Patches;
 
 namespace TheBetterRoles.Roles;
 
-public class PestillenceRole : CustomRoleBehavior
+public class PestillenceRole : PlaguebearerRole
 {
     // Role Info
     public override int RoleId => 18;
@@ -20,16 +20,6 @@ public class PestillenceRole : CustomRoleBehavior
     public override bool CanKill => true;
     public override bool CanVent => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().CanVent;
     public override bool HasImpostorVision => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().HasImpostorVision;
-
-    public override BetterOptionItem[]? OptionItems
-    {
-        get
-        {
-            return
-            [
-            ];
-        }
-    }
 
     public bool WasTransformed = false;
     public override void OnSetUpRole()
