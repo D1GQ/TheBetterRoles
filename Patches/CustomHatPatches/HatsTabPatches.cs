@@ -46,7 +46,7 @@ public static class HatsTabPatches
 
             if (!packages.ContainsKey(packageKey))
             {
-                packages[packageKey] = new List<Tuple<HatData, CustomHatData>>();
+                packages[packageKey] = [];
             }
             packages[packageKey].Add(new Tuple<HatData, CustomHatData>(hat, ext));
         }
@@ -69,7 +69,7 @@ public static class HatsTabPatches
         var offset = yStart;
         var isDefaultPackage = packageName == CustomHatManager.InnerslothPackageName;
 
-        hats = isDefaultPackage ? hats : hats.OrderBy(h => h.Item1.name).ToList();
+        hats = isDefaultPackage ? hats : [.. hats.OrderBy(h => h.Item1.name)];
         offset = AddPackageTitle(packageName, offset, hatsTab);
 
         for (var i = 0; i < hats.Count; i++)

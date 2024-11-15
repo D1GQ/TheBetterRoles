@@ -1,10 +1,5 @@
 ﻿using Cpp2IL.Core.Extensions;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TheBetterRoles.Managers;
 
 namespace TheBetterRoles.Patches;
@@ -21,25 +16,30 @@ internal static class HatManagerPatches
     private static void GetHatByIdPrefix(HatManager __instance)
     {
         if (isRunning || isLoaded) return;
+
         isRunning = true;
-        allHats = __instance.allHats.ToList();
-        var cache = CustomHatManager.UnregisteredHats.Clone();
-        foreach (var hat in cache)
+        allHats = [.. __instance.allHats];
+
+        var unregisteredHatsCache = CustomHatManager.UnregisteredHats.Clone();
+        foreach (var hat in unregisteredHatsCache)
         {
             if (hat == null) continue;
+
             try
             {
                 allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
                 CustomHatManager.UnregisteredHats.Remove(hat);
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
             }
         }
+
         if (CustomHatManager.UnregisteredHats.Count == 0)
             isLoaded = true;
-        cache.Clear();
 
+        unregisteredHatsCache.Clear();
         __instance.allHats = allHats.ToArray();
     }
 
