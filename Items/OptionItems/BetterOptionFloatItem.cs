@@ -28,6 +28,9 @@ public class BetterOptionFloatItem : BetterOptionItem
     public BetterOptionFloatItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, FloatOptionNames? vanillaOption = null, bool canBeInfinite = false)
     {
         Id = id >= 0 ? id : GetGeneratedId();
+        Name = name;
+        PostFix = postFix;
+        PreFix = preFix;
         floatRange = new(values[0], values[1]);
         Increment = values[2];
         if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
@@ -48,6 +51,20 @@ public class BetterOptionFloatItem : BetterOptionItem
             else
             {
                 BetterOptionItems.Add(this);
+                if (Parent != null)
+                {
+                    int Index = 1;
+                    var tempParent = Parent;
+
+                    while (tempParent.ThisParent != null)
+                    {
+                        tempParent = tempParent.ThisParent;
+                        Index++;
+                    }
+                    ThisParent = Parent;
+                    IsChild = true;
+                    Parent.ChildrenList.Add(this);
+                }
                 return this;
             }
         }
@@ -76,11 +93,8 @@ public class BetterOptionFloatItem : BetterOptionItem
 
         // Set data
         Tab = gameOptionsMenu;
-        Name = name;
         TitleText = optionBehaviour.TitleText;
         Option = optionBehaviour;
-        PostFix = postFix;
-        PreFix = preFix;
         ThisOption = optionBehaviour;
 
         Load(DefaultValue);

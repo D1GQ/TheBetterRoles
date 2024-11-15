@@ -281,7 +281,7 @@
   "Role.Swift": "Swift",
   "Role.Swift.Info": "Gain more speed",
   "Role.Swift.LongInfo": "As the Swift, gain a set amount of speed",
-  "Role.Swift.Option.Speed": "Base Player Speed",
+  "Role.Swift.Option.Speed": "Speed Multiplier",
 
   "Role.Giant": "Giant",
   "Role.Giant.Info": "Become a giant",

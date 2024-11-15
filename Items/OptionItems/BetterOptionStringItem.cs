@@ -44,6 +44,20 @@ public class BetterOptionStringItem : BetterOptionItem
             else
             {
                 BetterOptionItems.Add(this);
+                if (Parent != null)
+                {
+                    int Index = 1;
+                    var tempParent = Parent;
+
+                    while (tempParent.ThisParent != null)
+                    {
+                        tempParent = tempParent.ThisParent;
+                        Index++;
+                    }
+                    ThisParent = Parent;
+                    IsChild = true;
+                    Parent.ChildrenList.Add(this);
+                }
                 return this;
             }
         }

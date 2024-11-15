@@ -1,4 +1,5 @@
-﻿using TheBetterRoles.Helpers;
+﻿using System.Text;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TMPro;
@@ -116,6 +117,76 @@ public class BetterOptionItem
         var num = 100 * IdNum;
         IdNum++;
         return num;
+    }
+
+    class TreeNode
+    {
+        public string Text { get; set; }
+        public int Depth { get; set; }
+        public bool IsLastChild { get; set; }
+    }
+
+    public string FormatOptionsToText()
+    {
+        StringBuilder sb = new();
+        sb.Append("<size=50%>");
+
+        string arrow = "▶";
+        string branch = "━";
+        string midBranch = "┣";
+        string closeBranch = "┗";
+        string vertical = "┃";
+
+        List<TreeNode> treeNodes = new();
+
+        void CollectTreeData(BetterOptionItem option, int depth, bool isLastChild)
+        {
+
+            treeNodes.Add(new TreeNode
+            {
+                Text = $"{Utils.RemoveSizeHtmlText(option.Name)}: {option.FormatValueAsText()}",
+                Depth = depth,
+                IsLastChild = isLastChild
+            });
+
+            if (option.IsParent && option.ShowChildrenCondition() || option.TryCast<BetterOptionPercentItem>())
+            {
+                for (int i = 0; i < option.ChildrenList.Count; i++)
+                {
+                    CollectTreeData(option.ChildrenList[i], depth + 1, i == option.ChildrenList.Count - 1);
+                }
+            }
+        }
+
+        CollectTreeData(this, 0, true);
+
+        for (int i = 0; i < treeNodes.Count; i++)
+        {
+            TreeNode node = treeNodes[i];
+
+            StringBuilder indent = new();
+            for (int j = 0; j < node.Depth; j++)
+            {
+
+                bool parentHasSibling = false;
+                for (int k = i + 1; k < treeNodes.Count; k++)
+                {
+                    if (treeNodes[k].Depth == j && !treeNodes[k].IsLastChild)
+                    {
+                        parentHasSibling = true;
+                        break;
+                    }
+                }
+
+                indent.Append(parentHasSibling ? $"{vertical}  " : "   ");
+            }
+
+            string prefix = node.Depth == 0 ? "┏" : (node.IsLastChild ? closeBranch : midBranch);
+            sb.AppendLine($"{indent}{prefix}{branch}{arrow} {node.Text}");
+        }
+
+        sb.Append("</size>");
+        return sb.ToString();
     }
 
     public virtual bool GetBool()
