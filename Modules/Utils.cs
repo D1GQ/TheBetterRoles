@@ -394,6 +394,7 @@ public static class Utils
             case CustomRoleTeam.Impostor:
                 return "#f00202";
             case CustomRoleTeam.Neutral:
+            case CustomRoleTeam.Apocalypse:
                 return "#949494";
             default:
                 return "#ffffff";

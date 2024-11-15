@@ -121,6 +121,7 @@ public class BetterOptionItem
 
     class TreeNode
     {
+        public TreeNode? ParentNode { get; set; }
         public string Text { get; set; }
         public int Depth { get; set; }
         public bool IsLastChild { get; set; }
@@ -137,56 +138,60 @@ public class BetterOptionItem
         string closeBranch = "┗";
         string vertical = "┃";
 
-        List<TreeNode> treeNodes = new();
+        List<TreeNode> treeNodes = [];
 
-        void CollectTreeData(BetterOptionItem option, int depth, bool isLastChild)
+        void CollectTreeData(BetterOptionItem option, int depth, bool isLastChild, TreeNode parent)
         {
-
-            treeNodes.Add(new TreeNode
+            var node = new TreeNode
             {
+                ParentNode = parent,
                 Text = $"{Utils.RemoveSizeHtmlText(option.Name)}: {option.FormatValueAsText()}",
                 Depth = depth,
                 IsLastChild = isLastChild
-            });
+            };
+            treeNodes.Add(node);
 
             if (option.IsParent && option.ShowChildrenCondition() || option.TryCast<BetterOptionPercentItem>())
             {
                 for (int i = 0; i < option.ChildrenList.Count; i++)
                 {
-                    CollectTreeData(option.ChildrenList[i], depth + 1, i == option.ChildrenList.Count - 1);
+                    CollectTreeData(option.ChildrenList[i], depth + option.GetChildIndex(), i == option.ChildrenList.Count - 1, node);
                 }
             }
         }
 
-        CollectTreeData(this, 0, true);
+        CollectTreeData(this, 0, true, null);
 
         for (int i = 0; i < treeNodes.Count; i++)
         {
             TreeNode node = treeNodes[i];
 
             StringBuilder indent = new();
-            for (int j = 0; j < node.Depth; j++)
+
+            if (node.Depth > 0)
             {
-
-                bool parentHasSibling = false;
-                for (int k = i + 1; k < treeNodes.Count; k++)
-                {
-                    if (treeNodes[k].Depth == j && !treeNodes[k].IsLastChild)
-                    {
-                        parentHasSibling = true;
-                        break;
-                    }
-                }
-
-                indent.Append(parentHasSibling ? $"{vertical}  " : "   ");
+                bool parentHasSibling = node.ParentNode?.IsLastChild == false;
+                indent.Append(parentHasSibling ? $"{vertical} " : "     ");
             }
 
-            string prefix = node.Depth == 0 ? "┏" : (node.IsLastChild ? closeBranch : midBranch);
+            string prefix = i == 0 ? "┏" : (node.IsLastChild ? closeBranch : midBranch);
             sb.AppendLine($"{indent}{prefix}{branch}{arrow} {node.Text}");
         }
 
         sb.Append("</size>");
         return sb.ToString();
+    }
+
+    public int GetChildIndex()
+    {
+        int index = 0;
+        var target = this;
+        while (target.ThisParent != null && target.IsParent)
+        {
+            index++;
+            target = target.ThisParent;
+        }
+        return index;
     }
 
     public virtual bool GetBool()

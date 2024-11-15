@@ -29,7 +29,9 @@ public abstract class BaseCommand
         .ToArray();
 
     public virtual CommandType Type => CommandType.Normal;
+    public string[] Names => ShortNames.Concat(new[] { Name }).ToArray();
     public abstract string Name { get; }
+    public virtual string[] ShortNames => [];
     public abstract string Description { get; }
     public virtual BaseArgument[]? Arguments { get; } = [];
     public virtual bool SetChatTimer() => false;

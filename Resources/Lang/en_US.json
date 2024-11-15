@@ -52,6 +52,7 @@
   "Role.Team.Impostor": "Impostor",
   "Role.Team.Crewmate": "Crewmate",
   "Role.Team.Neutral": "Neutral",
+  "Role.Team.Apocalypse": "Apocalypse",
   "Role.Team.None": "None",
 
   "Role.Ability.HasImpostorVision": "Impostor Vision",

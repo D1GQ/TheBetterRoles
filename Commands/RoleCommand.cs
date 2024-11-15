@@ -37,6 +37,7 @@ public class RoleCommand : BaseCommand
             sb.Append($"{Utils.GetCustomRoleInfo(role.RoleType, true)}</size>");
             sb.AppendLine();
             sb.AppendLine();
+            sb.Append($"<size=85%>{Translator.GetString(StringNames.RoleSettingsLabel)}:</size>\n");
             sb.Append(role?.RoleOptionItem?.FormatOptionsToText(85f) ?? string.Empty);
             CommandResultText(sb.ToString());
         }
