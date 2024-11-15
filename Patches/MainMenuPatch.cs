@@ -50,6 +50,7 @@ internal class MainMenuPatch
 
             if (logo == null)
             {
+                GameObject.Find("Ambience/PlayerParticles").SetActive(false);
                 logo = new GameObject("TheBetterRoles_Logo");
                 var sprite = logo.AddComponent<SpriteRenderer>();
                 var aspect = logo.AddComponent<AspectPosition>();

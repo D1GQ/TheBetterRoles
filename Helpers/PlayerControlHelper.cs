@@ -53,7 +53,11 @@ static class PlayerControlHelper
     {
         if (player.IsAlive(true)) return;
 
-        if (SetData) player.Data.IsDead = false;
+        if (SetData)
+        {
+            player.Data.IsDead = false;
+            player.SetDeathReason(DeathReasons.None, Color.white);
+        }
         player.gameObject.layer = LayerMask.NameToLayer("Players");
         player.MyPhysics.ResetMoveState(true);
         player.clickKillCollider.enabled = true;
@@ -67,6 +71,31 @@ static class PlayerControlHelper
             DestroyableSingleton<HudManager>.Instance.Chat.SetVisible(false);
             DestroyableSingleton<HudManager>.Instance.ShadowQuad.gameObject.SetActive(true);
         }
+    }
+
+    public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor)
+    {
+        player.SetDeathReason(reason, Utils.HexToColor32(hexColor));
+    }
+
+    public static void SetDeathReason(this PlayerControl player, DeathReasons reason, Color color)
+    {
+        if (player?.BetterData()?.DeathReason != null)
+        {
+            player.BetterData().DeathReasonColor = color;
+            player.BetterData().DeathReason = reason;
+        }
+    }
+
+    public static string FormatDeathReason(this PlayerControl player)
+    {
+        var data = player?.BetterData();
+        if (data?.DeathReason != null && data.DeathReason != DeathReasons.None)
+        {
+            return $"《<{Utils.Color32ToHex(data.DeathReasonColor)}>{Translator.GetString($"DeathReason.{Enum.GetName(data.DeathReason)}")}</color>》";
+        }
+
+        return string.Empty;
     }
 
     /// <summary>
@@ -119,6 +148,7 @@ static class PlayerControlHelper
             target.RpcSetScanner(false);
         }
 
+        target.SetDeathReason(DeathReasons.Killed, Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor));
         KillAnimation[] killAnimationsArray = killer.KillAnimations.ToArray();
         KillAnimation randomKillAnimation = killAnimationsArray[UnityEngine.Random.Range(0, killAnimationsArray.Length)];
         killer.MyPhysics.StartCoroutine(CoNewMurder(killer, target, randomKillAnimation, snapToTarget, spawnBody, showAnimation));

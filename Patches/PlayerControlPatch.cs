@@ -105,6 +105,14 @@ class PlayerControlPatch
                 cosmetics.nameText.color = new Color(1f, 1f, 1f, cosmetics.nameText.color.a);
             }
 
+            bool canRevealDeath = (isLocalPlayer && !isLocalPlayerAlive || !PlayerControl.LocalPlayer.IsAlive(true) && !PlayerControl.LocalPlayer.IsGhostRole() ||
+                     CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerDeath(player))) && !player.IsAlive(true);
+
+            if (canRevealDeath)
+            {
+                sbTagBottom.Append($"{player.FormatDeathReason()}---");
+            }
+
             bool canRevealRole = isLocalPlayer || !isLocalPlayerAlive || player.IsImpostorTeammate() ||
                                  CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerRole(player));
 

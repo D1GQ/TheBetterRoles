@@ -502,6 +502,7 @@ internal static class RPC
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(target.Data, target.Data);
                 target.Exiled();
+                target.SetDeathReason(DeathReasons.Guessed, Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate));
                 MeetingHudPatch.AdjustVotesOnGuess(target);
                 if (target.IsLocalPlayer())
                 {
@@ -512,6 +513,7 @@ internal static class RPC
             {
                 DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
                 player.Exiled();
+                player.SetDeathReason(DeathReasons.Guessed, Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate));
                 MeetingHudPatch.AdjustVotesOnGuess(player);
                 if (player.IsLocalPlayer())
                 {

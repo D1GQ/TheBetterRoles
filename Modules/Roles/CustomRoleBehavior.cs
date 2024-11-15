@@ -1091,6 +1091,13 @@ public abstract class CustomRoleBehavior
     public virtual void OnSabotage(ISystemType system, SystemTypes? systemType) { }
 
     /// <summary>
+    /// Determines whether a player's death reason should be revealed to this role.
+    /// </summary>
+    /// <param name="target">The player whose role is being checked for reveal.</param>
+    /// <returns>A boolean value indicating whether the role should be revealed (true) or not (false).</returns>
+    public virtual bool RevealPlayerDeath(PlayerControl target) => false;
+
+    /// <summary>
     /// Determines whether a player's role should be revealed to this role.
     /// </summary>
     /// <param name="target">The player whose role is being checked for reveal.</param>

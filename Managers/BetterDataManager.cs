@@ -13,6 +13,7 @@ class BetterDataManager
     public static string banPlayerListFile = Path.Combine(filePathFolderSaveInfo, "BanPlayerList.txt");
     public static string banNameListFile = Path.Combine(filePathFolderSaveInfo, "BanNameList.txt");
     public static string banWordListFile = Path.Combine(filePathFolderSaveInfo, "BanWordList.txt");
+    public static Dictionary<string, string> _settingsFileCache = [];
     public static Dictionary<int, string> TempSettings = [];
     public static Dictionary<int, string> HostSettings = [];
 
@@ -65,8 +66,6 @@ class BetterDataManager
     {
         LoadSettingsIntoTemp();
     }
-
-    public static Dictionary<string, string> _settingsFileCache = [];
 
     private static Dictionary<string, string> LoadFileIfNeeded()
     {
@@ -155,7 +154,7 @@ class BetterDataManager
         return Default;
     }
 
-    public static float LoadFloatSetting(int id, float Default = 0f)
+    public static float LoadFloatSetting(int id, float Default = 1f)
     {
         if (GameState.IsInGame && !GameState.IsHost)
         {
@@ -182,7 +181,7 @@ class BetterDataManager
         return Default;
     }
 
-    public static int LoadIntSetting(int id, int Default = 0)
+    public static int LoadIntSetting(int id, int Default = 1)
     {
         if (GameState.IsInGame && !GameState.IsHost)
         {

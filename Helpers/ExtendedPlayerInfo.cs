@@ -8,6 +8,14 @@ using UnityEngine;
 
 namespace TheBetterRoles;
 
+public enum DeathReasons
+{
+    None,
+    Killed, 
+    Guessed,
+    Misfire
+}
+
 // Base
 public class ExtendedPlayerInfo : MonoBehaviour
 {
@@ -16,6 +24,8 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public bool HasMod { get; set; }
     public string Version { get; set; } = "";
 
+    public DeathReasons DeathReason { get; set; } = DeathReasons.None;
+    public Color DeathReasonColor { get; set; } = Color.white;
     public bool IsFakeAlive { get; set; } = false;
     public bool IsSelf { get; set; } = false;
     public byte _PlayerId { get; set; }

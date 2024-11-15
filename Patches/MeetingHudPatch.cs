@@ -318,6 +318,19 @@ namespace TheBetterRoles
                         }
                     }
 
+                    bool canRevealDeath = (player.IsLocalPlayer() && !player.IsAlive() || !PlayerControl.LocalPlayer.IsAlive(true) && !PlayerControl.LocalPlayer.IsGhostRole() ||
+                        CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerDeath(player))) && !player.IsAlive(true);
+
+                    if (canRevealDeath)
+                    {
+                        var num = sbTag.Length - 3;
+                        if (num > 0)
+                        {
+                            sbTag.Remove(num, 3);
+                        }
+                        sbTag.Append($"{player.FormatDeathReason()}---");
+                    }
+
                     sbTagTop = Utils.FormatStringBuilder(sbTagTop);
                     sbTag = Utils.FormatStringBuilder(sbTag);
 

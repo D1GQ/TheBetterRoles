@@ -25,6 +25,10 @@
 
   "ConfirmEject": "{0} Was {1}",
 
+  "DeathReason.Killed": "Killed",
+  "DeathReason.Guessed": "Guessed",
+  "DeathReason.Misfire": "Misfire",
+
   "Role": "Role: {0}",
   "Role.Addon": "Addon: {0}",
   "Role.Team": "Team: {0}",
