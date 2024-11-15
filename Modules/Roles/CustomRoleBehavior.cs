@@ -1122,6 +1122,15 @@ public abstract class CustomRoleBehavior
     public virtual void OnIntroCutsceneEnd() { }
 
     /// <summary>
+    /// Override base vision calculation, always return false if overridden!
+    /// </summary>
+    public virtual bool CalculateLightRadius(ShipStatus shipStatus, out float radius)
+    {
+        radius = 0f;
+        return true;
+    }
+
+    /// <summary>
     /// This method is called at the end of the game to process the winning players.
     /// </summary>
     /// <param name="WinnerIds">A reference to the list containing the IDs of the winning players.</param>

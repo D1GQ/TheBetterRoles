@@ -70,6 +70,12 @@ class ShipStatusPatch
             __result = __instance.MaxLightRadius;
             return false;
         }
+        float radius = __result;
+        if (CustomRoleManager.RoleChecksAny(player, role => !role.CalculateLightRadius(__instance, out radius), log: false))
+        {
+            __result = radius;
+            return false;
+        }
         if (CustomRoleManager.RoleChecksAny(player, role => role.HasImpostorVision, log: false))
         {
             __result = __instance.MaxLightRadius *

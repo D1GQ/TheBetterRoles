@@ -81,7 +81,7 @@
 
   "Role.Sheriff": "Sheriff",
   "Role.Sheriff.Info": "Shoot the Impostors",
-  "Role.Sheriff.LongInfo": "The Sheriff can shoot the Impostors (according to the host settings, the Sheriff can also kill neutrals). If the Sheriff tries to kill a crewmate, the Sheriff will kill himself.",
+  "Role.Sheriff.LongInfo": "The Sheriff can shoot the Impostors according to the host settings, the Sheriff can also kill neutrals. If the Sheriff tries to kill a crewmate, the Sheriff will misfire resulting in death.",
   "Role.Sheriff.Ability.1": "Shoot",
   "Role.Sheriff.Option.ShootCooldown": "Shoot Cooldown",
   "Role.Sheriff.Option.ShootDistance": "Shoot Distance",

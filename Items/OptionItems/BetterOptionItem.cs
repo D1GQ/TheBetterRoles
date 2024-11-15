@@ -126,10 +126,10 @@ public class BetterOptionItem
         public bool IsLastChild { get; set; }
     }
 
-    public string FormatOptionsToText()
+    public string FormatOptionsToText(float size = 50f)
     {
         StringBuilder sb = new();
-        sb.Append("<size=50%>");
+        sb.Append($"<size={size}%>");
 
         string arrow = "▶";
         string branch = "━";

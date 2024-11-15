@@ -35,6 +35,9 @@ public class RoleCommand : BaseCommand
             sb.Append($"{string.Format(Translator.GetString("Role.Team"), $"<{Utils.GetCustomRoleTeamColor(role.RoleTeam)}>{Utils.GetCustomRoleTeamName(role.RoleTeam)}</color>")}\n");
             sb.Append(string.Format(Translator.GetString("Role.Category"), $"{Utils.GetCustomRoleCategoryName(role.RoleCategory)}\n\n"));
             sb.Append($"{Utils.GetCustomRoleInfo(role.RoleType, true)}</size>");
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.Append(role?.RoleOptionItem?.FormatOptionsToText(85f) ?? string.Empty);
             CommandResultText(sb.ToString());
         }
         else
