@@ -9,7 +9,6 @@ internal static class VisorManagerPatches
 {
     private static bool isRunning;
     private static bool isLoaded;
-    private static List<HatData> allHats;
 
     [HarmonyPatch(nameof(HatManager.GetVisorById))]
     [HarmonyPrefix]
