@@ -26,18 +26,24 @@ public class ColorEffectBehaviour : MonoBehaviour
         new Color(0.5f, 0f, 0f)], 0.28f);
     public static Color FireShadow => Shadow(Fire);
 
+    public static Color Water => MultiColorGradient([
+        new Color(0f, 0.34f, 0.64f),
+        new Color(0.68f, 0.85f, 1f),
+    ], 1.25f);
+    public static Color WaterShadow => Shadow(Water);
+
     public static Color MultiColorGradient(Color[] colors, float speed)
     {
         if (colors == null || colors.Length == 0)
         {
             colors = [
             Color.red,
-            new Color(1f, 0.5f, 0f),
-            Color.yellow,
-            Color.green,
-            Color.cyan,
-            Color.blue,
-            Color.magenta
+                new Color(1f, 0.5f, 0f),
+                Color.yellow,
+                Color.green,
+                Color.cyan,
+                Color.blue,
+                Color.magenta
         ];
         }
 
@@ -127,6 +133,9 @@ public class ColorEffectBehaviour : MonoBehaviour
             case CustomColors.FireId:
                 SetFire();
                 break;
+            case CustomColors.WaterId:
+                SetWater();
+                break;
         }
     }
 
@@ -169,6 +178,20 @@ public class ColorEffectBehaviour : MonoBehaviour
         else
         {
             Renderer.material.SetColor("_Color", Fire);
+        }
+    }
+
+    public void SetWater()
+    {
+        if (IsBodyMaterial)
+        {
+            Renderer.material.SetColor(PlayerMaterial.BackColor, WaterShadow);
+            Renderer.material.SetColor(PlayerMaterial.BodyColor, Water);
+            Renderer.material.SetColor(PlayerMaterial.VisorColor, Palette.VisorColor);
+        }
+        else
+        {
+            Renderer.material.SetColor("_Color", Water);
         }
     }
 

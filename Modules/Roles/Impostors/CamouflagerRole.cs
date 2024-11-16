@@ -5,7 +5,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
-using UnityEngine;
 
 namespace TheBetterRoles.Roles;
 

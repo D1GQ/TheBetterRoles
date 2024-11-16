@@ -116,6 +116,22 @@ public class RolePatch
 
             return true;
         }
+
+        [HarmonyPatch(nameof(CosmeticsLayer.SetPetPosition))]
+        [HarmonyPrefix]
+        public static bool SetPetPosition_Prefix(CosmeticsLayer __instance)
+        {
+            if (__instance.GetPet()?.targetPlayer == null) return false;
+            return true;
+        }
+
+        [HarmonyPatch(nameof(CosmeticsLayer.TogglePetVisible))]
+        [HarmonyPrefix]
+        public static bool TogglePetVisible_Prefix(CosmeticsLayer __instance)
+        {
+            if (__instance.GetPet()?.targetPlayer == null) return false;
+            return true;
+        }
     }
 
     [HarmonyPatch(typeof(PlayerPhysics))]

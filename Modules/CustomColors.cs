@@ -1,12 +1,7 @@
 ﻿using AmongUs.Data.Legacy;
-using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using System.Collections;
-using System.Collections.Concurrent;
-using TheBetterRoles.Managers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace TheBetterRoles.Modules;
 
@@ -22,59 +17,61 @@ public class CustomColors
 
     private static readonly List<int> Order =
     [
-        7,
-        37,
-        14,
-        5,
-        33,
-        41,
-        25,
-        4,
-        30,
-        0,
-        35,
-        3,
-        27,
-        17,
-        13,
-        23,
-        8,
-        32,
-        38,
-        1,
-        21,
-        40,
-        31,
-        10,
-        34,
-        22,
-        28,
-        36,
-        2,
-        11,
-        26,
-        29,
-        20,
-        19,
-        18,
-        12,
-        9,
-        24,
-        16,
-        15,
-        6,
-        39,
-        42,
-        43,
-        44,
+        7,  // White
+        37, // Banana
+        14, // Coral
+        5,  // Yellow
+        33, // Cyan
+        41, // Sundown
+        25, // Blurple
+        4,  // Orange
+        30, // Teal
+        0,  // Red
+        35, // Fuchsia
+        3,  // Pink
+        27, // Sunrise
+        17, // Coral
+        13, // Rose
+        23, // Mint
+        8,  // Purple
+        32, // Lemon
+        38, // Navy
+        1,  // Blue
+        21, // Wasabi
+        40, // Ocean
+        31, // Olive
+        10, // Cyan
+        34, // Peach
+        22, // Nougat
+        28, // HotPink
+        36, // RoyalGreen
+        2,  // Green
+        11, // Lime
+        26, // Petrol
+        29, // Lavender
+        20, // Olive
+        19, // Army
+        18, // Tamarind
+        12, // Maroon
+        9,  // Brown
+        24, // Ice
+        16, // Tan
+        15, // Gray
+        6,  // Black
+        39, // Darkness
+        42, // Rainbow
+        43, // Galaxy
+        44, // Fire
+        45, // Water
     ];
 
     public const int RainbowId = 42;
     public const int GalaxyId = 43;
     public const int FireId = 44;
-    public const int CamouflageId = 45;
+    public const int WaterId = 45;
+    public const int CamouflageId = 46;
 
-    public static bool IsAnimatedColor(int colorId) => colorId == RainbowId || colorId == GalaxyId || colorId == FireId;
+    public static bool IsAnimatedColor(int colorId) => colorId == RainbowId || colorId == GalaxyId || colorId == FireId || colorId == WaterId;
 
     public static void Load()
     {
@@ -255,27 +252,34 @@ public class CustomColors
             new CustomColor
             {
                 translatorName = "Rainbow", // 42
-                color = new Color32(255, 255, 255, byte.MaxValue),
-                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                color = new Color32(103, 118, 255, byte.MaxValue),
+                shadow = new Color32(103, 118, 255, byte.MaxValue),
                 isLighterColor = true
             },
             new CustomColor
             {
                 translatorName = "Galaxy", // 43
-                color = new Color32(255, 255, 255, byte.MaxValue),
-                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                color = new Color32(228, 0, 255, byte.MaxValue),
+                shadow = new Color32(136, 0, 255, byte.MaxValue),
                 isLighterColor = false
             },
             new CustomColor
             {
                 translatorName = "Fire", // 44
-                color = new Color32(255, 255, 255, byte.MaxValue),
-                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                color = new Color32(255, 3, 0, byte.MaxValue),
+                shadow = new Color32(255, 178, 0, byte.MaxValue),
+                isLighterColor = true
+            },
+            new CustomColor
+            {
+                translatorName = "Water", // 45
+                color = new Color32(13, 112, 200, byte.MaxValue),
+                shadow = new Color32(205, 232, 255, byte.MaxValue),
                 isLighterColor = true
             },
             new CustomColor // Not pickable!
             {
-                translatorName = "Camouflage", // 45
+                translatorName = "Camouflage", // 46
                 color = new Color32(140, 140, 140, byte.MaxValue),
                 shadow = new Color32(140, 140, 140, byte.MaxValue),
                 isLighterColor = true

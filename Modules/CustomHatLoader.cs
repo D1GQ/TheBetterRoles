@@ -2,10 +2,10 @@
 using Il2CppInterop.Runtime.Attributes;
 using System.Collections;
 using System.Text.Json;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using UnityEngine;
 using UnityEngine.Networking;
-using TheBetterRoles.Items;
 
 namespace TheBetterRoles.Modules
 {
