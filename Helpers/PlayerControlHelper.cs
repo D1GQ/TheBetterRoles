@@ -113,7 +113,7 @@ static class PlayerControlHelper
             player.SetCosmeticsActive(false);
             player.SetPlayerTextActive(false);
             player.BetterData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
-            player.RawSetColor(42);
+            player.RawSetColor(CustomColors.CamouflageId);
         }
 
         player.BetterData().CamouflagedQueue.Add(active);

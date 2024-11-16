@@ -158,7 +158,8 @@ public class Main : BasePlugin
 
             // Add custom components
             {
-                RegisterTypeInIl2Cpp();
+                AddComponent<CoroutineManager>();
+                AddComponent<ColorEffectBehaviour>().enabled = false;
                 AddComponent<ExtendedPlayerInfo>().enabled = false;
                 AddComponent<GuessManager>().enabled = false;
                 AddComponent<BaseButton>().enabled = false;
@@ -202,32 +203,6 @@ public class Main : BasePlugin
             TheBetterRoles.Logger.Error(ex);
         }
     }
-
-    private static void RegisterTypeInIl2Cpp()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        foreach (var type in assembly.GetTypes())
-        {
-            try
-            {
-                if (type == null || !ShouldRegisterType(type))
-                    continue;
-
-                if (!ClassInjector.IsTypeRegisteredInIl2Cpp(type))
-                {
-                    ClassInjector.RegisterTypeInIl2Cpp(type);
-                    TheBetterRoles.Logger.Log($"Registered type: {type.FullName}");
-                }
-            }
-            catch (Exception ex)
-            {
-                TheBetterRoles.Logger.Error($"Error registering type: {type?.FullName}. Exception: {ex}");
-            }
-        }
-    }
-
-
-    private static bool ShouldRegisterType(Type type) => typeof(MonoBehaviour).IsAssignableFrom(type);
 
     private void CheckRoleIds()
     {

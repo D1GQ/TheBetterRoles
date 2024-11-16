@@ -1,7 +1,12 @@
 ﻿using AmongUs.Data.Legacy;
+using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System.Collections;
+using System.Collections.Concurrent;
+using TheBetterRoles.Managers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace TheBetterRoles.Modules;
 
@@ -59,7 +64,17 @@ public class CustomColors
         15,
         6,
         39,
+        42,
+        43,
+        44,
     ];
+
+    public const int RainbowId = 42;
+    public const int GalaxyId = 43;
+    public const int FireId = 44;
+    public const int CamouflageId = 45;
+
+    public static bool IsAnimatedColor(int colorId) => colorId == RainbowId || colorId == GalaxyId || colorId == FireId;
 
     public static void Load()
     {
@@ -237,13 +252,34 @@ public class CustomColors
                 shadow = new Color32(197, 98, 54, byte.MaxValue),
                 isLighterColor = false
             },
+            new CustomColor
+            {
+                translatorName = "Rainbow", // 42
+                color = new Color32(255, 255, 255, byte.MaxValue),
+                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                isLighterColor = true
+            },
+            new CustomColor
+            {
+                translatorName = "Galaxy", // 43
+                color = new Color32(255, 255, 255, byte.MaxValue),
+                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                isLighterColor = false
+            },
+            new CustomColor
+            {
+                translatorName = "Fire", // 44
+                color = new Color32(255, 255, 255, byte.MaxValue),
+                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                isLighterColor = true
+            },
             new CustomColor // Not pickable!
             {
-                translatorName = "Camouflage", // 42
-                color = new Color32(181, 181, 181, byte.MaxValue),
-                shadow = new Color32(100, 100, 100, byte.MaxValue),
-                isLighterColor = false
-            }
+                translatorName = "Camouflage", // 45
+                color = new Color32(140, 140, 140, byte.MaxValue),
+                shadow = new Color32(140, 140, 140, byte.MaxValue),
+                isLighterColor = true
+            },
         ];
 
         pickableColors += (uint)colors.Count; // Colors to show in Tab
@@ -310,7 +346,7 @@ public class CustomColors
                 __instance.gameObject.SetActive(true);
                 __instance.SetCosmetics(sender.Data);
                 string str;
-                Color color;
+                UnityEngine.Color color;
                 try
                 {
                     str = ColorUtility.ToHtmlStringRGB(Palette.TextColors[__instance.player.ColorId]);
@@ -348,6 +384,11 @@ public class CustomColors
                     int row = i / cols, col = i % cols;
                     chip.transform.localPosition = new Vector3(-0.975f + col * 0.5f, 1.475f - row * 0.5f, chip.transform.localPosition.z);
                     chip.transform.localScale *= 0.76f;
+
+                    if (IsAnimatedColor(pos))
+                    {
+                        chip.Button.gameObject.AddComponent<ColorEffectBehaviour>().AddRend(chip.Button.GetComponent<SpriteRenderer>(), pos, false);
+                    }
                 }
                 for (int j = Order.Count; j < chips.Length; j++)
                 { // If number isn't in order, hide it
@@ -399,6 +440,26 @@ public class CustomColors
                 __instance.RpcSetColor((byte)color);
                 return false;
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerMaterial))]
+    [HarmonyPatch("SetColors")]
+    [HarmonyPatch(new[] { typeof(int), typeof(Renderer) })]
+    class PlayerMaterialColorPatch
+    {
+        [HarmonyPrefix]
+        public static bool RawSetColor_Prefix(int colorId, Renderer rend)
+        {
+            if (IsAnimatedColor(colorId))
+            {
+                rend?.gameObject.AddComponent<ColorEffectBehaviour>().AddRend(rend, colorId);
+                return false;
+            }
+
+            ColorEffectBehaviour.TryRemove(rend);
+
+            return true;
         }
     }
 }
