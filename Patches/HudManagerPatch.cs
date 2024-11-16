@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;

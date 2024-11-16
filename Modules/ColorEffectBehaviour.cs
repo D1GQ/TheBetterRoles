@@ -28,8 +28,7 @@ public class ColorEffectBehaviour : MonoBehaviour
 
     public static Color Water => MultiColorGradient([
         new Color(0f, 0.34f, 0.64f),
-        new Color(0.68f, 0.85f, 1f),
-    ], 1.25f);
+        new Color(0.68f, 0.85f, 1f),], 1.8f);
     public static Color WaterShadow => Shadow(Water);
 
     public static Color MultiColorGradient(Color[] colors, float speed)
@@ -38,12 +37,12 @@ public class ColorEffectBehaviour : MonoBehaviour
         {
             colors = [
             Color.red,
-                new Color(1f, 0.5f, 0f),
-                Color.yellow,
-                Color.green,
-                Color.cyan,
-                Color.blue,
-                Color.magenta
+            new Color(1f, 0.5f, 0f),
+            Color.yellow,
+            Color.green,
+            Color.cyan,
+            Color.blue,
+            Color.magenta
         ];
         }
 
