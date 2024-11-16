@@ -58,7 +58,7 @@ public class CustomColors
         16,
         15,
         6,
-        39
+        39,
     ];
 
     public static void Load()
@@ -236,6 +236,13 @@ public class CustomColors
                 color = new Color32(252, 194, 100, byte.MaxValue),
                 shadow = new Color32(197, 98, 54, byte.MaxValue),
                 isLighterColor = false
+            },
+            new CustomColor // Not pickable!
+            {
+                translatorName = "Camouflage", // 42
+                color = new Color32(181, 181, 181, byte.MaxValue),
+                shadow = new Color32(100, 100, 100, byte.MaxValue),
+                isLighterColor = false
             }
         ];
 
@@ -260,10 +267,10 @@ public class CustomColors
         Palette.ShadowColors = shadowlist.ToArray();
     }
 
-    protected internal struct CustomColor
+    public class CustomColor
     {
         public string translatorName;
-        public readonly string longname => Translator.GetString($"Color.{translatorName}");
+        public string longname => Translator.GetString($"Color.{translatorName}");
         public Color32 color;
         public Color32 shadow;
         public bool isLighterColor;

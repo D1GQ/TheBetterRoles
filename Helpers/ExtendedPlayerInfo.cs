@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Item;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
@@ -37,6 +38,9 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public bool HasShowDcMsg { get; set; } = false;
     public DisconnectReasons? DisconnectReason { get; set; }
     public ExtendedRoleInfo? RoleInfo { get; set; }
+    public BoolQueue CamouflagedQueue { get; set; } = new();
+    public BoolQueue CosmeticsActiveQueue { get; set; } = new();
+    public int CamouflageBackToColor { get; set; } = 0;
 
     public void Update()
     {

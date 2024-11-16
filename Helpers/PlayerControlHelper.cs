@@ -98,6 +98,31 @@ static class PlayerControlHelper
         return string.Empty;
     }
 
+    public static void SetCamouflage(this PlayerControl player, bool active)
+    {
+        if (player.BetterData().CamouflagedQueue)
+        {
+            player.SetCosmeticsActive(false);
+            player.BetterData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
+            player.RawSetColor(42);
+        }
+
+        player.BetterData().CamouflagedQueue.Add(active);
+        active = !player.BetterData().CamouflagedQueue;
+
+        player.cosmetics.nameText.transform.parent.gameObject.SetActive(!active);
+        if (!active)
+        {
+            player.RawSetColor(player.BetterData().CamouflageBackToColor);
+            player.SetCosmeticsActive(true);
+        }
+    }
+
+    public static void SetCosmeticsActive(this PlayerControl player, bool active)
+    {
+        player.BetterData()?.CosmeticsActiveQueue.Add(!active);
+    }
+
     /// <summary>
     /// Only call this directly if it's a 100% guarantee kill without any checks and is synced to all clients!
     /// </summary>

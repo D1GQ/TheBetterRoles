@@ -53,6 +53,7 @@ public class RolePatch
             {
                 box.enabled = true;
             }
+            __instance.cosmetics.gameObject.SetActive(__instance.BetterData().CosmeticsActiveQueue);
         }
 
         [HarmonyPatch(nameof(PlayerControl.Awake))]
@@ -86,6 +87,25 @@ public class RolePatch
                 CustomRoleManager.RoleListener(__instance, role => role.OnTaskCompleteOther(__instance, idx));
                 __instance?.DirtyName();
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(CosmeticsLayer))]
+    class CosmeticsLayerRolePatch
+    {
+        [HarmonyPatch(nameof(CosmeticsLayer.SetColor))]
+        [HarmonyPrefix]
+        public static bool RawSetColor_Prefix(CosmeticsLayer __instance, int color)
+        {
+            var player = Main.AllPlayerControls.FirstOrDefault(pc => pc.cosmetics == __instance);
+            if (player == null) return true;
+            if (!player.BetterData().CamouflagedQueue)
+            {
+                player.BetterData().CamouflageBackToColor = color;
+                return false;
+            }
+
+            return true;
         }
     }
 
