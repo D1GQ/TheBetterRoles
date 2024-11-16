@@ -11,7 +11,9 @@ public class CustomHatData
     [JsonPropertyName("author")] public string Author { get; set; }
     [JsonPropertyName("folder")] public string Folder { get; set; }
     [JsonPropertyName("sprite")] public string Sprite { get; set; }
+    [JsonPropertyName("flipsprite")] public string FlipSprite { get; set; }
     [JsonPropertyName("backsprite")] public string BackSprite { get; set; }
+    [JsonPropertyName("flipbacksprite")] public string FlipBackSprite { get; set; }
     [JsonPropertyName("climbsprite")] public string ClimbSprite { get; set; }
     [JsonPropertyName("behind")] public bool Behind { get; set; }
     [JsonPropertyName("bounce")] public bool Bounce { get; set; }
