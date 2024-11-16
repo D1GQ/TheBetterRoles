@@ -55,31 +55,17 @@ public static class CustomHatManager
         var hat = ScriptableObject.CreateInstance<HatData>();
 
         viewData.MainImage = LoadHatSprite(ch.Folder, ch.Sprite);
-        if (viewData.MainImage == null)
-        {
-            throw new FileNotFoundException("File not downloaded yet");
-        }
-        if (!string.IsNullOrEmpty(ch.FlipSprite))
-        {
-            viewData.LeftMainImage = LoadHatSprite(ch.Folder, ch.FlipSprite);
-        }
-
+        viewData.LeftMainImage = LoadHatSprite(ch.Folder, ch.FlipSprite);
         viewData.FloorImage = viewData.MainImage;
-        if (!string.IsNullOrEmpty(ch.BackSprite))
+        viewData.BackImage = LoadHatSprite(ch.Folder, ch.BackSprite);
+        if (viewData.BackImage != null)
         {
-            viewData.BackImage = LoadHatSprite(ch.Folder, ch.BackSprite);
-            if (!string.IsNullOrEmpty(ch.FlipSprite))
-            {
-                viewData.LeftBackImage = LoadHatSprite(ch.Folder, ch.FlipBackSprite);
-            }
+            viewData.LeftBackImage = LoadHatSprite(ch.Folder, ch.FlipBackSprite);
             ch.Behind = true;
         }
+        viewData.ClimbImage = LoadHatSprite(ch.Folder, ch.ClimbSprite);
+        viewData.LeftClimbImage = viewData.ClimbImage;
 
-        if (!string.IsNullOrEmpty(ch.ClimbSprite))
-        {
-            viewData.ClimbImage = LoadHatSprite(ch.Folder, ch.ClimbSprite);
-            viewData.LeftClimbImage = viewData.ClimbImage;
-        }
         viewData.MatchPlayerColor = ch.ColorBase;
 
         hat.name = ch.Name;
@@ -98,6 +84,16 @@ public static class CustomHatManager
 
     public static Sprite? LoadHatSprite(string folder, string path)
     {
+        if (string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+
+        if (!File.Exists(Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path)))
+        {
+            throw new FileNotFoundException($"{Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path)} not downloaded yet!");
+        }
+
         var texture = Utils.loadTextureFromDisk(Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path));
         if (texture == null) return null;
         var sprite = Sprite.Create(texture,
