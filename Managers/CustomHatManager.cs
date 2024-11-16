@@ -59,13 +59,19 @@ public static class CustomHatManager
         {
             throw new FileNotFoundException("File not downloaded yet");
         }
-        viewData.LeftMainImage = LoadHatSprite(ch.Folder, ch.FlipSprite);
+        if (!string.IsNullOrEmpty(ch.FlipSprite))
+        {
+            viewData.LeftMainImage = LoadHatSprite(ch.Folder, ch.FlipSprite);
+        }
 
         viewData.FloorImage = viewData.MainImage;
         if (!string.IsNullOrEmpty(ch.BackSprite))
         {
             viewData.BackImage = LoadHatSprite(ch.Folder, ch.BackSprite);
-            viewData.LeftBackImage = LoadHatSprite(ch.Folder, ch.FlipBackSprite);
+            if (!string.IsNullOrEmpty(ch.FlipSprite))
+            {
+                viewData.LeftBackImage = LoadHatSprite(ch.Folder, ch.FlipBackSprite);
+            }
             ch.Behind = true;
         }
 
