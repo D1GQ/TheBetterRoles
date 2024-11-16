@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using System.Text;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Modules;
 using TMPro;
 using UnityEngine;
 

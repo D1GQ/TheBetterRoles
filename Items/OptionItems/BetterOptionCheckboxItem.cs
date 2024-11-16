@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using Reactor.Networking.Rpc;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;

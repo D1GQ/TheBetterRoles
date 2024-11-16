@@ -41,7 +41,7 @@ namespace TheBetterRoles.Modules
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                Logger.Error($"Error downloading manifest: {www.error}");
+                Logger.Error($"Error downloading {ManifestFileName}: {www.error}");
                 isRunning = false;
                 Destroy(this);
                 yield break;
@@ -58,13 +58,13 @@ namespace TheBetterRoles.Modules
 
             if (response == null || !response.ContainsKey("Hats"))
             {
-                Logger.Error("Manifest deserialization failed or no 'Hats' key found.");
+                Logger.Error($"{ManifestFileName} deserialization failed or no 'Hats' key found.");
                 isRunning = false;
                 Destroy(this);
                 yield break;
             }
 
-            Logger.Log($"Hats Manifest loaded. Hats available: {response["Hats"].Count}");
+            Logger.Log($"Hats {ManifestFileName} loaded! Hats available: {response["Hats"].Count}");
 
             if (!Directory.Exists(HatsDirectory)) Directory.CreateDirectory(HatsDirectory);
 

@@ -6,7 +6,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections;
 using System.Reflection;
-using TheBetterRoles.Modules;
+using TheBetterRoles.Helpers;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;

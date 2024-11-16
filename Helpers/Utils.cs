@@ -5,14 +5,14 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
+using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
 
-namespace TheBetterRoles.Modules;
+namespace TheBetterRoles.Helpers;
 
 public static class Utils
 {
@@ -545,8 +545,6 @@ public static class Utils
         DisconnectPopup.Instance._textArea.text = text;
     }
 
-    public static Dictionary<string, Sprite> CachedSprites = [];
-
     public static AudioClip? loadAudioClipFromResources(string path, string clipName = "UNNAMED_TOR_AUDIO_CLIP")
     {
         // must be "raw (headerless) 2-channel signed 32 bit pcm (le)" (can e.g. use Audacity® to export)
@@ -582,17 +580,18 @@ public static class Utils
         */
     }
 
+    public static Dictionary<string, Sprite> CachedSprites = [];
+
     public static Texture2D? loadTextureFromDisk(string path)
     {
         try
         {
             if (File.Exists(path))
             {
-                Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, false); // Initial size doesn't matter; LoadImage will resize
-                byte[] byteTexture = System.IO.File.ReadAllBytes(path);
+                Texture2D texture = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+                byte[] byteTexture = File.ReadAllBytes(path);
 
-                // Load PNG data into the texture, without generating mipmaps
-                bool isLoaded = ImageConversion.LoadImage(texture, byteTexture, false);
+                bool isLoaded = texture.LoadImage(byteTexture, false);
 
                 if (isLoaded)
                     return texture;
@@ -625,7 +624,7 @@ public static class Utils
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
             sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
 
-            Logger.Log($"Successfully loaded sprite from {path}");
+            // Logger.Log($"Successfully loaded sprite from {path}");
             return CachedSprites[path + pixelsPerUnit] = sprite;
         }
         catch (Exception ex)
@@ -651,7 +650,7 @@ public static class Utils
                     return null;
             }
 
-            Logger.Log($"Successfully loaded texture from {path}");
+            // Logger.Log($"Successfully loaded texture from {path}");
             return texture;
         }
         catch (Exception ex)

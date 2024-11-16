@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Reflection;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Modules;
 using UnityEngine;
 using UnityEngine.Audio;
 

@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using TheBetterRoles.Helpers;
 
 namespace TheBetterRoles.Modules;
 

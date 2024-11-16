@@ -4,7 +4,6 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using static TheBetterRoles.Modules.Translator;
 

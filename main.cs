@@ -4,12 +4,15 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using Il2CppInterop.Runtime.Injection;
 using Innersloth.IO;
 using Reactor;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Managers;
@@ -155,6 +158,7 @@ public class Main : BasePlugin
 
             // Add custom components
             {
+                RegisterTypeInIl2Cpp();
                 AddComponent<ExtendedPlayerInfo>().enabled = false;
                 AddComponent<GuessManager>().enabled = false;
                 AddComponent<BaseButton>().enabled = false;
@@ -198,6 +202,32 @@ public class Main : BasePlugin
             TheBetterRoles.Logger.Error(ex);
         }
     }
+
+    private static void RegisterTypeInIl2Cpp()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        foreach (var type in assembly.GetTypes())
+        {
+            try
+            {
+                if (type == null || !ShouldRegisterType(type))
+                    continue;
+
+                if (!ClassInjector.IsTypeRegisteredInIl2Cpp(type))
+                {
+                    ClassInjector.RegisterTypeInIl2Cpp(type);
+                    TheBetterRoles.Logger.Log($"Registered type: {type.FullName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                TheBetterRoles.Logger.Error($"Error registering type: {type?.FullName}. Exception: {ex}");
+            }
+        }
+    }
+
+
+    private static bool ShouldRegisterType(Type type) => typeof(MonoBehaviour).IsAssignableFrom(type);
 
     private void CheckRoleIds()
     {

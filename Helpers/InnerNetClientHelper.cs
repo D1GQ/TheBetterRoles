@@ -1,6 +1,5 @@
 ﻿using Hazel;
 using InnerNet;
-using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Helpers;
 

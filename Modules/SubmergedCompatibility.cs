@@ -197,7 +197,7 @@ namespace TheBetterRoles.Modules
         public static Tuple<bool, object> GetPlayerElevator(PlayerControl player)
         {
             if (!isSubmerged()) return Tuple.Create(false, (object)null);
-            IList? elevatorlist = TheBetterRoles.Modules.Utils.createIList(SubmarineElevator);
+            IList? elevatorlist = Utils.createIList(SubmarineElevator);
             elevatorlist = (IList)SubmergedElevators.GetValue(SubmergedInstance.GetValue(null));
             foreach (object elevator in elevatorlist)
             {

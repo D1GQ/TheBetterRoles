@@ -2,6 +2,7 @@
 using BepInEx;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 
