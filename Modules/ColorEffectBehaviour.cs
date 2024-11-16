@@ -9,7 +9,7 @@ public class ColorEffectBehaviour : MonoBehaviour
     public int Id;
     public bool IsBodyMaterial;
 
-    public static Color Rainbow => MultiColorGradient([], 0.4f);
+    public static Color Rainbow => MultiColorGradient([], 0.8f);
     public static Color RainbowShadow => Shadow(Rainbow);
 
     public static Color Galaxy => MultiColorGradient([
@@ -18,6 +18,7 @@ public class ColorEffectBehaviour : MonoBehaviour
         new Color(1f, 0f, 0.97f),
         new Color(0.60f, 0f, 1f)], 2.5f);
     public static Color GalaxyShadow => Shadow(Galaxy);
+    public static Color GalaxyVisor => Visor(Galaxy);
 
     public static Color Fire => MultiColorGradient([
         new Color(1f, 0.5f, 0f),
@@ -58,6 +59,11 @@ public class ColorEffectBehaviour : MonoBehaviour
     public static Color Shadow(Color color)
     {
         return new Color(color.r - 0.3f, color.g - 0.3f, color.b - 0.3f);
+    }
+
+    public static Color Visor(Color color)
+    {
+        return new Color(color.r + 0.5f, color.g + 0.5f, color.b + 0.5f);
     }
 
     public static bool UsedColor(Renderer rend, int colorId)
@@ -144,7 +150,7 @@ public class ColorEffectBehaviour : MonoBehaviour
         {
             Renderer.material.SetColor(PlayerMaterial.BackColor, GalaxyShadow);
             Renderer.material.SetColor(PlayerMaterial.BodyColor, Galaxy);
-            Renderer.material.SetColor(PlayerMaterial.VisorColor, Palette.VisorColor);
+            Renderer.material.SetColor(PlayerMaterial.VisorColor, GalaxyVisor);
         }
         else
         {
