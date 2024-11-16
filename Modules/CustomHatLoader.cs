@@ -102,7 +102,9 @@ namespace TheBetterRoles.Modules
                     var config = JsonSerializer.Deserialize<CustomHatData>(File.ReadAllText(configFilePath));
 
                     if (!string.IsNullOrEmpty(config.Sprite) && !File.Exists(Path.Combine(spritesFolderPath, config.Sprite)) ||
+                        !string.IsNullOrEmpty(config.FlipSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.FlipSprite)) ||
                         !string.IsNullOrEmpty(config.BackSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.BackSprite)) ||
+                        !string.IsNullOrEmpty(config.FlipBackSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.FlipBackSprite)) ||
                         !string.IsNullOrEmpty(config.ClimbSprite) && !File.Exists(Path.Combine(spritesFolderPath, config.ClimbSprite)))
                     {
                         toDownload.Add(folderName);
@@ -164,16 +166,11 @@ namespace TheBetterRoles.Modules
 
             wwwConfig.Dispose();
 
-            var filesToDownload = new Dictionary<string, string>
-            {
-                { config.Sprite, "sprite" },
-                { config.BackSprite, "backsprite" },
-                { config.ClimbSprite, "climbsprite" }
-            };
+            List<string> filesToDownload = [config.Sprite, config.FlipSprite, config.BackSprite, config.FlipBackSprite, config.ClimbSprite];
 
             foreach (var fileEntry in filesToDownload)
             {
-                string fileName = fileEntry.Key;
+                string fileName = fileEntry;
                 if (string.IsNullOrEmpty(fileName)) continue;
 
                 string fileUrl = $"{RepositoryUrl}/Hats/{folderName}/sprites/{fileName}";
