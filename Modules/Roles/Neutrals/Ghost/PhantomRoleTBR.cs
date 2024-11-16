@@ -43,8 +43,8 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
         _player.cosmetics.SetPhantomRoleAlpha(0f);
-        _player.cosmetics.gameObject.SetActive(false);
-        _player.transform.Find("Names").gameObject.SetActive(false);
+        _player.SetCosmeticsActive(false);
+        _player.SetPlayerTextActive(false);
         TryOverrideTasks(true);
         SpawnInRandomVent();
     }
@@ -52,14 +52,11 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     private void OnClick()
     {
         HasBeenClicked = true;
-        _player.Visible = false;
-        _player.Exiled();
-        InteractableTarget = true;
-        _player.BetterData().IsFakeAlive = false;
-        _player.Data.IsDead = true;
-        _player.cosmetics.gameObject.SetActive(true);
         _player.cosmetics.SetPhantomRoleAlpha(1f);
-        _player.transform.Find("Names").gameObject.SetActive(true);
+        _player.SetCosmeticsActive(true);
+        _player.SetPlayerTextActive(true);
+        _player.CustomExiled();
+        InteractableTarget = true;
         if (_player.IsLocalPlayer()) _player.ShieldBreakAnimation(RoleColor);
     }
 

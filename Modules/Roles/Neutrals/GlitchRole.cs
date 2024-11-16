@@ -59,7 +59,7 @@ public class GlitchRole : CustomRoleBehavior
     {
         HackButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, 0, null, this, true, HackDistance.GetValue()));
         MimicButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
-        MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
+        MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.BetterData().CamouflagedQueue; };
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -197,11 +197,35 @@ public class GlitchRole : CustomRoleBehavior
 
     public override void OnSabotage(ISystemType system, SystemTypes? systemType)
     {
-        if (systemType == SystemTypes.MushroomMixupSabotage)
+        void Reset()
         {
             if (IsDisguised)
             {
                 ResetMimic();
+            }
+        }
+
+        if (systemType == SystemTypes.MushroomMixupSabotage)
+        {
+            Reset();
+            return;
+        }
+
+        if (systemType == SystemTypes.Comms && BetterGameSettings.CamouflageComms.GetBool())
+        {
+            if (system.TryCast<HqHudSystemType>(out var hqHudSystem))
+            {
+                if (!hqHudSystem.IsActive)
+                {
+                    Reset();
+                }
+            }
+            else if (system.TryCast<HudOverrideSystemType>(out var hudOverrideSystem))
+            {
+                if (!hudOverrideSystem.IsActive)
+                {
+                    Reset();
+                }
             }
         }
     }

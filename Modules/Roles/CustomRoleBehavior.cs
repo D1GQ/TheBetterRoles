@@ -156,7 +156,7 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
-    /// <code>Use id 37 for the next role!</code>
+    /// <code>Use id 38 for the next role!</code>
     /// Each role is assigned a unique ID.
     /// </summary>
     public abstract int RoleId { get; }

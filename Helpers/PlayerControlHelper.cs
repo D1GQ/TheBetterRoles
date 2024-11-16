@@ -73,6 +73,14 @@ static class PlayerControlHelper
         }
     }
 
+    public static void CustomExiled(this PlayerControl player)
+    {
+        if (!player.IsAlive(true)) return;
+
+        player.BetterData().IsFakeAlive = false;
+        player.Exiled();
+    }
+
     public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor)
     {
         player.SetDeathReason(reason, Utils.HexToColor32(hexColor));
@@ -103,17 +111,18 @@ static class PlayerControlHelper
         if (player.BetterData().CamouflagedQueue)
         {
             player.SetCosmeticsActive(false);
+            player.SetPlayerTextActive(false);
             player.BetterData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
             player.RawSetColor(42);
         }
 
         player.BetterData().CamouflagedQueue.Add(active);
         active = !player.BetterData().CamouflagedQueue;
-
-        player.cosmetics.nameText.transform.parent.gameObject.SetActive(!active);
+        
         if (!active)
         {
             player.RawSetColor(player.BetterData().CamouflageBackToColor);
+            player.SetPlayerTextActive(true);
             player.SetCosmeticsActive(true);
         }
     }
@@ -121,6 +130,11 @@ static class PlayerControlHelper
     public static void SetCosmeticsActive(this PlayerControl player, bool active)
     {
         player.BetterData()?.CosmeticsActiveQueue.Add(!active);
+    }
+
+    public static void SetPlayerTextActive(this PlayerControl player, bool active)
+    {
+        player.BetterData()?.PlayerTextActiveQueue.Add(!active);
     }
 
     /// <summary>

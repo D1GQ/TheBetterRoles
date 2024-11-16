@@ -42,6 +42,7 @@ public class MinerRole : CustomRoleBehavior
         DigButton = AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
         DigButton.InteractCondition = () => VentButton.ClosestObjDistance > 1f && !VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
         && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
+        tempVentId = GetNoneVentId();
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -109,6 +110,17 @@ public class MinerRole : CustomRoleBehavior
 
     private int tempVentId;
     private int GetRoleVentId() => 100 * (_player.PlayerId + 1);
+    private int GetNoneVentId()
+    {
+        var existingIds = Main.AllVents.Select(v => v.Id).ToHashSet();
+        int count = 0;
+        while (existingIds.Contains(GetRoleVentId() + count + 1))
+        {
+            count++;
+        }
+
+        return count;
+    }
 
     public override void OnSendRoleSync(int syncId, MessageWriter writer, object[]? additionalParams)
     {

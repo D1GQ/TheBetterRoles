@@ -3,6 +3,7 @@ using HarmonyLib;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches;
@@ -15,6 +16,9 @@ class ShipStatusPatch
     [HarmonyPostfix]
     public static void Start_Postfix(ShipStatus __instance)
     {
+        SystemPatch.LastActive = false;
+        SystemPatch.IsCamouflageActive = false;
+
         if (GameState.IsFreePlay)
         {
             if (settingsComputer == null)
@@ -162,6 +166,7 @@ class SystemPatch
             {
                 RoleCheck();
             }
+            CamouflageComms(__instance, hqHudSystem.IsActive);
             return;
         }
         else if (CastHelper.TryCast<HudOverrideSystemType>(__instance, out var hudOverrideSystem))
@@ -170,11 +175,45 @@ class SystemPatch
             {
                 RoleCheck();
             }
+            CamouflageComms(__instance, hudOverrideSystem.IsActive);
             return;
         }
         else if (CastHelper.TryCast<MushroomMixupSabotageSystem>(__instance))
         {
             RoleCheck();
+        }
+    }
+
+    public static bool LastActive = false;
+    public static bool IsCamouflageActive = false;
+    private static void CamouflageComms(ISystemType __instance, bool active)
+    {
+        if (BetterGameSettings.CamouflageComms.GetBool())
+        {
+            active = !active;
+            _ = new LateTask(() =>
+            {
+                if (LastActive != active)
+                {
+                    if (!IsCamouflageActive)
+                    {
+                        IsCamouflageActive = true;
+                        foreach (var player in Main.AllPlayerControls)
+                        {
+                            player.SetCamouflage(IsCamouflageActive);
+                        }
+                    }
+                    else
+                    {
+                        IsCamouflageActive = false;
+                        foreach (var player in Main.AllPlayerControls)
+                        {
+                            player.SetCamouflage(IsCamouflageActive);
+                        }
+                    }
+                }
+                LastActive = active;
+            }, 0.005f, shouldLog: false);
         }
     }
 }

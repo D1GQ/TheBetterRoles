@@ -35,12 +35,15 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public float PlayerVisionModPlus { get; set; } = 1f;
     public string? NameColor { get; set; } = string.Empty;
     public string? RealName => _Data.PlayerName;
-    public bool HasShowDcMsg { get; set; } = false;
-    public DisconnectReasons? DisconnectReason { get; set; }
-    public ExtendedRoleInfo? RoleInfo { get; set; }
+
+    public BoolQueue PlayerTextActiveQueue { get; set; } = new();
     public BoolQueue CamouflagedQueue { get; set; } = new();
     public BoolQueue CosmeticsActiveQueue { get; set; } = new();
     public int CamouflageBackToColor { get; set; } = 0;
+
+    public bool HasShowDcMsg { get; set; } = false;
+    public DisconnectReasons? DisconnectReason { get; set; }
+    public ExtendedRoleInfo? RoleInfo { get; set; }
 
     public void Update()
     {

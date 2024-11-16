@@ -175,6 +175,13 @@
   "Role.Blackmailer.YouMsg": "<b>You</b> have been Blackmailed from speaking!",
   "Role.Blackmailer.AllMsg": "<b>{0}</b> has been Blackmailed from speaking!",
 
+  "Role.Camouflager": "Camouflager",
+  "Role.Camouflager.Info": "Camouflage among the crewmates",
+  "Role.Camouflager.LongInfo": "As the Camouflager, color blind all players for a set duration.",
+  "Role.Camouflager.Ability.1": "Camouflagel",
+  "Role.Camouflager.Option.CamouflageCooldown": "Camouflage Cooldown",
+  "Role.Camouflager.Option.CamouflageDuration": "Camouflage Duration",
+
   "Role.Morphling": "Morphling",
   "Role.Morphling.Info": "Change your appearance to deceive others",
   "Role.Morphling.LongInfo": "As the Morphling, you're able to sample a player of your choice. when sampled temporarily change your appearance to that player for a set amount of time.",
@@ -427,6 +434,9 @@
   "BetterSetting.TaskBarUpdate.Meetings": "Meetings",
   "BetterSetting.TaskBarUpdate.Never": "Never",
   "BetterSetting.VisualTask": "Visual Task",
+
+  "BetterSetting.Title.SabotageSettings": "Sabotage Settings",
+  "BetterSetting.CamouflageComms": "Camouflage Comms",
 
   "BetterSetting.Title.ImpostorSettings": "Impostor Settings",
   "BetterSetting.Impostors": "# Impostors",

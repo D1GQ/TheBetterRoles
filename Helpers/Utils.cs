@@ -106,6 +106,17 @@ public static class Utils
             return string.Empty;
         }
     }
+
+    public static string SetColor(this string str, string hexColor)
+    {
+        return $"<{hexColor}>{str}</color>";
+    }
+
+    public static string SetColor(this string str, Color color)
+    {
+        return SetColor(str, Color32ToHex(color));
+    }
+
     // Add msg to chat
     public static void AddChatPrivate(string text, string overrideName = "", bool setRight = false)
     {

@@ -674,6 +674,7 @@ public enum CustomRoles
     // Impostors
     Impostor,
     Blackmailer,
+    Camouflager,
     Grenadier,
     Janitor,
     Miner,

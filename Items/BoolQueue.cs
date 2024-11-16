@@ -1,73 +1,107 @@
-﻿
-namespace TheBetterRoles.Item;
-
-public class BoolQueue
+﻿namespace TheBetterRoles.Item
 {
-    private uint queues = 0;
-    private readonly bool invertLogic;
-
-    public BoolQueue(bool invert = false)
+    public class BoolQueue
     {
-        invertLogic = invert;
-    }
+        private uint queues = 0;
+        private readonly bool invertLogic;
 
-    public uint GetQueueCount() => queues;
-
-    public void ResetBools()
-    {
-        queues = 0;
-    }
-
-    public void Add(bool value)
-    {
-        if (value)
+        public BoolQueue(bool invert = false)
         {
-            if (queues < uint.MaxValue)
-                queues++;
+            invertLogic = invert;
+            lastState = ToBool();
         }
-        else
+
+        private bool lastState;
+        private bool valueChanged = false;
+
+        public uint GetQueueCount() => queues;
+
+        public bool ValueChanged()
         {
-            if (queues > 0)
-                queues--;
+            var changed = valueChanged;
+            valueChanged = false;
+            return changed;
         }
-    }
 
-    public static bool operator ==(BoolQueue bq, bool value)
-    {
-        return bq.ToBool() == value;
-    }
-
-    public static bool operator !=(BoolQueue bq, bool value)
-    {
-        return bq.ToBool() != value;
-    }
-
-    public static implicit operator bool(BoolQueue bq)
-    {
-        return bq.ToBool();
-    }
-
-    public static bool operator !(BoolQueue bq)
-    {
-        return !bq.ToBool();
-    }
-
-    private bool ToBool()
-    {
-        return invertLogic ? queues != 0 : queues == 0;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is BoolQueue other)
+        public void ForceSetValueChanged()
         {
-            return queues == other.queues && invertLogic == other.invertLogic;
+            valueChanged = true;
         }
-        return false;
-    }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(queues, invertLogic);
+        public void ResetBools()
+        {
+            queues = 0;
+            UpdateValueChanged();
+        }
+
+        public void Add(bool value)
+        {
+            if (invertLogic)
+            {
+                value = !value;
+            }
+
+            if (value)
+            {
+                if (queues < uint.MaxValue)
+                    queues++;
+            }
+            else
+            {
+                if (queues > 0)
+                    queues--;
+            }
+
+            UpdateValueChanged();
+        }
+
+        public static bool operator ==(BoolQueue bq, bool value)
+        {
+            return bq.ToBool() == value;
+        }
+
+        public static bool operator !=(BoolQueue bq, bool value)
+        {
+            return bq.ToBool() != value;
+        }
+
+        public static implicit operator bool(BoolQueue bq)
+        {
+            return bq.ToBool();
+        }
+
+        public static bool operator !(BoolQueue bq)
+        {
+            return !bq.ToBool();
+        }
+
+        private bool ToBool()
+        {
+            return invertLogic ? queues != 0 : queues == 0;
+        }
+
+        private void UpdateValueChanged()
+        {
+            bool currentState = ToBool();
+            if (currentState != lastState)
+            {
+                valueChanged = true;
+                lastState = currentState;
+            }
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is BoolQueue other)
+            {
+                return queues == other.queues && invertLogic == other.invertLogic;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(queues, invertLogic);
+        }
     }
 }

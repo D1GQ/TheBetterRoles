@@ -6,6 +6,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
 using UnityEngine;
+using static PlayerMaterial;
 
 namespace TheBetterRoles.Patches;
 
@@ -53,7 +54,15 @@ public class RolePatch
             {
                 box.enabled = true;
             }
-            __instance.cosmetics.gameObject.SetActive(__instance.BetterData().CosmeticsActiveQueue);
+            var betterData = __instance.BetterData();
+
+            __instance.cosmetics.nameText.transform.parent.gameObject.SetActive(betterData.PlayerTextActiveQueue);
+            if (betterData.CosmeticsActiveQueue.ValueChanged())
+            {
+                int z = betterData.CosmeticsActiveQueue ? 0 : 100;
+                var pos = __instance.cosmetics.transform.localPosition;
+                __instance.cosmetics.transform.localPosition = new Vector3(pos.x, pos.y, z);
+            }
         }
 
         [HarmonyPatch(nameof(PlayerControl.Awake))]
@@ -179,6 +188,18 @@ public class RolePatch
                     __instance.ToggleNeighborVentBeingCleaned(!vent.IsEnabled(), buttonBehavior, __instance.CleaningIndicators[i]);
                 }
             }
+        }
+    }
+
+    // Set hand color during camouflage comms
+    [HarmonyPatch(typeof(ZiplineBehaviour))]
+    class ZiplineBehaviourRolePatch
+    {
+        [HarmonyPatch(nameof(ZiplineBehaviour.CoAnimatePlayerJumpingOnToZipline))]
+        [HarmonyPostfix]
+        public static void CoAnimatePlayerJumpingOnToZipline_Postfix(/*ZiplineBehaviour __instance,*/ [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(2)] HandZiplinePoolable hand)
+        {
+            SetColors(player.cosmetics.bodyMatProperties.ColorId, hand.handRenderer);
         }
     }
 

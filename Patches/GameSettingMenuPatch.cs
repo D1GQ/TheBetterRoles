@@ -49,6 +49,7 @@ class BetterGameSettings
     public static BetterOptionItem? BenignNeutralsCanGuess;
     public static BetterOptionItem? KillingNeutralsCanGuess;
     public static BetterOptionItem? CanGuessAddons;
+    public static BetterOptionItem? CamouflageComms;
 }
 
 class BetterGameSettingsTemp
@@ -105,14 +106,14 @@ static class GameSettingMenuPatch
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings"), !mapFlag ? 0.1f : 1.5f));
 
-        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor")}</color>"));
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Impostor").SetColor(Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor))));
         VanillaGameSettings.ImpostorVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.ImpostorVision"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.ImpostorLightMod);
         VanillaGameSettings.KillCooldown = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillCooldown"), [0f, 180f, 2.5f], 25f, "", "s", vanillaOption: FloatOptionNames.KillCooldown);
         VanillaGameSettings.KillDistance = new BetterOptionStringItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.KillDistance"),
                 [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, vanillaOption: Int32OptionNames.KillDistance);
 
         new BetterOptionDividerItem().Create(BetterTabs.GameSettings);
-        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>{Translator.GetString("BetterSetting.Title.PlayerSettings.Crewmate")}</color>"));
+        TitleList.Add(new BetterOptionTitleItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.PlayerSettings.Crewmate").SetColor(Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate))));
         VanillaGameSettings.PlayerVision = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerVision"), [0.25f, 5f, 0.25f], 0.75f, "", "x", vanillaOption: FloatOptionNames.CrewLightMod);
         VanillaGameSettings.PlayerSpeed = new BetterOptionFloatItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.PlayerSpeed"), [0.25f, 5f, 0.25f], 1.25f, "", "x", vanillaOption: FloatOptionNames.PlayerSpeedMod);
 
@@ -135,6 +136,8 @@ static class GameSettingMenuPatch
         VanillaGameSettings.ShortTasksNum = new BetterOptionIntItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("Role.Option.ShortTasks"), [0, 5, 1], 4);
         VanillaGameSettings.VisualTask = new BetterOptionCheckboxItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.VisualTask"), false, vanillaOption: BoolOptionNames.VisualTasks);
 
+        TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.GameSettings, Translator.GetString("BetterSetting.Title.SabotageSettings").SetColor(Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor))));
+        BetterGameSettings.CamouflageComms = new BetterOptionCheckboxItem().Create(-1, BetterTabs.GameSettings, Translator.GetString("BetterSetting.CamouflageComms"), false);
 
         TitleList.Add(new BetterOptionHeaderItem().Create(BetterTabs.SystemSettings, Translator.GetString("BetterSetting.Title.ModSettings")));
         new BetterOptionPresetItem().Create(BetterTabs.SystemSettings, 1);

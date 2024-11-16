@@ -49,7 +49,7 @@ public class MorphlingRole : CustomRoleBehavior
 
         TransformButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
         TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
-        TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage); };
+        TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.BetterData().CamouflagedQueue; };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
@@ -126,6 +126,25 @@ public class MorphlingRole : CustomRoleBehavior
         if (systemType == SystemTypes.MushroomMixupSabotage)
         {
             OnResetAbilityState(false);
+            return;
+        }
+
+        if (systemType == SystemTypes.Comms && BetterGameSettings.CamouflageComms.GetBool())
+        {
+            if (system.TryCast<HqHudSystemType>(out var hqHudSystem))
+            {
+                if (!hqHudSystem.IsActive)
+                {
+                    OnResetAbilityState(false);
+                }
+            }
+            else if (system.TryCast<HudOverrideSystemType>(out var hudOverrideSystem))
+            {
+                if (!hudOverrideSystem.IsActive)
+                {
+                    OnResetAbilityState(false);
+                }
+            }
         }
     }
 

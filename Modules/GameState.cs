@@ -1,5 +1,6 @@
 using AmongUs.GameOptions;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Patches;
 
 namespace TheBetterRoles.Modules;
 
@@ -17,6 +18,7 @@ public static class GameState
     public static bool AirshipIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Airship;
     public static bool FungleIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Fungle;
     public static bool SubmergedIsActive => SubmergedCompatibility.isSubmerged();
+    public static bool CamouflageCommsIsActive => IsSystemActive(SystemTypes.Comms) && BetterGameSettings.CamouflageComms.GetBool();
     public static byte GetActiveMapId => GameOptionsManager.Instance.CurrentGameOptions.MapId;
     public static bool IsSystemActive(SystemTypes type)
     {
@@ -34,8 +36,7 @@ public static class GameState
             SystemTypes.Laboratory when mapId == 2 => system.Cast<ReactorSystemType>()?.IsActive ?? false,
             SystemTypes.LifeSupp when mapId is 0 or 3 => system.Cast<LifeSuppSystemType>()?.IsActive ?? false,
             SystemTypes.HeliSabotage when mapId == 4 => system.Cast<HeliSabotageSystem>()?.IsActive ?? false,
-            SystemTypes.Comms when mapId is 1 or 5 => system.Cast<HqHudSystemType>()?.IsActive ?? false,
-            SystemTypes.Comms => system.Cast<HudOverrideSystemType>()?.IsActive ?? false,
+            SystemTypes.Comms => system.TryCast<HudOverrideSystemType>()?.IsActive ?? system.TryCast<HqHudSystemType>()?.IsActive ?? false,
             SystemTypes.MushroomMixupSabotage when mapId == 5 || IsFreePlay => system.Cast<MushroomMixupSabotageSystem>()?.IsActive ?? false,
             _ => false
         };
