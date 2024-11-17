@@ -280,7 +280,7 @@ static class GameSettingMenuPatch
         __instance.MenuDescriptionText.transform.parent.localScale = new Vector3(1.35f, 1.35f, 1f);
         __instance.MenuDescriptionText.transform.parent.Find("InfoImage").gameObject.DestroyObj();
         __instance.MenuDescriptionText.transform.localPosition = new Vector3(-3.045f, 0.62f, -2f);
-        __instance.MenuDescriptionText.fontSizeMin = 1.25f;
+        __instance.MenuDescriptionText.fontSizeMin = 0.85f;
 
         return false;
     }

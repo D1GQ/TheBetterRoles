@@ -15,6 +15,11 @@ class ShipStatusPatch
     [HarmonyPostfix]
     public static void Start_Postfix(ShipStatus __instance)
     {
+        _ = new LateTask(() =>
+        {
+            GameOptionsManager.Instance?.Initialize();
+        }, 0.5f, shouldLog: false);
+
         SystemPatch.LastActive = false;
         SystemPatch.IsCamouflageActive = false;
 

@@ -1,9 +1,14 @@
-﻿using Reactor.Networking.Rpc;
+﻿using Il2CppSystem.Security.Cryptography;
+using Reactor.Networking.Rpc;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
+using TheBetterRoles.Roles;
 using TheBetterRoles.RPCs;
+using TMPro;
 using UnityEngine;
+using Utils = TheBetterRoles.Helpers.Utils;
 
 namespace TheBetterRoles.Items.OptionItems;
 
@@ -19,7 +24,7 @@ public class BetterOptionPercentItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionPercentItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public BetterOptionPercentItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, CustomRoleBehavior? role = null, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Name = name;
@@ -109,6 +114,25 @@ public class BetterOptionPercentItem : BetterOptionItem
             ThisParent = Parent;
             IsChild = true;
             Parent.ChildrenList.Add(this);
+        }
+
+        if (role != null)
+        {
+            var button = UnityEngine.Object.Instantiate(optionBehaviour.PlusBtn, optionBehaviour.PlusBtn.transform.parent);
+            button.transform.position = button.transform.position - new Vector3(4.75f, 0f, 0f);
+            button.transform.GetComponentInChildren<TextMeshPro>(true).gameObject.DestroyObj();
+            button.interactableHoveredColor = Color.gray;
+            button.interactableClickColor = Color.white;
+            button.buttonSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.QuestionMark.png", 50);
+            button.OnClick = new();
+            button.OnClick.AddListener((Action)(() => 
+            {
+                var menu = DestroyableSingleton<GameSettingMenu>.Instance;
+                if (menu != null)
+                {
+                    menu.MenuDescriptionText.text = Utils.GetCustomRoleInfo(role.RoleType, true);
+                }
+            }));
         }
 
         return this;

@@ -29,7 +29,7 @@ class GamePlayManager
             _ = new LateTask(() =>
             {
                 GameOptionsManager.Instance?.Initialize();
-            }, 2f, shouldLog: false);
+            }, 1f, shouldLog: false);
 
             if (logoSpray == null)
             {
