@@ -117,7 +117,7 @@ class FileChecker
         {
             ClientUserName = GameObject.Find("AccountTab")?.GetComponent<AccountTab>()?.userName.text;
             ClientFriendCode = EOSManager.Instance.friendCode;
-            ClientPUIDHash = Utils.GetHashPuid(EOSManager.Instance.ProductUserId);
+            ClientPUIDHash = Utils.GetHashStr(EOSManager.Instance.ProductUserId);
         }
         else
         {
@@ -125,7 +125,7 @@ class FileChecker
             {
                 ClientUserName = PlayerControl.LocalPlayer.Data.PlayerName;
                 ClientFriendCode = PlayerControl.LocalPlayer.Data.FriendCode;
-                ClientPUIDHash = Utils.GetHashPuid(PlayerControl.LocalPlayer);
+                ClientPUIDHash = PlayerControl.LocalPlayer.GetHashPuid();
             }
         }
 

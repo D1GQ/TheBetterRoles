@@ -165,6 +165,7 @@ public class Main : BasePlugin
                 AddComponent<PlayerAbilityButton>().enabled = false;
                 AddComponent<VentAbilityButton>().enabled = false;
                 AddComponent<DeadBodyAbilityButton>().enabled = false;
+                AddComponent<UserDataLoader>();
                 AddComponent<CustomHatLoader>();
             }
 

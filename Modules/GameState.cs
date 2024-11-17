@@ -7,7 +7,7 @@ namespace TheBetterRoles.Modules;
 public static class GameState
 {
     /**********Check Game Status***********/
-    public static bool IsDev => EOSManager.Instance?.userId != null && Main.DevUser.Contains($"{Utils.GetHashPuid(EOSManager.Instance.userId.ToString())}+{Utils.GetHashPuid(EOSManager.Instance.friendCode)}");
+    public static bool IsDev => EOSManager.Instance?.userId != null && Main.DevUser.Contains($"{Utils.GetHashStr(EOSManager.Instance.userId.ToString())}+{Utils.GetHashStr(EOSManager.Instance.friendCode)}");
     public static bool InGame => Main.AllPlayerControls.Any();
     public static bool IsNormalGame => GameOptionsManager.Instance.CurrentGameOptions.GameMode is GameModes.Normal or GameModes.NormalFools;
     public static bool IsHideNSeek => GameOptionsManager.Instance != null && GameOptionsManager.Instance.CurrentGameOptions.GameMode is GameModes.HideNSeek or GameModes.SeekFools;

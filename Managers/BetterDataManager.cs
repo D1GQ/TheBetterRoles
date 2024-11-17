@@ -228,7 +228,7 @@ class BetterDataManager
                 {
                     newText += ", ";
                 }
-                newText += Utils.GetHashPuid(hashPUID);
+                newText += Utils.GetHashStr(hashPUID);
             }
 
             // Check if the file already contains the new entry

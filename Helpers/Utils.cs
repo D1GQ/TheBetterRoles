@@ -350,26 +350,13 @@ public static class Utils
         }
     }
 
-    // Get players HashPuid
-    public static string GetHashPuid(PlayerControl player)
+    // Get Hash string
+    public static string GetHashStr(string str)
     {
-        if (player?.Data?.Puid == null) return "";
-
-        string puid = player.Data.Puid;
-
-        if (string.IsNullOrEmpty(puid)) return "";
-        using SHA256 sha256 = SHA256.Create();
-        byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(puid));
-        string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
-        return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
-    }
-    // Get HashPuid from puid
-    public static string GetHashPuid(string puid)
-    {
-        if (string.IsNullOrEmpty(puid)) return "";
+        if (string.IsNullOrEmpty(str)) return "";
 
         using SHA256 sha256 = SHA256.Create();
-        byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(puid));
+        byte[] sha256Bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(str));
         string sha256Hash = BitConverter.ToString(sha256Bytes).Replace("-", "").ToLower();
         return sha256Hash.Substring(0, 5) + sha256Hash.Substring(sha256Hash.Length - 4);
     }

@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using PowerTools;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using UnityEngine;
 

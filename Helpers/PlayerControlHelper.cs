@@ -443,8 +443,28 @@ static class PlayerControlHelper
     }
     // Get true position
     public static Vector2 GetCustomPosition(this PlayerControl player) => new(player.transform.position.x, player.transform.position.y);
+    // Get players HashPuid
+    public static string GetHashPuid(this PlayerControl player)
+    {
+        return player.Data.GetHashPuid() ?? "";
+    }
+    public static string GetHashPuid(this NetworkedPlayerInfo data)
+    {
+        if (data?.Puid == null) return "";
+        return Utils.GetHashStr(data.Puid);
+    }
+    // Get players Friendcode
+    public static string GetHashFriendcode(this PlayerControl player)
+    {
+        return player.Data.GetHashFriendcode() ?? "";
+    }
+    public static string GetHashFriendcode(this NetworkedPlayerInfo data)
+    {
+        if (data?.FriendCode == null) return "";
+        return Utils.GetHashStr(data.FriendCode);
+    }
     // Check if player is a dev
-    public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{Utils.GetHashPuid(player)}+{Utils.GetHashPuid(player.Data.FriendCode)}");
+    public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{player.GetHashPuid()}+{Utils.GetHashStr(player.Data.FriendCode)}");
     // Check if player is alive
     public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
     public static bool IsAlive(this NetworkedPlayerInfo data, bool CheckFakeAlive = false) => data?.IsDead == false || CheckFakeAlive && data.BetterData()?.IsFakeAlive == true;

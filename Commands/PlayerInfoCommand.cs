@@ -32,7 +32,7 @@ public class PlayerInfoCommand : BaseCommand
             var format3 = "└ •";
             sb.Append($"<size=150%><color={hexColor}><b>{player?.Data?.PlayerName}</color> Info:</b></size>\n");
             sb.Append($"{format1} <color=#c1c1c1>ID: {player?.Data?.PlayerId}</color>\n");
-            sb.Append($"{format2} <color=#c1c1c1>HashPUID: {Utils.GetHashPuid($"{player?.Data?.Puid}")}</color>\n");
+            sb.Append($"{format2} <color=#c1c1c1>HashPUID: {Utils.GetHashStr($"{player?.Data?.Puid}")}</color>\n");
             sb.Append($"{format2} <color=#c1c1c1>Platform: {Utils.GetPlatformName(player)}</color>\n");
             sb.Append($"{format3} <color=#c1c1c1>FriendCode: {player?.Data?.FriendCode}</color>");
             CommandResultText(sb.ToString());
