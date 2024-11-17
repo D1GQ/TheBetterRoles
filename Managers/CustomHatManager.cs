@@ -1,5 +1,6 @@
 ﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
+using TheBetterRoles.Patches;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -39,6 +40,7 @@ public static class CustomHatManager
                         if (customHat.Package == DeveloperPackageName && !developerHatIdList.Contains(customHat.Id)) return;
                         UnregisteredHats.Add(customHat);
                         loaded.Add(subDir);
+                        HatManagerPatches.isLoaded = false;
                     }
                 }
             }

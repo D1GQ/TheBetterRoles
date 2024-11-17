@@ -8,7 +8,7 @@ namespace TheBetterRoles.Patches;
 internal static class HatManagerPatches
 {
     private static bool isRunning;
-    private static bool isLoaded;
+    public static bool isLoaded;
     private static List<HatData> allHats;
 
     [HarmonyPatch(nameof(HatManager.GetHatById))]
