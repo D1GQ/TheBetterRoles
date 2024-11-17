@@ -119,7 +119,7 @@ static class PlayerControlHelper
 
         player.BetterData().CamouflagedQueue.Add(active);
         active = !player.BetterData().CamouflagedQueue;
-        
+
         if (!active)
         {
             player.RawSetColor(player.BetterData().CamouflageBackToColor);

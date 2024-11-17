@@ -1,6 +1,4 @@
-﻿using TheBetterRoles.Helpers;
-
-namespace TheBetterRoles.Commands;
+﻿namespace TheBetterRoles.Commands;
 
 public class TestCommand : BaseCommand
 {

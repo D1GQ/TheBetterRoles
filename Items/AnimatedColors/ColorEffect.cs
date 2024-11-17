@@ -5,6 +5,10 @@ namespace TheBetterRoles.Modules;
 public abstract class ColorEffect
 {
     public abstract int EffectId { get; }
+    public abstract Color MainColor { get; }
+    public virtual Color ShadowColor => Shadow(MainColor);
+    public virtual Color VisorColor => Palette.VisorColor;
+
     public static Color MultiColorGradient(Color[] colors, float speed)
     {
         if (colors == null || colors.Length == 0)
@@ -46,4 +50,18 @@ public abstract class ColorEffect
     }
 
     public abstract void SetEffect(Renderer rend, int colorId, bool isBodyMaterial);
+
+    public void SetDefaultEffects(Renderer rend, int colorId, bool isBodyMaterial)
+    {
+        if (isBodyMaterial)
+        {
+            rend.material.SetColor(PlayerMaterial.BackColor, ShadowColor);
+            rend.material.SetColor(PlayerMaterial.BodyColor, MainColor);
+            rend.material.SetColor(PlayerMaterial.VisorColor, VisorColor);
+        }
+        else
+        {
+            rend.material.SetColor("_Color", MainColor);
+        }
+    }
 }

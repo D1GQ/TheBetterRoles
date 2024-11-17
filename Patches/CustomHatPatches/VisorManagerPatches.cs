@@ -1,6 +1,5 @@
 ﻿using Cpp2IL.Core.Extensions;
 using HarmonyLib;
-using TheBetterRoles.Managers;
 
 namespace TheBetterRoles.Patches;
 

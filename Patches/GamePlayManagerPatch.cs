@@ -4,7 +4,6 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
 using UnityEngine;
-using UnityEngine.ProBuilder;
 
 namespace TheBetterRoles.Patches;
 

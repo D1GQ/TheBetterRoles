@@ -1,12 +1,7 @@
 ﻿using AmongUs.Data.Legacy;
-using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using System.Collections;
-using System.Collections.Concurrent;
-using TheBetterRoles.Managers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace TheBetterRoles.Modules;
 

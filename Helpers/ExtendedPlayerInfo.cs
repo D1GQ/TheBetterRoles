@@ -12,7 +12,7 @@ namespace TheBetterRoles;
 public enum DeathReasons
 {
     None,
-    Killed, 
+    Killed,
     Guessed,
     Misfire
 }
