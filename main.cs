@@ -4,12 +4,10 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
 using Innersloth.IO;
 using Reactor;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using TheBetterRoles.Helpers;
@@ -159,7 +157,7 @@ public class Main : BasePlugin
             // Add custom components
             {
                 AddComponent<CoroutineManager>();
-                AddComponent<ColorEffectBehaviour>().enabled = false;
+                AddComponent<ColorEffectBehavior>().enabled = false;
                 AddComponent<ExtendedPlayerInfo>().enabled = false;
                 AddComponent<GuessManager>().enabled = false;
                 AddComponent<BaseButton>().enabled = false;

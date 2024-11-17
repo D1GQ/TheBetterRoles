@@ -396,7 +396,7 @@ public class CustomColors
 
                     if (IsAnimatedColor(pos))
                     {
-                        chip.Button.gameObject.AddComponent<ColorEffectBehaviour>().AddRend(chip.Button.GetComponent<SpriteRenderer>(), pos, false);
+                        ColorEffectBehavior.AddRend(chip.Button.GetComponent<SpriteRenderer>(), pos, false);
                     }
                 }
                 for (int j = Order.Count; j < chips.Length; j++)
@@ -462,11 +462,11 @@ public class CustomColors
         {
             if (IsAnimatedColor(colorId))
             {
-                rend?.gameObject.AddComponent<ColorEffectBehaviour>().AddRend(rend, colorId);
+                ColorEffectBehavior.AddRend(rend, colorId);
                 return false;
             }
 
-            ColorEffectBehaviour.TryRemove(rend);
+            ColorEffectBehavior.TryRemove(rend);
 
             return true;
         }
