@@ -114,7 +114,12 @@ static class PlayerControlHelper
             player.SetPlayerTextActive(false);
             player.BetterData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
             player.RawSetColor(CustomColors.CamouflageId);
-            player.cosmetics.GetPet()?.SetMourning();
+            var pet = player.cosmetics.GetPet();
+            if (pet != null)
+            {
+                pet.targetPlayer = null;
+                pet.SetScared();
+            }
         }
 
         player.BetterData().CamouflagedQueue.Add(active);
@@ -125,14 +130,19 @@ static class PlayerControlHelper
             player.RawSetColor(player.BetterData().CamouflageBackToColor);
             player.SetPlayerTextActive(true);
             player.SetCosmeticsActive(true);
+            var pet = player.cosmetics.GetPet();
             if (player.IsAlive())
             {
-                var pet = player.cosmetics.GetPet();
                 if (pet != null)
                 {
                     pet.SetIdle();
                     pet.targetPlayer = player;
+                    pet.Visible = !player.IsInVent();
                 }
+            }
+            else
+            {
+                pet.SetIdle();
             }
         }
     }

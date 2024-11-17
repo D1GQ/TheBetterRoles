@@ -134,6 +134,17 @@ public class RolePatch
         }
     }
 
+    [HarmonyPatch(typeof(PetBehaviour))]
+    class PetBehaviourRolePatch
+    {
+        [HarmonyPatch(nameof(PetBehaviour.Visible), MethodType.Setter)]
+        [HarmonyPrefix]
+        public static bool SetVisible_Prefix(PetBehaviour __instance)
+        {
+            return __instance.targetPlayer != null;
+        }
+    }
+
     [HarmonyPatch(typeof(PlayerPhysics))]
     class PlayerPhysicsRolePatch
     {
