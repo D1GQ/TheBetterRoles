@@ -13,13 +13,16 @@ public class BetterOptionHeaderItem : BetterOptionItem
 
         Id = -1;
         Tab = gameOptionsMenu;
-        Name = name;
+        Name = $"<b>{name}</b>";
         this.topDistance = topDistance;
         this.bottomDistance = bottomDistance;
         CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
         categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, 2f, -2f);
         categoryHeaderMasked.Title.text = name;
+        categoryHeaderMasked.Title.outlineColor = Color.black;
+        categoryHeaderMasked.Title.outlineWidth = 0.2f;
+        categoryHeaderMasked.Title.fontSizeMax = 3f;
         categoryHeaderMasked.Background.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
         if (categoryHeaderMasked.Divider != null)
         {

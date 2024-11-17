@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Helpers;
+using UnityEngine;
 
 namespace TheBetterRoles.Modules;
 
@@ -61,7 +62,14 @@ public abstract class ColorEffect
         }
         else
         {
-            rend.material.SetColor("_Color", MainColor);
+            if(rend.TryCast<SpriteRenderer>(out var renderer))
+            {
+                renderer.color = MainColor;
+            }
+            else
+            {
+                rend.material.SetColor("_Color", VisorColor);
+            }
         }
     }
 }
