@@ -6,29 +6,20 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(HatManager))]
 internal static class VisorManagerPatches
 {
-    private static bool isRunning;
-    private static bool isLoaded;
+    private static bool Done;
 
     [HarmonyPatch(nameof(HatManager.GetVisorById))]
     [HarmonyPrefix]
     private static void GetVisorByIdPrefix(HatManager __instance)
     {
-        if (isRunning || isLoaded) return;
+        if (Done) return;
 
-        isRunning = true;
-
-        var visors = __instance.allVisors.ToList().Clone();
+        var visors = __instance.allVisors.ToList();
         foreach (var visor in visors)
         {
             visor.behindHats = false;
         }
-        isLoaded = true;
-    }
 
-    [HarmonyPatch(nameof(HatManager.GetHatById))]
-    [HarmonyPostfix]
-    private static void GetVisorByIdPostfix()
-    {
-        isRunning = false;
+        Done = true;
     }
 }

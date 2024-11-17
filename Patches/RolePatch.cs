@@ -40,6 +40,23 @@ public class RolePatch
                 }
             };
         }
+
+        [HarmonyPatch(nameof(HudManager.Update))]
+        [HarmonyPostfix]
+        public static void Update_Postfix(HudManager __instance)
+        {
+            var pc = PlayerControl.LocalPlayer;
+
+            if (pc != null)
+            {
+                __instance?.ReportButton?.gameObject?.SetActive(false);
+
+                __instance.AbilityButton.gameObject.SetActive(
+                    !pc.IsAlive(true) && pc.Role()?.IsGhostRole != true && GameState.IsInGamePlay && pc.Data.RoleType == AmongUs.GameOptions.RoleTypes.CrewmateGhost
+                    && !(GameState.IsMeeting || GameState.IsExilling)
+                    && (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen));
+            }
+        }
     }
 
     [HarmonyPatch(typeof(PlayerControl))]

@@ -72,16 +72,6 @@ public class ExtendedPlayerInfo : MonoBehaviour
                     role?.BaseFixedUpdate();
                 }
             }
-
-            if (pc.IsLocalPlayer())
-            {
-                DestroyableSingleton<HudManager>.Instance?.ReportButton.gameObject.SetActive(false);
-
-                DestroyableSingleton<HudManager>.Instance?.AbilityButton.gameObject.SetActive(
-                    !pc.IsAlive(true) && pc.Role()?.IsGhostRole != true && GameState.IsInGamePlay && pc.Data.RoleType == AmongUs.GameOptions.RoleTypes.CrewmateGhost
-                    && !(GameState.IsMeeting || GameState.IsExilling)
-                    && (MapBehaviour.Instance == null || !MapBehaviour.Instance.IsOpen));
-            }
         }
     }
 }

@@ -19,7 +19,11 @@ class GamePlayManager
         {
             _ = new LateTask(() =>
             {
-                PlayerControl.LocalPlayer?.SendVersionRequest(Main.GetVersionText());
+                var pc = PlayerControl.LocalPlayer;
+                if (pc != null)
+                {
+                    pc.SendVersionRequest(Main.GetVersionText());
+                }
             }, 3f, shouldLog: false);
 
             _ = new LateTask(() =>

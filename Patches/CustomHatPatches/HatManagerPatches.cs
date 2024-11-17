@@ -8,45 +8,26 @@ namespace TheBetterRoles.Patches;
 internal static class HatManagerPatches
 {
     private static bool isRunning;
-    public static bool isLoaded;
-    private static List<HatData> allHats;
 
     [HarmonyPatch(nameof(HatManager.GetHatById))]
     [HarmonyPrefix]
     private static void GetHatByIdPrefix(HatManager __instance)
     {
-        if (isRunning || isLoaded) return;
+        if (isRunning || CustomHatManager.UnregisteredHats.Count <= 0) return;
 
         isRunning = true;
-        allHats = [.. __instance.allHats];
+        var allHats = __instance.allHats.ToList();
 
         var unregisteredHatsCache = CustomHatManager.UnregisteredHats.Clone();
         foreach (var hat in unregisteredHatsCache)
         {
             if (hat == null) continue;
-
-            try
-            {
-                allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
-                CustomHatManager.UnregisteredHats.Remove(hat);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
+            CustomHatManager.UnregisteredHats.Remove(hat);
         }
-
-        if (CustomHatManager.UnregisteredHats.Count == 0)
-            isLoaded = true;
 
         unregisteredHatsCache.Clear();
         __instance.allHats = allHats.ToArray();
-    }
-
-    [HarmonyPatch(nameof(HatManager.GetHatById))]
-    [HarmonyPostfix]
-    private static void GetHatByIdPostfix()
-    {
         isRunning = false;
     }
 }
