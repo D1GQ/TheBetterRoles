@@ -67,6 +67,7 @@ public class ColorEffectBehavior : MonoBehaviour
         var eff = ActiveEffects.FirstOrDefault(e => e.Renderer == rend);
         if (eff != null)
         {
+            eff.myEffect.UnsetSetEffect(eff.Renderer, eff.Id, eff.IsBodyMaterial);
             ActiveEffects.Remove(eff);
             Destroy(eff);
         }

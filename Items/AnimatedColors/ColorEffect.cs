@@ -14,15 +14,16 @@ public abstract class ColorEffect
     {
         if (colors == null || colors.Length == 0)
         {
-            colors = [
-            Color.red,
+            colors = 
+            [
+                Color.red,
                 new Color(1f, 0.5f, 0f),
                 Color.yellow,
                 Color.green,
                 Color.cyan,
                 Color.blue,
                 Color.magenta
-        ];
+            ];
         }
 
         if (colors.Length < 2)
@@ -62,14 +63,16 @@ public abstract class ColorEffect
         }
         else
         {
-            if(rend.TryCast<SpriteRenderer>(out var renderer))
+            if(rend is SpriteRenderer renderer)
             {
                 renderer.color = MainColor;
             }
-            else
+            else if (rend.material.HasProperty("_Color"))
             {
                 rend.material.SetColor("_Color", VisorColor);
             }
         }
     }
+
+    public virtual void UnsetSetEffect(Renderer rend, int colorId, bool isBodyMaterial) { }
 }

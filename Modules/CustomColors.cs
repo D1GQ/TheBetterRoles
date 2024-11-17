@@ -60,18 +60,20 @@ public class CustomColors
         6,  // Black
         39, // Darkness
         42, // Rainbow
-        43, // Galaxy
         44, // Fire
         45, // Water
+        43, // Galaxy
+        46, // Ghost
     ];
 
     public const int RainbowId = 42;
     public const int GalaxyId = 43;
     public const int FireId = 44;
     public const int WaterId = 45;
-    public const int CamouflageId = 46;
+    public const int GhostId = 46;
+    public const int CamouflageId = 47;
 
-    public static bool IsAnimatedColor(int colorId) => colorId == RainbowId || colorId == GalaxyId || colorId == FireId || colorId == WaterId;
+    public static bool IsAnimatedColor(int colorId) => colorId == RainbowId || colorId == GalaxyId || colorId == FireId || colorId == WaterId || colorId == GhostId;
 
     public static void Load()
     {
@@ -277,9 +279,16 @@ public class CustomColors
                 shadow = new Color32(205, 232, 255, byte.MaxValue),
                 isLighterColor = true
             },
+            new CustomColor
+            {
+                translatorName = "Ghost", // 46
+                color = new Color32(255, 255, 255, byte.MaxValue),
+                shadow = new Color32(255, 255, 255, byte.MaxValue),
+                isLighterColor = true
+            },
             new CustomColor // Not pickable!
             {
-                translatorName = "Camouflage", // 46
+                translatorName = "Camouflage", // 47
                 color = new Color32(140, 140, 140, byte.MaxValue),
                 shadow = new Color32(140, 140, 140, byte.MaxValue),
                 isLighterColor = true
