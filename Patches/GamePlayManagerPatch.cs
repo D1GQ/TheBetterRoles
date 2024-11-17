@@ -15,7 +15,7 @@ class GamePlayManager
         private static GameObject? logoSpray;
         [HarmonyPatch(nameof(LobbyBehaviour.Start))]
         [HarmonyPostfix]
-        private static void Start_Postfix(/*LobbyBehaviour __instance*/)
+        private static void Start_Postfix(LobbyBehaviour __instance)
         {
             _ = new LateTask(() =>
             {
@@ -30,6 +30,7 @@ class GamePlayManager
             if (logoSpray == null)
             {
                 logoSpray = new GameObject("TheBetterRoles_Spray");
+                logoSpray.transform.SetParent(__instance.transform, true);
                 logoSpray.transform.position = new Vector3(0f, -2.35f, -1f);
                 var sprite = logoSpray.AddComponent<SpriteRenderer>();
                 sprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.TBR_Spray.png", 170);

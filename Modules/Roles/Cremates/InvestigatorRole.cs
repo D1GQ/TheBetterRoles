@@ -116,7 +116,7 @@ public class InvestigatorRole : CustomRoleBehavior
         footprint.transform.rotation *= Quaternion.Euler(0f, 0f, 90f);
         var spriteRenderer = footprint.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = LoadAbilitySprite("Footprint", 135);
-        spriteRenderer.color = !AnonymousFootprint.GetBool() ? Palette.PlayerColors[player.Data.DefaultOutfit.ColorId] : Palette.DisabledGrey;
+        spriteRenderer.color = !AnonymousFootprint.GetBool() ? Palette.PlayerColors[player.cosmetics.bodyMatProperties.ColorId] : Palette.DisabledGrey;
         var color = spriteRenderer.color;
         spriteRenderer.color = new Color(color.r, color.g, color.b, 0.75f);
 

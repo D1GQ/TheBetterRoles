@@ -187,7 +187,7 @@ class SystemPatch
     public static bool IsCamouflageActive = false;
     private static void CamouflageComms(ISystemType __instance, bool active)
     {
-        if (BetterGameSettings.CamouflageComms.GetBool())
+        if (BetterGameSettings.CamouflageComms.GetBool() && GameManager.Instance.GameHasStarted)
         {
             active = !active;
             _ = new LateTask(() =>
