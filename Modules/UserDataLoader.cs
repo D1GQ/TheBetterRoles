@@ -6,71 +6,131 @@ using TheBetterRoles.Items;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace TheBetterRoles.Modules
+namespace TheBetterRoles.Modules;
+
+public class UserDataLoader : MonoBehaviour
 {
-    public class UserDataLoader : MonoBehaviour
+    private bool isRunning;
+
+    private const string RepositoryUrl = "https://raw.githubusercontent.com/D1GQ/TBR_Data/main";
+    private const string userDataFileName = "userData.json";
+    private const string bacDataFileName = "bacData.json";
+
+    public void Start()
     {
-        private bool isRunning;
+        FetchData();
+    }
 
-        private const string RepositoryUrl = "https://raw.githubusercontent.com/D1GQ/TBR_Data/main";
-        private const string DataFileName = "userData.json";
+    public void FetchData()
+    {
+        if (isRunning) return;
+        this.StartCoroutine(CoFetchUserData());
+    }
 
-        public void Start()
+    [HideFromIl2Cpp]
+    private IEnumerator CoFetchUserData()
+    {
+        isRunning = true;
+
+        while (!Application.internetReachability.Equals(NetworkReachability.ReachableViaLocalAreaNetwork) &&
+            !Application.internetReachability.Equals(NetworkReachability.ReachableViaCarrierDataNetwork))
         {
-            FetchData();
+            yield return new WaitForSeconds(5f);
         }
 
-        public void FetchData()
+        Logger.Log($"Downloading UserData items");
+        var www = new UnityWebRequest($"{RepositoryUrl}/{userDataFileName}", UnityWebRequest.kHttpVerbGET)
         {
-            if (isRunning) return;
-            this.StartCoroutine(CoFetchData());
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Logger.Error($"Error downloading {userDataFileName}: {www.error}");
+            isRunning = false;
+            yield break;
         }
 
-        [HideFromIl2Cpp]
-        private IEnumerator CoFetchData()
+        var options = new JsonSerializerOptions
         {
-            isRunning = true;
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = true
+        };
 
-            Logger.Log($"Downloading UserData items");
-            var www = new UnityWebRequest($"{RepositoryUrl}/{DataFileName}", UnityWebRequest.kHttpVerbGET)
+        try
+        {
+            var users = JsonSerializer.Deserialize<List<UserData>>(www.downloadHandler.text, options);
+            Logger.Log($"Loaded {users.Count} UserData items");
+            if (users != null)
             {
-                downloadHandler = new DownloadHandlerBuffer()
-            };
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Logger.Error($"Error downloading {DataFileName}: {www.error}");
-                isRunning = false;
-                Destroy(this);
-                yield break;
-            }
-
-            var options = new JsonSerializerOptions
-            {
-                AllowTrailingCommas = true,
-                PropertyNameCaseInsensitive = true
-            };
-
-            try
-            {
-                var users = JsonSerializer.Deserialize<List<UserData>>(www.downloadHandler.text, options);
-                Logger.Log($"Loaded {users.Count} UserData items");
-                if (users != null)
+                foreach (var user in users)
                 {
-                    foreach (var user in users)
-                    {
-                        UserData.AllUsers.Add(user);
-                    }
+                    UserData.AllUsers.Add(user);
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.Error($"Error parsing JSON: {ex.Message}");
-            }
-
-            isRunning = false;
-            www.Dispose();
         }
+        catch (Exception ex)
+        {
+            Logger.Error($"Error parsing JSON: {ex.Message}");
+        }
+
+        isRunning = false;
+        www.Dispose();
+
+        this.StartCoroutine(CoFetchBACData());
+    }
+
+    [HideFromIl2Cpp]
+    private IEnumerator CoFetchBACData()
+    {
+        isRunning = true;
+
+        while (!Application.internetReachability.Equals(NetworkReachability.ReachableViaLocalAreaNetwork) &&
+            !Application.internetReachability.Equals(NetworkReachability.ReachableViaCarrierDataNetwork))
+        {
+            yield return new WaitForSeconds(5f);
+        }
+
+        Logger.Log($"Downloading BacData items");
+        var www = new UnityWebRequest($"{RepositoryUrl}/{bacDataFileName}", UnityWebRequest.kHttpVerbGET)
+        {
+            downloadHandler = new DownloadHandlerBuffer()
+        };
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Logger.Error($"Error downloading {bacDataFileName}: {www.error}");
+            isRunning = false;
+            yield break;
+        }
+
+        var options = new JsonSerializerOptions
+        {
+            AllowTrailingCommas = true,
+            PropertyNameCaseInsensitive = true
+        };
+
+        try
+        {
+            var bannedUsers = JsonSerializer.Deserialize<List<BannedUserData>>(www.downloadHandler.text, options);
+            Logger.Log($"Loaded {bannedUsers.Count} BacData items");
+            if (bannedUsers != null)
+            {
+                foreach (var user in bannedUsers)
+                {
+                    BannedUserData.AllBannedUsers.Add(user);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Error parsing JSON: {ex.Message}");
+        }
+
+        isRunning = false;
+        www.Dispose();
+        Destroy(this);
     }
 }

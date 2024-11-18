@@ -43,7 +43,6 @@ namespace TheBetterRoles.Modules
             {
                 Logger.Error($"Error downloading {ManifestFileName}: {www.error}");
                 isRunning = false;
-                Destroy(this);
                 yield break;
             }
 
@@ -60,7 +59,6 @@ namespace TheBetterRoles.Modules
             {
                 Logger.Error($"{ManifestFileName} deserialization failed or no 'Hats' key found.");
                 isRunning = false;
-                Destroy(this);
                 yield break;
             }
 
