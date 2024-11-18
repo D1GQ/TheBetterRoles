@@ -19,7 +19,7 @@ public enum MultiPermissionFlags : ushort
 [method: JsonConstructor]
 public class UserData(string name = "", string puid = "", string friendCode = "", string overheadTag = "", string overheadColor = "", ushort permissions = 0)
 {
-    public static List<UserData> AllUsers = [new UserData()];
+    public static List<UserData> AllUsers = [new UserData(name: "Default")];
 
     public bool IsLocalData { get; private set; }
 
@@ -51,6 +51,7 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
                 var data = AllUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(EOSManager.Instance.ProductUserId) || user.FriendCode == Utils.GetHashStr(EOSManager.Instance.FriendCode));
                 if (data != null)
                 {
+                    Logger.Log($"Found local UserData({data.Name})");
                     data.IsLocalData = true;
                     Main.MyData = data;
                     HasLocalData = true;
@@ -58,11 +59,11 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
             }
         }
     }
-    public static UserData? GetPlayerUserData(NetworkedPlayerInfo data) => AllUsers?.FirstOrDefault(user => user.Puid == data.GetHashPuid() || user.FriendCode == data.GetHashFriendcode());
-    public static UserData? GetPlayerUserDataFromPuid(string puid) => AllUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(puid));
-    public static UserData? GetPlayerUserDataFromFriendCode(string friendcode) => AllUsers?.FirstOrDefault(user => user.FriendCode == Utils.GetHashStr(friendcode));
+    public static UserData? GetPlayerUserData(NetworkedPlayerInfo data) => AllUsers?.FirstOrDefault(user => user.Puid == data.GetHashPuid() || user.FriendCode == data.GetHashFriendcode()) ?? AllUsers.First();
+    public static UserData? GetPlayerUserDataFromPuid(string puid) => AllUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(puid)) ?? AllUsers.First();
+    public static UserData? GetPlayerUserDataFromFriendCode(string friendcode) => AllUsers?.FirstOrDefault(user => user.FriendCode == Utils.GetHashStr(friendcode)) ?? AllUsers.First();
 
-    public bool HasPermission(MultiPermissionFlags permissionFlags)
+    private bool HasPermission(MultiPermissionFlags permissionFlags)
     {
         if ((Permissions & (ushort)MultiPermissionFlags.All) == (ushort)MultiPermissionFlags.All)
         {
@@ -71,4 +72,11 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
 
         return (Permissions & (ushort)permissionFlags) == (ushort)permissionFlags;
     }
+
+    public bool IsDev() => HasPermission(MultiPermissionFlags.Dev);
+    public bool IsTester() => HasPermission(MultiPermissionFlags.Tester);
+    public bool IsSponsorTier3() => HasPermission(MultiPermissionFlags.Contributor_3);
+    public bool IsSponsorTier2() => HasPermission(MultiPermissionFlags.Contributor_2 | MultiPermissionFlags.Contributor_3);
+    public bool IsSponsorTier1() => IsSponsor();
+    public bool IsSponsor() => HasPermission(MultiPermissionFlags.Contributor_1 | MultiPermissionFlags.Contributor_2 | MultiPermissionFlags.Contributor_3 | MultiPermissionFlags.Dev);
 }

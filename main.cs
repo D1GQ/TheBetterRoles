@@ -49,7 +49,7 @@ public class Main : BasePlugin
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
     public static bool IsGuestBuild { get; private set; } = false;
-    public static UserData MyData = new();
+    public static UserData MyData = UserData.AllUsers.First();
 
     public static uint modSignature
     {

@@ -217,13 +217,6 @@ class CommandsPatch
         if (directNormalMatch != null)
             return directNormalMatch;
 
-        var directSponsorMatch = BaseCommand.allCommands
-            .FirstOrDefault(c => c.Type == CommandType.Sponsor
-                                 && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
-                                 && c.ShowCommand());
-        if (directSponsorMatch != null)
-            return directSponsorMatch;
-
         var closestNormalCommand = BaseCommand.allCommands
             .OrderBy(c => c.Name)
             .FirstOrDefault(c => c.Type == CommandType.Normal
@@ -232,26 +225,41 @@ class CommandsPatch
         if (closestNormalCommand != null)
             return closestNormalCommand;
 
-        var closestSponsorCommand = BaseCommand.allCommands
-            .OrderBy(c => c.Name)
-            .FirstOrDefault(c => c.Type == CommandType.Sponsor
+        if (Main.MyData.IsSponsor())
+        {
+            var directSponsorMatch = BaseCommand.allCommands
+                .FirstOrDefault(c => c.Type == CommandType.Sponsor
+                         && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
+                         && c.ShowCommand());
+            if (directSponsorMatch != null)
+                return directSponsorMatch;
+
+            var closestSponsorCommand = BaseCommand.allCommands
+                .OrderBy(c => c.Name)
+                .FirstOrDefault(c => c.Type == CommandType.Sponsor
                                  && c.Names.Any(name => name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase))
                                  && c.ShowCommand());
-        if (closestSponsorCommand != null)
-            return closestSponsorCommand;
+            if (closestSponsorCommand != null)
+                return closestSponsorCommand;
+        }
 
-#if DEBUG || DEBUG_MULTIACCOUNTS
-        if (GameState.IsDev)
+        if (Main.MyData.IsDev())
         {
-            var debugCommand = BaseCommand.allCommands
+            var directdebugCommand = BaseCommand.allCommands
+                .FirstOrDefault(c => c.Type == CommandType.Debug
+                                     && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
+                                     && c.ShowCommand());
+            if (directdebugCommand != null)
+                return directdebugCommand;
+
+            var closestDebugCommand = BaseCommand.allCommands
                 .OrderBy(c => c.Name)
                 .FirstOrDefault(c => c.Type == CommandType.Debug
-                                     && c.Names.Any(name => name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase))
-                                     && c.ShowCommand());
-            if (debugCommand != null)
-                return debugCommand;
+                     && c.Names.Any(name => name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase))
+                     && c.ShowCommand());
+            if (closestDebugCommand != null)
+                return closestDebugCommand;
         }
-#endif
 
         return null;
     }

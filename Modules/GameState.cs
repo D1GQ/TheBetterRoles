@@ -7,7 +7,7 @@ namespace TheBetterRoles.Modules;
 public static class GameState
 {
     /**********Check Game Status***********/
-    public static bool IsDev => Main.MyData.HasPermission(Items.MultiPermissionFlags.Dev);
+    public static bool IsDev => Main.MyData.IsDev();
     public static bool InGame => Main.AllPlayerControls.Any();
     public static bool IsNormalGame => GameOptionsManager.Instance.CurrentGameOptions.GameMode is GameModes.Normal or GameModes.NormalFools;
     public static bool IsHideNSeek => GameOptionsManager.Instance != null && GameOptionsManager.Instance.CurrentGameOptions.GameMode is GameModes.HideNSeek or GameModes.SeekFools;
