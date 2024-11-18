@@ -102,6 +102,7 @@ public class GlitchRole : CustomRoleBehavior
         RemoveHack();
     }
 
+    private Shader? catchShader;
     private void AddHack(PlayerControl target)
     {
         if (_player.IsLocalPlayer()) target.ShieldBreakAnimation(RoleColor);
@@ -109,14 +110,17 @@ public class GlitchRole : CustomRoleBehavior
         tempHackDuration = HackDuration.GetFloat();
         if (target.IsLocalPlayer())
         {
-            List<BaseButton> buttons = BaseButton.allButtons.ToList();
+            catchShader = HudManager.Instance.UseButton.graphic.material.shader;
+
+            List<BaseButton> buttons = BaseButton.allButtons;
             foreach (var button in buttons)
             {
                 button.Hacked = true;
+                button.ActionButton.graphic.material.shader = AssetBundles.GlitchShader;
             }
 
-            ReportButton.Hacked = true;
-            HudManager.Instance.UseButton.GetComponent<ActionButton>().enabled = false;
+            HudManager.Instance.UseButton.graphic.enabled = false;
+            HudManager.Instance.UseButton.graphic.material.shader = AssetBundles.GlitchShader;
         }
     }
 
@@ -124,14 +128,15 @@ public class GlitchRole : CustomRoleBehavior
     {
         if (hacked != null && hacked.IsLocalData())
         {
-            List<BaseButton> buttons = BaseButton.allButtons.ToList();
+            List<BaseButton> buttons = BaseButton.allButtons;
             foreach (var button in buttons)
             {
                 button.Hacked = false;
+                button.ActionButton.graphic.material.shader = catchShader;
             }
 
-            ReportButton.Hacked = false;
-            HudManager.Instance.UseButton.GetComponent<ActionButton>().enabled = true;
+            HudManager.Instance.UseButton.enabled = true;
+            HudManager.Instance.UseButton.graphic.material.shader = catchShader;
         }
         tempHackDuration = 0f;
         hacked = null;

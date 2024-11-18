@@ -2,6 +2,7 @@
 using InnerNet;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Item;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
@@ -21,6 +22,7 @@ public enum DeathReasons
 public class ExtendedPlayerInfo : MonoBehaviour
 {
     // Mod Info
+    public UserData? MyUserData { get; set; }
     public bool DirtyName { get; set; }
     public bool HasMod { get; set; }
     public string Version { get; set; } = "";
@@ -118,6 +120,7 @@ public static class PlayerDataExtension
             {
                 ExtendedPlayerInfo newBetterData = data.gameObject.AddComponent<ExtendedPlayerInfo>();
 
+                newBetterData.MyUserData = UserData.GetPlayerUserData(data);
                 newBetterData._PlayerId = data.PlayerId;
                 newBetterData._Data = data;
                 var newRole = CustomRoleManager.CreateNewRoleInstance(role => role.RoleType == CustomRoles.Crewmate);

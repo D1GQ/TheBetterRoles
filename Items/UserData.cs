@@ -27,6 +27,8 @@ public class UserData
     [JsonPropertyName("permissions")] public ushort Permissions { get; set; }
 
     public static UserData? GetPlayerUserData(NetworkedPlayerInfo data) => AllUsers?.FirstOrDefault(user => user.Puid == data.GetHashPuid() || user.FriendCode == data.GetHashFriendcode());
+    public static UserData? GetPlayerUserDataFromPuid(string puid) => AllUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(puid));
+    public static UserData? GetPlayerUserDataFromFriendCode(string friendcode) => AllUsers?.FirstOrDefault(user => user.FriendCode == Utils.GetHashStr(friendcode));
 
     public bool HasPermission(MultiPermissionFlags permissionFlags)
     {
