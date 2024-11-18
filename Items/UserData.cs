@@ -19,7 +19,7 @@ public enum MultiPermissionFlags : ushort
 [method: JsonConstructor]
 public class UserData(string name = "", string puid = "", string friendCode = "", string overheadTag = "", string overheadColor = "", ushort permissions = 0)
 {
-    public static List<UserData> AllUsers = [new UserData(name: "Default")];
+    public static List<UserData> AllUsers = [new UserData("Default")];
 
     public bool IsLocalData { get; private set; }
 
