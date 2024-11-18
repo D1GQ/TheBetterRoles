@@ -31,6 +31,7 @@ namespace TheBetterRoles.Modules
         {
             isRunning = true;
 
+            Logger.Log($"Downloading UserData items");
             var www = new UnityWebRequest($"{RepositoryUrl}/{DataFileName}", UnityWebRequest.kHttpVerbGET)
             {
                 downloadHandler = new DownloadHandlerBuffer()
@@ -54,7 +55,7 @@ namespace TheBetterRoles.Modules
             try
             {
                 var users = JsonSerializer.Deserialize<List<UserData>>(www.downloadHandler.text, options);
-
+                Logger.Log($"Loading {users.Count} UserData items");
                 if (users != null)
                 {
                     foreach (var user in users)

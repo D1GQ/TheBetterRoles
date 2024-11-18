@@ -49,6 +49,7 @@ public class Main : BasePlugin
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
     public static bool IsGuestBuild { get; private set; } = false;
+    public static UserData MyData = new();
 
     public static uint modSignature
     {
@@ -125,11 +126,6 @@ public class Main : BasePlugin
     [
         "2024.10.29",
         "2024.9.4",
-    ];
-
-    public static string[] DevUser =
-    [
-        "8f23c48e2+3e249bee5",
     ];
 
     public static IGameOptions? CurrentOptions => GameOptionsManager.Instance?.CurrentGameOptions;

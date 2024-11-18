@@ -22,7 +22,7 @@ public enum DeathReasons
 public class ExtendedPlayerInfo : MonoBehaviour
 {
     // Mod Info
-    public UserData? MyUserData { get; set; }
+    public UserData? MyUserData { get; set; } = new();
     public bool DirtyName { get; set; }
     public bool HasMod { get; set; }
     public string Version { get; set; } = "";

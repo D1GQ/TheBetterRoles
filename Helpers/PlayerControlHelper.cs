@@ -464,7 +464,7 @@ static class PlayerControlHelper
         return Utils.GetHashStr(data.FriendCode);
     }
     // Check if player is a dev
-    public static bool IsDev(this PlayerControl player) => player != null && Main.DevUser.Contains($"{player.GetHashPuid()}+{Utils.GetHashStr(player.Data.FriendCode)}");
+    public static bool IsDev(this PlayerControl player) => player.BetterData().MyUserData.HasPermission(Items.MultiPermissionFlags.Dev);
     // Check if player is alive
     public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
     public static bool IsAlive(this NetworkedPlayerInfo data, bool CheckFakeAlive = false) => data?.IsDead == false || CheckFakeAlive && data.BetterData()?.IsFakeAlive == true;

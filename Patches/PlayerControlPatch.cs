@@ -76,6 +76,7 @@ class PlayerControlPatch
         if (player?.Data == null || player?.BetterData()?.DirtyName != true) return;
 
         var betterData = player.BetterData();
+        var userData = betterData.MyUserData;
         betterData.DirtyName = false;
         var cosmetics = player.cosmetics;
 
@@ -89,6 +90,14 @@ class PlayerControlPatch
 
         if (isLobbyState)
         {
+            if (userData != null)
+            {
+                var playerTag = !string.IsNullOrEmpty(userData.OverheadColor) ? $"<{userData.OverheadColor}>{userData.OverheadTag}</color>" : userData.OverheadTag;
+                if (!string.IsNullOrEmpty(playerTag))
+                {
+                    sbTagTop.Append($"{playerTag}---");
+                }
+            }
             cosmetics.nameText.color = betterData.HasMod || isLocalPlayer
                 ? new Color(0.47f, 1f, 0.95f, 1f)
                 : Color.white;

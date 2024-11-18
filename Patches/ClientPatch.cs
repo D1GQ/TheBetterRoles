@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using InnerNet;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
 using TheBetterRoles.Modules;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ public class ClientPatch
         [HarmonyPostfix]
         public static void EndFinalPartsOfLoginFlow_Postfix()
         {
+            UserData.TrySetLocalData();
+
             var varSupportedVersions = Main.SupportedAmongUsVersions;
             Version currentVersion = new Version(Main.AmongUsVersion);
             Version firstSupportedVersion = new Version(varSupportedVersions.First());
