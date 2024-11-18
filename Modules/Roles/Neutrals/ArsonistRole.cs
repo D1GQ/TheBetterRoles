@@ -126,7 +126,7 @@ public class ArsonistRole : CustomRoleBehavior
                             if (DousingDuration.GetFloat() > 0f)
                             {
                                 DouseButton?.SetDuration();
-                                douseCoroutine = _player.BetterData().StartCoroutine(CoDousePlayer(target));
+                                douseCoroutine = CoroutineManager.Instance.StartCoroutine(CoDousePlayer(target));
                             }
                             else
                             {

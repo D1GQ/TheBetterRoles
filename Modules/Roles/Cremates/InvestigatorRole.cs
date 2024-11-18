@@ -120,7 +120,7 @@ public class InvestigatorRole : CustomRoleBehavior
         var color = spriteRenderer.color;
         spriteRenderer.color = new Color(color.r, color.g, color.b, 0.75f);
 
-        _player.BetterData().StartCoroutine(CoFadeFootprintOut(footprint, spriteRenderer));
+        CoroutineManager.Instance.StartCoroutine(CoFadeFootprintOut(footprint, spriteRenderer));
     }
 
     private void CreateBodyprint(DeadBody body)

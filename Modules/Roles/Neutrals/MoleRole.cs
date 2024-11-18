@@ -197,7 +197,7 @@ public class MoleRole : CustomRoleBehavior
 
         if (shrink)
         {
-            _player.BetterData().StartCoroutine(ShrinkVentOut(vent));
+            CoroutineManager.Instance.StartCoroutine(ShrinkVentOut(vent));
         }
         else
         {

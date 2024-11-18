@@ -119,7 +119,7 @@ public class AltruistRole : CustomRoleBehavior
             _player.MyPhysics.Animations.PlayScanner(false, false, _player.MyPhysics.FlipX);
             _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Color.white);
             SetMovement(_player, true);
-            _player.BetterData().StopCoroutine(reviveCoroutine);
+            CoroutineManager.Instance.StopCoroutine(reviveCoroutine);
             reviveCoroutine = null;
             isReviving = false;
         }
@@ -132,7 +132,7 @@ public class AltruistRole : CustomRoleBehavior
         if (body != null && !CustomRoleManager.RoleChecksAny(target, role => role.IsGhostRole))
         {
             isReviving = true;
-            reviveCoroutine = _player.BetterData().StartCoroutine(CoStartRevive(target, body));
+            reviveCoroutine = CoroutineManager.Instance.StartCoroutine(CoStartRevive(target, body));
             return true;
         }
 

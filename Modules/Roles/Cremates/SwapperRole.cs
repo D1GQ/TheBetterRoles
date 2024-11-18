@@ -163,7 +163,7 @@ public class SwapperRole : CustomRoleBehavior
 
             PlayerVoteArea? pva1 = meetingHud.playerStates.FirstOrDefault(p => p.TargetPlayerId == firstTargetData.PlayerId);
             PlayerVoteArea? pva2 = meetingHud.playerStates.FirstOrDefault(p => p.TargetPlayerId == secondTargetData.PlayerId);
-            _player.BetterData().StartCoroutine(SwapAnimation(pva1, pva2));
+            CoroutineManager.Instance.StartCoroutine(SwapAnimation(pva1, pva2));
         }
 
         UnsetTargets();
