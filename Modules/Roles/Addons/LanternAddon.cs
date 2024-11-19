@@ -19,12 +19,14 @@ public class LanternAddon : CustomAddonBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HarmfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;
+    public TBROptionItem? PlaceLanternOffCooldown;
     public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
+                PlaceLanternOffCooldown = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Lantern.Option.PlaceLanternOffCooldown"), true, RoleOptionItem),
             ];
         }
     }
@@ -49,6 +51,18 @@ public class LanternAddon : CustomAddonBehavior
         if (Lantern != null)
         {
             Lantern.DestroyObj();
+        }
+    }
+
+    public override void FixedUpdate()
+    {
+        if (_player.IsLocalPlayer() && PlaceLanternOffCooldown.GetBool())
+        {
+            if (!LanternButton.IsCooldown && (Lantern == null || Vector2.Distance(_player.GetCustomPosition(), Lantern.transform.position) > 1.5f))
+            {
+                CreateLantern();
+                LanternButton.SetCooldown();
+            }
         }
     }
 

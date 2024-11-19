@@ -56,7 +56,7 @@ public class TransporterRole : CustomRoleBehavior
                     {
                         TransportButton?.AddUse();
                         TransportButton?.SetCooldown(0);
-                        menu = new PlayerMenu().Create(id, this, false, false, true);
+                        menu = new PlayerMenu().Create(id, this, true, false, true);
                     }
                 }
                 break;

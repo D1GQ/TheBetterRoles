@@ -329,6 +329,7 @@
   "Role.Lantern.Info": "Place down lanterns for vision",
   "Role.Lantern.LongInfo": "As Lantern, your vision no longer follows you. Place a lantern for vision, only one lantern can be on the map at a time.",
   "Role.Lantern.Ability.1": "Lantern",
+  "Role.Lantern.Option.PlaceLanternOffCooldown": "Place Lantern Off Cooldown",
 
   "Role.None": "None",
   "Role.None.Info": "None",

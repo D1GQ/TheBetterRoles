@@ -37,7 +37,8 @@ public class BaseButton : MonoBehaviour
     // Ability configuration
     public string? Name { get; protected set; } = "Ability";
     public IntRange Range = new(0, 100);
-    public bool IsDuration { get; set; }
+    public bool IsDuration { get; protected set; }
+    public bool IsCooldown { get; protected set; }
     public bool InfiniteUses { get; protected set; } = true;
     public int Uses { get; protected set; } = 0;
 
@@ -144,6 +145,7 @@ public class BaseButton : MonoBehaviour
                 if (!IsDuration)
                 {
                     ActionButton.SetCoolDown(TempTimer, Cooldown);
+                    IsCooldown = true;
                 }
                 else if (IsDuration)
                 {
@@ -157,6 +159,7 @@ public class BaseButton : MonoBehaviour
             else
             {
                 ActionButton.SetCoolDown(-1, 0);
+                IsCooldown = false;
             }
         }
 
