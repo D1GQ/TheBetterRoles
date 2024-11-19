@@ -73,9 +73,9 @@ class PlayerControlPatch
     {
         if (player?.Data == null || player?.ExtendedData()?.DirtyName != true) return;
 
-        var extendedData = player.ExtendedData();
-        var userData = extendedData.MyUserData;
-        extendedData.DirtyName = false;
+        var betterData = player.ExtendedData();
+        var userData = betterData.MyUserData;
+        betterData.DirtyName = false;
         var cosmetics = player.cosmetics;
 
         var sbTag = new StringBuilder();
@@ -96,15 +96,15 @@ class PlayerControlPatch
                     sbTagTop.Append($"{playerTag}---");
                 }
             }
-            cosmetics.nameText.color = extendedData.HasMod || isLocalPlayer
+            cosmetics.nameText.color = betterData.HasMod || isLocalPlayer
                 ? new Color(0.47f, 1f, 0.95f, 1f)
                 : Color.white;
         }
         else
         {
-            if (!string.IsNullOrEmpty(extendedData.NameColor))
+            if (!string.IsNullOrEmpty(betterData.NameColor))
             {
-                var color = Utils.HexToColor32(extendedData.NameColor);
+                var color = Utils.HexToColor32(betterData.NameColor);
                 cosmetics.nameText.color = new Color(color.r, color.g, color.b, cosmetics.nameText.color.a);
             }
             else
@@ -133,7 +133,7 @@ class PlayerControlPatch
 
             if (canRevealAddons)
             {
-                foreach (var addon in extendedData.RoleInfo.Addons)
+                foreach (var addon in betterData.RoleInfo.Addons)
                 {
                     sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
                 }

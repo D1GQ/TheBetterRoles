@@ -71,12 +71,12 @@ public class RolePatch
             {
                 box.enabled = true;
             }
-            var extendedData = __instance.ExtendedData();
+            var betterData = __instance.ExtendedData();
 
-            __instance.cosmetics.nameText.transform.parent.gameObject.SetActive(extendedData.PlayerTextActiveQueue);
-            if (extendedData.CosmeticsActiveQueue.ValueChanged())
+            __instance.cosmetics.nameText.transform.parent.gameObject.SetActive(betterData.PlayerTextActiveQueue);
+            if (betterData.CosmeticsActiveQueue.ValueChanged())
             {
-                int z = extendedData.CosmeticsActiveQueue ? 0 : 100;
+                int z = betterData.CosmeticsActiveQueue ? 0 : 100;
                 var pos = __instance.cosmetics.transform.localPosition;
                 __instance.cosmetics.transform.localPosition = new Vector3(pos.x, pos.y, z);
             }
