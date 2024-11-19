@@ -52,6 +52,16 @@ public class ChameleonRole : CustomRoleBehavior
         InvisibilityButton.CanCancelDuration = true;
     }
 
+    public override void OnDeinitialize()
+    {
+        if (fadeInCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeInCoroutine);
+        _player.invisibilityAlpha = 1f;
+        _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
+        SetNameTextAlpha(_player.invisibilityAlpha);
+        isVisible = true;
+        InteractableTarget = true;
+    }
+
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
     {
         switch (id)
@@ -104,10 +114,11 @@ public class ChameleonRole : CustomRoleBehavior
     {
         if (fadeOutCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeOutCoroutine);
         fadeOutCoroutine = null;
-        CoroutineManager.Instance.StartCoroutine(CoFadeIn());
+        fadeInCoroutine = CoroutineManager.Instance.StartCoroutine(CoFadeIn());
     }
 
     private Coroutine? fadeOutCoroutine;
+    private Coroutine? fadeInCoroutine;
 
     private IEnumerator CoFadeOut()
     {
@@ -164,6 +175,7 @@ public class ChameleonRole : CustomRoleBehavior
 
         isVisible = true;
         InteractableTarget = true;
+        fadeInCoroutine = null;
     }
 
     private void SetNameTextAlpha(float alpha)

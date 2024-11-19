@@ -63,7 +63,7 @@ class CommandsPatch
         if (ChatPatch.ChatHistory.Count == 0 || ChatPatch.ChatHistory[^1] != text) ChatPatch.ChatHistory.Add(text);
         ChatPatch.CurrentHistorySelection = ChatPatch.ChatHistory.Count;
 
-        if (closestCommand?.SetChatTimer() == true)
+        if (closestCommand?.SetChatTimer == true)
         {
             __instance.timeSinceLastMessage = 0f;
         }
