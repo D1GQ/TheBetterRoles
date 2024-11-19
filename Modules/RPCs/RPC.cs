@@ -4,7 +4,6 @@ using HarmonyLib;
 using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
-using TheBetterRoles.Commands;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
@@ -251,7 +250,7 @@ internal static class RPC
     }
     private static bool CheckResetAbilityStateRpc(PlayerControl player, int id) => true;
 
-    public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoles roleType, bool removeAddon = false, bool isAssigned = false)
+    public static void SendRpcSetCustomRole(this PlayerControl player, CustomRoleType roleType, bool removeAddon = false, bool isAssigned = false)
     {
         player.SendTrueRpcSetCustomRole((int)roleType, removeAddon, isAssigned);
     }
@@ -259,7 +258,7 @@ internal static class RPC
     [MethodRpc((uint)ReactorRPCs.SetRole, SendImmediately = true)]
     private static void SendTrueRpcSetCustomRole(this PlayerControl player, int roleTypeInt, bool removeAddon = false, bool isAssigned = false)
     {
-        var role = (CustomRoles)roleTypeInt;
+        var role = (CustomRoleType)roleTypeInt;
         if (CheckSetRoleRpc(player, role))
         {
             if (!Utils.GetCustomRoleClass(role).IsAddon)
@@ -280,7 +279,7 @@ internal static class RPC
         }
     }
 
-    private static bool CheckSetRoleRpc(PlayerControl player, CustomRoles role) => true;
+    private static bool CheckSetRoleRpc(PlayerControl player, CustomRoleType role) => true;
 
     public static void SendRpcMurder(this PlayerControl player,
         PlayerControl target,
@@ -486,7 +485,7 @@ internal static class RPC
     [MethodRpc((uint)ReactorRPCs.GuessPlayer, SendImmediately = true)]
     public static void SendRpcGuessPlayer(this PlayerControl player, PlayerControl target, int roleTypeInt)
     {
-        var roleType = (CustomRoles)roleTypeInt;
+        var roleType = (CustomRoleType)roleTypeInt;
         if (CheckGuessPlayerRpc(player, target, roleType) == true)
         {
             CustomRoleManager.RoleListener(target, role => role.OnDeath(target, DeathReasons.Guessed));
@@ -539,7 +538,7 @@ internal static class RPC
         }
     }
 
-    private static bool CheckGuessPlayerRpc(PlayerControl player, PlayerControl target, CustomRoles roleType)
+    private static bool CheckGuessPlayerRpc(PlayerControl player, PlayerControl target, CustomRoleType roleType)
     {
         if (!player.RoleChecks(role => role.CheckGuess(player, target, roleType)))
         {

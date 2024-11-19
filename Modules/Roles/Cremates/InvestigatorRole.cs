@@ -14,7 +14,7 @@ public class InvestigatorRole : CustomRoleBehavior
     public override int RoleId => 9;
     public override string RoleColor => "#00FFEE";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Investigator;
+    public override CustomRoleType RoleType => CustomRoleType.Investigator;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Information;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

@@ -1,6 +1,5 @@
 ﻿using Reactor.Utilities.Extensions;
 using System.Reflection;
-using TheBetterRoles.Modules;
 using UnityEngine;
 
 namespace TheBetterRoles.Items;

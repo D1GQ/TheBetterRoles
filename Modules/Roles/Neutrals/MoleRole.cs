@@ -18,7 +18,7 @@ public class MoleRole : CustomRoleBehavior
     public override int RoleId => 21;
     public override string RoleColor => "#862500";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Mole;
+    public override CustomRoleType RoleType => CustomRoleType.Mole;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;

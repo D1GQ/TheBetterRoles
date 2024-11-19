@@ -1,5 +1,4 @@
-﻿using Il2CppSystem.Security.Cryptography;
-using Reactor.Networking.Rpc;
+﻿using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
@@ -125,7 +124,7 @@ public class TBROptionPercentItem : TBROptionItem
             button.interactableClickColor = Color.white;
             button.buttonSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.QuestionMark.png", 50);
             button.OnClick = new();
-            button.OnClick.AddListener((Action)(() => 
+            button.OnClick.AddListener((Action)(() =>
             {
                 var menu = DestroyableSingleton<GameSettingMenu>.Instance;
                 if (menu != null)

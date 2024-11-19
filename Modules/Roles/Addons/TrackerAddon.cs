@@ -13,7 +13,7 @@ public class TrackerAddon : CustomAddonBehavior
     public override int RoleId => 29;
     public override string RoleColor => "#80FF00";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Tracker;
+    public override CustomRoleType RoleType => CustomRoleType.Tracker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

@@ -11,7 +11,7 @@ public class OpportunistRole : CustomRoleBehavior
     public override int RoleId => 22;
     public override string RoleColor => "#00CA28";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Opportunist;
+    public override CustomRoleType RoleType => CustomRoleType.Opportunist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;

@@ -1,5 +1,4 @@
-﻿using TheBetterRoles.Helpers;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TheBetterRoles.Modules;
 
@@ -14,7 +13,7 @@ public abstract class ColorEffect
     {
         if (colors == null || colors.Length == 0)
         {
-            colors = 
+            colors =
             [
                 Color.red,
                 new Color(1f, 0.5f, 0f),
@@ -63,7 +62,7 @@ public abstract class ColorEffect
         }
         else
         {
-            if(rend is SpriteRenderer renderer)
+            if (rend is SpriteRenderer renderer)
             {
                 renderer.color = MainColor;
             }

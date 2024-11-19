@@ -20,7 +20,7 @@ public class ChameleonRole : CustomRoleBehavior
     public override int RoleId => 38;
     public override string RoleColor => "#64AD1C";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Chameleon;
+    public override CustomRoleType RoleType => CustomRoleType.Chameleon;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Information;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
@@ -194,7 +194,7 @@ public class ChameleonRole : CustomRoleBehavior
         [HarmonyPrefix]
         public static bool SetHatAndVisorAlpha_Prefix(PlayerControl __instance)
         {
-            if (__instance.Is(CustomRoles.Swooper) && __instance.IsAlive()) return false;
+            if (__instance.Is(CustomRoleType.Swooper) && __instance.IsAlive()) return false;
 
             return true;
         }

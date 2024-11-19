@@ -15,7 +15,7 @@ public class MedicRole : CustomRoleBehavior
     public override int RoleId => 11;
     public override string RoleColor => "#00FF2A";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Medic;
+    public override CustomRoleType RoleType => CustomRoleType.Medic;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

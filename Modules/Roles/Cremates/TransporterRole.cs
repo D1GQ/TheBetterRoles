@@ -15,7 +15,7 @@ public class TransporterRole : CustomRoleBehavior
     public override int RoleId => 15;
     public override string RoleColor => "#68b2bf";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Transporter;
+    public override CustomRoleType RoleType => CustomRoleType.Transporter;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

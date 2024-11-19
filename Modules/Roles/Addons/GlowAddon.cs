@@ -12,7 +12,7 @@ public class GlowAddon : CustomAddonBehavior
     public override int RoleId => 35;
     public override string RoleColor => "#ffff3e";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Glow;
+    public override CustomRoleType RoleType => CustomRoleType.Glow;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.GeneralAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

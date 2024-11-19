@@ -18,7 +18,7 @@ public class AltruistRole : CustomRoleBehavior
     public override int RoleId => 8;
     public override string RoleColor => "#BA0400";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Altruist;
+    public override CustomRoleType RoleType => CustomRoleType.Altruist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

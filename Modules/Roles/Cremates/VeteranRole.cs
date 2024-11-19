@@ -16,7 +16,7 @@ public class VeteranRole : CustomRoleBehavior
     public override int RoleId => 16;
     public override string RoleColor => "#BB9B4F";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Veteran;
+    public override CustomRoleType RoleType => CustomRoleType.Veteran;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

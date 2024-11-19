@@ -11,7 +11,7 @@ public class GiantAddon : CustomAddonBehavior
     public override int RoleId => 25;
     public override string RoleColor => "#745354";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Giant;
+    public override CustomRoleType RoleType => CustomRoleType.Giant;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HarmfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

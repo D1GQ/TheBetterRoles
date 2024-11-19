@@ -16,7 +16,7 @@ public class MayorRole : CustomRoleBehavior
     public override int RoleId => 10;
     public override string RoleColor => "#004f1e";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Mayor;
+    public override CustomRoleType RoleType => CustomRoleType.Mayor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

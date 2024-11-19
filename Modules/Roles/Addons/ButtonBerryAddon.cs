@@ -15,7 +15,7 @@ public class ButtonBerryAddon : CustomAddonBehavior
     public override int RoleId => 24;
     public override string RoleColor => "#FF00EE";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.ButtonBerry;
+    public override CustomRoleType RoleType => CustomRoleType.ButtonBerry;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.AbilityAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

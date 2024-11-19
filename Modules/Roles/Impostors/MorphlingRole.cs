@@ -14,7 +14,7 @@ public class MorphlingRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 5;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Morphling;
+    public override CustomRoleType RoleType => CustomRoleType.Morphling;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;

@@ -13,7 +13,7 @@ public class CamouflagerRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 37;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Camouflager;
+    public override CustomRoleType RoleType => CustomRoleType.Camouflager;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;

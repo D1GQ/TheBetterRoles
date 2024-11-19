@@ -16,7 +16,7 @@ public class AmnesiacRole : CustomRoleBehavior
     public override int RoleId => 31;
     public override string RoleColor => "#96E5FF";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Amnesiac;
+    public override CustomRoleType RoleType => CustomRoleType.Amnesiac;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;

@@ -16,7 +16,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     public override bool HasSelfTask => !HasBeenClicked;
     public override string RoleColor => "#A04D8A";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Phantom;
+    public override CustomRoleType RoleType => CustomRoleType.Phantom;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Ghost;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
@@ -153,7 +153,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         public static void HandleAnimation_Prefix(PlayerPhysics __instance, ref bool amDead)
         {
             var player = __instance.myPlayer;
-            if (!player.Is(CustomRoles.Phantom)) return;
+            if (!player.Is(CustomRoleType.Phantom)) return;
 
             amDead = player?.IsAlive(true) == false;
         }

@@ -12,7 +12,7 @@ public class DrunkAddon : CustomAddonBehavior
     public override int RoleId => 34;
     public override string RoleColor => "#3e2e1d";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Drunk;
+    public override CustomRoleType RoleType => CustomRoleType.Drunk;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HarmfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;
@@ -40,7 +40,7 @@ public class DrunkAddon : CustomAddonBehavior
         {
             var player = __instance.myPlayer;
             if (!player.IsLocalPlayer()) return;
-            if (!player.Has(CustomRoles.Drunk)) return;
+            if (!player.Has(CustomRoleType.Drunk)) return;
 
             bool flag = !player.CanMove;
             __instance.body.velocity *= flag ? 1 : -1;

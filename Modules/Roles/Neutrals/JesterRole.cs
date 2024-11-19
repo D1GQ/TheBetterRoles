@@ -11,7 +11,7 @@ public class JesterRole : CustomRoleBehavior
     public override int RoleId => 20;
     public override string RoleColor => "#FF82F8";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Jester;
+    public override CustomRoleType RoleType => CustomRoleType.Jester;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Evil;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;

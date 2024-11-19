@@ -80,6 +80,16 @@ public static class Utils
         }
     }
 
+    public static string FormatDeathReason(DeathReasons? reason, Color color)
+    {
+        if (reason != null && reason != DeathReasons.None)
+        {
+            return $"<{Color32ToHex(color)}>{Translator.GetString($"DeathReason.{Enum.GetName(typeof(DeathReasons), reason)}")}</color>";
+        }
+
+        return string.Empty;
+    }
+
     // Set player name
     public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
     {
@@ -392,7 +402,7 @@ public static class Utils
         return (ushort)(BitConverter.ToUInt16(SHA256.HashData(Encoding.UTF8.GetBytes(input)), 0) % 65536);
     }
 
-    public static string GetCustomRoleNameAndColor(CustomRoles role, bool bigText = false)
+    public static string GetCustomRoleNameAndColor(CustomRoleType role, bool bigText = false)
     {
         if (!bigText)
         {
@@ -403,10 +413,10 @@ public static class Utils
             return $"<size=150%><{GetCustomRoleColorHex(role)}>{GetCustomRoleName(role)}</color></size>";
         }
     }
-    public static CustomRoleBehavior? GetCustomRoleClass(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role);
-    public static string GetCustomRoleName(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleName;
-    public static string GetCustomRoleColorHex(CustomRoles role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor;
-    public static Color GetCustomRoleColor(CustomRoles role) => HexToColor32(CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor);
+    public static CustomRoleBehavior? GetCustomRoleClass(CustomRoleType role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role);
+    public static string GetCustomRoleName(CustomRoleType role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleName;
+    public static string GetCustomRoleColorHex(CustomRoleType role) => CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor;
+    public static Color GetCustomRoleColor(CustomRoleType role) => HexToColor32(CustomRoleManager.allRoles.FirstOrDefault(r => r.RoleType == role).RoleColor);
     public static string GetCustomRoleTeamColor(CustomRoleTeam roleTeam)
     {
         switch (roleTeam)
@@ -424,15 +434,15 @@ public static class Utils
     }
     public static string GetCustomRoleTeamName(CustomRoleTeam roleTeam) => Translator.GetString($"Role.Team.{Enum.GetName(roleTeam)}");
     public static string GetCustomRoleCategoryName(CustomRoleCategory roleCategory) => Translator.GetString($"Role.Category.{Enum.GetName(roleCategory)}");
-    public static string GetCustomRoleInfo(CustomRoles role, bool longInfo = false)
+    public static string GetCustomRoleInfo(CustomRoleType role, bool longInfo = false)
     {
         if (!longInfo)
         {
-            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), role)}.Info");
+            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoleType), role)}.Info");
         }
         else
         {
-            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoles), role)}.LongInfo");
+            return Translator.GetString($"Role.{Enum.GetName(typeof(CustomRoleType), role)}.LongInfo");
         }
     }
     // Remove Html Tags Template

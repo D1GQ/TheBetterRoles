@@ -7,7 +7,6 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.Helpers;
 
@@ -108,7 +107,18 @@ static class PlayerControlHelper
         var data = player?.ExtendedData();
         if (data?.DeathReason != null && data.DeathReason != DeathReasons.None)
         {
-            return $"《<{Utils.Color32ToHex(data.DeathReasonColor)}>{Translator.GetString($"DeathReason.{Enum.GetName(data.DeathReason)}")}</color>》";
+            return $"《{Utils.FormatDeathReason(data.DeathReason, data.DeathReasonColor)}》";
+        }
+
+        return string.Empty;
+    }
+
+    public static string FormatDeathReason(this NetworkedPlayerInfo Data)
+    {
+        var data = Data?.ExtendedData();
+        if (data?.DeathReason != null && data.DeathReason != DeathReasons.None)
+        {
+            return $"《{Utils.FormatDeathReason(data.DeathReason, data.DeathReasonColor)}》";
         }
 
         return string.Empty;
@@ -514,8 +524,8 @@ static class PlayerControlHelper
     public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.ExtendedData().RoleInfo.Role.RoleTeam));
 
     // Check if player is role type
-    public static bool Is(this PlayerControl player, CustomRoles role) => player?.ExtendedData()?.RoleInfo?.RoleType == role;
-    public static bool Has(this PlayerControl player, CustomRoles role) => player?.ExtendedData()?.RoleInfo?.Addons.Any(addon => addon.RoleType == role) ?? false;
+    public static bool Is(this PlayerControl player, CustomRoleType role) => player?.ExtendedData()?.RoleInfo?.RoleType == role;
+    public static bool Has(this PlayerControl player, CustomRoleType role) => player?.ExtendedData()?.RoleInfo?.Addons.Any(addon => addon.RoleType == role) ?? false;
     public static bool Is(this PlayerControl player, CustomRoleTeam roleTeam) => player?.Role()?.RoleTeam == roleTeam;
     public static bool Is(this PlayerControl player, CustomRoleCategory roleCategory) => player?.Role()?.RoleCategory == roleCategory;
     // Check if player is Ghost role type

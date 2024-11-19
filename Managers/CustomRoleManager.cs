@@ -16,7 +16,7 @@ public class RoleAssignmentData
 {
     public CustomRoleBehavior? _role;
     public bool CanKill => _role.CanKill;
-    public CustomRoles RoleType => _role.RoleType;
+    public CustomRoleType RoleType => _role.RoleType;
     public CustomRoleTeam RoleTeam => _role.RoleTeam;
     public bool IsGhostRole => _role.RoleCategory == CustomRoleCategory.Ghost;
     public bool IsAddon => _role.IsAddon;
@@ -82,8 +82,8 @@ public static class CustomRoleManager
         }
     }
 
-    public static Dictionary<NetworkedPlayerInfo, CustomRoles> QueuedRoles = [];
-    public static Dictionary<NetworkedPlayerInfo, List<CustomRoles>> QueuedAddons = [];
+    public static Dictionary<NetworkedPlayerInfo, CustomRoleType> QueuedRoles = [];
+    public static Dictionary<NetworkedPlayerInfo, List<CustomRoleType>> QueuedAddons = [];
 
     public static IEnumerator CoAssignRoles()
     {
@@ -98,7 +98,10 @@ public static class CustomRoleManager
         var availableRoles = GatherRoles(false);
         var availableAddons = GatherRoles(true);
 
-        List<PlayerControl> players = Main.AllPlayerControls.Shuffle().ToList();
+        List<PlayerControl> players =
+        [
+            .. Main.AllPlayerControls.Shuffle().OrderBy(pc => QueuedRoles.ContainsKey(pc.Data) || QueuedAddons.ContainsKey(pc.Data) ? 0 : 1),
+        ];
 
         Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];
 
@@ -188,7 +191,7 @@ public static class CustomRoleManager
 
     private static RoleAssignmentData? SelectRole(ref List<RoleAssignmentData> availableRoles, ref int ImposterAmount, ref int BenignNeutralAmount, ref int KillingNeutralAmount)
     {
-        List<CustomRoles> validRoleTypes = [];
+        List<CustomRoleType> validRoleTypes = [];
         RoleAssignmentData? lowestRngRole = null;
         int lowestRngValue = int.MaxValue;
 
@@ -264,19 +267,19 @@ public static class CustomRoleManager
         if (ImposterAmount > 0)
         {
             ImposterAmount--;
-            return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoles.Impostor), Amount = 1, };
+            return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoleType.Impostor), Amount = 1, };
         }
 
-        return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoles.Crewmate), Amount = 1 };
+        return new RoleAssignmentData { _role = Utils.GetCustomRoleClass(CustomRoleType.Crewmate), Amount = 1 };
     }
 
     private static List<RoleAssignmentData> AssignAddons(ref List<RoleAssignmentData> availableAddons, RoleAssignmentData? assignedRole, PlayerControl player)
     {
-        List<CustomRoles> selectedAddons = [];
+        List<CustomRoleType> selectedAddons = [];
         int addonAmount = GetRNGAmount(TBRGameSettings.MinimumAddonAmount.GetInt(), TBRGameSettings.MaximumAddonAmount.GetInt());
         int safeAttempts = 0;
 
-        List<CustomRoles> validAddons = availableAddons
+        List<CustomRoleType> validAddons = availableAddons
             .Where(addonData => addonData.Amount > 0
                 && addonData._role is CustomAddonBehavior addon
                 && addon.AssignmentCondition(assignedRole._role)
@@ -343,7 +346,7 @@ public static class CustomRoleManager
         }
     }
 
-    public static Dictionary<NetworkedPlayerInfo, CustomRoles> QueuedGhostRoles = [];
+    public static Dictionary<NetworkedPlayerInfo, CustomRoleType> QueuedGhostRoles = [];
     public static List<RoleAssignmentData> AvailableGhostRoles = [];
 
     public static void GatherAvailableGhostRolesOnStart()
@@ -405,7 +408,7 @@ public static class CustomRoleManager
         {
             foreach (var roleData in AvailableGhostRoles)
             {
-                if (roleData.Amount <= 0 
+                if (roleData.Amount <= 0
                     || roleData.RoleTeam != CustomRoleTeam.Neutral
                     && roleData.RoleTeam != player.Role().RoleTeam) continue;
                 int rng = IRandom.Instance.Next(100);
@@ -626,7 +629,7 @@ public static class CustomRoleManager
         }
     }
 
-    public static CustomRoleBehavior? SetCustomRole(PlayerControl player, CustomRoles role, bool isAssigned = false)
+    public static CustomRoleBehavior? SetCustomRole(PlayerControl player, CustomRoleType role, bool isAssigned = false)
     {
         if (player == null || player?.ExtendedData()?.RoleInfo?.Role.RoleType == role) return null;
 
@@ -640,7 +643,7 @@ public static class CustomRoleManager
         return newRole;
     }
 
-    public static CustomRoleBehavior? AddAddon(PlayerControl player, CustomRoles role, bool isAssigned = false)
+    public static CustomRoleBehavior? AddAddon(PlayerControl player, CustomRoleType role, bool isAssigned = false)
     {
         if (player == null) return null;
 
@@ -666,7 +669,7 @@ public static class CustomRoleManager
         return null;
     }
 
-    public static void RemoveAddon(PlayerControl player, CustomRoles role)
+    public static void RemoveAddon(PlayerControl player, CustomRoleType role)
     {
         if (player == null) return;
 
@@ -698,7 +701,7 @@ public static class CustomRoleManager
     public static int RNG(int input) => IRandom.Instance.Next(input);
 }
 
-public enum CustomRoles
+public enum CustomRoleType
 {
     // Crewmates
     Crewmate,

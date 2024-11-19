@@ -15,7 +15,7 @@ public class MinerRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 4;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Miner;
+    public override CustomRoleType RoleType => CustomRoleType.Miner;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override bool VentReliantRole => true;

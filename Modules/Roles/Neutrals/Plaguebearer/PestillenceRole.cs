@@ -13,7 +13,7 @@ public class PestillenceRole : PlaguebearerRole
     public override bool CanBeAssigned => false;
     public override string RoleColor => "#4F631E";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Pestillence;
+    public override CustomRoleType RoleType => CustomRoleType.Pestillence;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Chaos;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;

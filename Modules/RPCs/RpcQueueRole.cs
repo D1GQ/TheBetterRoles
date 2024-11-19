@@ -3,7 +3,6 @@ using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Commands;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.RPCs;
 
@@ -13,9 +12,9 @@ public class RpcQueueRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcQueue
     public override SendOption SendOption => SendOption.Reliable;
     public override RpcLocalHandling LocalHandling => RpcLocalHandling.None;
 
-    public readonly struct Data(CustomRoles role)
+    public readonly struct Data(CustomRoleType role)
     {
-        public readonly CustomRoles Role = role;
+        public readonly CustomRoleType Role = role;
     }
 
     public override void Write(MessageWriter writer, Data data)
@@ -25,7 +24,7 @@ public class RpcQueueRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcQueue
 
     public override Data Read(MessageReader reader)
     {
-        return new Data((CustomRoles)reader.ReadPackedInt32());
+        return new Data((CustomRoleType)reader.ReadPackedInt32());
     }
 
     public override void Handle(PlayerControl player, Data data)

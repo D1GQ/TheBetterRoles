@@ -19,7 +19,7 @@ public class ArsonistRole : CustomRoleBehavior
     public override int RoleId => 32;
     public override string RoleColor => "#ff8900";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Arsonist;
+    public override CustomRoleType RoleType => CustomRoleType.Arsonist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;

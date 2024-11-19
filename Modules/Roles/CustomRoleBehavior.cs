@@ -194,7 +194,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// Get the type of the role. This is an abstract method that returns the enum representing the role type.
     /// </summary>
-    public abstract CustomRoles RoleType { get; }
+    public abstract CustomRoleType RoleType { get; }
 
     /// <summary>
     /// Set the role's team. This determines whether the role is part of the Crewmates, Impostors, or Neutrals.
@@ -442,6 +442,7 @@ public abstract class CustomRoleBehavior
             {
                 player.ExtendedData().RoleInfo.Role = this;
                 player.ExtendedData().RoleInfo.RoleType = RoleType;
+                player.ExtendedData().RoleInfo.RoleHistory.Add(RoleType);
                 if (isAssigned) OnRoleAssigned();
                 SetUpRole();
             }
@@ -904,25 +905,25 @@ public abstract class CustomRoleBehavior
     /// Check for a player guessing another player's role.
     /// This method can handle special conditions or roles.
     /// </summary>
-    public virtual bool CheckGuessOther(PlayerControl guesser, PlayerControl target, CustomRoles role) => true;
+    public virtual bool CheckGuessOther(PlayerControl guesser, PlayerControl target, CustomRoleType role) => true;
 
     /// <summary>
     /// Check for the local player attempting to guess another player's role.
     /// If the guess is invalid, the action will be canceled.
     /// </summary>
-    public virtual bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoles role) => true;
+    public virtual bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoleType role) => true;
 
     /// <summary>
     /// Executes when a player has made a guess about another player's role.
     /// Custom logic for handling the result of a guess can be added here.
     /// </summary>
-    public virtual void OnGuess(PlayerControl guesser, PlayerControl target, CustomRoles role) { }
+    public virtual void OnGuess(PlayerControl guesser, PlayerControl target, CustomRoleType role) { }
 
     /// <summary>
     /// Executes when a player has made a guess about another player's role using a method intended for handling special cases or conditions.
     /// Custom logic for processing the result of such guesses can be added here.
     /// </summary>
-    public virtual void OnGuessOther(PlayerControl guesser, PlayerControl target, CustomRoles role) { }
+    public virtual void OnGuessOther(PlayerControl guesser, PlayerControl target, CustomRoleType role) { }
 
     /// <summary>
     /// Check for the ability to murder another player. Returns false if the murder should be prevented.

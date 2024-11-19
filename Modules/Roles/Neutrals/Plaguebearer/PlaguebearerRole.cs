@@ -15,7 +15,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     public override int RoleId => 17;
     public override string RoleColor => "#97BD3D";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Plaguebearer;
+    public override CustomRoleType RoleType => CustomRoleType.Plaguebearer;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Chaos;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
@@ -122,7 +122,7 @@ public class PlaguebearerRole : CustomRoleBehavior
     {
         if (Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(infected.Contains))
         {
-            var role = CustomRoleManager.SetCustomRole(_player, CustomRoles.Pestillence);
+            var role = CustomRoleManager.SetCustomRole(_player, CustomRoleType.Pestillence);
             if (role.TryCast<PestillenceRole>(out var Pestillence))
             {
                 Pestillence.WasTransformed = true;

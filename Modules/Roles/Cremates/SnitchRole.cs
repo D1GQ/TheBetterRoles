@@ -15,7 +15,7 @@ public class SnitchRole : CustomRoleBehavior
     public override bool TaskReliantRole => true;
     public override string RoleColor => "#F3CE35";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Snitch;
+    public override CustomRoleType RoleType => CustomRoleType.Snitch;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Information;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
@@ -99,7 +99,7 @@ public class SnitchRole : CustomRoleBehavior
         arrows.Add(arrow);
     }
 
-    public override bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoles role)
+    public override bool CheckGuess(PlayerControl guesser, PlayerControl target, CustomRoleType role)
     {
         if (target == _player)
         {

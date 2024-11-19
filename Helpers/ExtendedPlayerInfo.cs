@@ -1,12 +1,10 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using Epic.OnlineServices.Presence;
 using HarmonyLib;
 using InnerNet;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
-using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using UnityEngine;
 
@@ -85,8 +83,9 @@ public class ExtendedRoleInfo
 {
     public bool RoleAssigned => AllRoles.Any();
     public CustomRoleBehavior? Role { get; set; }
-    public CustomRoles RoleTypeWhenAlive { get; set; }
-    public CustomRoles RoleType { get; set; }
+    public List<CustomRoleType> RoleHistory { get; set; } = [];
+    public CustomRoleType RoleTypeWhenAlive { get; set; }
+    public CustomRoleType RoleType { get; set; }
     public List<CustomAddonBehavior>? Addons { get; set; } = [];
     public int OverrideCommonTasks { get; set; } = -1;
     public int OverrideShortTasks { get; set; } = -1;
@@ -126,11 +125,11 @@ public static class PlayerDataExtension
                 newExtendedData.MyUserData = UserData.GetPlayerUserData(data);
                 newExtendedData._PlayerId = data.PlayerId;
                 newExtendedData._Data = data;
-                var newRole = CustomRoleManager.CreateNewRoleInstance(role => role.RoleType == CustomRoles.Crewmate);
+                var newRole = CustomRoleManager.CreateNewRoleInstance(role => role.RoleType == CustomRoleType.Crewmate);
                 newExtendedData.RoleInfo = new()
                 {
                     Role = newRole,
-                    RoleType = CustomRoles.Crewmate
+                    RoleType = CustomRoleType.Crewmate
                 };
                 newExtendedData.DirtyName = true;
                 CoroutineManager.Instance.StartCoroutine(CoSetLaterData(newExtendedData));

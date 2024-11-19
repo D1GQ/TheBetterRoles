@@ -16,7 +16,7 @@ public class JanitorRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 3;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Janitor;
+    public override CustomRoleType RoleType => CustomRoleType.Janitor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;

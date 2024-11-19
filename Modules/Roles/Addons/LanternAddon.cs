@@ -15,7 +15,7 @@ public class LanternAddon : CustomAddonBehavior
     public override int RoleId => 26;
     public override string RoleColor => "#c7c71d";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Lantern;
+    public override CustomRoleType RoleType => CustomRoleType.Lantern;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HarmfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

@@ -15,7 +15,7 @@ public class UndertakerRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 7;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Undertaker;
+    public override CustomRoleType RoleType => CustomRoleType.Undertaker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;

@@ -79,7 +79,7 @@ public class Main : BasePlugin
                 .Append(string.Join(".", Enum.GetNames(typeof(TargetType))))
                 .Append(string.Join(".", Enum.GetNames(typeof(ReactorRPCs))))
                 .Append(string.Join(".", Enum.GetNames(typeof(CustomRPC))))
-                .Append(string.Join(".", Enum.GetNames(typeof(CustomRoles))))
+                .Append(string.Join(".", Enum.GetNames(typeof(CustomRoleType))))
                 .ToString();
 
             return getHash(versionData);

@@ -17,7 +17,7 @@ public class SwapperRole : CustomRoleBehavior
     public override int RoleId => 14;
     public override string RoleColor => "#52c345";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Swapper;
+    public override CustomRoleType RoleType => CustomRoleType.Swapper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

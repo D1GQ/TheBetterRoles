@@ -12,7 +12,7 @@ public class GuessManager : MonoBehaviour
 {
     public static GuessManager? Instance;
     public ShapeshifterMinigame? Minigame { get; set; }
-    public Action<CustomRoles, NetworkedPlayerInfo?> GuessAction = GuessPlayer;
+    public Action<CustomRoleType, NetworkedPlayerInfo?> GuessAction = GuessPlayer;
     public PassiveButton? ButtonTemplate;
     private bool shouldSetButtons = true;
 
@@ -144,8 +144,8 @@ public class GuessManager : MonoBehaviour
             if (!role.CanBeAssigned) continue;
 
             if (role.RoleType is
-                CustomRoles.Crewmate
-                or CustomRoles.Impostor)
+                CustomRoleType.Crewmate
+                or CustomRoleType.Impostor)
             {
                 goto skip;
             }
@@ -204,7 +204,7 @@ public class GuessManager : MonoBehaviour
         }
     }
 
-    private static void GuessPlayer(CustomRoles role, NetworkedPlayerInfo? targetData)
+    private static void GuessPlayer(CustomRoleType role, NetworkedPlayerInfo? targetData)
     {
         Instance.shouldSetButtons = false;
         var player = targetData.Object;

@@ -13,7 +13,7 @@ public class NoiseMakerAddon : CustomAddonBehavior
     public override int RoleId => 27;
     public override string RoleColor => "#920086";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.NoiseMaker;
+    public override CustomRoleType RoleType => CustomRoleType.NoiseMaker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

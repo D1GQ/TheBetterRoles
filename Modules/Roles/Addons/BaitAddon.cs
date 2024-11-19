@@ -14,7 +14,7 @@ public class BaitAddon : CustomAddonBehavior
     public override int RoleId => 23;
     public override string RoleColor => "#00BDA4";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Bait;
+    public override CustomRoleType RoleType => CustomRoleType.Bait;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.GeneralAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

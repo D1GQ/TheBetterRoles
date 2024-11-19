@@ -12,7 +12,7 @@ public class SwiftAddon : CustomAddonBehavior
     public override int RoleId => 28;
     public override string RoleColor => "#8DECFF";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Swift;
+    public override CustomRoleType RoleType => CustomRoleType.Swift;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
     public override TBROptionTab? SettingsTab => BetterTabs.Addons;

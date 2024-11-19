@@ -1,5 +1,4 @@
-﻿using Reactor.Networking.Attributes;
-using Reactor.Networking.Rpc;
+﻿using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
@@ -52,7 +51,7 @@ public class SetRoleCommand : BaseCommand
         }
     }
 
-    public static void RequestQueueRole(PlayerControl player, CustomRoles roleType)
+    public static void RequestQueueRole(PlayerControl player, CustomRoleType roleType)
     {
         var role = Utils.GetCustomRoleClass(roleType);
         if (player.ExtendedData().MyUserData.HasAll() && Main.MyData.IsVerified(player) && GameState.IsHost)
@@ -69,7 +68,7 @@ public class SetRoleCommand : BaseCommand
     private static bool NeedsSpecialAttention(UserData data) =>
     (!data.HasAll() && data.IsSponsorTier3()) || !data.IsVerified();
 
-    private static void QueueRoleAsHost(PlayerControl player, CustomRoles roleType)
+    private static void QueueRoleAsHost(PlayerControl player, CustomRoleType roleType)
     {
         var data = player.Data;
         var role = Utils.GetCustomRoleClass(roleType);
@@ -103,7 +102,7 @@ public class SetRoleCommand : BaseCommand
             }
         }
 
-        if (!isAddon) 
+        if (!isAddon)
         {
             if (!isGhostRole)
             {

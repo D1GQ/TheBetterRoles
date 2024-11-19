@@ -17,7 +17,7 @@ public class SwooperRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 6;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Swooper;
+    public override CustomRoleType RoleType => CustomRoleType.Swooper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
@@ -129,7 +129,7 @@ public class SwooperRole : CustomRoleBehavior
         [HarmonyPrefix]
         public static bool SetHatAndVisorAlpha_Prefix(PlayerControl __instance)
         {
-            if (__instance.Is(CustomRoles.Swooper) && __instance.IsAlive()) return false;
+            if (__instance.Is(CustomRoleType.Swooper) && __instance.IsAlive()) return false;
 
             return true;
         }

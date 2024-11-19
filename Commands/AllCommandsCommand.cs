@@ -1,6 +1,4 @@
-﻿using TheBetterRoles.Modules;
-
-namespace TheBetterRoles.Commands;
+﻿namespace TheBetterRoles.Commands;
 
 public class AllCommandsCommand : BaseCommand
 {

@@ -19,7 +19,7 @@ public class GlitchRole : CustomRoleBehavior
     public override bool CanVent => false;
     public override string RoleColor => "#32ff00";
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Glitch;
+    public override CustomRoleType RoleType => CustomRoleType.Glitch;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;

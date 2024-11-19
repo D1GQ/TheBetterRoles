@@ -214,7 +214,7 @@ public class CustomGameManager
             List<NetworkedPlayerInfo> players = playerData.Where(CheckWinner).ToList();
             var anyFlag = players.Any();
             NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
-            var role = first?.ExtendedData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
+            var role = first?.ExtendedData()?.RoleInfo?.RoleType ?? CustomRoleType.Crewmate;
             var team = winTeam;
             Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
                 : first.ExtendedData().RoleInfo.Role.RoleColor32;
@@ -422,18 +422,19 @@ public class CustomGameManager
 
                 foreach (var data in playersData)
                 {
-                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.ExtendedData().RealName}</color>";
-                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.ExtendedData().RoleInfo.Role.RoleTeam)}>{text}</color>";
+                    var extendedData = data.ExtendedData();
+                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{extendedData.RealName}</color>";
+                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(extendedData.RoleInfo.Role.RoleTeam)}>{text}</color>";
 
-                    var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.ExtendedData().RoleInfo.Role.RoleType)})";
+                    var roleInfo = $"({string.Join("<#A3A3A3> > </color>", extendedData.RoleInfo.RoleHistory.Select(r => Utils.GetCustomRoleNameAndColor(r)))})";
 
-                    if (data.ExtendedData().RoleInfo.Role.HasTask)
+                    if (extendedData.RoleInfo.Role.HasTask || extendedData.RoleInfo.Role.HasSelfTask)
                     {
                         roleInfo += $" → {playerTheme($"{Translator.GetString("Tasks")}: {data.Tasks.ToArray().Where(task => task.Complete).Count()}/{data.Tasks.Count}")}";
                     }
-                    if (data.ExtendedData().RoleInfo.Role.CanKill)
+                    if (extendedData.RoleInfo.Role.CanKill)
                     {
-                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {data.ExtendedData().RoleInfo.Kills}")}";
+                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {extendedData.RoleInfo.Kills}")}";
                     }
 
                     string deathReason;
@@ -447,7 +448,7 @@ public class CustomGameManager
                     }
                     else if (data.IsDead)
                     {
-                        deathReason = $"『<color=#ff0600><b>{Translator.GetString("Dead")}</b></color>』";
+                        deathReason = $"『<color=#ff0600><b>{Utils.FormatDeathReason(extendedData.DeathReason, extendedData.DeathReasonColor)}</b></color>』";
                     }
                     else
                     {

@@ -12,7 +12,7 @@ public class CrewmateRoleTBR : CustomRoleBehavior
     public override int RoleId => 1;
     public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Crewmate;
+    public override CustomRoleType RoleType => CustomRoleType.Crewmate;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Vanilla;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;

@@ -14,7 +14,7 @@ public class GrenadierRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 36;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Grenadier;
+    public override CustomRoleType RoleType => CustomRoleType.Grenadier;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;

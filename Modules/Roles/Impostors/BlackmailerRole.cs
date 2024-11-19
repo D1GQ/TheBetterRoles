@@ -15,7 +15,7 @@ public class BlackmailerRole : CustomRoleBehavior
     // Role Info
     public override int RoleId => 33;
     public override CustomRoleBehavior Role => this;
-    public override CustomRoles RoleType => CustomRoles.Blackmailer;
+    public override CustomRoleType RoleType => CustomRoleType.Blackmailer;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
