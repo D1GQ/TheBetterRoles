@@ -51,6 +51,7 @@ public class MoleRole : CustomRoleBehavior
         DigButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
         DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
         && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
+        tempVentId = GetNoneVentId();
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -115,24 +116,27 @@ public class MoleRole : CustomRoleBehavior
         }
     }
 
-    private void SpawnVent(Vector2 Pos, int ventId)
+    private void SpawnVent(Vector2 position, int ventId)
     {
         if (Vents.Count >= MaximumVents.GetInt())
         {
-            RemoveVent(Vents.First());
+            var firstVent = Vents.First();
+            firstVent.Right.Left = null;
+            RemoveVent(firstVent);
         }
 
         var ventPrefab = ShipStatus.Instance.AllVents.First();
         var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
         vent.name = "Vent(Mole)";
 
-        // Set usable for local player
-        vent.SetEnabled(_player.IsLocalPlayer());
-        float Alpha = _player.IsLocalPlayer() ? 1 : 0;
+        bool isLocalPlayer = _player.IsLocalPlayer();
+        float alpha = isLocalPlayer ? 1f : 0f;
+        vent.SetEnabled(isLocalPlayer);
 
         vent.EnterVentAnim = null;
         vent.ExitVentAnim = null;
-        if (vent.myAnim != null) vent.myAnim.DestroyMono();
+        vent.myAnim?.DestroyMono();
+
         var animator = vent.GetComponentInChildren<Animator>();
         if (animator != null)
         {
@@ -142,26 +146,25 @@ public class MoleRole : CustomRoleBehavior
         var spriteObj = vent.transform.Find("Sprite");
         if (spriteObj != null)
         {
-            spriteObj.transform.localPosition = new Vector3(0f, 0f, 0f);
+            spriteObj.transform.localPosition = Vector3.zero;
             spriteObj.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
         }
 
-        vent.myRend.color = new Color(1f, 0.4f, 0.4f, Alpha);
+        vent.myRend.color = new Color(1f, 0.4f, 0.4f, alpha);
         _ = new LateTask(() =>
         {
             vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
         }, 0.00005f, shouldLog: false);
 
         vent.Id = ventId;
-        var pos = Pos;
-        float z = _player.gameObject.transform.position.z + 0.0005f;
-        vent.transform.position = new Vector3(pos.x, pos.y, z);
+        float zPosition = _player.gameObject.transform.position.z + 0.0005f;
+        vent.transform.position = new Vector3(position.x, position.y, zPosition);
 
         if (Vents.Count > 0)
         {
-            var leftVent = Vents[^1];
-            vent.Left = leftVent;
-            leftVent.Right = vent;
+            var lastVent = Vents[^1];
+            vent.Left = lastVent;
+            lastVent.Right = vent;
         }
         else
         {
@@ -170,8 +173,9 @@ public class MoleRole : CustomRoleBehavior
 
         if (Vents.Count > 1)
         {
-            Vents.First().Left = vent;
-            vent.Right = Vents.First();
+            var firstVent = Vents.First();
+            firstVent.Left = vent;
+            vent.Right = firstVent;
         }
         else
         {
@@ -182,12 +186,22 @@ public class MoleRole : CustomRoleBehavior
         var allVents = ShipStatus.Instance.AllVents.ToList();
         allVents.Add(vent);
         ShipStatus.Instance.AllVents = allVents.ToArray();
-
         Vents.Add(vent);
     }
 
     private int tempVentId;
     private int GetRoleVentId() => 100 * (_player.PlayerId + 1);
+    private int GetNoneVentId()
+    {
+        var existingIds = Main.AllVents.Select(v => v.Id).ToHashSet();
+        int count = 0;
+        while (existingIds.Contains(GetRoleVentId() + count + 1))
+        {
+            count++;
+        }
+
+        return count;
+    }
 
     // Fix meeting breaking
     private void RemoveVent(Vent vent, bool shrink = true)
