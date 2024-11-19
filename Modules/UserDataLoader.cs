@@ -33,9 +33,14 @@ public class UserDataLoader : MonoBehaviour
     {
         isRunning = true;
 
+        int count = 0;
+        float hang = 0;
         while (!Utils.IsInternetAvailable())
         {
-            yield return new WaitForSeconds(5f);
+            count++;
+            if (count >= 17) yield break;
+            if (hang < 30f) hang += 2.5f;
+            yield return new WaitForSeconds(hang);
         }
 
         Logger.Log($"Downloading UserData items");
@@ -86,9 +91,14 @@ public class UserDataLoader : MonoBehaviour
     {
         isRunning = true;
 
+        int count = 0;
+        float hang = 0;
         while (!Utils.IsInternetAvailable())
         {
-            yield return new WaitForSeconds(5f);
+            count++;
+            if (count >= 17) yield break;
+            if (hang < 30f) hang += 2.5f;
+            yield return new WaitForSeconds(hang);
         }
 
         Logger.Log($"Downloading BacData items");
