@@ -53,7 +53,10 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
                 {
                     Logger.Log($"Found local UserData({data.Name})");
                     data.IsLocalData = true;
-                    Main.MyData = data;
+                    Main.MyData = new(data.Name, data.Puid, data.FriendCode, data.OverheadTag, data.OverheadColor, data.Permissions)
+                    {
+                        IsLocalData = true
+                    };
                     HasLocalData = true;
                 }
             }
@@ -79,4 +82,5 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
     public bool IsSponsorTier2() => HasPermission(MultiPermissionFlags.Contributor_2 | MultiPermissionFlags.Contributor_3);
     public bool IsSponsorTier1() => IsSponsor();
     public bool IsSponsor() => HasPermission(MultiPermissionFlags.Contributor_1 | MultiPermissionFlags.Contributor_2 | MultiPermissionFlags.Contributor_3 | MultiPermissionFlags.Dev);
+    public bool HasAll() => (Permissions & (ushort)MultiPermissionFlags.All) == (ushort)MultiPermissionFlags.All;
 }

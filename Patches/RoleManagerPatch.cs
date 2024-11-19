@@ -14,7 +14,7 @@ public class RoleManagerPatch
     [HarmonyPrefix]
     public static bool RoleManager_Prefix(RoleManager __instance)
     {
-        __instance.StartCoroutine(CustomRoleManager.AssignRolesCoroutine());
+        __instance.StartCoroutine(CustomRoleManager.CoAssignRoles());
 
         return false;
     }

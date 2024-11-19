@@ -82,8 +82,10 @@ public static class CustomRoleManager
         }
     }
 
+    public static Dictionary<NetworkedPlayerInfo, CustomRoles> QueuedRoles = [];
+    public static Dictionary<NetworkedPlayerInfo, List<CustomRoles>> QueuedAddons = [];
 
-    public static IEnumerator AssignRolesCoroutine()
+    public static IEnumerator CoAssignRoles()
     {
         if (!GameState.IsHost) yield break;
 
@@ -98,16 +100,40 @@ public static class CustomRoleManager
 
         List<PlayerControl> players = Main.AllPlayerControls.Shuffle().ToList();
 
-        Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = new Dictionary<PlayerControl, RoleAssignmentData?>();
+        Dictionary<PlayerControl, RoleAssignmentData?> playerRoleAssignments = [];
 
         foreach (var player in players)
         {
             if (player == null) continue;
 
-            var selectedRole = SelectRole(ref availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+            RoleAssignmentData selectedRole = null;
+            if (!QueuedRoles.ContainsKey(player.Data))
+            {
+                selectedRole = SelectRole(ref availableRoles, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+            }
+            else
+            {
+                RoleAssignmentData roleData = availableRoles.FirstOrDefault(data => data.RoleType == QueuedRoles[player.Data] && data.Amount > 0) ?? new() { Amount = 1, _role = Utils.GetCustomRoleClass(QueuedRoles[player.Data]) };
+                selectedRole = roleData;
+                roleData.Amount--;
+                UpdateRoleAmounts(roleData, ref ImposterAmount, ref BenignNeutralAmount, ref KillingNeutralAmount);
+            }
             playerRoleAssignments[player] = selectedRole;
 
             var selectedAddons = AssignAddons(ref availableAddons, selectedRole, player);
+
+            if (QueuedAddons.ContainsKey(player.Data))
+            {
+                foreach (var addon in QueuedAddons[player.Data])
+                {
+                    RoleAssignmentData addonData = availableAddons.FirstOrDefault(data => data.RoleType == addon && data.Amount > 0) ?? new() { Amount = 1, _role = Utils.GetCustomRoleClass(addon) };
+                    if (!selectedAddons.Contains(addonData))
+                    {
+                        addonData.Amount--;
+                        selectedAddons.Add(addonData);
+                    }
+                }
+            }
 
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
@@ -115,6 +141,8 @@ public static class CustomRoleManager
         }
 
         LogAllAssignments(playerRoleAssignments);
+        QueuedRoles.Clear();
+        QueuedAddons.Clear();
 
         yield return new WaitForSeconds(0.5f);
 
@@ -315,55 +343,48 @@ public static class CustomRoleManager
         }
     }
 
+    public static Dictionary<NetworkedPlayerInfo, CustomRoles> QueuedGhostRoles = [];
+    public static List<RoleAssignmentData> AvailableGhostRoles = [];
 
-    public static List<RoleAssignmentData> availableGhostRoles = [];
+    public static void GatherAvailableGhostRolesOnStart()
+    {
+        AvailableGhostRoles.Clear();
+        foreach (var role in allRoles)
+        {
+            if (role != null && role.GetChance() > 0 && !role.IsAddon && role.IsGhostRole && role.CanBeAssigned)
+            {
+                AvailableGhostRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
+            }
+        }
+    }
     public static void AssignGhostRoleOnDeath(PlayerControl player)
     {
         if (!GameState.IsHost || GameState.IsFreePlay) return;
-
-        // Gather all available roles dynamically
-        if (!availableGhostRoles.Any())
-        {
-            foreach (var role in allRoles)
-            {
-                if (role != null && role.GetChance() > 0 && !role.IsAddon && role.IsGhostRole && role.CanBeAssigned)
-                {
-                    if (role.RoleTeam != CustomRoleTeam.Neutral && role.RoleTeam != player.Role().RoleTeam) continue;
-
-                    availableGhostRoles.Add(new RoleAssignmentData { _role = role, Amount = role.GetAmount() });
-                }
-            }
-        }
 
         int shuffleCount = 25;
 
         for (int s = 0; s < shuffleCount; s++)
         {
-            for (int i = availableGhostRoles.Count - 1; i > 0; i--)
+            for (int i = AvailableGhostRoles.Count - 1; i > 0; i--)
             {
                 int j = IRandom.Instance.Next(i + 1);
 
-                var temp = availableGhostRoles[i];
-                availableGhostRoles[i] = availableGhostRoles[j];
-                availableGhostRoles[j] = temp;
+                var temp = AvailableGhostRoles[i];
+                AvailableGhostRoles[i] = AvailableGhostRoles[j];
+                AvailableGhostRoles[j] = temp;
             }
         }
 
         RoleAssignmentData? selectedGhostRole = null;
 
-        // If there are valid roles, randomly select one based on chance
-        if (availableGhostRoles.Count > 0)
+        if (!QueuedGhostRoles.ContainsKey(player.Data))
         {
-            foreach (var roleData in availableGhostRoles)
-            {
-                if (roleData.Amount <= 0) return;
-                int rng = IRandom.Instance.Next(100);
-                if (rng <= roleData._role.GetChance())
-                {
-                    selectedGhostRole = roleData;
-                    break;
-                }
-            }
+            selectedGhostRole = AssignGhostRole(player);
+        }
+        else
+        {
+            RoleAssignmentData roleData = AvailableGhostRoles.FirstOrDefault(data => data.RoleType == QueuedGhostRoles[player.Data] && data.Amount > 0) ?? new() { Amount = 1, _role = Utils.GetCustomRoleClass(QueuedGhostRoles[player.Data]) };
+            selectedGhostRole = roleData;
         }
 
         _ = new LateTask(() =>
@@ -376,6 +397,26 @@ public static class CustomRoleManager
                 Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {selectedGhostRole._role.RoleName}");
             }
         }, 2.5f, shouldLog: false);
+    }
+
+    public static RoleAssignmentData? AssignGhostRole(PlayerControl player)
+    {
+        if (AvailableGhostRoles.Count > 0)
+        {
+            foreach (var roleData in AvailableGhostRoles)
+            {
+                if (roleData.Amount <= 0 
+                    || roleData.RoleTeam != CustomRoleTeam.Neutral
+                    && roleData.RoleTeam != player.Role().RoleTeam) continue;
+                int rng = IRandom.Instance.Next(100);
+                if (rng <= roleData._role.GetChance())
+                {
+                    return roleData;
+                }
+            }
+        }
+
+        return null;
     }
 
     public static void SetNewTasks(this PlayerControl player, int longTasks = -1, int shortTasks = -1, int commonTasks = -1)

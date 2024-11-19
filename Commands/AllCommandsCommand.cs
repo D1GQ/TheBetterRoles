@@ -9,12 +9,9 @@ public class AllCommandsCommand : BaseCommand
 
     public override void Run()
     {
-        BaseCommand?[] allNormalCommands = allCommands.Where(cmd => cmd.Type == CommandType.Normal).ToArray();
-        BaseCommand?[] allSponsorCommands = allCommands.Where(cmd => cmd.Type == CommandType.Sponsor
-                && (Main.MyData.IsSponsorTier1() && cmd.RequiredSponsorTier >= 1
-                || Main.MyData.IsSponsorTier2() && cmd.RequiredSponsorTier >= 2
-                || Main.MyData.IsSponsorTier3() && cmd.RequiredSponsorTier >= 3)).ToArray();
-        BaseCommand?[] allDebugCommands = allCommands.Where(cmd => cmd.Type == CommandType.Debug).ToArray();
+        BaseCommand?[] allNormalCommands = allCommands.Where(cmd => cmd.Type == CommandType.Normal && cmd.ShowCommand()).ToArray();
+        BaseCommand?[] allSponsorCommands = allCommands.Where(cmd => cmd.Type == CommandType.Sponsor && cmd.ShowCommand()).ToArray();
+        BaseCommand?[] allDebugCommands = allCommands.Where(cmd => cmd.Type == CommandType.Debug && cmd.ShowCommand()).ToArray();
         string list;
         var open = "<color=#858585>┌──────── </color>";
         var mid = "<color=#858585>├ </color>";

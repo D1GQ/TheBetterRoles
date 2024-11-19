@@ -513,7 +513,7 @@ public class CustomGameManager
         }
 
         GameHasEnded = false;
-        CustomRoleManager.availableGhostRoles.Clear();
+        CustomRoleManager.GatherAvailableGhostRolesOnStart();
         CustomRoleBehavior.SubTeam.Clear();
         foreach (var player in Main.AllPlayerControls)
         {
@@ -577,6 +577,8 @@ public class CustomGameManager
                 GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
             }, 1f, shouldLog: false);
         }
+
+        CustomRoleManager.QueuedGhostRoles.Clear();
     }
 
     public static void CheckWinConditions()

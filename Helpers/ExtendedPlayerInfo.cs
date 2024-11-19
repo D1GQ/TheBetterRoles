@@ -4,7 +4,6 @@ using HarmonyLib;
 using InnerNet;
 using System.Collections;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Item;
 using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;

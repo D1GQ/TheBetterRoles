@@ -4,6 +4,7 @@ using HarmonyLib;
 using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
+using TheBetterRoles.Commands;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
@@ -40,10 +41,12 @@ public enum ReactorRPCs : uint
     DirtyRole,
 
     // Sync
+    AddChatPrivate,
     Chat,
     ResetAbilityState,
     PlayIntro,
     SetRole,
+    QueueRole,
     EndGame,
     ReportBody,
     StartMeeting,
