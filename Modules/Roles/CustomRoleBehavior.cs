@@ -517,20 +517,23 @@ public abstract class CustomRoleBehavior
             SetUpVentButton();
         }
 
-        if (CanCallMeetingOptionItem?.GetBool() != false)
+        if (_player.IsLocalPlayer())
         {
-            if (ShipStatus.Instance != null)
+            if (CanCallMeetingOptionItem?.GetBool() != false)
             {
-                ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatusPatch.CatchedMeetingButtonSprite;
-                ShipStatus.Instance.EmergencyButton.enabled = true;
+                if (ShipStatus.Instance != null)
+                {
+                    ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatusPatch.CatchedMeetingButtonSprite;
+                    ShipStatus.Instance.EmergencyButton.enabled = true;
+                }
             }
-        }
-        else
-        {
-            if (ShipStatus.Instance != null)
+            else
             {
-                ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatus.Instance.BrokenEmergencyButton;
-                ShipStatus.Instance.EmergencyButton.enabled = false;
+                if (ShipStatus.Instance != null)
+                {
+                    ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatus.Instance.BrokenEmergencyButton;
+                    ShipStatus.Instance.EmergencyButton.enabled = false;
+                }
             }
         }
 

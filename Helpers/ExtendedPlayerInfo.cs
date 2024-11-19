@@ -1,11 +1,13 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using InnerNet;
+using Reactor.Networking.Rpc;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Roles;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles;
@@ -23,6 +25,7 @@ public enum DeathReasons
 public class ExtendedPlayerInfo : MonoBehaviour
 {
     // Mod Info
+    public bool IsDirty { get; set; }
     public UserData? MyUserData { get; set; } = UserData.AllUsers.First();
     public bool DirtyName { get; set; }
     public bool HasMod { get; set; }
@@ -65,6 +68,12 @@ public class ExtendedPlayerInfo : MonoBehaviour
 
     public void FixedUpdate()
     {
+        if (IsDirty)
+        {
+            Rpc<RpcDirtyPlayerInfo>.Instance.Send(PlayerControl.LocalPlayer, new(this));
+            IsDirty = false;
+        }
+
         var pc = _Data?.Object;
         if (pc != null)
         {
@@ -157,6 +166,9 @@ public static class PlayerDataExtension
     }
 
     public static void DirtyName(this PlayerControl player) => player.ExtendedData().DirtyName = true;
+    public static void DirtyName(this NetworkedPlayerInfo data) => data.ExtendedData().DirtyName = true;
+    public static void DirtyData(this PlayerControl player) => player.ExtendedData().IsDirty = true;
+    public static void DirtyData(this NetworkedPlayerInfo data) => data.ExtendedData().IsDirty = true;
 
     // Get ExtendedData from PlayerControl
     public static ExtendedPlayerInfo? ExtendedData(this PlayerControl player)

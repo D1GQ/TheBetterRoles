@@ -67,8 +67,8 @@ public class ChameleonRole : CustomRoleBehavior
         switch (id)
         {
             case 5:
-                InvisibilityButton?.SetDuration();
                 fadeOutCoroutine = CoroutineManager.Instance.StartCoroutine(CoFadeOut());
+                InvisibilityButton?.SetDuration();
                 break;
         }
     }

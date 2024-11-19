@@ -88,9 +88,10 @@ static class PlayerControlHelper
         player.SetDeathReason(DeathReasons.Exiled, Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate));
     }
 
-    public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor)
+    public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor, bool setDirty = false)
     {
         player.SetDeathReason(reason, Utils.HexToColor32(hexColor));
+        if (setDirty) player.DirtyData();
     }
 
     public static void SetDeathReason(this PlayerControl player, DeathReasons reason, Color color)

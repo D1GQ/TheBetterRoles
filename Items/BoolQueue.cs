@@ -14,6 +14,8 @@ public class BoolQueue
     private bool lastState;
     private bool valueChanged = false;
 
+    public void SetQueueCount(uint count) => queues = count;
+
     public uint GetQueueCount() => queues;
 
     public bool ValueChanged()

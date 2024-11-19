@@ -78,7 +78,7 @@ public class SheriffRole : CustomRoleBehavior
             if (_player.IsLocalPlayer())
             {
                 _player.SendRpcMurder(_player, true, MultiMurderFlags.spawnBody | MultiMurderFlags.playSound | MultiMurderFlags.showAnimation);
-                _player.SetDeathReason(DeathReasons.Misfire, RoleColor);
+                _player.SetDeathReason(DeathReasons.Misfire, RoleColor, true);
             }
         }
     }
