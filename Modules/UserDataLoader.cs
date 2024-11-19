@@ -2,6 +2,7 @@
 using Il2CppInterop.Runtime.Attributes;
 using System.Collections;
 using System.Text.Json;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -32,8 +33,7 @@ public class UserDataLoader : MonoBehaviour
     {
         isRunning = true;
 
-        while (!Application.internetReachability.Equals(NetworkReachability.ReachableViaLocalAreaNetwork) &&
-            !Application.internetReachability.Equals(NetworkReachability.ReachableViaCarrierDataNetwork))
+        while (!Utils.IsInternetAvailable())
         {
             yield return new WaitForSeconds(5f);
         }
@@ -86,8 +86,7 @@ public class UserDataLoader : MonoBehaviour
     {
         isRunning = true;
 
-        while (!Application.internetReachability.Equals(NetworkReachability.ReachableViaLocalAreaNetwork) &&
-            !Application.internetReachability.Equals(NetworkReachability.ReachableViaCarrierDataNetwork))
+        while (!Utils.IsInternetAvailable())
         {
             yield return new WaitForSeconds(5f);
         }

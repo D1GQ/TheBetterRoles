@@ -11,11 +11,35 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches;
 using TheBetterRoles.Roles;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace TheBetterRoles.Helpers;
 
 public static class Utils
 {
+    public static bool IsInternetAvailable()
+    {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+            return false;
+
+        UnityWebRequest www = null;
+        try
+        {
+            www = UnityWebRequest.Get("http://clients3.google.com/generate_204");
+            www.SendWebRequest();
+            while (!www.isDone) { }
+            return www.result == UnityWebRequest.Result.Success && www.responseCode == 204;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            www?.Dispose();
+        }
+    }
+
     // Get player by client id
     public static ClientData? ClientFromClientId(int clientId)
         => AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(cd => cd.Id == clientId);
