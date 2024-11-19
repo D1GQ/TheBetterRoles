@@ -10,11 +10,14 @@ namespace TheBetterRoles.Patches;
 [HarmonyPatch(typeof(ShipStatus))]
 class ShipStatusPatch
 {
+    public static Sprite? CatchedMeetingButtonSprite;
     private static GameObject? settingsComputer;
     [HarmonyPatch(nameof(ShipStatus.Start))]
     [HarmonyPostfix]
     public static void Start_Postfix(ShipStatus __instance)
     {
+        CatchedMeetingButtonSprite = __instance.EmergencyButton.Image.sprite;
+
         _ = new LateTask(() =>
         {
             GameOptionsManager.Instance?.Initialize();

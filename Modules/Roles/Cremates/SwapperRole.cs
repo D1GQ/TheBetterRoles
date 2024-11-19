@@ -21,6 +21,7 @@ public class SwapperRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override bool MeetingReliantRole => true;
 
     public TBROptionItem? AmountOfSwaps;
     public override TBROptionItem[]? OptionItems

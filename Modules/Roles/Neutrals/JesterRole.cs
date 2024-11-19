@@ -15,6 +15,7 @@ public class JesterRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Evil;
     public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override bool MeetingReliantRole => true;
     public override bool AlwaysShowVoteOutMsg => true;
     public override OptionAttributes? AdditionalVentOptions => new() { Cooldown = 10f, Duration = 5f, };
     public override TBROptionItem[]? OptionItems

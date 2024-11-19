@@ -253,6 +253,16 @@ public abstract class CustomRoleBehavior
     public virtual bool DefaultVentOption => IsImpostor;
 
     /// <summary>
+    /// The option that determines whether players can callm meetings while playing this role. 
+    /// </summary>
+    public virtual bool DefaultCanCallMeetingOption => false;
+
+    /// <summary>
+    /// The option that determines whether players can use call an emergency meeting.
+    /// </summary>
+    public TBROptionItem? CanCallMeetingOptionItem { get; set; }
+
+    /// <summary>
     /// The option that determines if the normal task amount is overrated.
     /// </summary>
     public TBROptionItem? OverrideTasksOptionItem { get; set; }
@@ -369,6 +379,12 @@ public abstract class CustomRoleBehavior
     /// This property can be overridden by specific roles that require guessing, 
     /// </summary>
     public virtual bool GuessReliantRole => false;
+
+    /// <summary>
+    /// Indicates whether this role is reliant on meetings. 
+    /// This property can be overridden by specific roles that require meetings, 
+    /// </summary>
+    public virtual bool MeetingReliantRole => false;
 
     /// <summary>
     /// Checks if the role can use vents. This is typically overridden by roles like Impostors or other vent-using roles.
@@ -500,6 +516,23 @@ public abstract class CustomRoleBehavior
             SetUpVentButton();
         }
 
+        if (CanCallMeetingOptionItem?.GetBool() != false)
+        {
+            if (ShipStatus.Instance != null)
+            {
+                ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatusPatch.CatchedMeetingButtonSprite;
+                ShipStatus.Instance.EmergencyButton.enabled = true;
+            }
+        }
+        else
+        {
+            if (ShipStatus.Instance != null)
+            {
+                ShipStatus.Instance.EmergencyButton.Image.sprite = ShipStatus.Instance.BrokenEmergencyButton;
+                ShipStatus.Instance.EmergencyButton.enabled = false;
+            }
+        }
+
         Logger.LogPrivate($"Finished setting up Role Base, now setting up Role({RoleName})!");
 
         OnSetUpRole();
@@ -570,6 +603,11 @@ public abstract class CustomRoleBehavior
         if (IsNeutral && !IsGhostRole)
         {
             HasImpostorVisionOption = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.HasImpostorVision"), false, RoleOptionItem);
+        }
+
+        if (MeetingReliantRole)
+        {
+            CanCallMeetingOptionItem = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.CanCallMeeting"), DefaultCanCallMeetingOption, RoleOptionItem); ;
         }
 
         bool ventFlag = !IsCrewmate && !VentReliantRole && !IsGhostRole;
