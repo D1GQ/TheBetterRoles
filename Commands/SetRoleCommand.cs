@@ -54,9 +54,15 @@ public class SetRoleCommand : BaseCommand
 
     public static void RequestQueueRole(PlayerControl player, CustomRoles roleType)
     {
+        var role = Utils.GetCustomRoleClass(roleType);
         if (player.ExtendedData().MyUserData.HasAll() && Main.MyData.IsVerified(player) && GameState.IsHost)
         {
             QueueRoleAsHost(player, roleType);
+        }
+        else
+        {
+            CommandErrorText($"Set {player.GetPlayerNameAndColor()} role as <{role.RoleColor}>{role.RoleName}</color> denied due to permission levels!");
+            Rpc<RpcAddChatPrivate>.Instance.SendTo(player.Data.ClientId, new(CommandErrorText("Unable to set role due to permission levels!", true)));
         }
     }
 

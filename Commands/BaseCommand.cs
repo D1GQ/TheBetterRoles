@@ -39,14 +39,16 @@ public abstract class BaseCommand
     public virtual bool ShowSuggestion() => ShowCommand();
     public abstract void Run();
 
-    public static void CommandResultText(string text)
+    public static string CommandResultText(string text, bool onlyGetStr = false)
     {
-        Utils.AddChatPrivate(text);
+        if (!onlyGetStr) Utils.AddChatPrivate(text);
+        return text;
     }
 
-    public static void CommandErrorText(string error)
+    public static string CommandErrorText(string error, bool onlyGetStr = false)
     {
         string er = "<color=#f50000><size=150%><b>Error:</b></size></color>";
-        Utils.AddChatPrivate($"<color=#730000>{er}\n{error}");
+        if (!onlyGetStr) Utils.AddChatPrivate($"<color=#730000>{er}\n{error}");
+        return $"<color=#730000>{er}\n{error}";
     }
 }
