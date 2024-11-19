@@ -34,7 +34,7 @@ public class KeyListener
                         {
                             PlayerControl.LocalPlayer.SendRpcReportBody(null);
                         }
-                        else
+                        else if (GameState.IsMeeting)
                         {
                             if (!boolN)
                             {
