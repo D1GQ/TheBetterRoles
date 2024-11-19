@@ -86,6 +86,7 @@ static class PlayerControlHelper
         {
             StatsManager.Instance.IncrementStat(StringNames.StatsTimesEjected);
         }
+        player.SetDeathReason(DeathReasons.Exiled, Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate));
     }
 
     public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor)
