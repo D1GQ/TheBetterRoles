@@ -227,6 +227,7 @@ namespace TheBetterRoles
         [HarmonyPostfix]
         public static void UpdatePostfix(MeetingHud __instance)
         {
+            if (__instance == null) return;
             var buttons = PlayerVoteAreaButton.AllButtons;
             foreach (var button in buttons)
             {

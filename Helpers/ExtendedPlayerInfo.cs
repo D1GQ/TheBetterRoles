@@ -1,5 +1,8 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using Epic.OnlineServices.Presence;
+using HarmonyLib;
 using InnerNet;
+using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Item;
 using TheBetterRoles.Items;
@@ -30,7 +33,7 @@ public class ExtendedPlayerInfo : MonoBehaviour
     public DeathReasons DeathReason { get; set; } = DeathReasons.None;
     public Color DeathReasonColor { get; set; } = Color.white;
     public bool IsFakeAlive { get; set; } = false;
-    public bool IsSelf { get; set; } = false;
+    public bool IsLocalData { get; set; } = false;
     public byte _PlayerId { get; set; }
     public NetworkedPlayerInfo? _Data { get; set; }
     public float PlayerVisionMod => RoleInfo?.Role?.BaseVisionMod != null ? RoleInfo.Role.BaseVisionMod : 1f;
@@ -129,23 +132,32 @@ public static class PlayerDataExtension
                     Role = newRole,
                     RoleType = CustomRoles.Crewmate
                 };
+                newBetterData.DirtyName = true;
+                CoroutineManager.Instance.StartCoroutine(CoSetLaterData(newBetterData));
+            }
+        }
 
-                _ = new LateTask(() =>
+        private static IEnumerator CoSetLaterData(ExtendedPlayerInfo info)
+        {
+            while (true)
+            {
+                if (info == null) break;
+
+                var player = info?._Data?.Object;
+                if (player != null)
                 {
-                    newBetterData.DirtyName = true;
-                }, 1f, shouldLog: false);
-                _ = new LateTask(() =>
-                {
-                    newBetterData.IsSelf = data?.Object?.IsLocalPlayer() ?? false;
-                }, 3f, shouldLog: false);
+                    yield return new WaitForSeconds(1f);
+                    info.DirtyName = true;
+                    info.IsLocalData = player.IsLocalPlayer();
+                    break;
+                }
+
+                yield return null;
             }
         }
     }
 
-    public static void DirtyName(this PlayerControl player)
-    {
-        player.BetterData().DirtyName = true;
-    }
+    public static void DirtyName(this PlayerControl player) => player.BetterData().DirtyName = true;
 
     // Get BetterData from PlayerControl
     public static ExtendedPlayerInfo? BetterData(this PlayerControl player)

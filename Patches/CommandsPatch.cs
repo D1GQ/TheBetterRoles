@@ -209,7 +209,6 @@ class CommandsPatch
 
     public static BaseCommand? GetClosestCommand(string typedCommand)
     {
-
         var directNormalMatch = BaseCommand.allCommands
             .FirstOrDefault(c => c.Type == CommandType.Normal
                                  && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
@@ -225,10 +224,31 @@ class CommandsPatch
         if (closestNormalCommand != null)
             return closestNormalCommand;
 
+        if (Main.MyData.IsDev()) // add mod check later
+        {
+            var directModeratorMatch = BaseCommand.allCommands
+                .FirstOrDefault(c => c.Type == CommandType.Moderator
+                         && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
+                         && c.ShowCommand());
+            if (directModeratorMatch != null)
+                return directModeratorMatch;
+
+            var closestModeratorCommand = BaseCommand.allCommands
+                .OrderBy(c => c.Name)
+                .FirstOrDefault(c => c.Type == CommandType.Moderator
+                                 && c.Names.Any(name => name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase))
+                                 && c.ShowCommand());
+            if (closestModeratorCommand != null)
+                return closestModeratorCommand;
+        }
+
         if (Main.MyData.IsSponsor())
         {
             var directSponsorMatch = BaseCommand.allCommands
                 .FirstOrDefault(c => c.Type == CommandType.Sponsor
+                        && (Main.MyData.IsSponsorTier1() && c.RequiredSponsorTier >= 1
+                        || Main.MyData.IsSponsorTier2() && c.RequiredSponsorTier >= 2
+                        || Main.MyData.IsSponsorTier3() && c.RequiredSponsorTier >= 3)
                          && c.Names.Any(name => string.Equals(name, typedCommand, StringComparison.OrdinalIgnoreCase))
                          && c.ShowCommand());
             if (directSponsorMatch != null)
@@ -237,6 +257,9 @@ class CommandsPatch
             var closestSponsorCommand = BaseCommand.allCommands
                 .OrderBy(c => c.Name)
                 .FirstOrDefault(c => c.Type == CommandType.Sponsor
+                                        && (Main.MyData.IsSponsorTier1() && c.RequiredSponsorTier >= 1
+                                        || Main.MyData.IsSponsorTier2() && c.RequiredSponsorTier >= 2
+                                        || Main.MyData.IsSponsorTier3() && c.RequiredSponsorTier >= 3)
                                  && c.Names.Any(name => name.StartsWith(typedCommand, StringComparison.OrdinalIgnoreCase))
                                  && c.ShowCommand());
             if (closestSponsorCommand != null)

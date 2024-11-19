@@ -266,7 +266,7 @@ public class CustomGameManager
                     $"{player.BetterData().RoleInfo.Role.RoleName}</color></size>";
             }
 
-            bool flag = players.Any(data => data.BetterData().IsSelf);
+            bool flag = players.Any(data => data.BetterData().IsLocalData);
 
             if (!anyFlag)
             {

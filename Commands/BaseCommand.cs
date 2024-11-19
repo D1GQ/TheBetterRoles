@@ -6,6 +6,7 @@ namespace TheBetterRoles.Commands;
 public enum CommandType
 {
     Normal,
+    Moderator,
     Sponsor,
     Debug,
 }
@@ -29,6 +30,7 @@ public abstract class BaseCommand
         .ToArray();
 
     public virtual CommandType Type => CommandType.Normal;
+    public virtual uint RequiredSponsorTier => 0;
     public string[] Names => ShortNames.Concat(new[] { Name }).ToArray();
     public abstract string Name { get; }
     public virtual string[] ShortNames => [];

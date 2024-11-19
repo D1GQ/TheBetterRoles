@@ -39,8 +39,6 @@ class PlayerControlPatch
         InstantiatePlayerInfoText("InfoText_Info_TMP", new Vector3(0f, 0.25f));
         InstantiatePlayerInfoText("InfoText_T_TMP", new Vector3(0f, 0.15f));
         InstantiatePlayerInfoText("InfoText_B_TMP", new Vector3(0f, -0.15f));
-
-        __instance.DirtyName();
     }
 
     public static Dictionary<byte, float> Times = [];

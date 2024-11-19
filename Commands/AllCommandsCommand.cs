@@ -10,7 +10,10 @@ public class AllCommandsCommand : BaseCommand
     public override void Run()
     {
         BaseCommand?[] allNormalCommands = allCommands.Where(cmd => cmd.Type == CommandType.Normal).ToArray();
-        BaseCommand?[] allSponsorCommands = allCommands.Where(cmd => cmd.Type == CommandType.Sponsor).ToArray();
+        BaseCommand?[] allSponsorCommands = allCommands.Where(cmd => cmd.Type == CommandType.Sponsor
+                && (Main.MyData.IsSponsorTier1() && cmd.RequiredSponsorTier >= 1
+                || Main.MyData.IsSponsorTier2() && cmd.RequiredSponsorTier >= 2
+                || Main.MyData.IsSponsorTier3() && cmd.RequiredSponsorTier >= 3)).ToArray();
         BaseCommand?[] allDebugCommands = allCommands.Where(cmd => cmd.Type == CommandType.Debug).ToArray();
         string list;
         var open = "<color=#858585>┌──────── </color>";
@@ -28,7 +31,8 @@ public class AllCommandsCommand : BaseCommand
                 }
             }
         }
-        if (allSponsorCommands.Length > 0)
+
+        if (Main.MyData.IsSponsor() && allSponsorCommands.Length > 0)
         {
             list += "\n" + close + "\n";
             list += "<color=#00751f><b><size=150%>Sponsor Command List</size></b></color>\n" + open;
@@ -40,8 +44,8 @@ public class AllCommandsCommand : BaseCommand
                 }
             }
         }
-#if DEBUG || DEBUG_MULTIACCOUNTS
-        if (GameState.IsDev && allDebugCommands.Length > 0)
+
+        if (Main.MyData.IsDev() && allDebugCommands.Length > 0)
         {
             list += "\n" + close + "\n";
             list += "<color=#00751f><b><size=150%>Debug Command List</size></b></color>\n" + open;
@@ -53,7 +57,7 @@ public class AllCommandsCommand : BaseCommand
                 }
             }
         }
-#endif
+
         list += "\n" + close;
         CommandResultText(list);
     }
