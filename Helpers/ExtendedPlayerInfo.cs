@@ -120,19 +120,19 @@ public static class PlayerDataExtension
         {
             if (data.ExtendedData() == null)
             {
-                ExtendedPlayerInfo newBetterData = data.gameObject.AddComponent<ExtendedPlayerInfo>();
+                ExtendedPlayerInfo newExtendedData = data.gameObject.AddComponent<ExtendedPlayerInfo>();
 
-                newBetterData.MyUserData = UserData.GetPlayerUserData(data);
-                newBetterData._PlayerId = data.PlayerId;
-                newBetterData._Data = data;
+                newExtendedData.MyUserData = UserData.GetPlayerUserData(data);
+                newExtendedData._PlayerId = data.PlayerId;
+                newExtendedData._Data = data;
                 var newRole = CustomRoleManager.CreateNewRoleInstance(role => role.RoleType == CustomRoles.Crewmate);
-                newBetterData.RoleInfo = new()
+                newExtendedData.RoleInfo = new()
                 {
                     Role = newRole,
                     RoleType = CustomRoles.Crewmate
                 };
-                newBetterData.DirtyName = true;
-                CoroutineManager.Instance.StartCoroutine(CoSetLaterData(newBetterData));
+                newExtendedData.DirtyName = true;
+                CoroutineManager.Instance.StartCoroutine(CoSetLaterData(newExtendedData));
             }
         }
 
@@ -158,19 +158,19 @@ public static class PlayerDataExtension
 
     public static void DirtyName(this PlayerControl player) => player.ExtendedData().DirtyName = true;
 
-    // Get BetterData from PlayerControl
+    // Get ExtendedData from PlayerControl
     public static ExtendedPlayerInfo? ExtendedData(this PlayerControl player)
     {
         return player?.Data?.GetComponent<ExtendedPlayerInfo>();
     }
 
-    // Get BetterData from NetworkedPlayerInfo
+    // Get ExtendedData from NetworkedPlayerInfo
     public static ExtendedPlayerInfo? ExtendedData(this NetworkedPlayerInfo data)
     {
         return data?.GetComponent<ExtendedPlayerInfo>();
     }
 
-    // Get BetterData from ClientData
+    // Get ExtendedData from ClientData
     public static ExtendedPlayerInfo? ExtendedData(this ClientData data)
     {
         var player = Utils.PlayerFromClientId(data.Id);

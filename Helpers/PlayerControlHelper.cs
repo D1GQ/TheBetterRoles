@@ -491,11 +491,11 @@ static class PlayerControlHelper
     {
         if (player == null) return false;
 
-        var betterData = player.ExtendedData();
-        if (betterData == null || betterData.RoleInfo == null)
+        var extendedData = player.ExtendedData();
+        if (extendedData == null || extendedData.RoleInfo == null)
             return false;
 
-        return betterData.RoleInfo.RoleAssigned;
+        return extendedData.RoleInfo.RoleAssigned;
     }
 
     // Get hex color for team

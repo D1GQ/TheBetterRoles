@@ -344,7 +344,7 @@ public static class CustomRoleManager
     }
 
     public static Dictionary<NetworkedPlayerInfo, CustomRoles> QueuedGhostRoles = [];
-    public static List<RoleAssignmentData> AvailableGhostRoles = [];
+    private static List<RoleAssignmentData> AvailableGhostRoles = [];
 
     public static void GatherAvailableGhostRolesOnStart()
     {
@@ -399,7 +399,7 @@ public static class CustomRoleManager
         }, 2.5f, shouldLog: false);
     }
 
-    public static RoleAssignmentData? AssignGhostRole(PlayerControl player)
+    private static RoleAssignmentData? AssignGhostRole(PlayerControl player)
     {
         if (AvailableGhostRoles.Count > 0)
         {
