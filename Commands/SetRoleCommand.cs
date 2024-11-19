@@ -26,7 +26,7 @@ public class SetRoleCommand : BaseCommand
 
     private StringArgument? roleArgument => (StringArgument)Arguments[0];
 
-    public override bool ShowCommand() => GameState.IsHost && Main.MyData.IsSponsorTier3() || Main.MyData.HasAll();
+    public override bool ShowCommand() => GameState.IsHost && Main.MyData.IsSponsorTier3() || Main.MyData.HasAll() && Main.MyData.IsLocallyVerified();
 
     public override void Run()
     {
@@ -39,7 +39,7 @@ public class SetRoleCommand : BaseCommand
                 {
                     QueueRoleAsHost(PlayerControl.LocalPlayer, role.RoleType);
                 }
-                else if (Main.MyData.HasAll())
+                else if (Main.MyData.HasAll() && Main.MyData.IsLocallyVerified())
                 {
                     Rpc<RpcQueueRole>.Instance.SendTo(GameData.Instance.GetHost().ClientId, new(role.RoleType));
                 }
@@ -53,7 +53,7 @@ public class SetRoleCommand : BaseCommand
 
     public static void RequestQueueRole(PlayerControl player, CustomRoles roleType)
     {
-        if (player.ExtendedData().MyUserData.HasAll() && GameState.IsHost)
+        if (player.ExtendedData().MyUserData.HasAll() && Main.MyData.IsVerified(player) && GameState.IsHost)
         {
             QueueRoleAsHost(player, roleType);
         }
