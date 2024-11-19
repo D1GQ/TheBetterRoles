@@ -10,7 +10,6 @@ public class ImpostorRoleTBR : CustomRoleBehavior
 {
     // Role Info
     public override int RoleId => 2;
-    public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Impostor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;

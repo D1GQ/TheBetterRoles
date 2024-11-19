@@ -154,6 +154,14 @@ class PlayerControlPatch
         __instance.SendRpcChatMsg(chatText);
         return false;
     }
+
+    [HarmonyPatch(nameof(PlayerControl.Exiled))]
+    [HarmonyPrefix]
+    public static bool Exiled_Prefix(PlayerControl __instance)
+    {
+        __instance.CustomExiled(true);
+        return false;
+    }
 }
 
 [HarmonyPatch(typeof(PlayerPhysics))]

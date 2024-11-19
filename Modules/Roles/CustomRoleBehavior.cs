@@ -156,7 +156,7 @@ public abstract class CustomRoleBehavior
     public virtual bool AlwaysShowVoteOutMsg => false;
 
     /// <summary>
-    /// <code>Use id 38 for the next role!</code>
+    /// <code>Use id 39 for the next role!</code>
     /// Each role is assigned a unique ID.
     /// </summary>
     public abstract int RoleId { get; }
@@ -762,7 +762,7 @@ public abstract class CustomRoleBehavior
 
         foreach (var button in Buttons)
         {
-            button.SetCooldown();
+            button.SetCooldown(durationState: 0);
         }
     }
 
@@ -909,6 +909,20 @@ public abstract class CustomRoleBehavior
     /// Custom logic for what happens after the murder action is validated by the host can be placed here.
     /// </summary>
     public virtual void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility) { }
+
+    /// <summary>
+    /// Triggered when the local player dies, regardless of the cause.
+    /// This method allows for custom logic to handle player death events, including deaths from
+    /// murders, abilities, or other game mechanics.
+    /// </summary>
+    public virtual void OnDeath(PlayerControl player, DeathReasons reason) { }
+
+    /// <summary>
+    /// Triggered when a player dies, regardless of the cause.
+    /// This method allows for custom logic to handle player death events, including deaths from
+    /// murders, abilities, or other game mechanics.
+    /// </summary>
+    public virtual void OnDeathOther(PlayerControl player, DeathReasons reason) { }
 
     /// <summary>
     /// Executes when a player is successfully murdered.

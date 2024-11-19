@@ -16,6 +16,7 @@ public enum DeathReasons
 {
     None,
     Killed,
+    Exiled,
     Guessed,
     Misfire
 }

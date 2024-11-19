@@ -16,7 +16,6 @@ public class SwooperRole : CustomRoleBehavior
 {
     // Role Info
     public override int RoleId => 6;
-    public override string RoleColor => Utils.GetCustomRoleTeamColor(RoleTeam);
     public override CustomRoleBehavior Role => this;
     public override CustomRoles RoleType => CustomRoles.Swooper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
@@ -69,14 +68,14 @@ public class SwooperRole : CustomRoleBehavior
         }
     }
 
-    public override void OnMurderOther(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    public override void OnDeath(PlayerControl player, DeathReasons reason)
     {
-        if (target == _player)
-        {
-            InvisibilityButton?.SetCooldown();
-            OnResetAbilityState(false);
-        }
+        InvisibilityButton?.SetCooldown();
+        OnResetAbilityState(false);
+    }
 
+    public override void OnMurder(PlayerControl killer, PlayerControl target, bool Suicide, bool IsAbility)
+    {
         if (target.IsLocalPlayer())
         {
             _ = new LateTask(() =>

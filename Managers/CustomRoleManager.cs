@@ -703,6 +703,7 @@ public enum CustomRoles
     // Crewmates
     Crewmate,
     Altruist,
+    Chameleon,
     Investigator,
     Mayor,
     Medic,

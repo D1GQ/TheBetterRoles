@@ -367,6 +367,7 @@ internal static class RPC
         {
             // Run after checks for roles
             CustomRoleManager.RoleListenerOther(role => role.OnResetAbilityState(false));
+            CustomRoleManager.RoleListener(PlayerControl.LocalPlayer, role => role.SetAllCooldowns());
             CustomRoleManager.RoleListener(player, role => role.OnBodyReport(player, bodyInfo, flag));
             CustomRoleManager.RoleListenerOther(role => role.OnBodyReportOther(player, bodyInfo, flag));
 
@@ -488,6 +489,8 @@ internal static class RPC
         var roleType = (CustomRoles)roleTypeInt;
         if (CheckGuessPlayerRpc(player, target, roleType) == true)
         {
+            CustomRoleManager.RoleListener(target, role => role.OnDeath(target, DeathReasons.Guessed));
+            CustomRoleManager.RoleListenerOther(role => role.OnDeathOther(target, DeathReasons.Guessed));
             CustomRoleManager.RoleListener(player, role => role.OnGuess(player, target, roleType));
             CustomRoleManager.RoleListener(target, role => role.OnGuess(player, target, roleType));
             CustomRoleManager.RoleListenerOther(role => role.OnGuessOther(player, target, roleType));

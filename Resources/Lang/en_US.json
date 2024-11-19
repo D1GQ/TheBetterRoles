@@ -26,6 +26,7 @@
   "ConfirmEject": "{0} Was {1}",
 
   "DeathReason.Killed": "Killed",
+  "DeathReason.Exiled": "Exiled",
   "DeathReason.Guessed": "Guessed",
   "DeathReason.Misfire": "Misfire",
 
@@ -146,6 +147,15 @@
   "Role.Altruist.Option.ReviveDuration": "Revive Duration",
   "Role.Altruist.Option.KillOnRevive": "Kill Altruist On Revive",
   "Role.Altruist.Ability.1": "Revive",
+
+  "Role.Chameleon": "Chameleon",
+  "Role.Chameleon.Info": "Camouflage in the environment",
+  "Role.Chameleon.LongInfo": "As the Chameleon, you can temporarily camouflage in the environment looking nearly invisible.",
+  "Role.Chameleon.Option.InvisibilityCooldow": "Invisibility Cooldow",
+  "Role.Chameleon.Option.InvisibilityDuration": "Invisibility Duration",
+  "Role.Chameleon.Option.FadeDuration": "Fade Duration",
+  "Role.Chameleon.Ability.1": "Hide",
+  "Role.Chameleon.Ability.2": "Reveal",
 
   "Role.Transporter": "Transporter",
   "Role.Transporter.Info": "Transport players around the map",

@@ -7,6 +7,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
 using TMPro;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TheBetterRoles.Helpers;
 
@@ -73,12 +74,18 @@ static class PlayerControlHelper
         }
     }
 
-    public static void CustomExiled(this PlayerControl player)
+    public static void CustomExiled(this PlayerControl player, bool assignGhostRole = false)
     {
         if (!player.IsAlive(true)) return;
+        CustomRoleManager.RoleListener(player, role => role.OnDeath(player, DeathReasons.Exiled));
+        CustomRoleManager.RoleListenerOther(role => role.OnDeathOther(player, DeathReasons.Exiled));
 
         player.ExtendedData().IsFakeAlive = false;
-        player.Exiled();
+        player.Die(DeathReason.Exile, assignGhostRole);
+        if (player.IsLocalPlayer())
+        {
+            StatsManager.Instance.IncrementStat(StringNames.StatsTimesEjected);
+        }
     }
 
     public static void SetDeathReason(this PlayerControl player, DeathReasons reason, string hexColor)
@@ -168,6 +175,9 @@ static class PlayerControlHelper
     /// <param name="playSound">Set if the kill sound should play for the Killer.</param>
     public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, bool snapToTarget = true, bool spawnBody = true, bool showAnimation = true, bool playSound = true)
     {
+        CustomRoleManager.RoleListener(target, role => role.OnDeath(target, DeathReasons.Killed));
+        CustomRoleManager.RoleListenerOther(role => role.OnDeathOther(target, DeathReasons.Killed));
+
         if (killer.IsLocalPlayer())
         {
             if (GameManager.Instance.IsHideAndSeek())
