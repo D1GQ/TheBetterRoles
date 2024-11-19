@@ -1,5 +1,8 @@
-﻿using System.Text;
+﻿using Reactor.Networking.Rpc;
+using System.Text;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Managers;
+using TheBetterRoles.RPCs;
 using UnityEngine;
 
 namespace TheBetterRoles.Modules;
@@ -10,6 +13,40 @@ public class KeyListener
     private static int AddonSettingsIndex = 0;
     public static void Update()
     {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if (GameState.IsHost)
+            {
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    if (GameState.IsInGamePlay && !GameState.IsFreePlay)
+                    {
+                        Rpc<RpcEndGame>.Instance.Send(PlayerControl.LocalPlayer, new([], EndGameReason.ByHost, CustomRoleTeam.None));
+                    }
+                }
+
+                var boolN = Input.GetKeyDown(KeyCode.N);
+                if (Input.GetKeyDown(KeyCode.M) || boolN)
+                {
+                    if (GameState.IsInGamePlay)
+                    {
+                        if (!GameState.IsMeeting && !boolN)
+                        {
+                            PlayerControl.LocalPlayer.SendRpcReportBody(null);
+                        }
+                        else
+                        {
+                            if (!boolN)
+                            {
+                                MeetingHudPatch.DoNotCalculate = true;
+                            }
+                            DestroyableSingleton<MeetingHud>.Instance?.RpcClose();
+                        }
+                    }
+                }
+            }
+        }
+
         if (!GameState.IsLobby)
         {
             if (Input.GetKeyDown(KeyCode.F1) && PlayerControl.LocalPlayer.Role() != null)

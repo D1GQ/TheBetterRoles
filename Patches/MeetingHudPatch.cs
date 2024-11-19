@@ -357,10 +357,18 @@ namespace TheBetterRoles
             }
         }
 
+        public static bool DoNotCalculate = false;
         [HarmonyPatch(nameof(MeetingHud.CalculateVotes))]
         [HarmonyPrefix]
         public static bool CalculateVotes_Prefix(MeetingHud __instance, ref Il2CppSystem.Collections.Generic.Dictionary<byte, int> __result)
         {
+            if (DoNotCalculate)
+            {
+                __result = new();
+                DoNotCalculate = false;
+                return false;
+            }
+
             var playerStates = __instance.playerStates.ToList();
             Dictionary<byte, int> dictionary = [];
 

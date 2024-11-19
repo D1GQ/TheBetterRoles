@@ -281,7 +281,10 @@ public class CustomGameManager
                 SoundManager.Instance.PlaySound(__instance.ImpostorStinger, false);
             }
 
-            __instance.WinText.text += $" {Translator.GetString("Game.Summary.Wins")}</color>";
+            if (winReason != EndGameReason.ByHost)
+            {
+                __instance.WinText.text += $" {Translator.GetString("Game.Summary.Wins")}</color>";
+            }
 
             int num = Mathf.CeilToInt(7.5f);
             for (int i = 0; i < players.Count; i++)
