@@ -17,24 +17,24 @@ public class InvestigatorRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Investigator;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Information;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? FootprintInterval;
-    public BetterOptionItem? FootprintDuration;
-    public BetterOptionItem? AnonymousFootprint;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? FootprintInterval;
+    public TBROptionItem? FootprintDuration;
+    public TBROptionItem? AnonymousFootprint;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                FootprintInterval = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab,
+                FootprintInterval = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab,
                 Translator.GetString("Role.Investigator.Option.FootprintInterval"), [0.20f, 1f, 0.05f], 0.40f, "", "s", RoleOptionItem),
 
-                FootprintDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab,
+                FootprintDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab,
                 Translator.GetString("Role.Investigator.Option.FootprintDuration"), [1f, 10f, 0.5f], 3.5f, "", "s", RoleOptionItem),
 
-                AnonymousFootprint = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab,
+                AnonymousFootprint = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab,
                 Translator.GetString("Role.Investigator.Option.AnonymousFootprint"), false, RoleOptionItem),
             ];
         }

@@ -11,9 +11,9 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
     public virtual Func<CustomRoleBehavior, bool> AssignmentCondition => (CustomRoleBehavior role) => true;
     public override bool CanMoveInVents => true;
 
-    private BetterOptionItem? AssignToCrewmate { get; set; }
-    private BetterOptionItem? AssignToImpostor { get; set; }
-    private BetterOptionItem? AssignToNeutral { get; set; }
+    private TBROptionItem? AssignToCrewmate { get; set; }
+    private TBROptionItem? AssignToImpostor { get; set; }
+    private TBROptionItem? AssignToNeutral { get; set; }
 
     /// <summary>
     /// Checks if the addon can be assigned based on the team.
@@ -64,18 +64,18 @@ public abstract class CustomAddonBehavior : CustomRoleBehavior
     protected override void SetUpSettings()
     {
         tempBaseOptionNum = 0;
-        RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f, this);
-        AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+        RoleOptionItem = new TBROptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f, this);
+        AmountOptionItem = new TBROptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
         OptionItems.Initialize();
 
         if (RoleCategory is not CustomRoleCategory.GoodAddon or CustomRoleCategory.EvilAddon)
         {
-            AssignToCrewmate = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
+            AssignToCrewmate = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToCrewmate"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Crewmate)}>", "</color>"), true, RoleOptionItem);
-            AssignToImpostor = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
+            AssignToImpostor = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToImpostor"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Impostor)}>", "</color>"), true, RoleOptionItem);
-            AssignToNeutral = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
+            AssignToNeutral = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab,
                 string.Format(Translator.GetString("Role.Option.AssignToNeutral"), $"<{Utils.GetCustomRoleTeamColor(CustomRoleTeam.Neutral)}>", "</color>"), true, RoleOptionItem);
         }
     }

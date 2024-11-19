@@ -16,7 +16,7 @@ public class PestillenceRole : PlaguebearerRole
     public override CustomRoles RoleType => CustomRoles.Pestillence;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Chaos;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
     public override bool CanKill => true;
     public override bool CanVent => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().CanVent;
     public override bool HasImpostorVision => CustomRoleManager.GetRoleInstance<PlaguebearerRole>().HasImpostorVision;

@@ -19,17 +19,17 @@ public class AmnesiacRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Amnesiac;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? RememberCooldown;
+    public TBROptionItem? RememberCooldown;
     public DeadBodyAbilityButton? RememberButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                RememberCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Amnesiac.Option.RememberCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
+                RememberCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Amnesiac.Option.RememberCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
             ];
         }
     }
@@ -53,7 +53,7 @@ public class AmnesiacRole : CustomRoleBehavior
                             {
                                 if (_player.IsLocalPlayer()) Utils.FlashScreen(RoleColor);
 
-                                _player.SendRpcSetCustomRole(data.BetterData().RoleInfo.RoleTypeWhenAlive);
+                                _player.SendRpcSetCustomRole(data.ExtendedData().RoleInfo.RoleTypeWhenAlive);
 
                                 /*
                                 _player.ClearAddonsSync();

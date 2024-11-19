@@ -18,21 +18,21 @@ public class UndertakerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Undertaker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool VentReliantRole => true;
     public override bool CanMoveInVents => !IsDragging;
 
-    public BetterOptionItem? DragSlowdown;
-    public BetterOptionItem? CanHideBodyInVent;
+    public TBROptionItem? DragSlowdown;
+    public TBROptionItem? CanHideBodyInVent;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                DragSlowdown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Undertaker.Option.DragSlowdown"), [0.1f, 1f, 0.1f], 0.5f, "", "x", RoleOptionItem),
-                CanHideBodyInVent = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Undertaker.Option.CanHideBodyInVent"), false, RoleOptionItem),
+                DragSlowdown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Undertaker.Option.DragSlowdown"), [0.1f, 1f, 0.1f], 0.5f, "", "x", RoleOptionItem),
+                CanHideBodyInVent = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Undertaker.Option.CanHideBodyInVent"), false, RoleOptionItem),
             ];
         }
     }

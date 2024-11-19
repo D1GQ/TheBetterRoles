@@ -17,22 +17,22 @@ public class GrenadierRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Grenadier;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool DefaultVentOption => false;
 
-    public BetterOptionItem? FlashGrenadeCooldown;
-    public BetterOptionItem? FlashGrenadeDuration;
-    public BetterOptionItem? FlashGrenadeRadius;
+    public TBROptionItem? FlashGrenadeCooldown;
+    public TBROptionItem? FlashGrenadeDuration;
+    public TBROptionItem? FlashGrenadeRadius;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                FlashGrenadeCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                FlashGrenadeDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                FlashGrenadeRadius = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeRadius"), [1f, 5f, 0.25f], 3.5f, "x", "", RoleOptionItem),
+                FlashGrenadeCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                FlashGrenadeDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                FlashGrenadeRadius = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Grenadier.Option.FlashGrenadeRadius"), [1f, 5f, 0.25f], 3.5f, "x", "", RoleOptionItem),
             ];
         }
     }

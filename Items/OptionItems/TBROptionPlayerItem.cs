@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionPlayerItem : BetterOptionItem
+public class TBROptionPlayerItem : TBROptionItem
 {
     private NumberOption? ThisOption;
     public int CurrentIndex = -1;
@@ -16,7 +16,7 @@ public class BetterOptionPlayerItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionPlayerItem Create(BetterOptionTab gameOptionsMenu, string name, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public TBROptionPlayerItem Create(TBROptionTab gameOptionsMenu, string name, TBROptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
         Id = TempPlayerOptionDataNum + 1;
         Tab = gameOptionsMenu;

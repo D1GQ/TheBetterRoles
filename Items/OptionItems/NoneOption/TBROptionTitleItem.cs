@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionTitleItem : BetterOptionItem
+public class TBROptionTitleItem : TBROptionItem
 {
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, string name)
+    public TBROptionItem Create(TBROptionTab gameOptionsMenu, string name)
     {
         if (gameOptionsMenu.Tab == null)
         {

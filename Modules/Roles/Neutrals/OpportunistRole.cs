@@ -14,9 +14,9 @@ public class OpportunistRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Opportunist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Benign;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
     public override OptionAttributes? AdditionalVentOptions => new() { Cooldown = 10f, Duration = 5f, };
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {

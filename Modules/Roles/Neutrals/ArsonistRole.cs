@@ -22,35 +22,35 @@ public class ArsonistRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Arsonist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? ArsonistType;
-    public BetterOptionItem? MinimumDousesToIgnite;
-    public BetterOptionItem? MaximumDouses;
-    public BetterOptionItem? DouseCooldown;
-    public BetterOptionItem? DouseDistance;
-    public BetterOptionItem? DousingDuration;
-    public BetterOptionItem? DousingRange;
+    public TBROptionItem? ArsonistType;
+    public TBROptionItem? MinimumDousesToIgnite;
+    public TBROptionItem? MaximumDouses;
+    public TBROptionItem? DouseCooldown;
+    public TBROptionItem? DouseDistance;
+    public TBROptionItem? DousingDuration;
+    public TBROptionItem? DousingRange;
 
     public PlayerAbilityButton? DouseButton;
     public BaseAbilityButton? IgniteButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                ArsonistType = new BetterOptionStringItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Arsonist.Option.ArsonistType"),
+                ArsonistType = new TBROptionStringItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Arsonist.Option.ArsonistType"),
                 [Translator.GetString("Role.Arsonist.ArsonistType.Original"), Translator.GetString("Role.Arsonist.ArsonistType.Modern")], 0, RoleOptionItem),
-                MinimumDousesToIgnite = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MinimumDousesToIgnite"), [1, 15, 1], 1, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
-                MaximumDouses = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MaximumDouses"), [1, 15, 1], 3, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
+                MinimumDousesToIgnite = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MinimumDousesToIgnite"), [1, 15, 1], 1, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
+                MaximumDouses = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.MaximumDouses"), [1, 15, 1], 3, "", "", ArsonistType, () => { return ArsonistType.GetValue() == 1; }),
 
-                DouseCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseCooldown"), [0f, 180f, 2.5f], 20f, "", "s", RoleOptionItem),
-                DouseDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseDistance"),
+                DouseCooldown = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseCooldown"), [0f, 180f, 2.5f], 20f, "", "s", RoleOptionItem),
+                DouseDistance = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DouseDistance"),
                     [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 0, RoleOptionItem),
 
-                DousingDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingDuration"), [0f, 5f, 0.5f], 0f, "", "s", RoleOptionItem),
-                DousingRange = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingRange"), [0f, 5f, 0.25f], 1.25f, "", "x", DousingDuration),
+                DousingDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingDuration"), [0f, 5f, 0.5f], 0f, "", "s", RoleOptionItem),
+                DousingRange = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Arsonist.Option.DousingRange"), [0f, 5f, 0.25f], 1.25f, "", "x", DousingDuration),
             ];
         }
     }
@@ -105,7 +105,7 @@ public class ArsonistRole : CustomRoleBehavior
                 if (player != null)
                 {
                     player.SetTrueVisorColor(Palette.VisorColor);
-                    player.BetterData().NameColor = string.Empty;
+                    player.ExtendedData().NameColor = string.Empty;
                 }
             }
         }
@@ -191,7 +191,7 @@ public class ArsonistRole : CustomRoleBehavior
         {
             CustomSoundsManager.Play("Douse", 2.5f);
             target.SetTrueVisorColor(RoleColor32);
-            target.BetterData().NameColor = "#59360d";
+            target.ExtendedData().NameColor = "#59360d";
         }
 
         IsDirty = true;

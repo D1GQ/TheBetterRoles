@@ -18,20 +18,20 @@ public class SnitchRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Snitch;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Information;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? RevealRolesInMeeting;
-    public BetterOptionItem? SnitchSeesNeutralRoles;
-    public BetterOptionItem? TasksRemainingWhenRevealed;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? RevealRolesInMeeting;
+    public TBROptionItem? SnitchSeesNeutralRoles;
+    public TBROptionItem? TasksRemainingWhenRevealed;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                RevealRolesInMeeting = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Snitch.Option.RevealRolesInMeeting"), true, RoleOptionItem),
-                SnitchSeesNeutralRoles = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.SnitchSeesNeutralRoles"), false, RoleOptionItem),
-                TasksRemainingWhenRevealed = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.TasksRemainingWhenRevealed"), [0, 4, 1], 2, "", "", RoleOptionItem)
+                RevealRolesInMeeting = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Snitch.Option.RevealRolesInMeeting"), true, RoleOptionItem),
+                SnitchSeesNeutralRoles = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.SnitchSeesNeutralRoles"), false, RoleOptionItem),
+                TasksRemainingWhenRevealed = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Snitch.Option.TasksRemainingWhenRevealed"), [0, 4, 1], 2, "", "", RoleOptionItem)
             ];
         }
     }

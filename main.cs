@@ -167,8 +167,8 @@ public class Main : BasePlugin
 
             CheckRoleIds();
 
-            BetterDataManager.SetUp();
-            BetterDataManager.LoadData();
+            TBRDataManager.SetUp();
+            TBRDataManager.LoadData();
             LoadOptions();
             Translator.Init();
             Harmony.PatchAll();
@@ -182,10 +182,10 @@ public class Main : BasePlugin
             if (PlatformData.Platform == Platforms.StandaloneSteamPC)
                 File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "steam_appid.txt"), "945360");
 
-            if (File.Exists(Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt")))
-                File.WriteAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-previous-log.txt"), File.ReadAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt")));
+            if (File.Exists(Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt")))
+                File.WriteAllText(Path.Combine(TBRDataManager.filePathFolder, "betterrole-previous-log.txt"), File.ReadAllText(Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt")));
 
-            File.WriteAllText(Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt"), "");
+            File.WriteAllText(Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt"), "");
             TheBetterRoles.Logger.Log("The Better Roles successfully loaded!");
 
             string SupportedVersions = string.Empty;

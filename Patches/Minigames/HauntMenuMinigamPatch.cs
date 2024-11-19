@@ -95,7 +95,7 @@ class HauntMenuMinigamPatch
     [HarmonyPrefix]
     public static bool SetFilterText_Prefix(HauntMenuMinigame __instance)
     {
-        if (__instance.HauntTarget.BetterData().RoleInfo.RoleAssigned)
+        if (__instance.HauntTarget.ExtendedData().RoleInfo.RoleAssigned)
         {
             __instance.FilterText.text = __instance.HauntTarget.GetRoleName();
             __instance.FilterText.color = __instance.HauntTarget.GetRoleColor();

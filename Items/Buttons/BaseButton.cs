@@ -15,7 +15,7 @@ public class BaseButton : MonoBehaviour
     public int Id { get; protected set; }
     public CustomRoleBehavior? Role { get; protected set; }
     public PlayerControl? _player => Role != null ? Role._player : PlayerControl.LocalPlayer;
-    public List<CustomAddonBehavior>? Addons => Role?._player?.BetterData()?.RoleInfo?.Addons;
+    public List<CustomAddonBehavior>? Addons => Role?._player?.ExtendedData()?.RoleInfo?.Addons;
 
     // Button and UI elements
     public ActionButton? ActionButton { get; protected set; }

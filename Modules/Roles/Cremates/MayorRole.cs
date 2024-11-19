@@ -19,20 +19,20 @@ public class MayorRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Mayor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? CollectVoteOnSkip;
-    public BetterOptionItem? CollectVoteWhenVotedOn;
-    public BetterOptionItem? AdditionalVoteIcon;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? CollectVoteOnSkip;
+    public TBROptionItem? CollectVoteWhenVotedOn;
+    public TBROptionItem? AdditionalVoteIcon;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                CollectVoteOnSkip = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mayor.Option.CollectVoteOnSkip"), true, RoleOptionItem),
-                CollectVoteWhenVotedOn = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Mayor.Option.CollectVoteWhenVotedOn"), true, RoleOptionItem),
-                AdditionalVoteIcon = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Mayor.Option.AdditionalVoteIcon"),
+                CollectVoteOnSkip = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mayor.Option.CollectVoteOnSkip"), true, RoleOptionItem),
+                CollectVoteWhenVotedOn = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Mayor.Option.CollectVoteWhenVotedOn"), true, RoleOptionItem),
+                AdditionalVoteIcon = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Mayor.Option.AdditionalVoteIcon"),
                 [Translator.GetString("Role.Mayor.AdditionalVoteIcon.Normal"), Translator.GetString("Role.Mayor.AdditionalVoteIcon.Anonymous"), Translator.GetString("Role.Mayor.AdditionalVoteIcon.Hide")],
                 1, RoleOptionItem),
             ];

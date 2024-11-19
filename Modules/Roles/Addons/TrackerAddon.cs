@@ -16,8 +16,8 @@ public class TrackerAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.Tracker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {

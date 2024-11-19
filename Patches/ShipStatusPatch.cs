@@ -87,7 +87,7 @@ class ShipStatusPatch
         if (CustomRoleManager.RoleChecksAny(player, role => role.HasImpostorVision, log: false))
         {
             __result = __instance.MaxLightRadius *
-                PlayerControl.LocalPlayer.BetterData()?.PlayerVisionMod * PlayerControl.LocalPlayer.BetterData()?.PlayerVisionModPlus
+                PlayerControl.LocalPlayer.ExtendedData()?.PlayerVisionMod * PlayerControl.LocalPlayer.ExtendedData()?.PlayerVisionModPlus
                 ?? GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
             return false;
         }
@@ -101,7 +101,7 @@ class ShipStatusPatch
             }
         }
         __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, num) *
-            PlayerControl.LocalPlayer.BetterData()?.PlayerVisionMod * PlayerControl.LocalPlayer.BetterData()?.PlayerVisionModPlus ??
+            PlayerControl.LocalPlayer.ExtendedData()?.PlayerVisionMod * PlayerControl.LocalPlayer.ExtendedData()?.PlayerVisionModPlus ??
             GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
 
         return false;
@@ -192,7 +192,7 @@ class SystemPatch
     public static bool IsCamouflageActive = false;
     private static void CamouflageComms(ISystemType __instance, bool active)
     {
-        if (BetterGameSettings.CamouflageComms.GetBool() && GameManager.Instance.GameHasStarted)
+        if (TBRGameSettings.CamouflageComms.GetBool() && GameManager.Instance.GameHasStarted)
         {
             active = !active;
             _ = new LateTask(() =>

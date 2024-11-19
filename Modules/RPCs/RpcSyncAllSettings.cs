@@ -44,11 +44,11 @@ namespace TheBetterRoles.RPCs
                 byte boolByte = 0;
                 int boolIndex = 0;
 
-                foreach (var item in BetterOptionItem.BetterOptionItems)
+                foreach (var item in TBROptionItem.BetterOptionItems)
                 {
                     if (ids.Contains(item.Id)) continue;
 
-                    if (item is BetterOptionFloatItem floatItem && floatItem.CurrentValue != floatItem.defaultValue)
+                    if (item is TBROptionFloatItem floatItem && floatItem.CurrentValue != floatItem.defaultValue)
                     {
                         binaryWriter.Write((byte)SettingType.Float);
                         binaryWriter.Write(item.Id);
@@ -56,7 +56,7 @@ namespace TheBetterRoles.RPCs
                         ids.Add(item.Id);
                         count++;
                     }
-                    else if (item is BetterOptionIntItem intItem && intItem.CurrentValue != intItem.defaultValue)
+                    else if (item is TBROptionIntItem intItem && intItem.CurrentValue != intItem.defaultValue)
                     {
                         binaryWriter.Write((byte)SettingType.Int);
                         binaryWriter.Write(item.Id);
@@ -64,7 +64,7 @@ namespace TheBetterRoles.RPCs
                         ids.Add(item.Id);
                         count++;
                     }
-                    else if (item is BetterOptionCheckboxItem checkboxItem && checkboxItem.IsChecked != checkboxItem.defaultValue)
+                    else if (item is TBROptionCheckboxItem checkboxItem && checkboxItem.IsChecked != checkboxItem.defaultValue)
                     {
                         binaryWriter.Write((byte)SettingType.Bool);
                         binaryWriter.Write(item.Id);
@@ -86,7 +86,7 @@ namespace TheBetterRoles.RPCs
                         ids.Add(item.Id);
                         count++;
                     }
-                    else if (item is BetterOptionPercentItem percentItem && percentItem.CurrentValue != percentItem.defaultValue)
+                    else if (item is TBROptionPercentItem percentItem && percentItem.CurrentValue != percentItem.defaultValue)
                     {
                         binaryWriter.Write((byte)SettingType.Float); // Percent treated as Float
                         binaryWriter.Write(item.Id);
@@ -94,7 +94,7 @@ namespace TheBetterRoles.RPCs
                         ids.Add(item.Id);
                         count++;
                     }
-                    else if (item is BetterOptionStringItem stringItem && stringItem.CurrentValue != stringItem.defaultValue)
+                    else if (item is TBROptionStringItem stringItem && stringItem.CurrentValue != stringItem.defaultValue)
                     {
                         binaryWriter.Write((byte)SettingType.Int); // StringItem treated as Int
                         binaryWriter.Write(item.Id);
@@ -158,7 +158,7 @@ namespace TheBetterRoles.RPCs
         {
             if (player.IsHost())
             {
-                BetterDataManager.HostSettings.Clear();
+                TBRDataManager.HostSettings.Clear();
                 GameSettingMenuPatch.SetupSettings(true, true);
 
                 // Process Bool values from the Bool data buffer
@@ -182,8 +182,8 @@ namespace TheBetterRoles.RPCs
                 // Save settings
                 foreach (var kvp in data.Settings)
                 {
-                    BetterDataManager.SaveSetting(kvp.Key, kvp.Value);
-                    BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
+                    TBRDataManager.SaveSetting(kvp.Key, kvp.Value);
+                    TBROptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == kvp.Key)?.SyncValue(kvp.Value);
                 }
             }
         }

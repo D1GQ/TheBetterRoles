@@ -16,15 +16,15 @@ public class NoiseMakerAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.NoiseMaker;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
-    public BetterOptionItem? ArrowDuration;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
+    public TBROptionItem? ArrowDuration;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                ArrowDuration = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.NoiseMaker.Option.ArrowDuration"), [5f, 15f, 2.5f], 10f, "", "s", RoleOptionItem),
+                ArrowDuration = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.NoiseMaker.Option.ArrowDuration"), [5f, 15f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }

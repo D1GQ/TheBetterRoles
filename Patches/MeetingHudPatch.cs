@@ -61,11 +61,11 @@ namespace TheBetterRoles
                 var guessManager = HudManager.Instance.gameObject.AddComponent<GuessManager>();
                 guessManager.TargetId = pva.TargetPlayerId;
             };
-            var role = PlayerControl.LocalPlayer.BetterData().RoleInfo.Role;
-            Guess.Enabled = (BetterGameSettings.CrewmatesCanGuess.GetBool() && role.IsCrewmate)
-                || (BetterGameSettings.ImpostorsCanGuess.GetBool() && role.IsImpostor)
-                || (BetterGameSettings.KillingNeutralsCanGuess.GetBool() && role.IsNeutral && role.CanKill)
-                || (BetterGameSettings.BenignNeutralsCanGuess.GetBool() && role.IsNeutral && !role.CanKill)
+            var role = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Role;
+            Guess.Enabled = (TBRGameSettings.CrewmatesCanGuess.GetBool() && role.IsCrewmate)
+                || (TBRGameSettings.ImpostorsCanGuess.GetBool() && role.IsImpostor)
+                || (TBRGameSettings.KillingNeutralsCanGuess.GetBool() && role.IsNeutral && role.CanKill)
+                || (TBRGameSettings.BenignNeutralsCanGuess.GetBool() && role.IsNeutral && !role.CanKill)
                 || role.GuessReliantRole;
 
             CustomRoleManager.RoleListenerOther(role => role.OnMeetingStart(__instance));
@@ -262,7 +262,7 @@ namespace TheBetterRoles
                 if (!flag)
                 {
                     string DisconnectText;
-                    switch (playerData.BetterData().DisconnectReason)
+                    switch (playerData.ExtendedData().DisconnectReason)
                     {
                         case DisconnectReasons.ExitGame:
                             DisconnectText = Translator.GetString("DisconnectReasonMeeting.Left");
@@ -291,14 +291,14 @@ namespace TheBetterRoles
                 }
                 else if (TopText != null && InfoText != null)
                 {
-                    if (player == null || player.BetterData() == null) continue;
+                    if (player == null || player.ExtendedData() == null) continue;
 
                     var sbTagTop = new StringBuilder();
                     var sbTag = new StringBuilder();
 
-                    if (!string.IsNullOrEmpty(player.BetterData().NameColor))
+                    if (!string.IsNullOrEmpty(player.ExtendedData().NameColor))
                     {
-                        var color = Utils.HexToColor32(player.BetterData().NameColor);
+                        var color = Utils.HexToColor32(player.ExtendedData().NameColor);
                         pva.NameText.color = new Color(color.r, color.g, color.b, pva.NameText.color.a);
                     }
                     else
@@ -313,7 +313,7 @@ namespace TheBetterRoles
 
                     if (player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate() || CustomRoleManager.RoleChecksAny(PlayerControl.LocalPlayer, role => role.RevealPlayerAddons(player)))
                     {
-                        foreach (var addon in player.BetterData().RoleInfo.Addons)
+                        foreach (var addon in player.ExtendedData().RoleInfo.Addons)
                         {
                             sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
                         }

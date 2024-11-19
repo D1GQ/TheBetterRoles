@@ -15,8 +15,8 @@ public class ImpostorRoleTBR : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Impostor;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Vanilla;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {

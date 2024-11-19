@@ -176,7 +176,7 @@ public class CustomGameManager
                         addonText.text = "";
                         addonText.transform.position += new Vector3(0f, 2.8f, 0f);
                         bool first = true;
-                        foreach (var addon in PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons)
+                        foreach (var addon in PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Addons)
                         {
                             if (addon == null) return;
 
@@ -214,10 +214,10 @@ public class CustomGameManager
             List<NetworkedPlayerInfo> players = playerData.Where(CheckWinner).ToList();
             var anyFlag = players.Any();
             NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
-            var role = first?.BetterData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
+            var role = first?.ExtendedData()?.RoleInfo?.RoleType ?? CustomRoles.Crewmate;
             var team = winTeam;
             Color teamColor = winTeam != CustomRoleTeam.Neutral ? Utils.HexToColor32(Utils.GetCustomRoleTeamColor(winTeam))
-                : first.BetterData().RoleInfo.Role.RoleColor32;
+                : first.ExtendedData().RoleInfo.Role.RoleColor32;
 
             __instance.WinText.alignment = TextAlignmentOptions.Right;
 
@@ -262,11 +262,11 @@ public class CustomGameManager
 
                 var player = Utils.PlayerDataFromPlayerId(playerIds);
                 players.Add(player);
-                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.BetterData().RoleInfo.Role.RoleColor}>" +
-                    $"{player.BetterData().RoleInfo.Role.RoleName}</color></size>";
+                __instance.WinText.text += $"<size=50%><color=#FFFFFF>+</color><color={player.ExtendedData().RoleInfo.Role.RoleColor}>" +
+                    $"{player.ExtendedData().RoleInfo.Role.RoleName}</color></size>";
             }
 
-            bool flag = players.Any(data => data.BetterData().IsLocalData);
+            bool flag = players.Any(data => data.ExtendedData().IsLocalData);
 
             if (!anyFlag)
             {
@@ -332,7 +332,7 @@ public class CustomGameManager
             List<NetworkedPlayerInfo> players = playerData;
             var anyFlag = players.Any();
             NetworkedPlayerInfo? first = anyFlag ? players.First() : null;
-            var role = first?.BetterData()?.RoleInfo?.Role;
+            var role = first?.ExtendedData()?.RoleInfo?.Role;
             if (role == null) return;
 
             Logger.LogHeader($"Game Has Ended - {Enum.GetName(typeof(MapNames), GameState.GetActiveMapId)}/{GameState.GetActiveMapId}", "GamePlayManager");
@@ -368,9 +368,9 @@ public class CustomGameManager
                     .OrderBy(pd => pd.Disconnected)  // Disconnected players last
                     .ThenBy(pd => pd.IsDead)          // Dead players after live players
                     .ThenBy(pd => CheckWinner(pd) ? 0 : 1) // Winners first
-                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
-                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
-                    .ThenBy(pd => pd.BetterData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
+                    .ThenBy(pd => pd.ExtendedData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Crewmate) // Crewmates first
+                    .ThenBy(pd => pd.ExtendedData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Impostor) // Impostors next
+                    .ThenBy(pd => pd.ExtendedData().RoleInfo.Role.RoleTeam == CustomRoleTeam.Neutral) // Neutral last
                     .ToArray();
 
 
@@ -422,18 +422,18 @@ public class CustomGameManager
 
                 foreach (var data in playersData)
                 {
-                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.BetterData().RealName}</color>";
-                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.BetterData().RoleInfo.Role.RoleTeam)}>{text}</color>";
+                    var name = $"<color={Utils.Color32ToHex(Palette.PlayerColors[data.DefaultOutfit.ColorId])}>{data.ExtendedData().RealName}</color>";
+                    string playerTheme(string text) => $"<color={Utils.GetCustomRoleTeamColor(data.ExtendedData().RoleInfo.Role.RoleTeam)}>{text}</color>";
 
-                    var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.BetterData().RoleInfo.Role.RoleType)})";
+                    var roleInfo = $"({Utils.GetCustomRoleNameAndColor(data.ExtendedData().RoleInfo.Role.RoleType)})";
 
-                    if (data.BetterData().RoleInfo.Role.HasTask)
+                    if (data.ExtendedData().RoleInfo.Role.HasTask)
                     {
                         roleInfo += $" → {playerTheme($"{Translator.GetString("Tasks")}: {data.Tasks.ToArray().Where(task => task.Complete).Count()}/{data.Tasks.Count}")}";
                     }
-                    if (data.BetterData().RoleInfo.Role.CanKill)
+                    if (data.ExtendedData().RoleInfo.Role.CanKill)
                     {
-                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {data.BetterData().RoleInfo.Kills}")}";
+                        roleInfo += $" → {playerTheme($"{Translator.GetString("Kills")}: {data.ExtendedData().RoleInfo.Kills}")}";
                     }
 
                     string deathReason;
@@ -503,7 +503,7 @@ public class CustomGameManager
     public static CustomRoleTeam winTeam;
 
     public static bool GameHasEnded = false;
-    public static bool ShouldCheckConditions => !GameState.IsFreePlay && !GameState.IsExilling && GameState.IsInGamePlay && GameManager.Instance.GameHasStarted && !BetterGameSettings.NoGameEnd.GetBool();
+    public static bool ShouldCheckConditions => !GameState.IsFreePlay && !GameState.IsExilling && GameState.IsInGamePlay && GameManager.Instance.GameHasStarted && !TBRGameSettings.NoGameEnd.GetBool();
 
     public static void GameStart()
     {
@@ -631,7 +631,7 @@ public class CustomGameManager
         List<NetworkedPlayerInfo> players = [];
         foreach (var data in GameData.Instance.AllPlayers)
         {
-            if (data?.BetterData()?.RoleInfo?.Role?.RoleTeam != team) continue;
+            if (data?.ExtendedData()?.RoleInfo?.Role?.RoleTeam != team) continue;
             players.Add(data);
         }
 
@@ -643,7 +643,7 @@ public class CustomGameManager
         List<byte> players = [];
         foreach (var data in GameData.Instance.AllPlayers)
         {
-            if (data?.BetterData()?.RoleInfo?.Role?.RoleTeam != team) continue;
+            if (data?.ExtendedData()?.RoleInfo?.Role?.RoleTeam != team) continue;
             players.Add(data.PlayerId);
         }
 
@@ -704,7 +704,7 @@ public class CustomGameManager
     {
         foreach (var player in Main.AllPlayerControls)
         {
-            if (player.BetterData().RoleInfo.RoleAssigned && player.BetterData().RoleInfo.Role.WinCondition())
+            if (player.ExtendedData().RoleInfo.RoleAssigned && player.ExtendedData().RoleInfo.Role.WinCondition())
             {
                 return player;
             }

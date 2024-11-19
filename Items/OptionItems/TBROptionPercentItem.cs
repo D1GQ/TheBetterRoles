@@ -12,7 +12,7 @@ using Utils = TheBetterRoles.Helpers.Utils;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionPercentItem : BetterOptionItem
+public class TBROptionPercentItem : TBROptionItem
 {
     private NumberOption? ThisOption;
     public float CurrentValue;
@@ -24,7 +24,7 @@ public class BetterOptionPercentItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionPercentItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float DefaultValue, CustomRoleBehavior? role = null, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null)
+    public TBROptionPercentItem Create(int id, TBROptionTab gameOptionsMenu, string name, float DefaultValue, CustomRoleBehavior? role = null, TBROptionItem? Parent = null, Func<bool>? selfShowCondition = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Name = name;
@@ -39,7 +39,7 @@ public class BetterOptionPercentItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return (BetterOptionPercentItem)BetterOptionItems.First(op => op.Id == Id);
+                return (TBROptionPercentItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -157,7 +157,7 @@ public class BetterOptionPercentItem : BetterOptionItem
         if (CurrentValue >= floatRange.max) ThisOption.PlusBtn.SetInteractable(false);
         if (CurrentValue <= floatRange.min) ThisOption.MinusBtn.SetInteractable(false);
 
-        BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
+        TBRDataManager.SaveSetting(Id, CurrentValue.ToString());
     }
 
     public string GetColor(float num)
@@ -221,29 +221,29 @@ public class BetterOptionPercentItem : BetterOptionItem
 
     public void Load(float DefaultValue)
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            var Float = BetterDataManager.LoadFloatSetting(Id, DefaultValue);
+            var Float = TBRDataManager.LoadFloatSetting(Id, DefaultValue);
 
             if (Float > floatRange.max || Float < floatRange.min)
             {
                 Float = DefaultValue;
-                BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+                TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
             }
 
             CurrentValue = Float;
         }
         else
         {
-            BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+            TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
     }
 
     public override float GetFloat()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadFloatSetting(Id);
+            return TBRDataManager.LoadFloatSetting(Id);
         }
         else
         {
@@ -253,9 +253,9 @@ public class BetterOptionPercentItem : BetterOptionItem
 
     public override int GetInt()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return (int)BetterDataManager.LoadFloatSetting(Id);
+            return (int)TBRDataManager.LoadFloatSetting(Id);
         }
         else
         {

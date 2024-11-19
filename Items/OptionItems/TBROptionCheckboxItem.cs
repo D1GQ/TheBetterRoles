@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionCheckboxItem : BetterOptionItem
+public class TBROptionCheckboxItem : TBROptionItem
 {
     public BoolOptionNames? VanillaOption;
 
@@ -21,7 +21,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionCheckboxItem Create(int id, BetterOptionTab gameOptionsMenu, string name, bool DefaultValue = true, BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, BoolOptionNames? vanillaOption = null)
+    public TBROptionCheckboxItem Create(int id, TBROptionTab gameOptionsMenu, string name, bool DefaultValue = true, TBROptionItem? Parent = null, Func<bool>? selfShowCondition = null, BoolOptionNames? vanillaOption = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Tab = gameOptionsMenu;
@@ -36,7 +36,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return (BetterOptionCheckboxItem)BetterOptionItems.First(op => op.Id == Id);
+                return (TBROptionCheckboxItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -116,15 +116,15 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
     public void Load(bool DefaultValue)
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            var Bool = BetterDataManager.LoadBoolSetting(Id, DefaultValue);
+            var Bool = TBRDataManager.LoadBoolSetting(Id, DefaultValue);
             if (ThisOption != null) ThisOption.CheckMark.GetComponent<SpriteRenderer>().enabled = Bool;
             IsChecked = Bool;
         }
         else
         {
-            BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+            TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
 
         if (VanillaOption != null)
@@ -136,9 +136,9 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
     public override bool GetBool()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadBoolSetting(Id);
+            return TBRDataManager.LoadBoolSetting(Id);
         }
         else
         {
@@ -161,7 +161,7 @@ public class BetterOptionCheckboxItem : BetterOptionItem
 
         OnValueChange.Invoke(this);
 
-        BetterDataManager.SaveSetting(Id, IsChecked.ToString());
+        TBRDataManager.SaveSetting(Id, IsChecked.ToString());
 
         if (VanillaOption != null)
         {

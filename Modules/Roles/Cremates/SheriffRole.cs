@@ -19,29 +19,29 @@ public class SheriffRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Sheriff;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? ShootCooldown;
-    public BetterOptionItem? ShootDistance;
-    public BetterOptionItem? ShotsAmount;
-    public BetterOptionItem? Misfire;
-    public BetterOptionItem? CanShootImposters;
-    public BetterOptionItem? CanShootNeutrals;
+    public TBROptionItem? ShootCooldown;
+    public TBROptionItem? ShootDistance;
+    public TBROptionItem? ShotsAmount;
+    public TBROptionItem? Misfire;
+    public TBROptionItem? CanShootImposters;
+    public TBROptionItem? CanShootNeutrals;
     public PlayerAbilityButton? ShootButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                ShootCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
-                ShootDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootDistance"),
+                ShootCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
+                ShootDistance = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootDistance"),
                 [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
-                ShotsAmount = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootsAmount"), [0, 15, 1], 0, "", "", RoleOptionItem),
-                Misfire = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.KillOnMisfire"),
+                ShotsAmount = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.ShootsAmount"), [0, 15, 1], 0, "", "", RoleOptionItem),
+                Misfire = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.KillOnMisfire"),
                 [Translator.GetString("Role.Option.AtSelf"), Translator.GetString("Role.Option.AtTarget"), Translator.GetString("Role.Option.AtNone")], 0, RoleOptionItem),
-                CanShootImposters = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImpostors"), true, RoleOptionItem),
-                CanShootNeutrals = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootNeutralKilling"), false, RoleOptionItem)
+                CanShootImposters = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootImpostors"), true, RoleOptionItem),
+                CanShootNeutrals = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Sheriff.Option.CanShootNeutralKilling"), false, RoleOptionItem)
             ];
         }
     }

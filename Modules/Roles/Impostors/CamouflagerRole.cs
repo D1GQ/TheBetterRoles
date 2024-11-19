@@ -16,20 +16,20 @@ public class CamouflagerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Camouflager;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool DefaultVentOption => false;
 
-    public BetterOptionItem? CamouflageCooldown;
-    public BetterOptionItem? CamouflageDuration;
+    public TBROptionItem? CamouflageCooldown;
+    public TBROptionItem? CamouflageDuration;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                CamouflageCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Camouflager.Option.CamouflageCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                CamouflageDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Camouflager.Option.CamouflageDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                CamouflageCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Camouflager.Option.CamouflageCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                CamouflageDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Camouflager.Option.CamouflageDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }

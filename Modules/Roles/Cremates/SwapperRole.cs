@@ -20,16 +20,16 @@ public class SwapperRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Swapper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? AmountOfSwaps;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? AmountOfSwaps;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                AmountOfSwaps = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swapper.Option.AmountOfSwaps"), [1, 100, 1], 3, "", "", RoleOptionItem)
+                AmountOfSwaps = new TBROptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swapper.Option.AmountOfSwaps"), [1, 100, 1], 3, "", "", RoleOptionItem)
             ];
         }
     }

@@ -16,7 +16,7 @@ public class ModManagerPatch
 
         FileChecker.UpdateUnauthorizedFiles();
         LateTask.Update(Time.deltaTime);
-        BetterNotificationManager.Update();
+        TBRNotificationManager.Update();
         KeyListener.Update();
     }
 }

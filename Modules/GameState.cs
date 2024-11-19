@@ -18,7 +18,7 @@ public static class GameState
     public static bool AirshipIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Airship;
     public static bool FungleIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Fungle;
     public static bool SubmergedIsActive => SubmergedCompatibility.isSubmerged();
-    public static bool CamouflageCommsIsActive => IsSystemActive(SystemTypes.Comms) && BetterGameSettings.CamouflageComms.GetBool();
+    public static bool CamouflageCommsIsActive => IsSystemActive(SystemTypes.Comms) && TBRGameSettings.CamouflageComms.GetBool();
     public static byte GetActiveMapId => GameOptionsManager.Instance.CurrentGameOptions.MapId;
     public static bool IsSystemActive(SystemTypes type)
     {
@@ -90,7 +90,7 @@ public static class GameState
     }
     public static bool IsInGame => InGame;
     public static bool IsLobby => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Joined && InGame && !IsFreePlay;
-    public static bool IsTBRLobby => IsHost || AmongUsClient.Instance?.GetHost()?.BetterData()?.HasMod == true;
+    public static bool IsTBRLobby => IsHost || AmongUsClient.Instance?.GetHost()?.ExtendedData()?.HasMod == true;
     public static bool IsInIntro => IntroCutscene.Instance != null;
     public static bool IsInGamePlay => InGame && IsShip && !IsLobby && !IsInIntro || IsFreePlay;
     public static bool IsEnded => AmongUsClient.Instance?.GameState == InnerNet.InnerNetClient.GameStates.Ended;

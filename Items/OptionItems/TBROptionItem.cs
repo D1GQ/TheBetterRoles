@@ -16,31 +16,31 @@ public enum SettingType
     Bool,
 }
 
-public class BetterOptionItem
+public class TBROptionItem
 {
     public static string InfiniteIcon => "<b><size=150%>∞</size></b>";
     protected float topDistance = 0.15f;
     protected float bottomDistance = 0.50f;
     public static int IdNum = 0;
     public float StaticSpacingNum => 1f;
-    public Action<BetterOptionItem> OnValueChange { get; set; } = (BetterOptionItem opt) => { };
+    public Action<TBROptionItem> OnValueChange { get; set; } = (TBROptionItem opt) => { };
     public float StaticSpacingNumPlus => 0.45f;
     public static Dictionary<int, int> TempPlayerOptionData = [];
     public static int TempPlayerOptionDataNum = 0;
-    public static List<BetterOptionItem> BetterOptionItems = [];
+    public static List<TBROptionItem> BetterOptionItems = [];
 
     public int maskLayer = 20;
     public int Id { get; protected set; } = 0;
-    public BetterOptionTab? Tab { get; protected set; }
+    public TBROptionTab? Tab { get; protected set; }
     public OptionBehaviour? Option { get; protected set; }
     public string? Name { get; protected set; } = "None";
     public TextMeshPro? TitleText;
     public GameObject? obj;
 
-    public BetterOptionItem? ThisParent;
+    public TBROptionItem? ThisParent;
     public bool IsChild = false;
     public bool IsParent => ChildrenList.Count > 0;
-    public List<BetterOptionItem> ChildrenList = [];
+    public List<TBROptionItem> ChildrenList = [];
     public virtual bool ShowChildrenCondition() => false;
     public virtual bool SelfShowCondition() => true;
 
@@ -61,15 +61,15 @@ public class BetterOptionItem
                     continue;
             }
 
-            if (item is BetterOptionPlayerItem player)
+            if (item is TBROptionPlayerItem player)
             {
                 player.Load();
             }
 
             SpacingNum += item switch
             {
-                BetterOptionHeaderItem => item.topDistance,
-                BetterOptionDividerItem => item.topDistance,
+                TBROptionHeaderItem => item.topDistance,
+                TBROptionDividerItem => item.topDistance,
                 _ => 0f,
             };
 
@@ -85,16 +85,16 @@ public class BetterOptionItem
 
             SpacingNum += item switch
             {
-                BetterOptionHeaderItem => item.bottomDistance,
-                BetterOptionTitleItem => item.bottomDistance,
+                TBROptionHeaderItem => item.bottomDistance,
+                TBROptionTitleItem => item.bottomDistance,
                 _ => 0.45f,
             };
         }
 
         _ = new LateTask(() =>
         {
-            BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
-            BetterOptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.ScrollRelative(new(0f, 0f));
+            TBROptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.SetYBoundsMax(1.65f * SpacingNum / 1.8f);
+            TBROptionTab.allTabs?.FirstOrDefault(tab => tab.Id == GameSettingMenuPatch.ActiveTab)?.Tab?.scrollBar?.ScrollRelative(new(0f, 0f));
         }, 0.005f, shouldLog: false);
     }
 
@@ -140,7 +140,7 @@ public class BetterOptionItem
 
         List<TreeNode> treeNodes = [];
 
-        void CollectTreeData(BetterOptionItem option, int depth, bool isLastChild, TreeNode parent)
+        void CollectTreeData(TBROptionItem option, int depth, bool isLastChild, TreeNode parent)
         {
             var node = new TreeNode
             {
@@ -151,7 +151,7 @@ public class BetterOptionItem
             };
             treeNodes.Add(node);
 
-            if (option.IsParent && option.ShowChildrenCondition() || option.TryCast<BetterOptionPercentItem>())
+            if (option.IsParent && option.ShowChildrenCondition() || option.TryCast<TBROptionPercentItem>())
             {
                 for (int i = 0; i < option.ChildrenList.Count; i++)
                 {

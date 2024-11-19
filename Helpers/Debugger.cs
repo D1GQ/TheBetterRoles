@@ -17,7 +17,7 @@ class Logger
             if (hostOnly && !GameState.IsHost) return;
 
             string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][{tag}]";
-            string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
+            string logFilePath = Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt");
             string newLine = $"{mark}: {Utils.RemoveHtmlText(info)}";
             File.AppendAllText(logFilePath, newLine + Environment.NewLine);
             Main.Logger.LogInfo($"[{tag}] {info}");
@@ -108,7 +108,7 @@ class Logger
 #endif
 
             string mark = $"{DateTime.Now:HH:mm} [BetterRoleLog][PrivateLog][{tag}]";
-            string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
+            string logFilePath = Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt");
             string newLine = $"{mark}: " + Encryptor.Encrypt($"{info}");
             File.AppendAllText(logFilePath, newLine + Environment.NewLine);
         }

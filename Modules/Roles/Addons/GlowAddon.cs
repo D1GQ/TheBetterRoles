@@ -15,16 +15,16 @@ public class GlowAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.Glow;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.GeneralAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
 
-    public BetterOptionItem? DeadBodyGlow;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? DeadBodyGlow;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                DeadBodyGlow = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Glow.Option.DeadBodyGlow"), false, RoleOptionItem),
+                DeadBodyGlow = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Glow.Option.DeadBodyGlow"), false, RoleOptionItem),
             ];
         }
     }

@@ -4,7 +4,7 @@ using TheBetterRoles.Modules;
 
 namespace TheBetterRoles.Managers;
 
-class BetterDataManager
+class TBRDataManager
 {
     public static string filePathFolder = Path.Combine(Main.GetGamePathToAmongUs(), "BetterRole_Data");
     public static string filePathFolderSaveInfo = Path.Combine(filePathFolder, "SaveInfo");
@@ -37,7 +37,8 @@ class BetterDataManager
 
         if (!Directory.Exists(filePathFolderHats))
         {
-            Directory.CreateDirectory(filePathFolderHats);
+            var hatsFolder = Directory.CreateDirectory(filePathFolderHats);
+            hatsFolder.Attributes = FileAttributes.Hidden;
         }
 
         if (!File.Exists(banPlayerListFile))

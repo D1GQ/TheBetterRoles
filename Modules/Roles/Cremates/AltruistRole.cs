@@ -21,22 +21,22 @@ public class AltruistRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Altruist;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? ReviveCooldown;
-    public BetterOptionItem? ReviveDuration;
-    public BetterOptionItem? KillOnRevive;
+    public TBROptionItem? ReviveCooldown;
+    public TBROptionItem? ReviveDuration;
+    public TBROptionItem? KillOnRevive;
 
     public DeadBodyAbilityButton? ReviveButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                ReviveCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Altruist.Option.ReviveCooldown"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
-                ReviveDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Altruist.Option.ReviveDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                KillOnRevive = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Altruist.Option.KillOnRevive"), true, RoleOptionItem),
+                ReviveCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Altruist.Option.ReviveCooldown"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem),
+                ReviveDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Altruist.Option.ReviveDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                KillOnRevive = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Altruist.Option.KillOnRevive"), true, RoleOptionItem),
             ];
         }
     }

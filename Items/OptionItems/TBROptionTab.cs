@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionTab
+public class TBROptionTab
 {
-    public static List<BetterOptionTab> allTabs = [];
+    public static List<TBROptionTab> allTabs = [];
 
     public int Id;
     public string? Name;
@@ -15,7 +15,7 @@ public class BetterOptionTab
     public PassiveButton? TabButton;
     public Color? Color;
 
-    public BetterOptionTab CreateTab(int Id, string Name, string Description, Color Color, bool doNotDestroyMapPicker = false)
+    public TBROptionTab CreateTab(int Id, string Name, string Description, Color Color, bool doNotDestroyMapPicker = false)
     {
         if (GameSettingMenuPatch.Preload)
         {
@@ -59,7 +59,7 @@ public class BetterOptionTab
         BetterSettingsButton.OnClick.AddListener(new Action(() =>
         {
             GameSettingMenu.Instance.ChangeTab(Id, false);
-            BetterOptionItem.UpdatePositions();
+            TBROptionItem.UpdatePositions();
         }));
 
         var BetterSettingsTab = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsTab, GameSettingMenu.Instance.GameSettingsTab.transform.parent);

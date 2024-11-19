@@ -187,8 +187,8 @@ internal static class RPC
         version = version.Replace(" ", ".");
         if (version == Main.GetVersionText().Replace(" ", "."))
         {
-            player.BetterData().HasMod = true;
-            player.BetterData().Version = version;
+            player.ExtendedData().HasMod = true;
+            player.ExtendedData().Version = version;
 
             if (GameState.IsHost)
             {
@@ -210,8 +210,8 @@ internal static class RPC
         version = version.Replace(" ", ".");
         if (version == Main.GetVersionText().Replace(" ", "."))
         {
-            player.BetterData().HasMod = true;
-            player.BetterData().Version = version;
+            player.ExtendedData().HasMod = true;
+            player.ExtendedData().Version = version;
 
             if (GameState.IsHost)
             {
@@ -299,8 +299,8 @@ internal static class RPC
             CustomRoleManager.RoleListener(target, role => role.OnMurder(player, target, player == target, isAbility));
             CustomRoleManager.RoleListenerOther(role => role.OnMurderOther(player, target, player == target, isAbility));
 
-            player.BetterData().RoleInfo.Kills++;
-            target.BetterData().RoleInfo.RoleTypeWhenAlive = target.BetterData().RoleInfo.RoleType;
+            player.ExtendedData().RoleInfo.Kills++;
+            target.ExtendedData().RoleInfo.RoleTypeWhenAlive = target.ExtendedData().RoleInfo.RoleType;
 
             bool snapToTarget = (flags & (byte)MultiMurderFlags.snapToTarget) != 0;
             bool spawnBody = (flags & (byte)MultiMurderFlags.spawnBody) != 0;

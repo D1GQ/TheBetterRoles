@@ -24,7 +24,7 @@ public static class CustomHatManager
 
     public static void LoadAll()
     {
-        string path = BetterDataManager.filePathFolderHats;
+        string path = TBRDataManager.filePathFolderHats;
 
         if (Directory.Exists(path))
         {
@@ -90,12 +90,12 @@ public static class CustomHatManager
             return null;
         }
 
-        if (!File.Exists(Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path)))
+        if (!File.Exists(Path.Combine(TBRDataManager.filePathFolderHats, folder, "sprites", path)))
         {
-            throw new FileNotFoundException($"{Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path)} not downloaded yet!");
+            throw new FileNotFoundException($"{Path.Combine(TBRDataManager.filePathFolderHats, folder, "sprites", path)} not downloaded yet!");
         }
 
-        var texture = Utils.loadTextureFromDisk(Path.Combine(BetterDataManager.filePathFolderHats, folder, "sprites", path));
+        var texture = Utils.loadTextureFromDisk(Path.Combine(TBRDataManager.filePathFolderHats, folder, "sprites", path));
         if (texture == null) return null;
         var sprite = Sprite.Create(texture,
             new Rect(0, 0, texture.width, texture.height),

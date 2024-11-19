@@ -62,7 +62,7 @@ public class KeyListener
 
             if (Input.GetKeyDown(KeyCode.F2))
             {
-                var addons = PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons.ToList();
+                var addons = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Addons.ToList();
                 if (addons.Any())
                 {
                     if (AddonInfoIndex >= addons.Count) AddonInfoIndex = 0;
@@ -88,7 +88,7 @@ public class KeyListener
 
             if (Input.GetKeyDown(KeyCode.F4) && PlayerControl.LocalPlayer.Role() != null)
             {
-                var addons = PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons.ToList();
+                var addons = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Addons.ToList();
                 if (addons.Any())
                 {
                     if (AddonSettingsIndex >= addons.Count) AddonSettingsIndex = 0;

@@ -124,7 +124,7 @@ public class UsablePatch
                 condition &= true;
 
                 options.HostOnly = false;
-                if (!GameState.IsTBRLobby || !GameState.IsHost && !BetterDataManager.HostSettings.Any())
+                if (!GameState.IsTBRLobby || !GameState.IsHost && !TBRDataManager.HostSettings.Any())
                 {
                     condition = false;
                 }
@@ -168,7 +168,7 @@ public class UsablePatch
     {
         float num = float.MaxValue;
         PlayerControl @object = pc.Object;
-        couldUse = (!pc.IsDead || pc.BetterData().IsFakeAlive || canUseAsDead) && extraFlag;
+        couldUse = (!pc.IsDead || pc.ExtendedData().IsFakeAlive || canUseAsDead) && extraFlag;
         canUse = couldUse;
 
         if (canUse)

@@ -63,7 +63,7 @@ public class PlayerMenu
             {
                 CustomRoleManager.RoleListener(PlayerControl.LocalPlayer, role => role.OnPlayerMenu(Id, player?.Object, player, this, shapeshifterPanel, false), role => role.RoleHash == Role.RoleHash);
             }));
-            shapeshifterPanel.NameText.color = player.IsLocalData() ? player.BetterData().RoleInfo.Role.RoleColor32 : Color.white;
+            shapeshifterPanel.NameText.color = player.IsLocalData() ? player.ExtendedData().RoleInfo.Role.RoleColor32 : Color.white;
             PlayerMinigame.potentialVictims.Add(shapeshifterPanel);
             shapeshifterPanel.Background.gameObject.GetComponent<ButtonRolloverHandler>().OverColor = Role.RoleColor32;
             shapeshifterPanel.Background.transform.Find("Highlight/ShapeshifterIcon").gameObject.SetActive(false);

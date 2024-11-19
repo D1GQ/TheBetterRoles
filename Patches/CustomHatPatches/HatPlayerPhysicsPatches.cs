@@ -14,7 +14,7 @@ internal static class HatPlayerPhysicsPatches
         if (currentAnimation == __instance.Animations.group.ClimbUpAnim) return;
         if (currentAnimation == __instance.Animations.group.ClimbDownAnim) return;
         var hatParent = __instance.myPlayer.cosmetics.hat;
-        if (hatParent == null || hatParent == null || __instance?.myPlayer?.Visible == false || __instance?.myPlayer?.BetterData().CosmeticsActiveQueue == false) return;
+        if (hatParent == null || hatParent == null || __instance?.myPlayer?.Visible == false || __instance?.myPlayer?.ExtendedData().CosmeticsActiveQueue == false) return;
         if (!hatParent.TryGetCached(out var viewData)) return;
         if (viewData.LeftMainImage != null)
         {

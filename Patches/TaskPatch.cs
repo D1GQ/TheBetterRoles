@@ -30,10 +30,10 @@ public class TaskPatch
                     Il2CppSystem.Text.StringBuilder sb = new();
                     sb.Append("<size=75%>");
 
-                    if (PlayerControl.LocalPlayer.BetterData()?.RoleInfo?.RoleAssigned == true)
+                    if (PlayerControl.LocalPlayer.ExtendedData()?.RoleInfo?.RoleAssigned == true)
                     {
                         System.Text.StringBuilder sb2 = new();
-                        var allRoles = PlayerControl.LocalPlayer.BetterData().RoleInfo.AllRoles;
+                        var allRoles = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.AllRoles;
                         for (int i = allRoles.Count - 1; i >= 0; i--)
                         {
                             var role = allRoles[i];
@@ -59,7 +59,7 @@ public class TaskPatch
                     {
                         return false;
                     }
-                    bool flag = data.BetterData().RoleInfo.Role.IsImpostor;
+                    bool flag = data.ExtendedData().RoleInfo.Role.IsImpostor;
                     if (PlayerControl.LocalPlayer.myTasks == null || PlayerControl.LocalPlayer.myTasks.Count == 0)
                     {
                         sb.Append("None");
@@ -120,14 +120,14 @@ public class TaskPatch
             if (instance && instance.TotalTasks > 0)
             {
                 int num = DestroyableSingleton<TutorialManager>.InstanceExists ? 1 :
-                    instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.BetterData()?.RoleInfo?.Role?.HasTask == true);
+                    instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.ExtendedData()?.RoleInfo?.Role?.HasTask == true);
 
                 float totalProgress = 0f;
                 int taskPlayers = 0;
 
                 foreach (var player in instance.AllPlayers)
                 {
-                    if (player?.Disconnected == false && player?.BetterData()?.RoleInfo?.Role?.HasTask == true)
+                    if (player?.Disconnected == false && player?.ExtendedData()?.RoleInfo?.Role?.HasTask == true)
                     {
                         var tasks = player?.Tasks;
                         if (tasks != null)
@@ -187,7 +187,7 @@ public class TaskPatch
                 if (playerInfo == null || playerInfo.Disconnected || playerInfo.Tasks == null || playerInfo.Object == null)
                     continue;
 
-                var betterData = playerInfo.BetterData();
+                var betterData = playerInfo.ExtendedData();
                 if (betterData == null || betterData.RoleInfo == null || !betterData.RoleInfo.RoleAssigned || !betterData.RoleInfo.Role.HasTask)
                     continue;
 
@@ -214,7 +214,7 @@ public class TaskPatch
         public static bool Prefix(Console __instance, [HarmonyArgument(0)] NetworkedPlayerInfo playerInfo, ref float __result, ref bool canUse, ref bool couldUse)
         {
             var pc = playerInfo.Object;
-            var flag = pc.BetterData().RoleInfo.Role.HasTask || pc.BetterData().RoleInfo.Role.HasSelfTask;
+            var flag = pc.ExtendedData().RoleInfo.Role.HasTask || pc.ExtendedData().RoleInfo.Role.HasSelfTask;
             if (!flag && !__instance.AllowImpostor)
             {
                 couldUse = false;

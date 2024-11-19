@@ -13,7 +13,7 @@ public class DumpCommand : BaseCommand
     {
         if (GameState.IsInGamePlay && !GameState.IsDev) return;
 
-        string logFilePath = Path.Combine(BetterDataManager.filePathFolder, "betterrole-log.txt");
+        string logFilePath = Path.Combine(TBRDataManager.filePathFolder, "betterrole-log.txt");
         string log = File.ReadAllText(logFilePath);
         string newLog = string.Empty;
         string[] logArray = log.Split(new[] { Environment.NewLine }, StringSplitOptions.None);

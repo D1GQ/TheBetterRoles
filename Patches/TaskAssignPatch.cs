@@ -48,11 +48,11 @@ class RpcSetTasksPatch
         int NumLongTasks = VanillaGameSettings.LongTasksNum.GetInt();
         int NumShortTasks = VanillaGameSettings.ShortTasksNum.GetInt();
 
-        if (__instance?.BetterData()?.RoleInfo != null)
+        if (__instance?.ExtendedData()?.RoleInfo != null)
         {
-            NumCommonTasks = __instance.BetterData().RoleInfo.OverrideCommonTasks >= 0 ? __instance.BetterData().RoleInfo.OverrideCommonTasks : NumCommonTasks;
-            NumShortTasks = __instance.BetterData().RoleInfo.OverrideShortTasks >= 0 ? __instance.BetterData().RoleInfo.OverrideShortTasks : NumShortTasks;
-            NumLongTasks = __instance.BetterData().RoleInfo.OverrideLongTasks >= 0 ? __instance.BetterData().RoleInfo.OverrideLongTasks : NumLongTasks;
+            NumCommonTasks = __instance.ExtendedData().RoleInfo.OverrideCommonTasks >= 0 ? __instance.ExtendedData().RoleInfo.OverrideCommonTasks : NumCommonTasks;
+            NumShortTasks = __instance.ExtendedData().RoleInfo.OverrideShortTasks >= 0 ? __instance.ExtendedData().RoleInfo.OverrideShortTasks : NumShortTasks;
+            NumLongTasks = __instance.ExtendedData().RoleInfo.OverrideLongTasks >= 0 ? __instance.ExtendedData().RoleInfo.OverrideLongTasks : NumLongTasks;
         }
 
         // A list containing the IDs of tasks that can be assigned

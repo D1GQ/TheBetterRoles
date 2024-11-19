@@ -14,13 +14,13 @@ public class GiantAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.Giant;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HarmfulAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
 
     public CircleCollider2D? CircleCollider;
     public Vector3 Size;
     public Vector2 Offset;
     public float Radius;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {

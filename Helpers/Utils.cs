@@ -48,7 +48,7 @@ public static class Utils
     {
         foreach (var player in Main.AllPlayerControls)
         {
-            var betterData = player.BetterData();
+            var betterData = player.ExtendedData();
             if (betterData != null)
             {
                 betterData.DirtyName = true;
@@ -59,10 +59,10 @@ public static class Utils
     // Set player name
     public static string FormatPlayerName(NetworkedPlayerInfo player, bool bypassDisguise = false)
     {
-        if (player == null || !(player.BetterData()?.RoleInfo?.RoleAssigned == true))
+        if (player == null || !(player.ExtendedData()?.RoleInfo?.RoleAssigned == true))
             return string.Empty;
 
-        var playerData = player.BetterData();
+        var playerData = player.ExtendedData();
         var roleInfo = playerData.RoleInfo;
         var role = roleInfo?.Role;
         NetworkedPlayerInfo target = player;
@@ -80,7 +80,7 @@ public static class Utils
         }
 
         StringBuilder nameBuilder = new StringBuilder();
-        string? nameColor = target.BetterData().NameColor;
+        string? nameColor = target.ExtendedData().NameColor;
 
         if (string.IsNullOrEmpty(nameColor))
         {
@@ -298,12 +298,12 @@ public static class Utils
 
     public static string SettingsChangeNotifier(int Id, string info, bool playSound = true)
     {
-        var option = BetterOptionItem.BetterOptionItems.FirstOrDefault(op => op.Id == Id);
+        var option = TBROptionItem.BetterOptionItems.FirstOrDefault(op => op.Id == Id);
         if (option != null)
         {
             string Name = option.Name ?? "???";
             List<string> names = [Name];
-            BetterOptionItem tempOption = option;
+            TBROptionItem tempOption = option;
 
             while (tempOption.ThisParent != null)
             {

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionIntItem : BetterOptionItem
+public class TBROptionIntItem : TBROptionItem
 {
     public Int32OptionNames? VanillaOption;
 
@@ -25,7 +25,7 @@ public class BetterOptionIntItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionIntItem Create(int id, BetterOptionTab gameOptionsMenu, string name, int[] values, int DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, Int32OptionNames? vanillaOption = null, bool canBeInfinite = false)
+    public TBROptionIntItem Create(int id, TBROptionTab gameOptionsMenu, string name, int[] values, int DefaultValue, string preFix = "", string postFix = "", TBROptionItem? Parent = null, Func<bool>? selfShowCondition = null, Int32OptionNames? vanillaOption = null, bool canBeInfinite = false)
     {
         Id = id >= 0 ? id : GetGeneratedId();
         Name = name;
@@ -46,7 +46,7 @@ public class BetterOptionIntItem : BetterOptionItem
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return (BetterOptionIntItem)BetterOptionItems.First(op => op.Id == Id);
+                return (TBROptionIntItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -149,7 +149,7 @@ public class BetterOptionIntItem : BetterOptionItem
         if (CurrentValue >= intRange.max) ThisOption.PlusBtn.SetInteractable(false);
         if (CurrentValue <= intRange.min) ThisOption.MinusBtn.SetInteractable(false);
 
-        BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
+        TBRDataManager.SaveSetting(Id, CurrentValue.ToString());
     }
 
     public void Increase()
@@ -206,21 +206,21 @@ public class BetterOptionIntItem : BetterOptionItem
 
     public void Load(int DefaultValue)
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            var Int = BetterDataManager.LoadIntSetting(Id, DefaultValue);
+            var Int = TBRDataManager.LoadIntSetting(Id, DefaultValue);
 
             if (Int > intRange.max || Int < intRange.min)
             {
                 Int = DefaultValue;
-                BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+                TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
             }
 
             CurrentValue = Int;
         }
         else
         {
-            BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+            TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
 
         if (VanillaOption != null)
@@ -232,9 +232,9 @@ public class BetterOptionIntItem : BetterOptionItem
 
     public override float GetFloat()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadIntSetting(Id);
+            return TBRDataManager.LoadIntSetting(Id);
         }
         else
         {
@@ -244,9 +244,9 @@ public class BetterOptionIntItem : BetterOptionItem
 
     public override int GetInt()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadIntSetting(Id);
+            return TBRDataManager.LoadIntSetting(Id);
         }
         else
         {

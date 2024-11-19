@@ -18,28 +18,28 @@ public class MedicRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Medic;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? ShowShieldedPlayer;
-    public BetterOptionItem? Notify;
-    public BetterOptionItem? NotifyKiller;
-    public BetterOptionItem? RemoveShieldOnMedicDeath;
+    public TBROptionItem? ShowShieldedPlayer;
+    public TBROptionItem? Notify;
+    public TBROptionItem? NotifyKiller;
+    public TBROptionItem? RemoveShieldOnMedicDeath;
 
     public PlayerAbilityButton? ShieldButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                ShowShieldedPlayer = new BetterOptionStringItem().Create(GetOptionUID(true), SettingsTab, GetString("Role.Medic.Option.ShowShieldedPlayer"),
+                ShowShieldedPlayer = new TBROptionStringItem().Create(GetOptionUID(true), SettingsTab, GetString("Role.Medic.Option.ShowShieldedPlayer"),
                 [$"{Utils.GetCustomRoleNameAndColor(RoleType)}", $"{Utils.GetCustomRoleNameAndColor(RoleType)}+<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>", $"{GetString("All")}"], 0, RoleOptionItem),
 
-                Notify = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.Notify"),
+                Notify = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.Notify"),
                 [$"{Utils.GetCustomRoleNameAndColor(RoleType)}", $"<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>", $"{Utils.GetCustomRoleNameAndColor(RoleType)}+<#8E8E8E>{GetString("Role.Medic.Shielded")}</color>"], 0, RoleOptionItem),
 
-                NotifyKiller = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.NotifyKiller"), true, RoleOptionItem),
-                RemoveShieldOnMedicDeath = new BetterOptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.RemoveShieldOnMedicDeath"), false, RoleOptionItem),
+                NotifyKiller = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.NotifyKiller"), true, RoleOptionItem),
+                RemoveShieldOnMedicDeath = new TBROptionCheckboxItem().Create(GetOptionUID(), SettingsTab, GetString("Role.Medic.Option.RemoveShieldOnMedicDeath"), false, RoleOptionItem),
             ];
         }
     }

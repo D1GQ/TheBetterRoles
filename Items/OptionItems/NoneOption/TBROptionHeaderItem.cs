@@ -2,9 +2,9 @@
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionHeaderItem : BetterOptionItem
+public class TBROptionHeaderItem : TBROptionItem
 {
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, string name, float topDistance = 0.1f, float bottomDistance = 0.75f)
+    public TBROptionItem Create(TBROptionTab gameOptionsMenu, string name, float topDistance = 0.1f, float bottomDistance = 0.75f)
     {
         if (gameOptionsMenu.Tab == null)
         {

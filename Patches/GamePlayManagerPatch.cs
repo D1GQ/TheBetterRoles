@@ -126,7 +126,7 @@ class GamePlayManager
         [HarmonyPrefix]
         private static bool BeginGame_Prefix(GameStartManager __instance)
         {
-            if (!Main.AllPlayerControls.Where(pc => !pc.IsHost()).All(pc => pc.BetterData().HasMod)) return false;
+            if (!Main.AllPlayerControls.Where(pc => !pc.IsHost()).All(pc => pc.ExtendedData().HasMod)) return false;
 
             if (__instance.startState == GameStartManager.StartingStates.Countdown)
             {

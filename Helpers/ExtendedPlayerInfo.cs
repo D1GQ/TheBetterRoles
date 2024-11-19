@@ -119,7 +119,7 @@ public static class PlayerDataExtension
 
         public static void TryCreateExtendedData(NetworkedPlayerInfo data)
         {
-            if (data.BetterData() == null)
+            if (data.ExtendedData() == null)
             {
                 ExtendedPlayerInfo newBetterData = data.gameObject.AddComponent<ExtendedPlayerInfo>();
 
@@ -157,22 +157,22 @@ public static class PlayerDataExtension
         }
     }
 
-    public static void DirtyName(this PlayerControl player) => player.BetterData().DirtyName = true;
+    public static void DirtyName(this PlayerControl player) => player.ExtendedData().DirtyName = true;
 
     // Get BetterData from PlayerControl
-    public static ExtendedPlayerInfo? BetterData(this PlayerControl player)
+    public static ExtendedPlayerInfo? ExtendedData(this PlayerControl player)
     {
         return player?.Data?.GetComponent<ExtendedPlayerInfo>();
     }
 
     // Get BetterData from NetworkedPlayerInfo
-    public static ExtendedPlayerInfo? BetterData(this NetworkedPlayerInfo data)
+    public static ExtendedPlayerInfo? ExtendedData(this NetworkedPlayerInfo data)
     {
         return data?.GetComponent<ExtendedPlayerInfo>();
     }
 
     // Get BetterData from ClientData
-    public static ExtendedPlayerInfo? BetterData(this ClientData data)
+    public static ExtendedPlayerInfo? ExtendedData(this ClientData data)
     {
         var player = Utils.PlayerFromClientId(data.Id);
         return player?.Data?.GetComponent<ExtendedPlayerInfo>();

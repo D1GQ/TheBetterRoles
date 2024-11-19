@@ -19,26 +19,26 @@ public class VeteranRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Veteran;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? CanBeKilledOnAlert;
-    public BetterOptionItem? AlertCooldown;
-    public BetterOptionItem? AlertDuration;
-    public BetterOptionItem? MaximumNumberOfAlerts;
-    public BetterOptionItem? AlertsGainFromTask;
+    public TBROptionItem? CanBeKilledOnAlert;
+    public TBROptionItem? AlertCooldown;
+    public TBROptionItem? AlertDuration;
+    public TBROptionItem? MaximumNumberOfAlerts;
+    public TBROptionItem? AlertsGainFromTask;
 
     public BaseAbilityButton? AlertButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                CanBeKilledOnAlert = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Veteran.Option.CanBeKilledOnAlert"), false, RoleOptionItem),
-                AlertCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertCooldown"), [0f, 180f, 2.5f], 20, "", "s", RoleOptionItem),
-                AlertDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertDuration"), [0f, 180f, 2.5f], 12, "", "s", RoleOptionItem),
-                MaximumNumberOfAlerts = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.MaximumNumberOfAlerts"), [1, 100, 1], 3, "", "", RoleOptionItem),
-                AlertsGainFromTask = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0f, 100f, 0.5f], 1, "", "", RoleOptionItem),
+                CanBeKilledOnAlert = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Veteran.Option.CanBeKilledOnAlert"), false, RoleOptionItem),
+                AlertCooldown = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertCooldown"), [0f, 180f, 2.5f], 20, "", "s", RoleOptionItem),
+                AlertDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertDuration"), [0f, 180f, 2.5f], 12, "", "s", RoleOptionItem),
+                MaximumNumberOfAlerts = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.MaximumNumberOfAlerts"), [1, 100, 1], 3, "", "", RoleOptionItem),
+                AlertsGainFromTask = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Veteran.Option.AlertsGainFromTask"), [0f, 100f, 0.5f], 1, "", "", RoleOptionItem),
             ];
         }
     }

@@ -18,22 +18,22 @@ public class TransporterRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Transporter;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
 
-    public BetterOptionItem? TransportCooldown;
-    public BetterOptionItem? MaximumNumberOfTransports;
-    public BetterOptionItem? TransportsGainFromTask;
+    public TBROptionItem? TransportCooldown;
+    public TBROptionItem? MaximumNumberOfTransports;
+    public TBROptionItem? TransportsGainFromTask;
 
     public BaseAbilityButton? TransportButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                TransportCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
-                MaximumNumberOfTransports = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.MaximumNumberOfTransports"), [1, 100, 1], 5, "", "", RoleOptionItem),
-                TransportsGainFromTask = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0f, 100f, 0.5f], 1f, "", "", RoleOptionItem),
+                TransportCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportCooldown"), [0f, 180f, 2.5f], 15, "", "s", RoleOptionItem),
+                MaximumNumberOfTransports = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.MaximumNumberOfTransports"), [1, 100, 1], 5, "", "", RoleOptionItem),
+                TransportsGainFromTask = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Transporter.Option.TransportsGainFromTask"), [0f, 100f, 0.5f], 1f, "", "", RoleOptionItem),
             ];
         }
     }

@@ -19,9 +19,9 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Phantom;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Ghost;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
     public override bool CanVent => _player.IsInVent();
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
@@ -37,9 +37,9 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
         InteractableTarget = false;
         VentButton.VisibleCondition = _player.IsInVent;
         VentButton.UseAsDead = true;
-        _player.BetterData().IsFakeAlive = true;
+        _player.ExtendedData().IsFakeAlive = true;
         _player.ClearAddons();
-        _player.BetterData().PlayerVisionModPlus += 10;
+        _player.ExtendedData().PlayerVisionModPlus += 10;
         _player.Data.IsDead = true;
         _player.CustomRevive(false);
         _player.cosmetics.SetPhantomRoleAlpha(0f);
@@ -62,7 +62,7 @@ public class PhantomRoleTBR : CustomGhostRoleBehavior
 
     public override void OnDeinitialize()
     {
-        _player.BetterData().PlayerVisionModPlus -= 10;
+        _player.ExtendedData().PlayerVisionModPlus -= 10;
         OnClick();
     }
 

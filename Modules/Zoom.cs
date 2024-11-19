@@ -14,7 +14,7 @@ public static class Zoom
         if (PlayerControl.LocalPlayer.Role() != null)
         {
             if (GameState.IsCanMove && (!GameState.IsInGamePlay || !PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.Role()?.IsGhostRole == false
-                && !PlayerControl.LocalPlayer.BetterData().IsFakeAlive))
+                && !PlayerControl.LocalPlayer.ExtendedData().IsFakeAlive))
             {
                 if (Camera.main.orthographicSize > 3.0f)
                     resetButtons = true;

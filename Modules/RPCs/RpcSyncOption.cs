@@ -48,8 +48,8 @@ namespace TheBetterRoles.RPCs
                 var value = data.value;
                 var text = data.text;
 
-                BetterDataManager.SaveSetting(Id, value);
-                BetterOptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue(value);
+                TBRDataManager.SaveSetting(Id, value);
+                TBROptionItem.BetterOptionItems?.FirstOrDefault(op => op.Id == Id)?.SyncValue(value);
                 Utils.SettingsChangeNotifierSync(Id, text);
             }
         }

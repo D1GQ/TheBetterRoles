@@ -19,18 +19,18 @@ public class MinerRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
     public override bool VentReliantRole => true;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
-    public BetterOptionItem? DigCooldown;
-    public BetterOptionItem? DigAmount;
-    public override BetterOptionItem[]? OptionItems
+    public TBROptionItem? DigCooldown;
+    public TBROptionItem? DigAmount;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                DigCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Miner.Option.DigCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                DigAmount = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Miner.Option.DigAmount"), [0, 100, 1], 0, "", "", RoleOptionItem),
+                DigCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Miner.Option.DigCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                DigAmount = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Miner.Option.DigAmount"), [0, 100, 1], 0, "", "", RoleOptionItem),
             ];
         }
     }

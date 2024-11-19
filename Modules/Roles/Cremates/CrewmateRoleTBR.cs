@@ -15,8 +15,8 @@ public class CrewmateRoleTBR : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Crewmate;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Crewmate;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Vanilla;
-    public override BetterOptionTab? SettingsTab => BetterTabs.CrewmateRoles;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionTab? SettingsTab => BetterTabs.CrewmateRoles;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {

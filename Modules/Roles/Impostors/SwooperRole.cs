@@ -21,20 +21,20 @@ public class SwooperRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Swooper;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool DefaultVentOption => false;
 
-    public BetterOptionItem? InvisibilityCooldown;
-    public BetterOptionItem? InvisibilityDuration;
+    public TBROptionItem? InvisibilityCooldown;
+    public TBROptionItem? InvisibilityDuration;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                InvisibilityCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityCooldow"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                InvisibilityDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem, canBeInfinite: true),
+                InvisibilityCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityCooldow"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                InvisibilityDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Swooper.Option.InvisibilityDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem, canBeInfinite: true),
             ];
         }
     }

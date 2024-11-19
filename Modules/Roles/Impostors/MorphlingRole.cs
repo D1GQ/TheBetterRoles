@@ -17,22 +17,22 @@ public class MorphlingRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Morphling;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
     public override bool DefaultVentOption => false;
 
-    public BetterOptionItem? SampleCooldown;
-    public BetterOptionItem? TransformCooldown;
-    public BetterOptionItem? TransformDuration;
+    public TBROptionItem? SampleCooldown;
+    public TBROptionItem? TransformCooldown;
+    public TBROptionItem? TransformDuration;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                SampleCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Morphling.Option.SampleCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                TransformCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                TransformDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem, canBeInfinite: true),
+                SampleCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Morphling.Option.SampleCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                TransformCooldown = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                TransformDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Morphling.Option.TransformDuration"), [0f, 180f, 2.5f], 15f, "", "s", RoleOptionItem, canBeInfinite: true),
             ];
         }
     }
@@ -49,7 +49,7 @@ public class MorphlingRole : CustomRoleBehavior
 
         TransformButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
         TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
-        TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.BetterData().CamouflagedQueue; };
+        TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.ExtendedData().CamouflagedQueue; };
         TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");
         TransformButton.CanCancelDuration = true;
     }
@@ -129,7 +129,7 @@ public class MorphlingRole : CustomRoleBehavior
             return;
         }
 
-        if (systemType == SystemTypes.Comms && BetterGameSettings.CamouflageComms.GetBool())
+        if (systemType == SystemTypes.Comms && TBRGameSettings.CamouflageComms.GetBool())
         {
             if (system.TryCast<HqHudSystemType>(out var hqHudSystem))
             {

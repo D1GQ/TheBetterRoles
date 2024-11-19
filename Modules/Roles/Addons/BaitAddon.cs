@@ -17,19 +17,19 @@ public class BaitAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.Bait;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.GeneralAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
-    public BetterOptionItem? Delay;
-    public BetterOptionItem? MaximumDelay;
-    public BetterOptionItem? MinimumDelay;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
+    public TBROptionItem? Delay;
+    public TBROptionItem? MaximumDelay;
+    public TBROptionItem? MinimumDelay;
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                Delay = new BetterOptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Bait.Option.Delay"), false, RoleOptionItem),
-                MaximumDelay = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MaximumDelay"), [0, 10, 1], 5, "", "s", Delay),
-                MinimumDelay = new BetterOptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MinimumDelay"), [0, 10, 1], 0, "", "s", Delay),
+                Delay = new TBROptionCheckboxItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Bait.Option.Delay"), false, RoleOptionItem),
+                MaximumDelay = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MaximumDelay"), [0, 10, 1], 5, "", "s", Delay),
+                MinimumDelay = new TBROptionIntItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Bait.Option.MinimumDelay"), [0, 10, 1], 0, "", "s", Delay),
             ];
         }
     }

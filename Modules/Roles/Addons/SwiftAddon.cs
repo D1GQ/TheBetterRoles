@@ -15,17 +15,17 @@ public class SwiftAddon : CustomAddonBehavior
     public override CustomRoles RoleType => CustomRoles.Swift;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.None;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.HelpfulAddon;
-    public override BetterOptionTab? SettingsTab => BetterTabs.Addons;
+    public override TBROptionTab? SettingsTab => BetterTabs.Addons;
 
-    public BetterOptionItem? SpeedX;
+    public TBROptionItem? SpeedX;
     private bool HasSpeed = false;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                SpeedX = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swift.Option.Speed"), [1.5f, 5f, 0.25f], 2f, "x", "", RoleOptionItem),
+                SpeedX = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Swift.Option.Speed"), [1.5f, 5f, 0.25f], 2f, "x", "", RoleOptionItem),
             ];
         }
     }

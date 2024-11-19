@@ -210,37 +210,37 @@ public abstract class CustomRoleBehavior
     /// Defines the settings tab that this role will automatically be placed into. 
     /// This helps in organizing the role's configuration in the UI.
     /// </summary>
-    public abstract BetterOptionTab? SettingsTab { get; }
+    public abstract TBROptionTab? SettingsTab { get; }
 
     /// <summary>
     /// Array of setting options for the role. These can be initialized later to provide customization for the role.
     /// </summary>
-    public abstract BetterOptionItem[]? OptionItems { get; }
+    public abstract TBROptionItem[]? OptionItems { get; }
 
     /// <summary>
     /// The role's specific chance option in the game settings. This allows the chance of this role appearing to be configured.
     /// </summary>
-    public BetterOptionItem? RoleOptionItem { get; set; }
+    public TBROptionItem? RoleOptionItem { get; set; }
 
     /// <summary>
     /// The role's amount option in the game settings. This allows setting how many players can have this role in a game.
     /// </summary>
-    public BetterOptionItem? AmountOptionItem { get; set; }
+    public TBROptionItem? AmountOptionItem { get; set; }
 
     /// <summary>
     /// The option that determines whether players can use vents while playing this role. 
     /// </summary>
-    public BetterOptionItem? CanVentOptionItem { get; set; }
+    public TBROptionItem? CanVentOptionItem { get; set; }
 
     /// <summary>
     /// The option that sets the cooldown time between vent uses for players in this role.
     /// </summary>
-    public BetterOptionItem? VentCooldownOptionItem { get; set; }
+    public TBROptionItem? VentCooldownOptionItem { get; set; }
 
     /// <summary>
     /// The option that sets the duration a player can stay in a vent while playing this role.
     /// </summary>
-    public BetterOptionItem? VentDurationOptionItem { get; set; }
+    public TBROptionItem? VentDurationOptionItem { get; set; }
 
     /// <summary>
     /// Additional options for CanVent
@@ -255,22 +255,22 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The option that determines if the normal task amount is overrated.
     /// </summary>
-    public BetterOptionItem? OverrideTasksOptionItem { get; set; }
+    public TBROptionItem? OverrideTasksOptionItem { get; set; }
 
     /// <summary>
     /// The option that determines the amount of common tasks assigned to this role.
     /// </summary>
-    public BetterOptionItem? CommonTasksOptionItem { get; set; }
+    public TBROptionItem? CommonTasksOptionItem { get; set; }
 
     /// <summary>
     /// The option that determines the amount of long tasks assigned to this role when using vents.
     /// </summary>
-    public BetterOptionItem? LongTasksOptionItem { get; set; }
+    public TBROptionItem? LongTasksOptionItem { get; set; }
 
     /// <summary>
     /// The option that determines the amount of short tasks assigned to this role.
     /// </summary>
-    public BetterOptionItem? ShortTasksOptionItem { get; set; }
+    public TBROptionItem? ShortTasksOptionItem { get; set; }
 
     /// <summary>
     /// List of all local ability buttons available to the player for this role. This can include things like kill, sabotage, or vent buttons.
@@ -320,7 +320,7 @@ public abstract class CustomRoleBehavior
     /// <summary>
     /// The option that determines whether players has Impostor vision.
     /// </summary>
-    protected BetterOptionItem? HasImpostorVisionOption { get; set; }
+    protected TBROptionItem? HasImpostorVisionOption { get; set; }
 
     /// <summary>
     /// The bool that determines whether players has Impostor vision.
@@ -391,8 +391,8 @@ public abstract class CustomRoleBehavior
     /// </summary>
     public virtual bool CanMove => true;
 
-    public float GetChance() => GameState.IsHost && CanBeAssigned ? BetterDataManager.LoadFloatSetting(RoleUID) : 0f;
-    public int GetAmount() => GameState.IsHost && CanBeAssigned ? BetterDataManager.LoadIntSetting(RoleUID + 1) : 0;
+    public float GetChance() => GameState.IsHost && CanBeAssigned ? TBRDataManager.LoadFloatSetting(RoleUID) : 0f;
+    public int GetAmount() => GameState.IsHost && CanBeAssigned ? TBRDataManager.LoadIntSetting(RoleUID + 1) : 0;
 
     private int tempOptionNum = 0;
     protected int GetOptionUID(bool firstOption = false)
@@ -424,16 +424,16 @@ public abstract class CustomRoleBehavior
 
             if (!IsAddon)
             {
-                player.BetterData().RoleInfo.Role = this;
-                player.BetterData().RoleInfo.RoleType = RoleType;
+                player.ExtendedData().RoleInfo.Role = this;
+                player.ExtendedData().RoleInfo.RoleType = RoleType;
                 if (isAssigned) OnRoleAssigned();
                 SetUpRole();
             }
             else
             {
-                if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == RoleType))
+                if (!player.ExtendedData().RoleInfo.Addons.Any(addon => addon.RoleType == RoleType))
                 {
-                    player.BetterData().RoleInfo.Addons.Add((CustomAddonBehavior)this);
+                    player.ExtendedData().RoleInfo.Addons.Add((CustomAddonBehavior)this);
                     if (isAssigned) OnRoleAssigned();
                     SetUpRole();
                 }
@@ -472,7 +472,7 @@ public abstract class CustomRoleBehavior
 
         if (IsAddon)
         {
-            _player.BetterData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
+            _player.ExtendedData().RoleInfo.Addons.Remove((CustomAddonBehavior)this);
         }
 
         Utils.DirtyAllNames();
@@ -562,33 +562,33 @@ public abstract class CustomRoleBehavior
     protected virtual void SetUpSettings()
     {
         tempBaseOptionNum = 0;
-        RoleOptionItem = new BetterOptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f, this);
-        AmountOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
+        RoleOptionItem = new TBROptionPercentItem().Create(GetBaseOptionID(), SettingsTab, Utils.GetCustomRoleNameAndColor(RoleType, true), 0f, this);
+        AmountOptionItem = new TBROptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.Amount"), [1, 15, 1], 1, "", "", RoleOptionItem);
 
         OptionItems.Initialize();
 
         if (IsNeutral && !IsGhostRole)
         {
-            HasImpostorVisionOption = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.HasImpostorVision"), false, RoleOptionItem);
+            HasImpostorVisionOption = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.HasImpostorVision"), false, RoleOptionItem);
         }
 
         bool ventFlag = !IsCrewmate && !VentReliantRole && !IsGhostRole;
         if (ventFlag)
         {
-            CanVentOptionItem = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), DefaultVentOption, RoleOptionItem);
+            CanVentOptionItem = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.CanVent"), DefaultVentOption, RoleOptionItem);
         }
         if (AdditionalVentOptions != null)
         {
-            if (AdditionalVentOptions.Cooldown > 0f) VentCooldownOptionItem = new BetterOptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentCooldown"), [0f, 180f, 2.5f], AdditionalVentOptions.Cooldown, "", "s", ventFlag ? CanVentOptionItem : null);
-            if (AdditionalVentOptions.Duration > 0f) VentDurationOptionItem = new BetterOptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentDuration"), [0f, 180f, 2.5f], AdditionalVentOptions.Duration, "", "s", ventFlag ? CanVentOptionItem : null);
+            if (AdditionalVentOptions.Cooldown > 0f) VentCooldownOptionItem = new TBROptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentCooldown"), [0f, 180f, 2.5f], AdditionalVentOptions.Cooldown, "", "s", ventFlag ? CanVentOptionItem : null);
+            if (AdditionalVentOptions.Duration > 0f) VentDurationOptionItem = new TBROptionFloatItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Ability.VentDuration"), [0f, 180f, 2.5f], AdditionalVentOptions.Duration, "", "s", ventFlag ? CanVentOptionItem : null);
         }
 
         if (TaskReliantRole)
         {
-            OverrideTasksOptionItem = new BetterOptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
-            CommonTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            LongTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
-            ShortTasksOptionItem = new BetterOptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
+            OverrideTasksOptionItem = new TBROptionCheckboxItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.OverrideTasks"), false, RoleOptionItem);
+            CommonTasksOptionItem = new TBROptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.CommonTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            LongTasksOptionItem = new TBROptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.LongTasks"), [0, 10, 1], 2, "", "", OverrideTasksOptionItem);
+            ShortTasksOptionItem = new TBROptionIntItem().Create(GetBaseOptionID(), SettingsTab, Translator.GetString("Role.Option.ShortTasks"), [0, 10, 1], 4, "", "", OverrideTasksOptionItem);
         }
     }
 

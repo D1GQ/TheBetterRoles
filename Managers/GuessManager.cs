@@ -130,7 +130,7 @@ public class GuessManager : MonoBehaviour
             TabImpostors = new GuessTab().Create(1, Translator.GetString("BetterSetting.Tab.ImpostorRoles"), this, CustomRoleTeam.Impostor);
         if (roles.Where(r => r.IsNeutral).Any())
             TabNeutrals = new GuessTab().Create(2, Translator.GetString("BetterSetting.Tab.NeutralRoles"), this, CustomRoleTeam.Neutral);
-        if (roles.Where(r => r.IsAddon).Any() && BetterGameSettings.CanGuessAddons.GetBool())
+        if (roles.Where(r => r.IsAddon).Any() && TBRGameSettings.CanGuessAddons.GetBool())
             TabAddons = new GuessTab().Create(3, Translator.GetString("BetterSetting.Tab.Addons"), this, CustomRoleTeam.None);
 
         ChangeTab(0);
@@ -150,7 +150,7 @@ public class GuessManager : MonoBehaviour
                 goto skip;
             }
 
-            if (role.GetChance() <= 0 && BetterGameSettings.OnlyShowEnabledRoles.GetBool())
+            if (role.GetChance() <= 0 && TBRGameSettings.OnlyShowEnabledRoles.GetBool())
             {
                 continue;
             }

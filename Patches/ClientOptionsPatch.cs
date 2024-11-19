@@ -25,7 +25,7 @@ public static class OptionsMenuBehaviourPatch
         {
             bool flag = GameState.IsInGame && !GameState.IsLobby || GameState.IsFreePlay;
             if (flag)
-                BetterNotificationManager.Notify($"Unable to toggle '{buttonName}' while in gameplay!", 2.5f);
+                TBRNotificationManager.Notify($"Unable to toggle '{buttonName}' while in gameplay!", 2.5f);
 
             return flag;
         }
@@ -33,7 +33,7 @@ public static class OptionsMenuBehaviourPatch
         {
             bool flag = GameState.IsInGame;
             if (flag)
-                BetterNotificationManager.Notify($"Unable to toggle '{buttonName}' while in game!", 2.5f);
+                TBRNotificationManager.Notify($"Unable to toggle '{buttonName}' while in game!", 2.5f);
 
             return flag;
         }
@@ -92,7 +92,7 @@ public static class OptionsMenuBehaviourPatch
             SwitchToVanilla = ClientOptionItem.Create(title, null, __instance, SwitchToVanillaButtonToggle, IsToggle: false, toggleCheck: () => !toggleCheckInGame(title));
             static void SwitchToVanillaButtonToggle()
             {
-                BetterNotificationManager.BAUNotificationManagerObj.DestroyObj();
+                TBRNotificationManager.TBRNotificationManagerObj.DestroyObj();
                 Harmony.UnpatchAll();
             }
         }

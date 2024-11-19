@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace TheBetterRoles.Managers;
 
-class BetterNotificationManager
+class TBRNotificationManager
 {
-    public static GameObject? BAUNotificationManagerObj;
+    public static GameObject? TBRNotificationManagerObj;
     public static TextMeshPro? NameText;
-    public static TextMeshPro? TextArea => BAUNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>();
+    public static TextMeshPro? TextArea => TBRNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>();
     public static Dictionary<string, float> NotifyQueue = [];
     public static float showTime = 0f;
     private static Camera? localCamera;
@@ -16,18 +16,18 @@ class BetterNotificationManager
 
     public static void Notify(string text, float Time = 5f)
     {
-        if (BAUNotificationManagerObj != null)
+        if (TBRNotificationManagerObj != null)
         {
             if (Notifying)
             {
-                if (text == BAUNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>().text)
+                if (text == TBRNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>().text)
                     return;
                 NotifyQueue[text] = Time;
                 return;
             }
 
             showTime = Time;
-            BAUNotificationManagerObj.SetActive(true);
+            TBRNotificationManagerObj.SetActive(true);
             NameText.text = $"<color=#00ff44>{Translator.GetString("SystemNotification")}</color>";
             TextArea.text = text;
             SoundManager.Instance.PlaySound(DestroyableSingleton<HudManager>.Instance.TaskCompleteSound, false, 1f);
@@ -37,7 +37,7 @@ class BetterNotificationManager
 
     public static void Update()
     {
-        if (BAUNotificationManagerObj != null)
+        if (TBRNotificationManagerObj != null)
         {
             if (!localCamera)
             {
@@ -51,13 +51,13 @@ class BetterNotificationManager
                 }
             }
 
-            BAUNotificationManagerObj.transform.position = AspectPosition.ComputeWorldPosition(localCamera, AspectPosition.EdgeAlignments.Bottom, new Vector3(-1.3f, 0.7f, localCamera.nearClipPlane + 0.1f));
+            TBRNotificationManagerObj.transform.position = AspectPosition.ComputeWorldPosition(localCamera, AspectPosition.EdgeAlignments.Bottom, new Vector3(-1.3f, 0.7f, localCamera.nearClipPlane + 0.1f));
 
             showTime -= Time.deltaTime;
             if (showTime <= 0f && GameState.IsInGame)
             {
-                BAUNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>().text = "";
-                BAUNotificationManagerObj.SetActive(false);
+                TBRNotificationManagerObj.transform.Find("Sizer/ChatText (TMP)").GetComponent<TextMeshPro>().text = "";
+                TBRNotificationManagerObj.SetActive(false);
                 Notifying = false;
 
                 CheckNotifyQueue();
@@ -65,7 +65,7 @@ class BetterNotificationManager
 
             if (!GameState.IsInGame)
             {
-                BAUNotificationManagerObj.SetActive(false);
+                TBRNotificationManagerObj.SetActive(false);
                 showTime = 0f;
             }
         }

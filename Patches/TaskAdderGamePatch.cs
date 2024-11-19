@@ -83,7 +83,7 @@ class TaskAdderGamePatch
                 }
                 else
                 {
-                    if (!player.BetterData().RoleInfo.Addons.Any(r => r.RoleType == roleBehaviour.RoleType))
+                    if (!player.ExtendedData().RoleInfo.Addons.Any(r => r.RoleType == roleBehaviour.RoleType))
                     {
                         taskAddButton.Overlay.enabled = true;
                         CustomRoleManager.AddAddon(player, roleBehaviour.RoleType);
@@ -98,7 +98,7 @@ class TaskAdderGamePatch
                 foreach (var items in rolesForButtons)
                 {
                     if (items.Value.IsAddon) return;
-                    items.Key.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType;
+                    items.Key.Overlay.enabled = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType;
                 }
             }));
             taskAddButton.DestroyMono();
@@ -107,8 +107,8 @@ class TaskAdderGamePatch
 
         foreach (var items in rolesForButtons)
         {
-            items.Key.Overlay.enabled = PlayerControl.LocalPlayer.BetterData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType
-                || PlayerControl.LocalPlayer.BetterData().RoleInfo.Addons.Any(r => r.RoleType == rolesForButtons[items.Key].RoleType);
+            items.Key.Overlay.enabled = PlayerControl.LocalPlayer.ExtendedData().RoleInfo.RoleType == rolesForButtons[items.Key].RoleType
+                || PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Addons.Any(r => r.RoleType == rolesForButtons[items.Key].RoleType);
         }
 
         return false;

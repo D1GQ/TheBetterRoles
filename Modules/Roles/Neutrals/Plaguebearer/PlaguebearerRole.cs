@@ -18,22 +18,22 @@ public class PlaguebearerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Plaguebearer;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Chaos;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? InfectCooldown;
-    public BetterOptionItem? InfectDistance;
-    public BetterOptionItem? PestilenceKillCooldown;
+    public TBROptionItem? InfectCooldown;
+    public TBROptionItem? InfectDistance;
+    public TBROptionItem? PestilenceKillCooldown;
     public PlayerAbilityButton? InfectButton;
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                InfectCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
-                InfectDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectDistance"),
+                InfectCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
+                InfectDistance = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.InfectDistance"),
                     [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
-                PestilenceKillCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.PestilenceKillCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
+                PestilenceKillCooldown = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Plaguebearer.Option.PestilenceKillCooldown"), [0f, 180f, 2.5f], 25, "", "s", RoleOptionItem),
             ];
         }
     }
@@ -72,7 +72,7 @@ public class PlaguebearerRole : CustomRoleBehavior
                 if (player != null)
                 {
                     player.SetTrueVisorColor(Palette.VisorColor);
-                    player.BetterData().NameColor = string.Empty;
+                    player.ExtendedData().NameColor = string.Empty;
                 }
             }
         }
@@ -112,7 +112,7 @@ public class PlaguebearerRole : CustomRoleBehavior
         if (_player.IsLocalPlayer())
         {
             player.SetTrueVisorColor(RoleColor32);
-            player.BetterData().NameColor = RoleColor;
+            player.ExtendedData().NameColor = RoleColor;
         }
 
         CheckPestillenceCondition();

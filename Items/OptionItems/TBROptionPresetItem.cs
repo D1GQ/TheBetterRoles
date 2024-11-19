@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionPresetItem : BetterOptionItem
+public class TBROptionPresetItem : TBROptionItem
 {
     private NumberOption? ThisOption;
     public int CurrentValue;
@@ -19,7 +19,7 @@ public class BetterOptionPresetItem : BetterOptionItem
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionPresetItem Create(BetterOptionTab gameOptionsMenu, int DefaultValue)
+    public TBROptionPresetItem Create(TBROptionTab gameOptionsMenu, int DefaultValue)
     {
         intRange = new(1, 10);
         Increment = 1;
@@ -68,13 +68,13 @@ public class BetterOptionPresetItem : BetterOptionItem
 
     private void AdjustPreset()
     {
-        BetterDataManager.TempSettings.Clear();
-        BetterDataManager._settingsFileCache.Clear();
-        if (!File.Exists(BetterDataManager.SettingsFile))
+        TBRDataManager.TempSettings.Clear();
+        TBRDataManager._settingsFileCache.Clear();
+        if (!File.Exists(TBRDataManager.SettingsFile))
         {
             var initialData = new Dictionary<string, string>();
             string json = JsonSerializer.Serialize(initialData, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(BetterDataManager.SettingsFile, json);
+            File.WriteAllText(TBRDataManager.SettingsFile, json);
         }
 
         GameSettingMenu.Instance.Close();
@@ -172,9 +172,9 @@ public class BetterOptionPresetItem : BetterOptionItem
 
     public override float GetFloat()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadIntSetting(Id);
+            return TBRDataManager.LoadIntSetting(Id);
         }
         else
         {
@@ -184,9 +184,9 @@ public class BetterOptionPresetItem : BetterOptionItem
 
     public override int GetInt()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadIntSetting(Id);
+            return TBRDataManager.LoadIntSetting(Id);
         }
         else
         {

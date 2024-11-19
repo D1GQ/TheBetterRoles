@@ -41,13 +41,13 @@ static class PlayerControlHelper
             return player.Data.PlayerName;
         }
     }
-    public static CustomRoleBehavior? Role(this PlayerControl player) => player?.BetterData()?.RoleInfo?.Role;
+    public static CustomRoleBehavior? Role(this PlayerControl player) => player?.ExtendedData()?.RoleInfo?.Role;
     public static string GetRoleNameAndColor(this PlayerControl player) => $"<color={player.GetRoleColorHex()}>{player.GetRoleName()}</color>";
-    public static string GetRoleName(this PlayerControl player) => Utils.GetCustomRoleName(player.BetterData().RoleInfo.RoleType);
-    public static Color GetRoleColor(this PlayerControl player) => Utils.GetCustomRoleColor(player.BetterData().RoleInfo.RoleType);
-    public static string GetRoleColorHex(this PlayerControl player) => Utils.GetCustomRoleColorHex(player.BetterData().RoleInfo.RoleType);
-    public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.BetterData().RoleInfo.RoleType, longInfo);
-    public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.BetterData().RoleInfo.Role.RoleTeam);
+    public static string GetRoleName(this PlayerControl player) => Utils.GetCustomRoleName(player.ExtendedData().RoleInfo.RoleType);
+    public static Color GetRoleColor(this PlayerControl player) => Utils.GetCustomRoleColor(player.ExtendedData().RoleInfo.RoleType);
+    public static string GetRoleColorHex(this PlayerControl player) => Utils.GetCustomRoleColorHex(player.ExtendedData().RoleInfo.RoleType);
+    public static string GetRoleInfo(this PlayerControl player, bool longInfo = false) => Utils.GetCustomRoleInfo(player.ExtendedData().RoleInfo.RoleType, longInfo);
+    public static string GetRoleTeamName(this PlayerControl player) => Utils.GetCustomRoleTeamName(player.ExtendedData().RoleInfo.Role.RoleTeam);
 
     public static void CustomRevive(this PlayerControl player, bool SetData = true)
     {
@@ -77,7 +77,7 @@ static class PlayerControlHelper
     {
         if (!player.IsAlive(true)) return;
 
-        player.BetterData().IsFakeAlive = false;
+        player.ExtendedData().IsFakeAlive = false;
         player.Exiled();
     }
 
@@ -88,16 +88,16 @@ static class PlayerControlHelper
 
     public static void SetDeathReason(this PlayerControl player, DeathReasons reason, Color color)
     {
-        if (player?.BetterData()?.DeathReason != null)
+        if (player?.ExtendedData()?.DeathReason != null)
         {
-            player.BetterData().DeathReasonColor = color;
-            player.BetterData().DeathReason = reason;
+            player.ExtendedData().DeathReasonColor = color;
+            player.ExtendedData().DeathReason = reason;
         }
     }
 
     public static string FormatDeathReason(this PlayerControl player)
     {
-        var data = player?.BetterData();
+        var data = player?.ExtendedData();
         if (data?.DeathReason != null && data.DeathReason != DeathReasons.None)
         {
             return $"《<{Utils.Color32ToHex(data.DeathReasonColor)}>{Translator.GetString($"DeathReason.{Enum.GetName(data.DeathReason)}")}</color>》";
@@ -108,11 +108,11 @@ static class PlayerControlHelper
 
     public static void SetCamouflage(this PlayerControl player, bool active)
     {
-        if (player.BetterData().CamouflagedQueue)
+        if (player.ExtendedData().CamouflagedQueue)
         {
             player.SetCosmeticsActive(false);
             player.SetPlayerTextActive(false);
-            player.BetterData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
+            player.ExtendedData().CamouflageBackToColor = player.cosmetics.bodyMatProperties.ColorId;
             player.RawSetColor(CustomColors.CamouflageId);
             var pet = player.cosmetics.GetPet();
             if (pet != null)
@@ -122,12 +122,12 @@ static class PlayerControlHelper
             }
         }
 
-        player.BetterData().CamouflagedQueue.Add(active);
-        active = !player.BetterData().CamouflagedQueue;
+        player.ExtendedData().CamouflagedQueue.Add(active);
+        active = !player.ExtendedData().CamouflagedQueue;
 
         if (!active)
         {
-            player.RawSetColor(player.BetterData().CamouflageBackToColor);
+            player.RawSetColor(player.ExtendedData().CamouflageBackToColor);
             player.SetPlayerTextActive(true);
             player.SetCosmeticsActive(true);
             var pet = player.cosmetics.GetPet();
@@ -149,12 +149,12 @@ static class PlayerControlHelper
 
     public static void SetCosmeticsActive(this PlayerControl player, bool active)
     {
-        player.BetterData()?.CosmeticsActiveQueue.Add(!active);
+        player.ExtendedData()?.CosmeticsActiveQueue.Add(!active);
     }
 
     public static void SetPlayerTextActive(this PlayerControl player, bool active)
     {
-        player.BetterData()?.PlayerTextActiveQueue.Add(!active);
+        player.ExtendedData()?.PlayerTextActiveQueue.Add(!active);
     }
 
     /// <summary>
@@ -464,10 +464,10 @@ static class PlayerControlHelper
         return Utils.GetHashStr(data.FriendCode);
     }
     // Check if player is a dev
-    public static bool IsDev(this PlayerControl player) => player.BetterData().MyUserData.IsDev();
+    public static bool IsDev(this PlayerControl player) => player.ExtendedData().MyUserData.IsDev();
     // Check if player is alive
-    public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.BetterData()?.IsFakeAlive == true;
-    public static bool IsAlive(this NetworkedPlayerInfo data, bool CheckFakeAlive = false) => data?.IsDead == false || CheckFakeAlive && data.BetterData()?.IsFakeAlive == true;
+    public static bool IsAlive(this PlayerControl player, bool CheckFakeAlive = false) => player?.Data?.IsDead == false || CheckFakeAlive && player.ExtendedData()?.IsFakeAlive == true;
+    public static bool IsAlive(this NetworkedPlayerInfo data, bool CheckFakeAlive = false) => data?.IsDead == false || CheckFakeAlive && data.ExtendedData()?.IsFakeAlive == true;
     // Check if player is in a vent
     public static bool IsInVent(this PlayerControl player) => player != null && (player.inVent || player.walkingToVent || player.MyPhysics?.Animations?.IsPlayingEnterVentAnimation() == true);
     // Check if player is Shapeshifting
@@ -491,7 +491,7 @@ static class PlayerControlHelper
     {
         if (player == null) return false;
 
-        var betterData = player.BetterData();
+        var betterData = player.ExtendedData();
         if (betterData == null || betterData.RoleInfo == null)
             return false;
 
@@ -499,12 +499,12 @@ static class PlayerControlHelper
     }
 
     // Get hex color for team
-    public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam);
-    public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.BetterData().RoleInfo.Role.RoleTeam));
+    public static string GetTeamHexColor(this PlayerControl player) => Utils.GetCustomRoleTeamColor(player.ExtendedData().RoleInfo.Role.RoleTeam);
+    public static Color GetTeamColor(this PlayerControl player) => Utils.HexToColor32(Utils.GetCustomRoleTeamColor(player.ExtendedData().RoleInfo.Role.RoleTeam));
 
     // Check if player is role type
-    public static bool Is(this PlayerControl player, CustomRoles role) => player?.BetterData()?.RoleInfo?.RoleType == role;
-    public static bool Has(this PlayerControl player, CustomRoles role) => player?.BetterData()?.RoleInfo?.Addons.Any(addon => addon.RoleType == role) ?? false;
+    public static bool Is(this PlayerControl player, CustomRoles role) => player?.ExtendedData()?.RoleInfo?.RoleType == role;
+    public static bool Has(this PlayerControl player, CustomRoles role) => player?.ExtendedData()?.RoleInfo?.Addons.Any(addon => addon.RoleType == role) ?? false;
     public static bool Is(this PlayerControl player, CustomRoleTeam roleTeam) => player?.Role()?.RoleTeam == roleTeam;
     public static bool Is(this PlayerControl player, CustomRoleCategory roleCategory) => player?.Role()?.RoleCategory == roleCategory;
     // Check if player is Ghost role type
@@ -518,7 +518,7 @@ static class PlayerControlHelper
     // Check if player is same team
     public static bool IsTeammate(this PlayerControl player) =>
         player != null && PlayerControl.LocalPlayer != null &&
-        (player.IsLocalPlayer() || player.Is(PlayerControl.LocalPlayer.BetterData().RoleInfo.Role.RoleTeam) && !PlayerControl.LocalPlayer.Is(CustomRoleTeam.Neutral));
+        (player.IsLocalPlayer() || player.Is(PlayerControl.LocalPlayer.ExtendedData().RoleInfo.Role.RoleTeam) && !PlayerControl.LocalPlayer.Is(CustomRoleTeam.Neutral));
     // Check if player is the host
     public static bool IsHost(this PlayerControl player) => player?.Data != null && GameData.Instance?.GetHost() == player.Data;
 

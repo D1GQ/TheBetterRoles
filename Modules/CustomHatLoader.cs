@@ -15,7 +15,7 @@ namespace TheBetterRoles.Modules
 
         private const string RepositoryUrl = "https://raw.githubusercontent.com/D1GQ/TBR_Hats/main";
         private const string ManifestFileName = "manifest.json";
-        private readonly string HatsDirectory = BetterDataManager.filePathFolderHats;
+        private readonly string HatsDirectory = TBRDataManager.filePathFolderHats;
 
         public void Start()
         {

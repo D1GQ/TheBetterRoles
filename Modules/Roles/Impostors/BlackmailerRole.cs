@@ -18,17 +18,17 @@ public class BlackmailerRole : CustomRoleBehavior
     public override CustomRoles RoleType => CustomRoles.Blackmailer;
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Impostor;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Support;
-    public override BetterOptionTab? SettingsTab => BetterTabs.ImpostorRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.ImpostorRoles;
 
-    public BetterOptionItem? BlackmailCooldown;
+    public TBROptionItem? BlackmailCooldown;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                BlackmailCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Blackmailer.Option.BlackmailCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                BlackmailCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Blackmailer.Option.BlackmailCooldown"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }

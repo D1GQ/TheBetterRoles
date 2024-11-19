@@ -38,7 +38,7 @@ public class HudManagerPatch
             Grid.MaxColumns = 2;
         }
 
-        if (BetterNotificationManager.BAUNotificationManagerObj == null)
+        if (TBRNotificationManager.TBRNotificationManagerObj == null)
         {
             var ChatNotifications = __instance.Chat.chatNotification;
             if (ChatNotifications != null)
@@ -52,15 +52,15 @@ public class HudManagerPatch
                 GameObject.Find($"{BAUNotification.name}/Sizer/ColorText").DestroyObj();
                 BAUNotification.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(-1.57f, 5.3f, -15f);
                 GameObject.Find($"{BAUNotification.name}/Sizer/NameText").transform.localPosition = new Vector3(-3.3192f, -0.0105f);
-                BetterNotificationManager.NameText = GameObject.Find($"{BAUNotification.name}/Sizer/NameText").GetComponent<TextMeshPro>();
+                TBRNotificationManager.NameText = GameObject.Find($"{BAUNotification.name}/Sizer/NameText").GetComponent<TextMeshPro>();
                 UnityEngine.Object.DontDestroyOnLoad(BAUNotification);
-                BetterNotificationManager.BAUNotificationManagerObj = BAUNotification;
+                TBRNotificationManager.TBRNotificationManagerObj = BAUNotification;
                 BAUNotification.SetActive(false);
                 ChatNotifications.timeOnScreen = 0f;
                 ChatNotifications.gameObject.SetActive(false);
-                BetterNotificationManager.TextArea.enableWordWrapping = true;
-                BetterNotificationManager.TextArea.m_firstOverflowCharacterIndex = 0;
-                BetterNotificationManager.TextArea.overflowMode = TextOverflowModes.Overflow;
+                TBRNotificationManager.TextArea.enableWordWrapping = true;
+                TBRNotificationManager.TextArea.m_firstOverflowCharacterIndex = 0;
+                TBRNotificationManager.TextArea.overflowMode = TextOverflowModes.Overflow;
             }
         }
 
@@ -68,7 +68,7 @@ public class HudManagerPatch
         {
             if (!HasBeenWelcomed && GameState.IsInGame && GameState.IsLobby && !GameState.IsFreePlay)
             {
-                BetterNotificationManager.Notify($"<b><color=#00751f>{string.Format(Translator.GetString("WelcomeMsg.WelcomeToTBR"), Translator.GetString("TheBetterRoles"))}!</color></b>", 8f);
+                TBRNotificationManager.Notify($"<b><color=#00751f>{string.Format(Translator.GetString("WelcomeMsg.WelcomeToTBR"), Translator.GetString("TheBetterRoles"))}!</color></b>", 8f);
                 HasBeenWelcomed = true;
             }
         }, 1f, "HudManagerPatch Start");

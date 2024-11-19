@@ -12,7 +12,7 @@ class OnGameJoinedPatch
 {
     public static void Postfix(/*AmongUsClient __instance*/)
     {
-        BetterDataManager.HostSettings.Clear();
+        TBRDataManager.HostSettings.Clear();
 
         try
         {
@@ -61,7 +61,7 @@ class GameDataHandleDisconnectPatch
     {
         CustomRoleManager.RoleListenerOther(role => role.OnDisconnect(player, reason));
         CustomRoleManager.RoleListener(player, role => role.OnResetAbilityState(false));
-        player.BetterData().DisconnectReason = reason;
+        player.ExtendedData().DisconnectReason = reason;
         RolePatch.ClearRoleData(player);
 
         GameDataShowNotificationPatch.BetterShowNotification(player.Data, reason);
@@ -73,14 +73,14 @@ class GameDataShowNotificationPatch
 {
     public static void BetterShowNotification(NetworkedPlayerInfo playerData, DisconnectReasons reason = DisconnectReasons.Unknown, string forceReasonText = "")
     {
-        if (playerData.BetterData().HasShowDcMsg) return;
-        playerData.BetterData().HasShowDcMsg = true;
+        if (playerData.ExtendedData().HasShowDcMsg) return;
+        playerData.ExtendedData().HasShowDcMsg = true;
 
-        string? playerName = playerData.BetterData().RealName;
+        string? playerName = playerData.ExtendedData().RealName;
 
         if (forceReasonText != "")
         {
-            var ReasonText = $"<color=#ff0>{playerData.BetterData().RealName}</color> {forceReasonText}";
+            var ReasonText = $"<color=#ff0>{playerData.ExtendedData().RealName}</color> {forceReasonText}";
 
             Logger.Log(ReasonText);
 

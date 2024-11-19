@@ -66,8 +66,8 @@ public static class CustomRoleManager
     }
 
     public static CustomRoleBehavior? GetActiveRoleFromPlayers(Func<CustomRoleBehavior, bool> selector) => Main.AllPlayerControls
-        .Where(player => player.BetterData()?.RoleInfo?.AllRoles != null)
-        .SelectMany(player => player.BetterData().RoleInfo.AllRoles)
+        .Where(player => player.ExtendedData()?.RoleInfo?.AllRoles != null)
+        .SelectMany(player => player.ExtendedData().RoleInfo.AllRoles)
         .FirstOrDefault(selector);
 
     public static int GetRNGAmount(int min, int max)
@@ -87,9 +87,9 @@ public static class CustomRoleManager
     {
         if (!GameState.IsHost) yield break;
 
-        int ImposterAmount = BetterGameSettings.ImpostorAmount.GetInt();
-        int BenignNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumBenignNeutralAmount.GetInt(), BetterGameSettings.MaximumBenignNeutralAmount.GetInt());
-        int KillingNeutralAmount = GetRNGAmount(BetterGameSettings.MinimumKillingNeutralAmount.GetInt(), BetterGameSettings.MaximumKillingNeutralAmount.GetInt());
+        int ImposterAmount = TBRGameSettings.ImpostorAmount.GetInt();
+        int BenignNeutralAmount = GetRNGAmount(TBRGameSettings.MinimumBenignNeutralAmount.GetInt(), TBRGameSettings.MaximumBenignNeutralAmount.GetInt());
+        int KillingNeutralAmount = GetRNGAmount(TBRGameSettings.MinimumKillingNeutralAmount.GetInt(), TBRGameSettings.MaximumKillingNeutralAmount.GetInt());
 
         AdjustImposterAmount(ref ImposterAmount);
 
@@ -245,7 +245,7 @@ public static class CustomRoleManager
     private static List<RoleAssignmentData> AssignAddons(ref List<RoleAssignmentData> availableAddons, RoleAssignmentData? assignedRole, PlayerControl player)
     {
         List<CustomRoles> selectedAddons = [];
-        int addonAmount = GetRNGAmount(BetterGameSettings.MinimumAddonAmount.GetInt(), BetterGameSettings.MaximumAddonAmount.GetInt());
+        int addonAmount = GetRNGAmount(TBRGameSettings.MinimumAddonAmount.GetInt(), TBRGameSettings.MaximumAddonAmount.GetInt());
         int safeAttempts = 0;
 
         List<CustomRoles> validAddons = availableAddons
@@ -384,11 +384,11 @@ public static class CustomRoleManager
 
         if (player != null)
         {
-            if (player?.BetterData()?.RoleInfo != null)
+            if (player?.ExtendedData()?.RoleInfo != null)
             {
-                player.BetterData().RoleInfo.OverrideLongTasks = longTasks;
-                player.BetterData().RoleInfo.OverrideShortTasks = shortTasks;
-                player.BetterData().RoleInfo.OverrideCommonTasks = commonTasks;
+                player.ExtendedData().RoleInfo.OverrideLongTasks = longTasks;
+                player.ExtendedData().RoleInfo.OverrideShortTasks = shortTasks;
+                player.ExtendedData().RoleInfo.OverrideCommonTasks = commonTasks;
             }
             player.Data.RpcSetTasks(new Il2CppStructArray<byte>(0));
         }
@@ -412,7 +412,7 @@ public static class CustomRoleManager
             {
                 if (player == null) continue;
 
-                foreach (var role in player.BetterData().RoleInfo.AllRoles)
+                foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
                 {
                     if (role == null || role.SetNameMark(target) == string.Empty) continue;
 
@@ -426,7 +426,7 @@ public static class CustomRoleManager
 
     public static void RoleListener(PlayerControl player, Action<CustomRoleBehavior> action, Func<CustomRoleBehavior, bool>? filter = null)
     {
-        foreach (var role in player.BetterData().RoleInfo.AllRoles)
+        foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
         {
             if (role == null || filter != null && !filter(role)) continue;
 
@@ -440,7 +440,7 @@ public static class CustomRoleManager
         {
             if (player == null) continue;
 
-            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
             {
                 if (role == null || filter != null && !filter(role)) continue;
 
@@ -454,7 +454,7 @@ public static class CustomRoleManager
     {
         if (player.RoleAssigned() && player != null)
         {
-            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
             {
                 if (role == null || targetRole != null && targetRole != role || filter != null && !filter(role)) continue;
 
@@ -476,7 +476,7 @@ public static class CustomRoleManager
         {
             if (player == null) continue;
 
-            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
             {
                 if (role == null || filter != null && !filter(role)) continue;
 
@@ -496,7 +496,7 @@ public static class CustomRoleManager
     {
         if (player.RoleAssigned() && player != null)
         {
-            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
             {
                 if (role == null || targetRole != null && targetRole != role || filter != null && !filter(role)) continue;
 
@@ -519,7 +519,7 @@ public static class CustomRoleManager
         {
             if (player == null) continue;
 
-            foreach (var role in player.BetterData().RoleInfo.AllRoles)
+            foreach (var role in player.ExtendedData().RoleInfo.AllRoles)
             {
                 if (role == null || filter != null && !filter(role)) continue;
 
@@ -538,13 +538,13 @@ public static class CustomRoleManager
     {
         if (player == null) return;
 
-        var Role = player.BetterData().RoleInfo.Role;
+        var Role = player.ExtendedData().RoleInfo.Role;
         if (Role != null)
         {
             Role?.Deinitialize();
         }
 
-        var Addons = player.BetterData().RoleInfo.Addons;
+        var Addons = player.ExtendedData().RoleInfo.Addons;
         if (Addons.Count > 0)
         {
             var addonsCopy = Addons.ToList();
@@ -559,7 +559,7 @@ public static class CustomRoleManager
     {
         if (player == null) return;
 
-        var Addons = player.BetterData().RoleInfo.Addons;
+        var Addons = player.ExtendedData().RoleInfo.Addons;
         if (Addons.Count > 0)
         {
             var addonsCopy = Addons.ToList();
@@ -574,7 +574,7 @@ public static class CustomRoleManager
     {
         if (player == null) return;
 
-        var Addons = player.BetterData().RoleInfo.Addons;
+        var Addons = player.ExtendedData().RoleInfo.Addons;
         if (Addons.Count > 0)
         {
             var addonsCopy = Addons.ToList();
@@ -587,9 +587,9 @@ public static class CustomRoleManager
 
     public static CustomRoleBehavior? SetCustomRole(PlayerControl player, CustomRoles role, bool isAssigned = false)
     {
-        if (player == null || player?.BetterData()?.RoleInfo?.Role.RoleType == role) return null;
+        if (player == null || player?.ExtendedData()?.RoleInfo?.Role.RoleType == role) return null;
 
-        player?.BetterData()?.RoleInfo?.Role?.Deinitialize();
+        player?.ExtendedData()?.RoleInfo?.Role?.Deinitialize();
 
         player.RawSetRole(RoleTypes.Crewmate);
 
@@ -609,7 +609,7 @@ public static class CustomRoleManager
         {
             if (roleClass.IsAddon)
             {
-                if (!player.BetterData().RoleInfo.Addons.Any(addon => addon.RoleType == role))
+                if (!player.ExtendedData().RoleInfo.Addons.Any(addon => addon.RoleType == role))
                 {
                     CustomRoleBehavior? newRole = CreateNewRoleInstance(r => r.RoleType == role);
                     newRole?.Initialize(player, isAssigned);
@@ -617,7 +617,7 @@ public static class CustomRoleManager
                 }
                 else
                 {
-                    return player.BetterData().RoleInfo.Addons.FirstOrDefault(addon => addon.RoleType == role);
+                    return player.ExtendedData().RoleInfo.Addons.FirstOrDefault(addon => addon.RoleType == role);
                 }
             }
         }
@@ -629,9 +629,9 @@ public static class CustomRoleManager
     {
         if (player == null) return;
 
-        if (player.BetterData().RoleInfo.Addons.Any(ad => ad.RoleType == role))
+        if (player.ExtendedData().RoleInfo.Addons.Any(ad => ad.RoleType == role))
         {
-            var Role = player.BetterData().RoleInfo.Addons.FirstOrDefault(ad => ad.RoleType == role);
+            var Role = player.ExtendedData().RoleInfo.Addons.FirstOrDefault(ad => ad.RoleType == role);
             if (Role != null)
             {
                 Role.Deinitialize();

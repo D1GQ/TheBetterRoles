@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionDividerItem : BetterOptionItem
+public class TBROptionDividerItem : TBROptionItem
 {
-    public BetterOptionItem Create(BetterOptionTab gameOptionsMenu, float topDistance = 0.15f, float bottomDistance = 0.50f)
+    public TBROptionItem Create(TBROptionTab gameOptionsMenu, float topDistance = 0.15f, float bottomDistance = 0.50f)
     {
         if (gameOptionsMenu.Tab == null)
         {

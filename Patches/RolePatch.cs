@@ -71,7 +71,7 @@ public class RolePatch
             {
                 box.enabled = true;
             }
-            var betterData = __instance.BetterData();
+            var betterData = __instance.ExtendedData();
 
             __instance.cosmetics.nameText.transform.parent.gameObject.SetActive(betterData.PlayerTextActiveQueue);
             if (betterData.CosmeticsActiveQueue.ValueChanged())
@@ -125,9 +125,9 @@ public class RolePatch
         {
             var player = Main.AllPlayerControls.FirstOrDefault(pc => pc.cosmetics == __instance);
             if (player == null) return true;
-            if (!player.BetterData().CamouflagedQueue)
+            if (!player.ExtendedData().CamouflagedQueue)
             {
-                player.BetterData().CamouflageBackToColor = color;
+                player.ExtendedData().CamouflageBackToColor = color;
                 return false;
             }
 
@@ -173,7 +173,7 @@ public class RolePatch
             __instance.myPlayer.FootSteps.loop = false;
             __instance.myPlayer.cosmetics.SetHatAndVisorIdle(__instance.myPlayer.CurrentOutfit.ColorId);
             NetworkedPlayerInfo data = __instance.myPlayer.Data;
-            if (data == null || !data.IsDead || data.BetterData().IsFakeAlive)
+            if (data == null || !data.IsDead || data.ExtendedData().IsFakeAlive)
             {
                 __instance.myPlayer.cosmetics.AnimateSkinIdle();
                 __instance.Animations.PlayIdleAnimation();

@@ -23,27 +23,27 @@ public class GlitchRole : CustomRoleBehavior
     public override CustomRoleTeam RoleTeam => CustomRoleTeam.Neutral;
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? HackCooldown;
-    public BetterOptionItem? HackDuration;
-    public BetterOptionItem? HackDistance;
-    public BetterOptionItem? MimicCooldown;
-    public BetterOptionItem? MimicDuration;
+    public TBROptionItem? HackCooldown;
+    public TBROptionItem? HackDuration;
+    public TBROptionItem? HackDistance;
+    public TBROptionItem? MimicCooldown;
+    public TBROptionItem? MimicDuration;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                HackCooldown = new BetterOptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Glitch.Option.HackCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                HackDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.HackDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
-                HackDistance = new BetterOptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.HackDistance"),
+                HackCooldown = new TBROptionFloatItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Glitch.Option.HackCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                HackDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.HackDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                HackDistance = new TBROptionStringItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.HackDistance"),
                 [Translator.GetString("Role.Option.Distance.1"), Translator.GetString("Role.Option.Distance.2"), Translator.GetString("Role.Option.Distance.3")], 1, RoleOptionItem),
 
-                MimicCooldown = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.MimicCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
-                MimicDuration = new BetterOptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.MimicDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
+                MimicCooldown = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.MimicCooldown"), [0f, 180f, 2.5f], 25f, "", "s", RoleOptionItem),
+                MimicDuration = new TBROptionFloatItem().Create(GetOptionUID(), SettingsTab, Translator.GetString("Role.Glitch.Option.MimicDuration"), [0f, 180f, 2.5f], 10f, "", "s", RoleOptionItem),
             ];
         }
     }
@@ -59,7 +59,7 @@ public class GlitchRole : CustomRoleBehavior
     {
         HackButton = AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, 0, null, this, true, HackDistance.GetValue()));
         MimicButton = AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
-        MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.BetterData().CamouflagedQueue; };
+        MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.ExtendedData().CamouflagedQueue; };
     }
 
     public override void OnAbility(int id, MessageReader? reader, CustomRoleBehavior role, PlayerControl? target, Vent? vent, DeadBody? body)
@@ -216,7 +216,7 @@ public class GlitchRole : CustomRoleBehavior
             return;
         }
 
-        if (systemType == SystemTypes.Comms && BetterGameSettings.CamouflageComms.GetBool())
+        if (systemType == SystemTypes.Comms && TBRGameSettings.CamouflageComms.GetBool())
         {
             if (system.TryCast<HqHudSystemType>(out var hqHudSystem))
             {

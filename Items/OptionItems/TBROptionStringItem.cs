@@ -8,45 +8,38 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.OptionItems;
 
-public class BetterOptionFloatItem : BetterOptionItem
+public class TBROptionStringItem : TBROptionItem
 {
-    public FloatOptionNames? VanillaOption;
+    public Int32OptionNames? VanillaOption;
 
-    private NumberOption? ThisOption;
-    public float CurrentValue;
-    public float defaultValue;
-    public FloatRange floatRange = new(0f, 180f);
-    public float Increment = 2.5f;
-    private string? PostFix;
-    private string? PreFix;
-    public bool CanBeInfinite;
+    private StringOption? ThisOption;
+    public string[] Values = [];
+    public int CurrentValue;
+    public int defaultValue;
 
-    public override bool ShowChildrenCondition() => CurrentValue > floatRange.min;
+    public override bool ShowChildrenCondition() => CurrentValue > 0;
     public override bool SelfShowCondition() => ShowCondition != null ? ShowCondition() : base.SelfShowCondition();
     public Func<bool>? ShowCondition = null;
 
-    public BetterOptionFloatItem Create(int id, BetterOptionTab gameOptionsMenu, string name, float[] values, float DefaultValue, string preFix = "", string postFix = "", BetterOptionItem? Parent = null, Func<bool>? selfShowCondition = null, FloatOptionNames? vanillaOption = null, bool canBeInfinite = false)
+    public TBROptionStringItem Create(int id, TBROptionTab gameOptionsMenu, string name, string[] strings, int DefaultValue = 0, TBROptionItem? Parent = null, Func<bool>? selfShowCondition = null, Int32OptionNames? vanillaOption = null)
     {
         Id = id >= 0 ? id : GetGeneratedId();
+        Values = strings;
+        Tab = gameOptionsMenu;
         Name = name;
-        PostFix = postFix;
-        PreFix = preFix;
-        floatRange = new(values[0], values[1]);
-        Increment = values[2];
-        if (DefaultValue < floatRange.min) DefaultValue = floatRange.min;
-        if (DefaultValue > floatRange.max) DefaultValue = floatRange.max;
+        if (DefaultValue < 0) DefaultValue = 0;
+        if (DefaultValue > Values.Length) DefaultValue = Values.Length;
         CurrentValue = DefaultValue;
         defaultValue = DefaultValue;
         ShowCondition = selfShowCondition;
         VanillaOption = vanillaOption;
-        CanBeInfinite = canBeInfinite;
 
         if (GameSettingMenuPatch.Preload || gameOptionsMenu?.Tab == null)
         {
             Load(DefaultValue);
             if (BetterOptionItems.Any(op => op.Id == Id))
             {
-                return (BetterOptionFloatItem)BetterOptionItems.First(op => op.Id == Id);
+                return (TBROptionStringItem)BetterOptionItems.First(op => op.Id == Id);
             }
             else
             {
@@ -69,9 +62,7 @@ public class BetterOptionFloatItem : BetterOptionItem
             }
         }
 
-        if (values.Length is < 3 or > 3) return null;
-
-        NumberOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.numberOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
+        StringOption optionBehaviour = UnityEngine.Object.Instantiate(gameOptionsMenu.Tab.stringOptionOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.Tab.settingsContainer);
         optionBehaviour.transform.localPosition = new Vector3(0.952f, 2f, -2f);
         SetUp(optionBehaviour);
         optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((option) => ValueChanged(Id, option));
@@ -80,8 +71,8 @@ public class BetterOptionFloatItem : BetterOptionItem
         optionBehaviour.MinusBtn.OnClick.RemoveAllListeners();
         optionBehaviour.PlusBtn.OnClick.AddListener(new Action(() => Increase()));
         optionBehaviour.MinusBtn.OnClick.AddListener(new Action(() => Decrease()));
-        optionBehaviour.PlusBtn.OnClick.AddListener(new Action(() => ValueChanged(id, optionBehaviour)));
-        optionBehaviour.MinusBtn.OnClick.AddListener(new Action(() => ValueChanged(id, optionBehaviour)));
+        optionBehaviour.PlusBtn.OnClick.AddListener(new Action(() => ValueChanged(Id, optionBehaviour)));
+        optionBehaviour.MinusBtn.OnClick.AddListener(new Action(() => ValueChanged(Id, optionBehaviour)));
 
         optionBehaviour.LabelBackground.transform.localScale = new Vector3(1.6f, 0.78f);
         optionBehaviour.LabelBackground.transform.SetLocalX(-2.4f);
@@ -92,7 +83,6 @@ public class BetterOptionFloatItem : BetterOptionItem
         optionBehaviour.TitleText.fontSize = 2.5f;
 
         // Set data
-        Tab = gameOptionsMenu;
         TitleText = optionBehaviour.TitleText;
         Option = optionBehaviour;
         ThisOption = optionBehaviour;
@@ -130,10 +120,9 @@ public class BetterOptionFloatItem : BetterOptionItem
     {
         if (ThisOption == null) return;
 
-        ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
-        if (CanBeInfinite && CurrentValue == 0f)
+        if (CurrentValue <= Values.Length - 1 && CurrentValue >= 0)
         {
-            ThisOption.ValueText.text = InfiniteIcon;
+            ThisOption.ValueText.text = Values[CurrentValue];
         }
 
         if (!GameState.IsHost && GameState.IsInGame && !GameState.IsFreePlay)
@@ -146,113 +135,77 @@ public class BetterOptionFloatItem : BetterOptionItem
         ThisOption.PlusBtn.SetInteractable(true);
         ThisOption.MinusBtn.SetInteractable(true);
 
-        if (CurrentValue >= floatRange.max) ThisOption.PlusBtn.SetInteractable(false);
-        if (CurrentValue <= floatRange.min) ThisOption.MinusBtn.SetInteractable(false);
+        if (CurrentValue >= Values.Length - 1) ThisOption.PlusBtn.SetInteractable(false);
+        if (CurrentValue <= 0) ThisOption.MinusBtn.SetInteractable(false);
 
-        BetterDataManager.SaveSetting(Id, CurrentValue.ToString());
+        TBRDataManager.SaveSetting(Id, CurrentValue.ToString());
     }
 
     public void Increase()
     {
-        int times = 1;
-        if (Input.GetKey(KeyCode.LeftShift))
-            times = 5;
-        if (Input.GetKey(KeyCode.LeftControl))
-            times = 10;
-
-        if (CurrentValue + Increment * times <= floatRange.max)
+        if (CurrentValue < Values.Length)
         {
-            CurrentValue += Increment * times;
+            CurrentValue++;
+            AdjustButtonsActiveState();
+            if (VanillaOption != null)
+            {
+                Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+                GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            }
+            Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
         }
-        else
-        {
-            CurrentValue = floatRange.max;
-        }
-
-        CurrentValue = (float)Math.Round(CurrentValue, 5);
-        AdjustButtonsActiveState();
-        if (VanillaOption != null)
-        {
-            Main.CurrentOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-        }
-        Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
     }
 
     public void Decrease()
     {
-        int times = 1;
-        if (Input.GetKey(KeyCode.LeftShift))
-            times = 5;
-        if (Input.GetKey(KeyCode.LeftControl))
-            times = 10;
-
-        if (CurrentValue - Increment * times >= floatRange.min)
+        if (CurrentValue > 0)
         {
-            CurrentValue -= Increment * times;
+            CurrentValue--;
+            AdjustButtonsActiveState();
+            if (VanillaOption != null)
+            {
+                Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+                GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            }
+            Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
         }
-        else
-        {
-            CurrentValue = floatRange.min;
-        }
-
-        CurrentValue = (float)Math.Round(CurrentValue, 5);
-        AdjustButtonsActiveState();
-        if (VanillaOption != null)
-        {
-            Main.CurrentOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-        }
-        Rpc<RpcSyncOption>.Instance.Send(new(Id, CurrentValue.ToString(), FormatValueAsText()));
     }
 
-    public void Load(float DefaultValue)
+    public void Load(int DefaultValue)
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            var Float = BetterDataManager.LoadFloatSetting(Id, DefaultValue);
+            var Int = TBRDataManager.LoadIntSetting(Id, DefaultValue);
 
-            if (Float > floatRange.max || Float < floatRange.min)
+            if (Int > Values.Length - 1 || Int < 0)
             {
-                Float = DefaultValue;
-                BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+                Int = DefaultValue;
+                TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
             }
 
-            CurrentValue = Float;
+            CurrentValue = Int;
         }
         else
         {
-            BetterDataManager.SaveSetting(Id, DefaultValue.ToString());
+            TBRDataManager.SaveSetting(Id, DefaultValue.ToString());
         }
 
         if (VanillaOption != null)
         {
-            Main.CurrentOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
         }
     }
 
-    public override float GetFloat()
+    public override int GetValue()
     {
-        if (BetterDataManager.CanLoadSetting(Id))
+        if (TBRDataManager.CanLoadSetting(Id))
         {
-            return BetterDataManager.LoadFloatSetting(Id);
+            return TBRDataManager.LoadIntSetting(Id);
         }
         else
         {
             return CurrentValue;
-        }
-    }
-
-    public override int GetInt()
-    {
-        if (BetterDataManager.CanLoadSetting(Id))
-        {
-            return (int)BetterDataManager.LoadFloatSetting(Id);
-        }
-        else
-        {
-            return (int)CurrentValue;
         }
     }
 
@@ -261,7 +214,7 @@ public class BetterOptionFloatItem : BetterOptionItem
         optionBehaviour.data = new BaseGameSetting
         {
             Title = StringNames.None,
-            Type = OptionTypes.Float,
+            Type = OptionTypes.String,
         };
     }
 
@@ -282,13 +235,16 @@ public class BetterOptionFloatItem : BetterOptionItem
 
     public override void SyncValue(string value)
     {
-        if (!float.TryParse(value, out float @float)) return;
+        if (!int.TryParse(value, out int @int)) return;
 
-        CurrentValue = @float;
+        CurrentValue = @int;
 
         if (ThisOption)
         {
-            ThisOption.ValueText.text = PreFix + CurrentValue.ToString() + PostFix;
+            if (CurrentValue <= Values.Length - 1 && CurrentValue >= 0)
+            {
+                ThisOption.ValueText.text = Values[CurrentValue];
+            }
 
             if (IsParent || IsChild)
             {
@@ -303,13 +259,13 @@ public class BetterOptionFloatItem : BetterOptionItem
 
         if (VanillaOption != null)
         {
-            Main.CurrentOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
-            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetFloat((FloatOptionNames)VanillaOption, CurrentValue);
+            Main.CurrentOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
+            GameManager.Instance?.LogicOptions?.currentGameOptions?.SetInt((Int32OptionNames)VanillaOption, CurrentValue);
         }
     }
 
     public override string FormatValueAsText()
     {
-        return !CanBeInfinite || CurrentValue > 0 ? $"{PreFix}{CurrentValue}{PostFix}" : "<b>∞</b>";
+        return Values[CurrentValue];
     }
 }

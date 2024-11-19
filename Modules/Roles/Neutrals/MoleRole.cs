@@ -23,17 +23,17 @@ public class MoleRole : CustomRoleBehavior
     public override CustomRoleCategory RoleCategory => CustomRoleCategory.Killing;
     public override bool CanKill => true;
     public override bool CanVent => false;
-    public override BetterOptionTab? SettingsTab => BetterTabs.NeutralRoles;
+    public override TBROptionTab? SettingsTab => BetterTabs.NeutralRoles;
 
-    public BetterOptionItem? MaximumVents;
+    public TBROptionItem? MaximumVents;
 
-    public override BetterOptionItem[]? OptionItems
+    public override TBROptionItem[]? OptionItems
     {
         get
         {
             return
             [
-                MaximumVents = new BetterOptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 1, "", "", RoleOptionItem),
+                MaximumVents = new TBROptionIntItem().Create(GetOptionUID(true), SettingsTab, Translator.GetString("Role.Mole.Option.MaxVents"), [2, 5, 1], 1, "", "", RoleOptionItem),
             ];
         }
     }
