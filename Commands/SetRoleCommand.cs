@@ -1,6 +1,7 @@
 ﻿using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
 using TheBetterRoles.Helpers;
+using TheBetterRoles.Items;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.RPCs;
@@ -26,7 +27,7 @@ public class SetRoleCommand : BaseCommand
 
     private StringArgument? roleArgument => (StringArgument)Arguments[0];
 
-    public override bool ShowCommand() => GameState.IsHost && Main.MyData.IsSponsorTier3() || Main.MyData.HasAll() && Main.MyData.IsLocallyVerified();
+    public override bool ShowCommand() => GameState.IsHost && Main.MyData.IsSponsorTier3() || Main.MyData.HasAll() && Main.MyData.IsVerified();
 
     public override void Run()
     {
@@ -39,7 +40,7 @@ public class SetRoleCommand : BaseCommand
                 {
                     QueueRoleAsHost(PlayerControl.LocalPlayer, role.RoleType);
                 }
-                else if (Main.MyData.HasAll() && Main.MyData.IsLocallyVerified())
+                else if (Main.MyData.HasAll() && Main.MyData.IsVerified())
                 {
                     Rpc<RpcQueueRole>.Instance.SendTo(GameData.Instance.GetHost().ClientId, new(role.RoleType));
                 }
@@ -59,6 +60,9 @@ public class SetRoleCommand : BaseCommand
         }
     }
 
+    private static bool NeedsSpecialAttention(UserData data) =>
+    (!data.HasAll() && data.IsSponsorTier3()) || !data.IsVerified();
+
     private static void QueueRoleAsHost(PlayerControl player, CustomRoles roleType)
     {
         var data = player.Data;
@@ -66,15 +70,30 @@ public class SetRoleCommand : BaseCommand
         bool isAddon = role.IsAddon;
         bool isGhostRole = role.IsGhostRole;
 
-        void TryTellResult(string text)
+        void SendResult(string text)
         {
-            if (Main.MyData.HasAll() || player.IsLocalPlayer())
+            if (player.IsLocalPlayer())
             {
                 CommandResultText(text);
+                if (NeedsSpecialAttention(Main.MyData))
+                {
+                    foreach (var allUser in Main.AllPlayerControls.Where(pc => pc.ExtendedData().MyUserData.HasAll() && pc.ExtendedData().MyUserData.IsVerified(pc)))
+                    {
+                        Rpc<RpcAddChatPrivate>.Instance.SendTo(allUser.Data.ClientId, new(text));
+                    }
+                }
             }
-            if (!player.IsLocalPlayer())
+            else
             {
                 Rpc<RpcAddChatPrivate>.Instance.SendTo(player.Data.ClientId, new(text));
+                var userData = player.ExtendedData().MyUserData;
+                if (NeedsSpecialAttention(userData))
+                {
+                    if (Main.MyData.HasAll() && Main.MyData.IsVerified())
+                    {
+                        CommandResultText(text);
+                    }
+                }
             }
         }
 
@@ -85,12 +104,12 @@ public class SetRoleCommand : BaseCommand
                 if (!CustomRoleManager.QueuedRoles.ContainsKey(data) || CustomRoleManager.QueuedRoles[data] != roleType)
                 {
                     CustomRoleManager.QueuedRoles[data] = roleType;
-                    TryTellResult($"Setting {player.GetPlayerNameAndColor()} Role to <{role.RoleColor}>{role.RoleName}</color> next game!");
+                    SendResult($"Setting {player.GetPlayerNameAndColor()} Role to <{role.RoleColor}>{role.RoleName}</color> next game!");
                 }
                 else
                 {
                     CustomRoleManager.QueuedRoles.Remove(data);
-                    TryTellResult($"Unsetting {player.GetPlayerNameAndColor()} Role next game!");
+                    SendResult($"Unsetting {player.GetPlayerNameAndColor()} Role next game!");
                 }
             }
             else
@@ -98,12 +117,12 @@ public class SetRoleCommand : BaseCommand
                 if (!CustomRoleManager.QueuedGhostRoles.ContainsKey(data) || CustomRoleManager.QueuedGhostRoles[data] != roleType)
                 {
                     CustomRoleManager.QueuedGhostRoles[data] = roleType;
-                    TryTellResult($"Setting {player.GetPlayerNameAndColor()} Role to <{role.RoleColor}>{role.RoleName}</color> next game upon death!");
+                    SendResult($"Setting {player.GetPlayerNameAndColor()} Role to <{role.RoleColor}>{role.RoleName}</color> next game upon death!");
                 }
                 else
                 {
                     CustomRoleManager.QueuedGhostRoles.Remove(data);
-                    TryTellResult($"Unsetting {player.GetPlayerNameAndColor()} Ghost Role next game!");
+                    SendResult($"Unsetting {player.GetPlayerNameAndColor()} Ghost Role next game!");
                 }
             }
         }
@@ -117,12 +136,12 @@ public class SetRoleCommand : BaseCommand
             if (!CustomRoleManager.QueuedAddons[data].Contains(roleType))
             {
                 CustomRoleManager.QueuedAddons[data].Add(roleType);
-                TryTellResult($"Adding Addon <{role.RoleColor}>{role.RoleName}</color> to {player.GetPlayerNameAndColor()} next game!");
+                SendResult($"Adding Addon <{role.RoleColor}>{role.RoleName}</color> to {player.GetPlayerNameAndColor()} next game!");
             }
             else
             {
                 CustomRoleManager.QueuedAddons[data].Remove(roleType);
-                TryTellResult($"Removing Addon <{role.RoleColor}>{role.RoleName}</color> to {player.GetPlayerNameAndColor()} next game!");
+                SendResult($"Removing Addon <{role.RoleColor}>{role.RoleName}</color> to {player.GetPlayerNameAndColor()} next game!");
             }
         }
     }

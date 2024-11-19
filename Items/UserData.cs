@@ -83,7 +83,7 @@ public class UserData(string name = "", string puid = "", string friendCode = ""
     public bool IsSponsorTier1() => IsSponsor();
     public bool IsSponsor() => HasPermission(MultiPermissionFlags.Contributor_1 | MultiPermissionFlags.Contributor_2 | MultiPermissionFlags.Contributor_3 | MultiPermissionFlags.Dev);
     public bool HasAll() => (Permissions & (ushort)MultiPermissionFlags.All) == (ushort)MultiPermissionFlags.All;
-    public bool IsLocallyVerified() => Puid == Utils.GetHashStr(EOSManager.Instance.ProductUserId) && FriendCode == Utils.GetHashStr(EOSManager.Instance.FriendCode);
+    public bool IsVerified() => Puid == Utils.GetHashStr(EOSManager.Instance.ProductUserId) && FriendCode == Utils.GetHashStr(EOSManager.Instance.FriendCode);
     public bool IsVerified(NetworkedPlayerInfo data) => Puid == Utils.GetHashStr(data?.Puid ?? string.Empty) && FriendCode == Utils.GetHashStr(data?.FriendCode ?? string.Empty);
     public bool IsVerified(PlayerControl player) => Puid == Utils.GetHashStr(player?.Data?.Puid ?? string.Empty) && FriendCode == Utils.GetHashStr(player?.Data?.FriendCode ?? string.Empty);
 }
