@@ -44,8 +44,8 @@ public class Main : BasePlugin
     public const string HotfixNum = "0";
     public const bool IsHotFix = false;
     public const string PluginGuid = "com.ten.thebetterroles";
-    public const string PluginVersion = "0.0.1";
-    public const string ReleaseDate = "10.12.2024"; // mm/dd/yyyy
+    public const string PluginVersion = "1.0.0";
+    public const string ReleaseDate = "11.19.2024"; // mm/dd/yyyy
     public const string Github = "https://github.com/EnhancedNetwork/BetterAmongUs-Public";
     public const string Discord = "https://discord.gg/ten";
     public static bool IsGuestBuild { get; private set; } = false;
@@ -124,6 +124,7 @@ public class Main : BasePlugin
 
     public static List<string> SupportedAmongUsVersions =
     [
+        "2024.11.26",
         "2024.10.29",
         "2024.9.4",
     ];
