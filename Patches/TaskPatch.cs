@@ -187,8 +187,8 @@ public class TaskPatch
                 if (playerInfo == null || playerInfo.Disconnected || playerInfo.Tasks == null || playerInfo.Object == null)
                     continue;
 
-                var betterData = playerInfo.ExtendedData();
-                if (betterData == null || betterData.RoleInfo == null || !betterData.RoleInfo.RoleAssigned || !betterData.RoleInfo.Role.HasTask)
+                var extendedData = playerInfo.ExtendedData();
+                if (extendedData == null || extendedData.RoleInfo == null || !extendedData.RoleInfo.RoleAssigned || !extendedData.RoleInfo.Role.HasTask)
                     continue;
 
                 if (!playerInfo.IsDead)

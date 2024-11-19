@@ -72,10 +72,10 @@ public static class Utils
     {
         foreach (var player in Main.AllPlayerControls)
         {
-            var betterData = player.ExtendedData();
-            if (betterData != null)
+            var extendedData = player.ExtendedData();
+            if (extendedData != null)
             {
-                betterData.DirtyName = true;
+                extendedData.DirtyName = true;
             }
         }
     }
