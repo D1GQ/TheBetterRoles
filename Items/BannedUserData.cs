@@ -22,16 +22,23 @@ public class BannedUserData(string name = "", string puid = "", string friendCod
     [JsonPropertyName("reason")]
     public string Reason { get; } = reason;
 
-    public static void CheckLocalBan()
+    private static bool IsBanned = false;
+    public static bool CheckLocalBan()
     {
+        if (IsBanned) return true;
+
         if (EOSManager.Instance)
         {
             var data = AllBannedUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(EOSManager.Instance.ProductUserId) || user.FriendCode == Utils.GetHashStr(EOSManager.Instance.FriendCode));
             if (data != null)
             {
                 data.IsLocalBan = true;
+                IsBanned = true;
+                return true;
             }
         }
+
+        return false;
     }
     public static bool CheckPlayerBan(NetworkedPlayerInfo data) => AllBannedUsers?.FirstOrDefault(user => user.Puid == data.GetHashPuid() || user.FriendCode == data.GetHashFriendcode()) != null;
     public static bool CheckPuidBan(string puid) => AllBannedUsers?.FirstOrDefault(user => user.Puid == Utils.GetHashStr(puid)) != null;

@@ -536,6 +536,7 @@ public static class Utils
 
         DataManager.Player.Account.LoginStatus = EOSManager.AccountLoginStatus.Offline;
         DataManager.Player.Save();
+        AccountManager.Instance?.accountTab?.signInStatusComponent?.friendsButton?.SetActive(false);
         if (apiError)
         {
             ShowPopUp(Translator.GetString("DataBaseConnect.InitFailure"), true);

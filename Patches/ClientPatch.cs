@@ -57,6 +57,41 @@ public class ClientPatch
             // __instance.StartCoroutine(DataBaseConnect.Init());
         }
     }
+
+    // If developer set account status color to Blue
+    [HarmonyPatch(typeof(SignInStatusComponent))]
+    public class SignInStatusComponentPatch
+    {
+        [HarmonyPatch(nameof(SignInStatusComponent.SetOnline))]
+        [HarmonyPrefix]
+        public static bool SetOnline_Prefix(SignInStatusComponent __instance)
+        {
+            if (BannedUserData.CheckLocalBan())
+            {
+                __instance.statusSprite.sprite = __instance.guestSprite;
+                __instance.glowSprite.sprite = __instance.guestGlow;
+                __instance.statusSprite.color = Color.red;
+                __instance.glowSprite.color = Color.red;
+                Utils.DisconnectAccountFromOnline();
+
+                return false;
+            }
+
+            if (Main.MyData.IsDev())
+            {
+                __instance.statusSprite.sprite = __instance.guestSprite;
+                __instance.glowSprite.sprite = __instance.guestGlow;
+                __instance.statusSprite.color = Color.cyan;
+                __instance.glowSprite.color = Color.cyan;
+                __instance.friendsButton.SetActive(true);
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+
     // Log game exit
     [HarmonyPatch(typeof(AmongUsClient))]
     public class AmongUsClientPatch
