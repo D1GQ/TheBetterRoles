@@ -40,7 +40,7 @@ class CommandsPatch
 
         if (!text.StartsWith(CommandPrefix) || 3f - __instance.timeSinceLastMessage > 0f)
         {
-            if (GameState.InGame && !GameState.IsLobby && !GameState.IsFreePlay && !GameState.IsMeeting && !GameState.IsExilling && PlayerControl.LocalPlayer.IsAlive())
+            if (GameState.IsInGame && !GameState.IsLobby && !GameState.IsFreePlay && !GameState.IsMeeting && !GameState.IsExilling && PlayerControl.LocalPlayer.IsAlive())
                 return false;
 
             if (ChatPatch.ChatHistory.Count == 0 || ChatPatch.ChatHistory[^1] != text) ChatPatch.ChatHistory.Add(text);

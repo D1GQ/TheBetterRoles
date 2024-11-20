@@ -120,6 +120,7 @@ public class TBROptionPercentItem : TBROptionItem
             var button = UnityEngine.Object.Instantiate(optionBehaviour.PlusBtn, optionBehaviour.PlusBtn.transform.parent);
             button.transform.position = button.transform.position - new Vector3(4.75f, 0f, 0f);
             button.transform.GetComponentInChildren<TextMeshPro>(true).gameObject.DestroyObj();
+            button.ReceiveMouseOut();
             button.interactableHoveredColor = Color.gray;
             button.interactableClickColor = Color.white;
             button.buttonSprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.QuestionMark.png", 50);

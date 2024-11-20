@@ -141,9 +141,8 @@ public static class CustomRoleManager
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
             yield return SyncPlayerRoleCoroutine(player, selectedRole, selectedAddons);
+            LogAllAssignments(player, selectedRole, selectedAddons);
         }
-
-        LogAllAssignments(playerRoleAssignments);
         QueuedRoles.Clear();
         QueuedAddons.Clear();
 
@@ -200,20 +199,17 @@ public static class CustomRoleManager
         {
             if (role.Amount <= 0) continue;
 
-            if (role._role.IsImpostor && ImposterAmount <= 0)
+            if (ImposterAmount > 0 && !role._role.IsImpostor)
             {
                 continue;
             }
-            else if (role._role.IsImpostor)
+            if (KillingNeutralAmount > 0 && !role._role.IsNeutral || !role._role.IsKillingRole)
             {
-                validRoleTypes.Add(role.RoleType);
                 continue;
             }
-
-            if (role._role.IsNeutral)
+            if (BenignNeutralAmount > 0 && !role._role.IsNeutral || role._role.IsKillingRole)
             {
-                if (role._role.IsKillingRole && KillingNeutralAmount <= 0) continue;
-                if (!role._role.IsKillingRole && BenignNeutralAmount <= 0) continue;
+                continue;
             }
 
             validRoleTypes.Add(role.RoleType);
@@ -322,7 +318,6 @@ public static class CustomRoleManager
     {
         if (selectedRole?._role != null)
         {
-            Logger.Log($"{player.Data.PlayerName} -> {selectedRole._role.RoleName}");
             player.SendRpcSetCustomRole(selectedRole._role.RoleType, isAssigned: true);
             yield return new WaitForSeconds(0.05f);
         }
@@ -331,18 +326,18 @@ public static class CustomRoleManager
         {
             if (addon?._role != null)
             {
-                Logger.Log($"{player.Data.PlayerName} -> {addon._role.RoleName}");
                 player.SendRpcSetCustomRole(addon._role.RoleType, isAssigned: true);
                 yield return new WaitForSeconds(0.05f);
             }
         }
     }
 
-    private static void LogAllAssignments(Dictionary<PlayerControl, RoleAssignmentData?> assignments)
+    private static void LogAllAssignments(PlayerControl player, RoleAssignmentData role, List<RoleAssignmentData> addons)
     {
-        foreach (var assignment in assignments)
+        Logger.LogPrivate($"Set Role: {player.Data.PlayerName} -> {role._role.RoleName}");
+        foreach (var addon in addons)
         {
-            Logger.LogPrivate($"Set Role: {assignment.Key.Data.PlayerName} -> {assignment.Value?._role.RoleName}");
+            Logger.LogPrivate($"Add Add-on: {player.Data.PlayerName} -> {addon._role.RoleName}");
         }
     }
 

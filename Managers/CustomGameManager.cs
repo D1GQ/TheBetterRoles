@@ -196,7 +196,9 @@ public class CustomGameManager
                     __instance.RoleText.color = RoleColor;
                     __instance.RoleBlurbText.color = RoleColor;
                 }, 0.0001f, shouldLog: false);
+
                 HudManager.Instance?.MapButton?.gameObject?.SetActive(true);
+                HudManager.Instance?.MapButton?.SelectButton(false);
             }
             catch { }
         }

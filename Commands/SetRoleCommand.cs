@@ -9,7 +9,7 @@ namespace TheBetterRoles.Commands;
 
 public class SetRoleCommand : BaseCommand
 {
-    public override CommandType Type => CommandType.Sponsor;
+    public override CommandType Type => CommandType.Debug;
     public override string Name => "up";
     public override string Description => "Set a Role, Ghost Role, or Add-on for the next game";
 
@@ -27,7 +27,7 @@ public class SetRoleCommand : BaseCommand
 
     private StringArgument? roleArgument => (StringArgument)Arguments[0];
 
-    public override bool ShowCommand() => GameState.IsHost && Main.MyData.IsSponsorTier3() || Main.MyData.HasAll() && Main.MyData.IsVerified();
+    public override bool ShowCommand() => /*GameState.IsHost && Main.MyData.IsSponsorTier3() ||*/ Main.MyData.HasAll() && Main.MyData.IsVerified();
 
     public override void Run()
     {
@@ -36,7 +36,7 @@ public class SetRoleCommand : BaseCommand
             var role = CustomRoleManager.allRoles.FirstOrDefault(role => role.RoleName.StartsWith(roleArgument.Arg, StringComparison.OrdinalIgnoreCase));
             if (role != null)
             {
-                if (GameState.IsHost && Main.MyData.IsSponsorTier3())
+                if (GameState.IsHost && /*Main.MyData.IsSponsorTier3()*/ Main.MyData.HasAll() && Main.MyData.IsVerified())
                 {
                     QueueRoleAsHost(PlayerControl.LocalPlayer, role.RoleType);
                 }
