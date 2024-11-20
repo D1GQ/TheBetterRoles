@@ -4,7 +4,8 @@ namespace TheBetterRoles.Commands;
 
 public class PlayerArgument(BaseCommand? command) : BaseArgument(command)
 {
-    public override string Suggestion => "{Id}";
+    protected override string[] ArgSuggestions => Main.AllPlayerControls.OrderBy(pc => pc.PlayerId).Select(pc => pc.PlayerId.ToString()).ToArray();
+    public override string ArgInfo => "{Id}";
     public override T? TryGetTarget<T>() where T : class
     {
         var digits = Arg.Where(char.IsDigit).ToArray();

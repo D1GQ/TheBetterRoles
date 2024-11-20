@@ -20,6 +20,7 @@ public class SetRoleCommand : BaseCommand
             new StringArgument(this),
         });
         roleArgument.suggestion = "{Name}";
+        roleArgument.GetArgSuggestions = () => { return CustomRoleManager.allRoles.Select(role => role.RoleName.ToLower()).ToArray(); };
     }
     private readonly Lazy<BaseArgument[]> _arguments;
     public override BaseArgument[]? Arguments => _arguments.Value;

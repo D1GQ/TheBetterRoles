@@ -18,16 +18,6 @@ class CommandsPatch
     {
         if (closestCommand != null && isTypedOut)
         {
-            string[] typedParts = typedCommand.Split(' ');
-
-            for (int i = 1; i < typedParts.Length && i < closestCommand.Arguments.Length + 1; i++)
-            {
-                if (closestCommand.Arguments[i - 1] != null)
-                {
-                    closestCommand.Arguments[i - 1].Arg = typedParts[i];
-                }
-            }
-
             closestCommand.Run();
         }
         else
@@ -76,8 +66,8 @@ class CommandsPatch
     }
 
     // Set up command helper
-    private static GameObject commandText;
-    private static GameObject commandInfo;
+    private static TextMeshPro commandText;
+    private static TextMeshPro commandInfo;
     private static RandomNameGenerator NameRNG;
     [HarmonyPatch(nameof(ChatController.Toggle))]
     [HarmonyPostfix]
@@ -85,29 +75,27 @@ class CommandsPatch
     {
         if (commandText == null)
         {
-            var TextArea = __instance.freeChatField.textArea.gameObject;
-            GameObject CommandDisplay = UnityEngine.Object.Instantiate(TextArea, TextArea.transform.parent.transform);
-            CommandDisplay.transform.SetSiblingIndex(TextArea.transform.GetSiblingIndex() + 1);
-            CommandDisplay.transform.DestroyChildren();
-            CommandDisplay.name = "CommandArea";
-            CommandDisplay.GetComponent<TextMeshPro>().color = new Color(1f, 1f, 1f, 0.5f);
-            commandText = CommandDisplay;
+            var TextArea = __instance.freeChatField.textArea.outputText;
+            commandText = UnityEngine.Object.Instantiate(TextArea, TextArea.transform.parent.transform);
+            commandText.transform.SetSiblingIndex(TextArea.transform.GetSiblingIndex() + 1);
+            commandText.transform.DestroyChildren();
+            commandText.name = "CommandArea";
+            commandText.GetComponent<TextMeshPro>().color = new Color(1f, 1f, 1f, 0.5f);
         }
 
         if (commandInfo == null)
         {
-            var TextArea = __instance.freeChatField.textArea.gameObject;
-            GameObject CommandInformation = UnityEngine.Object.Instantiate(TextArea, TextArea.transform.parent.transform);
-            CommandInformation.transform.SetSiblingIndex(TextArea.transform.GetSiblingIndex() + 1);
-            CommandInformation.transform.DestroyChildren();
-            CommandInformation.transform.localPosition = new Vector3(CommandInformation.transform.localPosition.x, 0.45f);
-            CommandInformation.name = "CommandInfoText";
-            CommandInformation.GetComponent<TextMeshPro>().color = Color.yellow;
-            CommandInformation.GetComponent<TextMeshPro>().outlineColor = new Color(0f, 0f, 0f, 1f);
-            CommandInformation.GetComponent<TextMeshPro>().outlineWidth = 0.2f;
-            CommandInformation.GetComponent<TextMeshPro>().characterWidthAdjustment = 1.5f;
-            CommandInformation.GetComponent<TextMeshPro>().enableWordWrapping = false;
-            commandInfo = CommandInformation;
+            var TextArea = __instance.freeChatField.textArea.outputText;
+            commandInfo = UnityEngine.Object.Instantiate(TextArea, TextArea.transform.parent.transform);
+            commandInfo.transform.SetSiblingIndex(TextArea.transform.GetSiblingIndex() + 1);
+            commandInfo.transform.DestroyChildren();
+            commandInfo.transform.localPosition = new Vector3(commandInfo.transform.localPosition.x, 0.45f);
+            commandInfo.name = "CommandInfoText";
+            commandInfo.GetComponent<TextMeshPro>().color = Color.yellow;
+            commandInfo.GetComponent<TextMeshPro>().outlineColor = new Color(0f, 0f, 0f, 1f);
+            commandInfo.GetComponent<TextMeshPro>().outlineWidth = 0.2f;
+            commandInfo.GetComponent<TextMeshPro>().characterWidthAdjustment = 1.5f;
+            commandInfo.GetComponent<TextMeshPro>().enableWordWrapping = false;
         }
 
         if (NameRNG == null)
@@ -128,84 +116,102 @@ class CommandsPatch
     {
         if (!_enabled)
         {
-            commandText.GetComponent<TextMeshPro>().text = string.Empty;
-            commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
+            ClearCommandDisplay();
             return;
         }
 
         string text = __instance.freeChatField.textArea.text;
 
-        if (commandText != null && commandInfo != null)
+        if (commandText == null || commandInfo == null)
+            return;
+
+        if (text.Length > 0 && text.StartsWith(CommandPrefix))
         {
-            if (text.Length > 0 && text.StartsWith(CommandPrefix))
+            typedCommand = text.Length > 1 ? text[1..] : string.Empty;
+            string[] typedParts = typedCommand.Split(' ');
+
+            closestCommand = GetClosestCommand(typedParts[0]);
+            bool isSuggestionValid = closestCommand != null
+                && (typedParts[0].Equals(closestCommand.Name, StringComparison.OrdinalIgnoreCase) || typedParts.Length == 1)
+                && closestCommand.ShowSuggestion();
+
+            if (isSuggestionValid)
             {
-                typedCommand = text.Length > 1 ? text[1..] : string.Empty;
-                string[] typedParts = typedCommand.Split(' ');
-
-                closestCommand = GetClosestCommand(typedCommand.Split(' ')[0]);
-                if ((closestCommand != null && (typedParts[0].ToLower() == closestCommand.Name.ToLower() || typedParts.Length == 1)) && closestCommand?.ShowSuggestion() != false)
-                {
-                    isTypedOut = true;
-                    string CommandInfo = closestCommand.Description;
-
-                    string suggestion = string.Empty;
-                    if (typedParts.Length == 1)
-                    {
-                        suggestion = closestCommand.Name;
-                    }
-                    else if (typedParts.Last().Length < 1)
-                    {
-                        int nextArgumentIndex = typedParts.Length - 2;
-
-                        if (nextArgumentIndex >= 0 && closestCommand.Arguments.Length > nextArgumentIndex)
-                        {
-                            suggestion = text + closestCommand.Arguments[nextArgumentIndex]?.Suggestion ?? string.Empty;
-                        }
-                        else
-                        {
-                            suggestion = closestCommand.Name;
-                        }
-                    }
-
-                    if (Input.GetKeyDown(KeyCode.Tab) && typedParts.Length == 1)
-                    {
-                        __instance.freeChatField.textArea.SetText(CommandPrefix + closestCommand.Name);
-                    }
-
-                    string fullSuggestion = CommandPrefix + suggestion;
-                    if (text.Length <= fullSuggestion.Length)
-                    {
-                        commandText.GetComponent<TextMeshPro>().text = text + fullSuggestion[text.Length..];
-                    }
-                    else
-                    {
-                        commandText.GetComponent<TextMeshPro>().text = string.Empty;
-                    }
-
-                    string argumentInfo = string.Empty;
-                    if (closestCommand.Arguments.Length > 0)
-                    {
-                        argumentInfo = $" - <#a6a6a6>{string.Join(" ", closestCommand.Arguments.Select(arg => arg.Suggestion))}</color>";
-                    }
-
-                    commandInfo.GetComponent<TextMeshPro>().text = $"{CommandInfo}{argumentInfo}";
-                }
-                else
-                {
-                    // Clear the suggestion if there is a mismatch
-                    isTypedOut = false;
-                    commandText.GetComponent<TextMeshPro>().text = string.Empty;
-                    commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
-                }
+                HandleValidSuggestion(__instance, typedParts);
             }
             else
             {
-                isTypedOut = false;
-                commandText.GetComponent<TextMeshPro>().text = string.Empty;
-                commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
+                ClearCommandDisplay();
+            }
+        }
+        else
+        {
+            ClearCommandDisplay();
+        }
+    }
+
+    private static void ClearCommandDisplay()
+    {
+        isTypedOut = false;
+        commandText.GetComponent<TextMeshPro>().text = string.Empty;
+        commandInfo.GetComponent<TextMeshPro>().text = string.Empty;
+    }
+
+    private static void HandleValidSuggestion(ChatController __instance, string[] typedParts)
+    {
+        isTypedOut = true;
+
+        string suggestion = GenerateSuggestion(typedParts);
+        string fullSuggestion = CommandPrefix + suggestion;
+
+        if (Input.GetKeyDown(KeyCode.Tab) && typedParts.Length >= 1)
+        {
+            __instance.freeChatField.textArea.SetText(fullSuggestion);
+        }
+
+        commandText.text = fullSuggestion;
+        commandInfo.text = $"{closestCommand.Description}{GenerateArgumentInfo()}";
+    }
+
+    private static string GenerateSuggestion(string[] typedParts)
+    {
+        if (typedParts.Length == 1)
+            return closestCommand.Name;
+
+        UpdateCommandArguments(typedParts);
+
+        int nextArgumentIndex = typedParts.Length - 2;
+
+        if (nextArgumentIndex >= 0 && nextArgumentIndex < closestCommand.Arguments.Length)
+        {
+            var argument = closestCommand.Arguments[nextArgumentIndex];
+            var closestSuggestion = argument.GetClosestSuggestion();
+            return typedCommand + closestSuggestion[Math.Min(argument.Arg.Length, closestSuggestion.Length)..];
+        }
+
+        return string.Empty;
+    }
+
+    private static void UpdateCommandArguments(string[] typedParts)
+    {
+        for (int i = 1; i < typedParts.Length && i <= closestCommand.Arguments.Length; i++)
+        {
+            if (closestCommand.Arguments[i - 1] != null)
+            {
+                closestCommand.Arguments[i - 1].Arg = typedParts[i];
             }
         }
     }
+
+    private static string GenerateArgumentInfo()
+    {
+        if (closestCommand.Arguments.Length == 0)
+            return string.Empty;
+
+        var argumentInfo = string.Join(" ", closestCommand.Arguments.Select(arg => arg.ArgInfo));
+        return $" - <#a6a6a6>{argumentInfo}</color>";
+    }
+
 
     public static BaseCommand? GetClosestCommand(string typedCommand)
     {

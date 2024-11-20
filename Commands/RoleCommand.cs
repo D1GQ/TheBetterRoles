@@ -17,6 +17,7 @@ public class RoleCommand : BaseCommand
             new StringArgument(this),
         });
         nameArgument.suggestion = "{Name}";
+        nameArgument.GetArgSuggestions = () => { return CustomRoleManager.allRoles.Where(role => role.IsAddon == IsAddonCommand).Select(role => role.RoleName.ToLower()).ToArray(); };
     }
     private readonly Lazy<BaseArgument[]> _arguments;
     public override BaseArgument[]? Arguments => _arguments.Value;

@@ -10,14 +10,6 @@ public enum CommandType
     Debug,
 }
 
-public abstract class BaseArgument(BaseCommand? command)
-{
-    public BaseCommand? Command { get; } = command;
-    public abstract string Suggestion { get; }
-    public string Arg { get; set; } = string.Empty;
-    public abstract T? TryGetTarget<T>() where T : class;
-}
-
 public abstract class BaseCommand
 {
     public static readonly BaseCommand?[] allCommands = GetAllCustomRoleInstances();
