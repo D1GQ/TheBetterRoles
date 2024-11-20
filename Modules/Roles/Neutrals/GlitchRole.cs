@@ -119,8 +119,10 @@ public class GlitchRole : CustomRoleBehavior
                 button.ActionButton.graphic.material.shader = AssetBundles.GlitchShader;
             }
 
-            HudManager.Instance.UseButton.graphic.enabled = false;
+            HudManager.Instance.UseButton.enabled = false;
             HudManager.Instance.UseButton.graphic.material.shader = AssetBundles.GlitchShader;
+            HudManager.Instance.PetButton.enabled = false;
+            HudManager.Instance.PetButton.graphic.material.shader = AssetBundles.GlitchShader;
         }
     }
 
@@ -137,6 +139,8 @@ public class GlitchRole : CustomRoleBehavior
 
             HudManager.Instance.UseButton.enabled = true;
             HudManager.Instance.UseButton.graphic.material.shader = catchShader;
+            HudManager.Instance.PetButton.enabled = true;
+            HudManager.Instance.PetButton.graphic.material.shader = catchShader;
         }
         tempHackDuration = 0f;
         hacked = null;

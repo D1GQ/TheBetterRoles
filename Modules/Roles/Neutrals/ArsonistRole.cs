@@ -194,6 +194,7 @@ public class ArsonistRole : CustomRoleBehavior
             target.ExtendedData().NameColor = "#59360d";
         }
 
+        target.DirtyName();
         IsDirty = true;
     }
 
