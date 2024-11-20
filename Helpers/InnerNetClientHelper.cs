@@ -5,17 +5,17 @@ namespace TheBetterRoles.Helpers;
 
 static class InnerNetClientHelper
 {
-    public static void WriteBooleans(this MessageWriter writer, bool[] @bools)
+    public static void WriteBooleans(this MessageWriter writer, bool[] bools)
     {
-        writer.Write(@bools.Length);
+
+        writer.Write(bools.Length);
 
         byte currentByte = 0;
         int bitIndex = 0;
 
-        foreach (bool b in @bools)
+        foreach (bool b in bools)
         {
-            if (b)
-                currentByte |= (byte)(1 << bitIndex);
+            if (b) currentByte |= (byte)(1 << bitIndex);
 
             bitIndex++;
 
@@ -27,36 +27,31 @@ static class InnerNetClientHelper
             }
         }
 
-        if (bitIndex > 0)
-        {
-            writer.Write(currentByte);
-        }
+        if (bitIndex > 0) writer.Write(currentByte);
     }
 
-
-    public static void ReadBooleans(this MessageReader reader, ref bool[] @bools)
+    public static bool[] ReadBooleans(this MessageReader reader)
     {
-        var length = reader.ReadInt32();
+
+        int length = reader.ReadInt32();
+        bool[] bools = new bool[length];
 
         int bitIndex = 0;
         byte currentByte = 0;
 
         for (int i = 0; i < length; i++)
         {
-            if (bitIndex == 0)
-            {
-                currentByte = reader.ReadByte();
-            }
 
-            @bools[i] = (currentByte & 1 << bitIndex) != 0;
+            if (bitIndex == 0) currentByte = reader.ReadByte();
+
+            bools[i] = (currentByte & (1 << bitIndex)) != 0;
 
             bitIndex++;
 
-            if (bitIndex == 8)
-            {
-                bitIndex = 0;
-            }
+            if (bitIndex == 8) bitIndex = 0;
         }
+
+        return bools;
     }
 
     public static void WritePlayerId(this MessageWriter writer, PlayerControl player) => writer.Write(player?.PlayerId ?? 255);
