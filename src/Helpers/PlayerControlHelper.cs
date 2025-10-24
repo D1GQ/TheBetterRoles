@@ -30,7 +30,7 @@ internal static class PlayerControlHelper
     {
         try
         {
-            var client = AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(cd => cd.Character.PlayerId == player.PlayerId);
+            var client = AmongUsClient.Instance.allClients.FirstOrDefaultIL2CPP(cd => cd.Character.PlayerId == player.PlayerId);
             return client;
         }
         catch
@@ -43,7 +43,7 @@ internal static class PlayerControlHelper
     /// Gets the client ID of the given player.
     /// Returns -1 if no client is found.
     /// </summary>
-    internal static int GetClientId(this PlayerControl player) => player?.GetClient()?.Id != null ? player.GetClient().Id : -1;
+    internal static int GetClientId(this PlayerControl player) => player?.GetClient()?.Id ?? -1;
 
     /// <summary>
     /// Gets the player's name formatted with their outfit color.

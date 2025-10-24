@@ -540,7 +540,7 @@ internal class MeetingHudPatch
             }
             RoleListener.InvokeRoles<IRoleMeetingAction>(role => role.EndVoting(__instance, ref calculatedVotes));
             KeyValuePair<byte, int> max = calculatedVotes.MaxPair(out bool tie);
-            NetworkedPlayerInfo? exiled = GameData.Instance.AllPlayers.ToArray().FirstOrDefault((v) => !tie && v.PlayerId == max.Key);
+            NetworkedPlayerInfo? exiled = GameData.Instance.AllPlayers.FirstOrDefaultIL2CPP((v) => !tie && v.PlayerId == max.Key);
             List<MeetingHud.VoterState> list = [];
             for (int i = 0; i < __instance.playerStates.Length; i++)
             {

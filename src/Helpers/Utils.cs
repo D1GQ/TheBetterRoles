@@ -49,7 +49,7 @@ internal static class Utils
     /// <param name="clientId">The ID of the client whose data is being retrieved.</param>
     /// <returns>The client data associated with the provided client ID, or null if no client is found.</returns>
     internal static ClientData? ClientFromClientId(int clientId)
-        => AmongUsClient.Instance.allClients.ToArray().FirstOrDefault(cd => cd.Id == clientId);
+        => AmongUsClient.Instance.allClients.FirstOrDefaultIL2CPP(cd => cd.Id == clientId);
 
     // Get player data from player ID
     /// <summary>
@@ -59,7 +59,7 @@ internal static class Utils
     /// <param name="playerId">The ID of the player whose data is being retrieved.</param>
     /// <returns>The player data associated with the provided player ID, or null if no player is found.</returns>
     internal static NetworkedPlayerInfo? PlayerDataFromPlayerId(int playerId)
-        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.PlayerId == playerId);
+        => GameData.Instance.AllPlayers.FirstOrDefaultIL2CPP(data => data.PlayerId == playerId);
 
     // Get player data from client ID
     /// <summary>
@@ -69,7 +69,7 @@ internal static class Utils
     /// <param name="clientId">The client ID of the player whose data is being retrieved.</param>
     /// <returns>The player data associated with the provided client ID, or null if no player is found.</returns>
     internal static NetworkedPlayerInfo? PlayerDataFromClientId(int clientId)
-        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.ClientId == clientId);
+        => GameData.Instance.AllPlayers.FirstOrDefaultIL2CPP(data => data.ClientId == clientId);
 
     // Get player data from friend code
     /// <summary>
@@ -79,7 +79,7 @@ internal static class Utils
     /// <param name="friendCode">The friend code of the player whose data is being retrieved.</param>
     /// <returns>The player data associated with the provided friend code, or null if no player is found.</returns>
     internal static NetworkedPlayerInfo? PlayerDataFromFriendCode(string friendCode)
-        => GameData.Instance.AllPlayers.ToArray().FirstOrDefault(data => data.FriendCode == friendCode);
+        => GameData.Instance.AllPlayers.FirstOrDefaultIL2CPP(data => data.FriendCode == friendCode);
 
     // Get player from player ID
     /// <summary>
@@ -323,7 +323,7 @@ internal static class Utils
     {
         if (player.CheckAnyRoles(role => role.HasTask) || player.CheckAnyRoles(role => role.HasSelfTask))
         {
-            return $" <#ffff2b>({player.Data.Tasks.ToArray().Where(task => task.Complete).Count()}/{player.Data.Tasks.Count})</color>";
+            return $" <#ffff2b>({player.Data.Tasks.CountIl2Cpp(task => task.Complete)}/{player.Data.Tasks.Count})</color>";
         }
         else
         {

@@ -112,7 +112,7 @@ internal class TaskPatchProgressTracker
         if (instance && instance.TotalTasks > 0)
         {
             int num = TutorialManager.InstanceExists ? 1 :
-                instance.AllPlayers.ToArray().Count(data => data?.Disconnected == false && data?.ExtendedData()?.RoleInfo?.Role?.HasTask == true);
+                instance.AllPlayers.CountIl2Cpp(data => data?.Disconnected == false && data?.ExtendedData()?.RoleInfo?.Role?.HasTask == true);
 
             float totalProgress = 0f;
             int taskPlayers = 0;
@@ -124,8 +124,8 @@ internal class TaskPatchProgressTracker
                     var tasks = player?.Tasks;
                     if (tasks != null)
                     {
-                        int playerCompletedTasks = tasks.ToArray().Count(task => task.Complete);
-                        int playerTotalTasks = tasks.ToArray().Length;
+                        int playerCompletedTasks = tasks.CountIl2Cpp(task => task.Complete);
+                        int playerTotalTasks = tasks.Count;
 
                         if (playerTotalTasks > 0)
                         {
@@ -172,10 +172,10 @@ internal class TaskPatchRecomputeTaskCounts
         __instance.TotalTasks = 0;
         __instance.CompletedTasks = 0;
 
-        var allPlayers = __instance.AllPlayers?.ToArray();
+        var allPlayers = __instance.AllPlayers;
         if (allPlayers == null) return false;
 
-        for (var i = 0; i < allPlayers.Length; i++)
+        for (var i = 0; i < allPlayers.Count; i++)
         {
             var playerInfo = allPlayers[i];
             if (playerInfo == null || playerInfo.Disconnected || playerInfo.Tasks == null || playerInfo.Object == null)
@@ -187,10 +187,10 @@ internal class TaskPatchRecomputeTaskCounts
 
             if (!playerInfo.IsDead)
             {
-                var tasks = playerInfo.Tasks?.ToArray();
+                var tasks = playerInfo.Tasks;
                 if (tasks == null) continue;
 
-                for (var j = 0; j < tasks.Length; j++)
+                for (var j = 0; j < tasks.Count; j++)
                 {
                     __instance.TotalTasks++;
                     if (tasks[j].Complete) __instance.CompletedTasks++;

@@ -141,7 +141,7 @@ internal class ChatControllerPatch
             chat.openKeyboardButton.transform.Find("OpenKeyboardIcon").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         }
 
-        foreach (var item in HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray().Select(c => c.GetComponent<ChatBubble>()))
+        foreach (var item in HudManager.Instance.Chat.chatBubblePool.activeChildren.SelectIL2CPP(c => c.GetComponent<ChatBubble>()))
         {
             SetChatPoolTheme(item);
         }
@@ -150,8 +150,8 @@ internal class ChatControllerPatch
     // Set chat theme
     internal static ChatBubble? SetChatPoolTheme(ChatBubble? asChatBubble = null)
     {
-        ChatBubble Get() => HudManager.Instance.Chat.chatBubblePool.activeChildren.ToArray()
-            .Select(c => c.GetComponent<ChatBubble>())
+        ChatBubble Get() => HudManager.Instance.Chat.chatBubblePool.activeChildren
+            .SelectIL2CPP(c => c.GetComponent<ChatBubble>())
             .Last();
 
         ChatBubble? chatBubble = asChatBubble ??= Get();

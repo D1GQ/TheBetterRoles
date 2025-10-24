@@ -163,7 +163,7 @@ internal class GameSummaryManager
 
             if (extendedData.RoleInfo.Role.HasTask || extendedData.RoleInfo.Role.HasSelfTask)
             {
-                roleInfo += $" → {playerTheme($"{Translator.GetString("Tasks")}: {player.Tasks.ToArray().Count(task => task.Complete)}/{player.Tasks.Count}")}";
+                roleInfo += $" → {playerTheme($"{Translator.GetString("Tasks")}: {player.Tasks.CountIl2Cpp(task => task.Complete)}/{player.Tasks.Count}")}";
             }
             if (extendedData.RoleInfo.Role.CanKill)
             {

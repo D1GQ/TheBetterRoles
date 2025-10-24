@@ -70,7 +70,7 @@ internal class ClientOptionItem
 
     private void AdjustOptionsMenuButtons(OptionsMenuBehaviour optionsMenuBehaviour, PassiveButton closeButton)
     {
-        UiElement[] selectableButtons = optionsMenuBehaviour.ControllerSelectable.ToArray();
+        var selectableButtons = optionsMenuBehaviour.ControllerSelectable;
         PassiveButton leaveButton = null, returnButton = null;
 
         foreach (var button in selectableButtons)

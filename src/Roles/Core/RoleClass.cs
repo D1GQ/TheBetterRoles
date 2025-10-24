@@ -467,14 +467,17 @@ internal abstract class RoleClass : NetworkClass
 
             if (!IsAddon)
             {
-                _player.ExtendedData().RoleInfo.Role = null;
+                if (_player?.ExtendedData()?.RoleInfo != null)
+                {
+                    _player.ExtendedData().RoleInfo.Role = null;
+                }
             }
             else
             {
                 _player.ExtendedData().RoleInfo.Addons.Remove((AddonClass)this);
             }
 
-            _player.ExtendedData().RoleInfo.DirtyRolesCache();
+            _player?.ExtendedData()?.RoleInfo?.DirtyRolesCache();
             Utils.DirtyAllNames();
 
             try { Logger.LogPrivate($"Finished deinitialize Role({RoleName})!"); }

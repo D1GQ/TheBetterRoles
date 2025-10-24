@@ -162,7 +162,7 @@ internal sealed class PhantomRoleTBR : GhostRoleClass, IRoleUpdateAction, IRoleM
 
     bool IRoleGameplayAction.WinCondition()
     {
-        bool isWin = _player.Data.Tasks.ToArray().All(task => task.Complete) && _player.Data.Tasks.ToArray().Length > 0 && !HasBeenClicked;
+        bool isWin = _player.Data.Tasks.AllIl2Cpp(task => task.Complete) && _player.Data.Tasks.Count > 0 && !HasBeenClicked;
         if (isWin)
         {
             _player.SendRpcRevive();

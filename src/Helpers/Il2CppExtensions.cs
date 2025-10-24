@@ -7,6 +7,17 @@ namespace TheBetterRoles.Helpers;
 /// </summary>
 internal static class Il2CppExtensions
 {
+    internal static void ForEachIl2Cpp<T>(this Il2CppSystem.Collections.Generic.IEnumerable<T> source, Action<T> action)
+    {
+        if (source == null || action == null) return;
+
+        var list = new Il2CppSystem.Collections.Generic.List<T>(source);
+        for (int i = 0; i < list.Count; i++)
+        {
+            action(list[i]);
+        }
+    }
+
     /// <summary>
     /// Converts an IEnumerable collection to an Il2CppArrayBase.
     /// </summary>
@@ -195,6 +206,19 @@ internal static class Il2CppExtensions
         return array[0];
     }
 
+    internal static int CountIl2Cpp<T>(this Il2CppSystem.Collections.Generic.List<T> source, Func<T, bool>? predicate = null)
+    {
+        if (source == null) return 0;
+
+        int count = 0;
+        for (int i = 0; i < source.Count; i++)
+        {
+            if (predicate == null || predicate(source[i]))
+                count++;
+        }
+        return count;
+    }
+
     /// <summary>
     /// Checks if an IL2CPP list contains an element.
     /// </summary>
@@ -217,6 +241,41 @@ internal static class Il2CppExtensions
         {
             if (EqualityComparer<T>.Default.Equals(element, item))
                 return true;
+        }
+        return false;
+    }
+
+    internal static List<T> WhereIl2Cpp<T>(this Il2CppSystem.Collections.Generic.List<T> source, Func<T, bool> predicate)
+    {
+        if (source == null || predicate == null) return [];
+
+        var result = new List<T>();
+        for (int i = 0; i < source.Count; i++)
+        {
+            var item = source[i];
+            if (predicate(item))
+                result.Add(item);
+        }
+        return result;
+    }
+
+    internal static bool AllIl2Cpp<T>(this Il2CppSystem.Collections.Generic.List<T> source, Func<T, bool> predicate)
+    {
+        if (source == null || predicate == null) return false;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            if (!predicate(source[i]))
+                return false;
+        }
+        return true;
+    }
+
+    public static bool AnyIl2Cpp<T>(this Il2CppSystem.Collections.Generic.List<T> list, Func<T, bool> predicate)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (predicate(list[i])) return true;
         }
         return false;
     }

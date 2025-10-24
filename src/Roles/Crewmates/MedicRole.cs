@@ -3,6 +3,7 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
+using TheBetterRoles.Network;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
@@ -75,11 +76,14 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
     private void AddShield(PlayerControl player)
     {
         Shielded = player.Data;
+        player.DirtyName();
     }
 
     private void RemoveShield()
     {
+        var player = Shielded.Object;
         Shielded = null;
+        player?.DirtyName();
     }
 
     void IRoleDeathAction.OnDeath(PlayerControl player, DeathReasons reason)

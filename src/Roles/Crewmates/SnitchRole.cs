@@ -56,7 +56,7 @@ internal sealed class SnitchRole : CrewmateRoleTBR, IRoleTaskAction, IRoleGuessA
 
     void IRoleTaskAction.TaskComplete(PlayerControl player, uint taskId)
     {
-        if (_player.myTasks.ToArray().All(task => task.IsComplete))
+        if (_player.myTasks.AllIl2Cpp(task => task.IsComplete))
         {
             foreach (var target in Main.AllAlivePlayerControls)
             {
@@ -76,7 +76,7 @@ internal sealed class SnitchRole : CrewmateRoleTBR, IRoleTaskAction, IRoleGuessA
     {
         if (!HasHitTaskReveal)
         {
-            if (_player.myTasks.ToArray().Where(task => !task.IsComplete).Count() <= TasksRemainingWhenRevealed.GetInt())
+            if (_player.myTasks.WhereIl2Cpp(task => !task.IsComplete).Count <= TasksRemainingWhenRevealed.GetInt())
             {
                 RevealSelf();
                 HasHitTaskReveal = true;

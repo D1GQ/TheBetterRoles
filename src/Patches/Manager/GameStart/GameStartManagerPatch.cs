@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using HarmonyLib;
 using InnerNet;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Network;
 
 namespace TheBetterRoles.Patches.Manager.GameStart;
@@ -37,9 +38,9 @@ internal class GameStartManagerPatch
     [HarmonyPrefix]
     private static bool UpdateMapImage_Prefix(GameStartManager __instance, [HarmonyArgument(0)] MapNames map)
     {
-        if (__instance.AllMapIcons.ToArray().FirstOrDefault(m => m.Name == map).MapIcon == null)
+        if (__instance.AllMapIcons.FirstOrDefaultIL2CPP(m => m.Name == map).MapIcon == null)
         {
-            __instance.MapImage.sprite = __instance.AllMapIcons.ToArray().First().MapIcon;
+            __instance.MapImage.sprite = __instance.AllMapIcons.FirstOrDefaultIL2CPP().MapIcon;
             return false;
         }
         return true;

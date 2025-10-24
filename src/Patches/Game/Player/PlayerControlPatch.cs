@@ -190,7 +190,7 @@ internal class PlayerControlPatch
     [HarmonyPostfix]
     internal static void CompleteTask_Postfix(PlayerControl __instance, [HarmonyArgument(0)] uint idx)
     {
-        PlayerTask playerTask = __instance.myTasks.ToArray().FirstOrDefault(p => p.Id == idx);
+        PlayerTask playerTask = __instance.myTasks.FirstOrDefaultIL2CPP(p => p.Id == idx);
         if (playerTask)
         {
             if (__instance.IsLocalPlayer()) RoleListener.InvokeRoles<IRoleTaskAction>(role => role.TaskComplete(__instance, idx), player: __instance);

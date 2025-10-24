@@ -634,8 +634,9 @@ internal static class HazelHelper
         }
         else
         {
-            foreach (var allClients in AmongUsClient.Instance.allClients.ToArray().Where(c => !ignoreClientIds.Contains(c.Id)))
+            foreach (var allClients in AmongUsClient.Instance.allClients)
             {
+                if (ignoreClientIds.Contains(allClients.Id)) continue;
                 if (clientCheck == null || clientCheck.Invoke(allClients))
                 {
                     messageWriters.Add(client.StartRpcImmediately(playerNetId, callId, option, allClients.Id));
