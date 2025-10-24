@@ -1,0 +1,95 @@
+﻿using HarmonyLib;
+using TheBetterRoles.Helpers;
+using UnityEngine;
+
+namespace TheBetterRoles.Modules;
+
+[HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+internal static class Zoom
+{
+    private static bool resetButtons = false;
+
+    internal static void Postfix()
+    {
+        if (PlayerControl.LocalPlayer.Role() != null)
+        {
+            if (GameState.IsCanMove && (!GameState.IsInGamePlay || !PlayerControl.LocalPlayer.IsGhostRole() && !PlayerControl.LocalPlayer.IsAlive(true)))
+            {
+                if (Camera.main.orthographicSize > 3.0f)
+                    resetButtons = true;
+
+                if (Input.mouseScrollDelta.y > 0 && Camera.main.orthographicSize > 3.0f)
+                {
+                    SetZoomSize(times: false);
+                }
+                else if (Input.mouseScrollDelta.y < 0 && (GameState.IsDead || GameState.IsFreePlay || GameState.IsLobby) &&
+                            Camera.main.orthographicSize < 18.0f)
+                {
+                    SetZoomSize(times: true);
+                }
+
+                Flag.NewFlag("Zoom");
+            }
+            else
+            {
+                Flag.Run(() => SetZoomSize(reset: true), "Zoom");
+            }
+        }
+    }
+
+    private static void SetZoomSize(bool times = false, bool reset = false)
+    {
+        float size = times ? 1.5f : 1 / 1.5f;
+
+        if (reset)
+        {
+            Camera.main.orthographicSize = 3.0f;
+            HudManager.Instance.UICamera.orthographicSize = 3.0f;
+            HudManager.Instance.Chat.transform.localScale = Vector3.one;
+            if (GameState.IsMeeting)
+                MeetingHud.Instance.transform.localScale = Vector3.one;
+        }
+        else
+        {
+            Camera.main.orthographicSize *= size;
+            HudManager.Instance.UICamera.orthographicSize *= size;
+        }
+
+        if (resetButtons)
+        {
+            ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
+            resetButtons = false;
+        }
+
+        HudManager.Instance?.ShadowQuad?.gameObject?.SetActive(Camera.main.orthographicSize == 3.0f && PlayerControl.LocalPlayer.IsAlive(true));
+    }
+}
+
+internal static class Flag
+{
+    private static readonly List<string> oneTimeList = new();
+    private static readonly List<string> firstRunList = new();
+
+    internal static void Run(Action action, string type, bool firstrun = false)
+    {
+        if (oneTimeList.Contains(type) || firstrun && !firstRunList.Contains(type))
+        {
+            if (!firstRunList.Contains(type))
+                firstRunList.Add(type);
+
+            oneTimeList.Remove(type);
+            action();
+        }
+    }
+
+    internal static void NewFlag(string type)
+    {
+        if (!oneTimeList.Contains(type))
+            oneTimeList.Add(type);
+    }
+
+    internal static void DeleteFlag(string type)
+    {
+        oneTimeList.Remove(type);
+    }
+}
