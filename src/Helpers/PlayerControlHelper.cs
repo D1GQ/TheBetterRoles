@@ -257,23 +257,6 @@ internal static class PlayerControlHelper
     }
 
     /// <summary>
-    /// Updates the position of the colorblind text indicator for the player.
-    /// </summary>
-    internal static void UpdateColorBlindTextPosition(this PlayerControl player)
-    {
-        var text = player.cosmetics.colorBlindText;
-        if (!text.enabled) return;
-        if (!player.onLadder && !player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
-        {
-            text.transform.localPosition = new Vector3(0f, -1.5f, 0.4999f);
-        }
-        else
-        {
-            text.transform.localPosition = new Vector3(0f, -1.75f, 0.4999f);
-        }
-    }
-
-    /// <summary>
     /// Toggles the player's camouflage effect.
     /// </summary>
     internal static void SetCamouflage(this PlayerControl player, bool active)
@@ -506,46 +489,6 @@ internal static class PlayerControlHelper
             return false;
         }
         return true;
-    }
-
-    /// <summary>
-    /// Sets the player's overhead text, allowing customization for top, bottom, or info text.
-    /// </summary>
-    internal static void SetPlayerTextInfo(this PlayerControl player, string text, bool isBottom = false, bool isInfo = false)
-    {
-        if (player == null) return;
-
-        var textTop = player.ExtendedPC().InfoTextTop;
-        var textBottom = player.ExtendedPC().InfoTextBottom;
-        var textInfo = player.ExtendedPC().InfoTextInfo;
-
-        var targetText = isBottom ? textBottom : textTop;
-        if (isInfo)
-        {
-            targetText = textInfo;
-
-            if (string.IsNullOrEmpty(Utils.RemoveHtmlText(textTop.text)))
-            {
-                text = "<voffset=-2.25em>" + text + "</voffset>";
-            }
-        }
-
-        text = text.Size(65f);
-        if (targetText != null)
-        {
-            targetText.text = text;
-        }
-    }
-
-    /// <summary>
-    /// Resets all of the player's overhead text (top, bottom, and info).
-    /// </summary>
-    internal static void ResetAllPlayerTextInfo(this PlayerControl player)
-    {
-        if (player == null) return;
-        player.SetPlayerTextInfo("", isInfo: true);
-        player.SetPlayerTextInfo("");
-        player.SetPlayerTextInfo("", isBottom: true);
     }
 
     /// <summary>

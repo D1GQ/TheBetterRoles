@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System.Text;
 using TheBetterRoles.Helpers;
 using TMPro;
 using UnityEngine;
@@ -60,60 +59,11 @@ internal class ChatControllerPatch
         }
     }
 
-    // Add extra information to chat bubble
-    [HarmonyPatch(nameof(ChatController.AddChat))]
+    [HarmonyPatch(nameof(ChatController.GetPooledBubble))]
     [HarmonyPostfix]
-    private static void AddChat_Postfix(/*ChatController __instance,*/ [HarmonyArgument(0)] PlayerControl sourcePlayer, [HarmonyArgument(1)] string chatText)
+    private static void GetPooledBubble_Postfix(ChatController __instance, ChatBubble __result)
     {
-        ChatBubble? chatBubble = SetChatPoolTheme();
-        if (chatBubble == null) return;
-
-        var sbTag = new StringBuilder();
-
-        // Put +++ at the end of each tag
-        static StringBuilder FormatInfo(StringBuilder source)
-        {
-            var sb = new StringBuilder();
-            if (source.Length > 0)
-            {
-                string text = source.ToString();
-                string[] parts = text.Split("+++");
-                for (int i = 0; i < parts.Length; i++)
-                {
-                    if (!string.IsNullOrEmpty(Utils.RemoveHtmlText(parts[i])))
-                    {
-                        sb.Append(parts[i]);
-                        if (i != parts.Length - 2)
-                        {
-                            sb.Append(" - ");
-                        }
-                    }
-                }
-            }
-
-            return sb;
-        }
-
-        sbTag = FormatInfo(sbTag);
-
-        var flag = sourcePlayer.IsLocalPlayer();
-
-        // chatBubble.NameText.text = playerName;
-        Logger.Log($"{sourcePlayer.Data.PlayerName} -> {chatText}", "ChatLog");
-    }
-
-    [HarmonyPatch(nameof(ChatController.AddChatNote))]
-    [HarmonyPostfix]
-    private static void AddChatNote_Postfix(ChatController __instance)
-    {
-        SetChatPoolTheme();
-    }
-
-    [HarmonyPatch(nameof(ChatController.AddChatWarning))]
-    [HarmonyPostfix]
-    private static void AddChatWarning_Postfix(ChatController __instance)
-    {
-        SetChatPoolTheme();
+        SetChatPoolTheme(__result);
     }
 
     internal static void SetChatTheme()
@@ -148,38 +98,33 @@ internal class ChatControllerPatch
     }
 
     // Set chat theme
-    internal static ChatBubble? SetChatPoolTheme(ChatBubble? asChatBubble = null)
+    internal static ChatBubble SetChatPoolTheme(ChatBubble asChatBubble)
     {
-        ChatBubble Get() => HudManager.Instance.Chat.chatBubblePool.activeChildren
-            .SelectIL2CPP(c => c.GetComponent<ChatBubble>())
-            .Last();
-
-        ChatBubble? chatBubble = asChatBubble ??= Get();
-        if (chatBubble == null) return chatBubble;
+        ChatBubble chatBubble = asChatBubble;
 
         if (Main.ChatDarkMode.Value)
         {
-            chatBubble.transform.Find("ChatText (TMP)").GetComponent<TextMeshPro>().color = new Color(1f, 1f, 1f, 1f);
-            chatBubble.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0.05f, 0.05f, 0.05f, 1f);
+            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = new Color(1f, 1f, 1f, 1f);
+            chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 1f);
 
             if (chatBubble.transform.Find("PoolablePlayer/xMark") != null)
             {
-                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponent<SpriteRenderer>().enabled == true)
+                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponentInChildren<SpriteRenderer>(true).enabled == true)
                 {
-                    chatBubble.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0.05f, 0.05f, 0.05f, 0.5f);
+                    chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(0.15f, 0.15f, 0.15f, 0.5f);
                 }
             }
         }
         else
         {
-            chatBubble.transform.Find("ChatText (TMP)").GetComponent<TextMeshPro>().color = new Color(0f, 0f, 0f, 1f);
-            chatBubble.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+            chatBubble.transform.Find("ChatText (TMP)").GetComponentInChildren<TextMeshPro>(true).color = new Color(0f, 0f, 0f, 1f);
+            chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(1f, 1f, 1f, 1f);
 
             if (chatBubble.transform.Find("PoolablePlayer/xMark") != null)
             {
-                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponent<SpriteRenderer>().enabled == true)
+                if (chatBubble.transform.Find("PoolablePlayer/xMark").GetComponentInChildren<SpriteRenderer>(true).enabled == true)
                 {
-                    chatBubble.transform.Find("Background").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                    chatBubble.transform.Find("Background").GetComponentInChildren<SpriteRenderer>(true).color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
         }

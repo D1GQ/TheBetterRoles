@@ -2,14 +2,13 @@ using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections;
-using System.Text;
 using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
-using TheBetterRoles.Network;
+using TheBetterRoles.Monos;
 using TheBetterRoles.Roles;
 using TheBetterRoles.Roles.Interfaces;
 using TMPro;
@@ -86,37 +85,8 @@ internal class MeetingHudPatch
 
         foreach (var pva in __instance.playerStates)
         {
-            var player = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
-            player?.DirtyName();
-
-            var TextTopMeeting = UnityEngine.Object.Instantiate(pva.NameText, pva.NameText.transform);
-            TextTopMeeting.gameObject.name = "TextTop";
-            TextTopMeeting.DestroyChildren();
-            TextTopMeeting.transform.position = pva.NameText.transform.position;
-            TextTopMeeting.transform.position += new Vector3(0f, 0.16f);
-            TextTopMeeting.GetComponent<TextMeshPro>().text = "";
-
-            var TextInfoMeeting = UnityEngine.Object.Instantiate(pva.NameText, pva.NameText.transform);
-            TextInfoMeeting.gameObject.name = "TextInfo";
-            TextInfoMeeting.DestroyChildren();
-            TextInfoMeeting.transform.position = pva.NameText.transform.position;
-            TextInfoMeeting.transform.position += new Vector3(0f, -0.16f);
-            TextInfoMeeting.GetComponent<TextMeshPro>().text = "";
-
-            var PlayerLevel = pva.transform.Find("PlayerLevel");
-            PlayerLevel.localPosition = new Vector3(PlayerLevel.localPosition.x, PlayerLevel.localPosition.y, -2f);
-            var LevelDisplay = UnityEngine.Object.Instantiate(PlayerLevel, pva.transform);
-            LevelDisplay.transform.SetSiblingIndex(pva.transform.Find("PlayerLevel").GetSiblingIndex() + 1);
-            LevelDisplay.gameObject.name = "PlayerId";
-            LevelDisplay.GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 1f, 1f);
-            var IdLabel = LevelDisplay.transform.Find("LevelLabel");
-            var IdNumber = LevelDisplay.transform.Find("LevelNumber");
-            IdLabel.gameObject.DestroyTextTranslators();
-            IdLabel.GetComponent<TextMeshPro>().text = "ID";
-            IdNumber.GetComponent<TextMeshPro>().text = pva.TargetPlayerId.ToString();
-            IdLabel.name = "IdLabel";
-            IdNumber.name = "IdNumber";
-            PlayerLevel.transform.position += new Vector3(0.23f, 0f);
+            var target = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
+            pva.gameObject.AddComponent<MeetingInfoDisplay>().Init(target, pva);
         }
 
         var textTemplate = UnityEngine.Object.Instantiate(__instance.TitleText, __instance.transform);
@@ -251,157 +221,6 @@ internal class MeetingHudPatch
         }
 
         return true;
-    }
-
-    [HarmonyPatch(nameof(MeetingHud.Update))]
-    [HarmonyPostfix]
-    private static void UpdatePostfix(MeetingHud __instance)
-    {
-        if (__instance == null) return;
-
-        if (__instance.playerStates == null || !GameState.IsInGame) return;
-
-        foreach (var pva in __instance.playerStates)
-        {
-            if (pva == null) continue;
-
-            var playerData = GameData.Instance?.GetPlayerById(pva.TargetPlayerId);
-            if (playerData == null) continue;
-            var extendedPlayerData = playerData.ExtendedData();
-            if (extendedPlayerData == null) return;
-
-            if (extendedPlayerData.DirtyName <= 0) continue;
-
-            extendedPlayerData.DirtyName -= 1;
-
-            if (pva.ColorBlindName != null && pva.ColorBlindName.isActiveAndEnabled)
-            {
-                pva.ColorBlindName.transform.localPosition = new Vector3(-0.91f, -0.19f, -0.05f);
-                pva.ColorBlindName.outlineWidth = 0.2745f;
-            }
-
-            if (pva.NameText == null) continue;
-
-            TextMeshPro? TopText = pva.NameText.transform.Find("TextTop")?.gameObject?.GetComponent<TextMeshPro>();
-            TextMeshPro? InfoText = pva.NameText.transform.Find("TextInfo")?.gameObject?.GetComponent<TextMeshPro>();
-
-            bool flag = Main.AllPlayerControls.Any(player => player.PlayerId == pva.TargetPlayerId);
-            PlayerControl? player = Utils.PlayerFromPlayerId(pva.TargetPlayerId);
-
-            if (!flag)
-            {
-                string DisconnectText;
-                switch (extendedPlayerData.DisconnectReason)
-                {
-                    case DisconnectReasons.ExitGame:
-                        DisconnectText = Translator.GetString("DisconnectReasonMeeting.Left");
-                        break;
-                    case DisconnectReasons.Banned:
-                        DisconnectText = Translator.GetString("DisconnectReasonMeeting.Banned");
-                        break;
-                    case DisconnectReasons.Kicked:
-                        DisconnectText = Translator.GetString("DisconnectReasonMeeting.Kicked");
-                        break;
-                    case DisconnectReasons.Hacking:
-                        DisconnectText = Translator.GetString("DisconnectReasonMeeting.Cheater");
-                        break;
-                    default:
-                        DisconnectText = Translator.GetString("DisconnectReasonMeeting.Disconnect");
-                        break;
-                }
-
-                pva.NameText.text = playerData.PlayerName;
-                SetPlayerTextInfoMeeting(pva, "", isInfo: true);
-                SetPlayerTextInfoMeeting(pva, $"<color=#6b6b6b>{DisconnectText}</color>");
-                pva.transform.Find("votePlayerBase")?.gameObject?.SetActive(false);
-                pva.transform.Find("deadX_border")?.gameObject?.SetActive(false);
-                pva.ClearForResults();
-                pva.SetDisabled();
-            }
-            else if (TopText != null && InfoText != null)
-            {
-                if (player == null || extendedPlayerData == null) continue;
-
-                var sbTagTop = new StringBuilder();
-                var sbTag = new StringBuilder();
-
-                string hexColor = "";
-
-                bool hideInfo = PlayerControl.LocalPlayer.CheckAnyRoles(role => role.HidePlayerInfoOther(player));
-
-                bool canRevealRole = player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate()
-                    || PlayerControl.LocalPlayer.CheckAnyRoles(role => role.RevealPlayerRole(player));
-
-                if (canRevealRole && !hideInfo && player.Role()?.ShowRoleAboveName == true)
-                {
-                    hexColor = player.Role()?.RoleColorHex ?? "#FFFFFF";
-                    sbTag.Append($"{player.Role()?.RoleNameAndAbilityAmount}{player.FormatTasksToText()}---");
-                }
-
-                bool canRevealAddons = player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || player.IsImpostorTeammate()
-                    || PlayerControl.LocalPlayer.CheckAnyRoles(role => role.RevealPlayerAddons(player));
-
-                if (canRevealAddons && !hideInfo)
-                {
-                    foreach (var addon in extendedPlayerData.RoleInfo.Addons)
-                    {
-                        if (!addon.ShowRoleAboveName) continue;
-                        sbTagTop.Append($"<size=55%>{addon.RoleNameAndAbilityAmount}</size>+++");
-                    }
-                }
-
-                bool canRevealDeath = (player.IsLocalPlayer() && !player.IsAlive() || !PlayerControl.LocalPlayer.IsAlive(true) && !PlayerControl.LocalPlayer.IsGhostRole() ||
-                    PlayerControl.LocalPlayer.CheckAnyRoles(role => role.RevealPlayerDeath(player))) && !player.IsAlive(true);
-
-                if (canRevealDeath && !hideInfo)
-                {
-                    var num = sbTag.Length - 3;
-                    if (num > 0)
-                    {
-                        sbTag.Remove(num, 3);
-                    }
-                    sbTag.Append($"{player.FormatDeathReason()}---");
-                }
-
-                if (!string.IsNullOrEmpty(extendedPlayerData.NameColor))
-                {
-                    hexColor = extendedPlayerData.NameColor;
-                }
-
-                if (!string.IsNullOrEmpty(hexColor))
-                {
-                    var color = Colors.HexToColor(hexColor);
-                    pva.NameText.color = new Color(color.r, color.g, color.b, pva.NameText.color.a);
-                }
-                else
-                {
-                    pva.NameText.color = new Color(1f, 1f, 1f, pva.NameText.color.a);
-                }
-
-                sbTagTop = Utils.FormatStringBuilder(sbTagTop);
-                sbTag = Utils.FormatStringBuilder(sbTag);
-
-                pva.NameText.text = Utils.FormatPlayerName(player);
-                SetPlayerTextInfoMeeting(pva, sbTagTop.ToString(), true);
-                SetPlayerTextInfoMeeting(pva, sbTag.ToString());
-            }
-        }
-    }
-
-    private static void SetPlayerTextInfoMeeting(PlayerVoteArea pva, string text, bool isInfo = false)
-    {
-        string InfoType = "TextTop";
-        if (isInfo)
-        {
-            InfoType = "TextInfo";
-        }
-
-        text = "<size=65%>" + text + "</size>";
-        GameObject? TextObj = pva.NameText.transform.Find(InfoType)?.gameObject;
-        if (TextObj != null)
-        {
-            TextObj.GetComponent<TextMeshPro>().text = text;
-        }
     }
 
     [HarmonyPatch(nameof(MeetingHud.SetMasksEnabled))]
