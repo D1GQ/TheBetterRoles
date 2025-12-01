@@ -68,6 +68,13 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
                     SendRoleSync(0, target);
                 }
                 break;
+        }
+    }
+
+    void IRoleAbilityAction.OnAbility(int id)
+    {
+        switch (id)
+        {
             case 6:
                 {
                     ((IRoleAbilityAction)this).OnResetAbilityState(false);
