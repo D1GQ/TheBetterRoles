@@ -187,7 +187,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
         if (canRevealRole && !hideInfo && _player.Role() != null && _player.Role().ShowRoleAboveName)
         {
             hexColor = _player.Role()?.RoleColorHex ?? "#FFFFFF";
-            _sbTag.Append($"{_player.Role()?.RoleNameAndAbilityAmount}{_player.FormatTasksToText()}---");
+            _sbTag.Append($"{_player.Role()?.RoleNameAndAbilityAmountText.GetText()}{_player.FormatTasksToText()}---");
         }
 
         bool canRevealAddons = isLocalPlayer || !isLocalPlayerAlive || _player.IsImpostorTeammate() ||
@@ -198,7 +198,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
             foreach (var addon in _extendedPlayerData.RoleInfo.Addons)
             {
                 if (!addon.ShowRoleAboveName) continue;
-                _sbTagTop.Append($"{addon.RoleNameAndAbilityAmount.Size(55f)}</size>+++");
+                _sbTagTop.Append($"{addon.RoleNameAndAbilityAmountText.GetText().Size(75f)}</size>+++");
             }
         }
 

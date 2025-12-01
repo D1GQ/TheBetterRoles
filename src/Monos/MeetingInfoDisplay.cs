@@ -150,7 +150,7 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
         if (canRevealRole && !hideInfo && _player.Role()?.ShowRoleAboveName == true)
         {
             hexColor = _player.Role()?.RoleColorHex ?? "#FFFFFF";
-            _sbTag.Append($"{_player.Role()?.RoleNameAndAbilityAmount}{_player.FormatTasksToText()}---");
+            _sbTag.Append($"{_player.Role()?.RoleNameAndAbilityAmountText.GetText()}{_player.FormatTasksToText()}---");
         }
 
         bool canRevealAddons = _player.IsLocalPlayer() || !PlayerControl.LocalPlayer.IsAlive(true) || _player.IsImpostorTeammate()
@@ -161,7 +161,7 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
             foreach (var addon in _extendedPlayerData.RoleInfo.Addons)
             {
                 if (!addon.ShowRoleAboveName) continue;
-                _sbTag.Append($"{addon.RoleNameAndAbilityAmount.Size(55f)}+++");
+                _sbTag.Append($"{addon.RoleNameAndAbilityAmountText.GetText().Size(55f)}+++");
             }
         }
 

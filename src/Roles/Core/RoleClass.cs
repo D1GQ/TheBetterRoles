@@ -70,27 +70,18 @@ internal abstract class RoleClass : NetworkClass
     /// <summary>
     /// Get role name with color.
     /// </summary>
-    internal string RoleNameAndColor => $"<{RoleColorHex}>{RoleName}</color>";
+    internal string RoleNameAndColor
+    {
+        get
+        {
+            return RoleName.ToColor(RoleColorHex);
+        }
+    }
 
     /// <summary>
     /// Get role name and ability amount. This returns a translated string for the role's name and the amount of ability uses based on its type using a translator utility.
     /// </summary>
-    internal string RoleNameAndAbilityAmount
-    {
-        get
-        {
-            string str = string.Empty;
-            int max = -1, current = -1;
-            SetAbilityAmountText(ref max, ref current);
-            if (max > -1 || current > -1)
-            {
-                string hex = Colors.Color32ToHex(RoleColor - new Color(0.15f, 0.15f, 0.15f));
-                str = $" {"(".ToColor(hex)}{(current > -1 ? current.ToString().ToColor(RoleColorHex) : string.Empty)}{(max > -1 && current > -1 ? "/".ToColor(hex) : string.Empty)}{(max > -1 ? max.ToString().ToColor(RoleColorHex) : string.Empty)}{")".ToColor(hex)}";
-            }
-
-            return RoleNameAndColor + str;
-        }
-    }
+    internal RoleNameAndAbilityAmountText RoleNameAndAbilityAmountText { get; private set; }
 
     /// <summary>
     /// Set role color. This returns the custom color for the role's team, using the team’s color configuration.
@@ -364,6 +355,7 @@ internal abstract class RoleClass : NetworkClass
     {
         if (player != null)
         {
+            RoleNameAndAbilityAmountText = new(this);
             _player = player;
             _data = player.Data;
             _roleMono = roleMono;

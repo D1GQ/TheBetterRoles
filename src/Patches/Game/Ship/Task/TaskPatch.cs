@@ -10,84 +10,111 @@ namespace TheBetterRoles.Patches.Game.Ship.Task;
 [HarmonyPatch(typeof(TaskPanelBehaviour))]
 internal class TaskPatchRecomputeTaskList
 {
-    private static StringBuilder sbTasks = new();
-    private static System.Text.StringBuilder sbRoles = new();
-    private static StringBuilder sbUnused = new();
+    private static StringBuilder sbTasks;
+    private static StringBuilder sbRoles;
+    private static StringBuilder sbUnused;
+
     [HarmonyPatch(nameof(TaskPanelBehaviour.SetTaskText))]
     [HarmonyPrefix]
     private static bool SetTaskText_Prefix(TaskPanelBehaviour __instance)
     {
+        sbTasks ??= new StringBuilder(512);
+        sbRoles ??= new StringBuilder(256);
+        sbUnused ??= new StringBuilder(128);
+
         sbTasks.Clear();
         sbTasks.Append("<size=75%>");
 
-        var extendedData = PlayerControl.LocalPlayer.ExtendedData();
-        if (extendedData != null)
+        var player = PlayerControl.LocalPlayer;
+        if (player == null)
         {
-            if (extendedData?.RoleInfo?.RoleAssigned == true)
-            {
-                sbRoles.Clear();
-                var allRoles = extendedData.RoleInfo.AllRoles;
-                for (int i = 0; i < allRoles.Count; i++)
-                {
-                    var role = allRoles[i];
-                    sbRoles.Append($"{role.RoleNameAndColor}---");
-                }
-                sbRoles = Utils.FormatStringBuilder(sbRoles);
-                sbTasks.Append(Translator.GetString("Roles", [$"{sbRoles}\n"]));
-
-                sbTasks.Append(Translator.GetString("Role.Team", [$"<color={PlayerControl.LocalPlayer.GetTeamHexColor()}>{PlayerControl.LocalPlayer.GetRoleTeamName()}</color>\n"]));
-
-                string addons = "";
-                if (extendedData.RoleInfo.Addons.Any()) addons = "\n" + PlayerControl.LocalPlayer.GetAddonInfo();
-                sbTasks.Append($"{Translator.GetString(StringNames.RoleHint)}:\n<color={PlayerControl.LocalPlayer.Role().RoleColorHex}>{PlayerControl.LocalPlayer.GetRoleInfo()}{addons}</color>\n\n");
-
-                sbTasks.Append(PlayerControl.LocalPlayer.Role().HasTask == true
-                    || PlayerControl.LocalPlayer.Role().HasSelfTask == true
-                    ? Translator.GetString(StringNames.Tasks) + "\n" : $"<color={PlayerControl.LocalPlayer.Role().RoleColorHex}>" + Translator.GetString(StringNames.FakeTasks) + "</color>\n");
-
-                if (!PlayerControl.LocalPlayer)
-                {
-                    __instance.taskText.SetText(string.Empty);
-                    return false;
-                }
-                NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
-                if (data == null)
-                {
-                    return false;
-                }
-                bool flag = data.Role().IsImpostor;
-                if (PlayerControl.LocalPlayer.myTasks == null || PlayerControl.LocalPlayer.myTasks.Count == 0)
-                {
-                    sbTasks.Append(Translator.GetString(StringNames.None));
-                }
-                else
-                {
-                    for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
-                    {
-                        PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
-                        if (playerTask)
-                        {
-                            if (playerTask.TaskType == TaskTypes.FixComms && !flag)
-                            {
-                                sbTasks.Clear();
-                                sbTasks.Append("<size=75%>");
-                                playerTask.AppendTaskText(sbUnused);
-                                playerTask.AppendTaskText(sbTasks);
-                                break;
-                            }
-                            playerTask.AppendTaskText(sbUnused);
-                            playerTask.AppendTaskText(sbTasks);
-                        }
-                    }
-                    sbUnused.Clear();
-                    sbTasks.Append("</size>");
-                    sbTasks.TrimEnd();
-                }
-            }
-
-            __instance.taskText.SetText(sbTasks);
+            __instance.taskText.SetText(string.Empty);
+            return false;
         }
 
+        var extendedData = player.ExtendedData();
+        if (extendedData == null || extendedData.RoleInfo?.RoleAssigned != true)
+        {
+            return false;
+        }
+
+        var roleInfo = extendedData.RoleInfo;
+        var allRoles = roleInfo.AllRoles;
+
+        sbRoles.Clear();
+        int roleCount = allRoles.Count;
+        for (int i = 0; i < roleCount; i++)
+        {
+            var role = allRoles[i];
+            sbRoles.Append(role.RoleNameAndColor + "---");
+        }
+
+        sbRoles = Utils.FormatStringBuilder(sbRoles);
+        sbTasks.Append(Translator.GetString("Roles", [sbRoles.ToString()]));
+        sbTasks.Append('\n');
+
+        // Team information
+        sbTasks.Append(Translator.GetString("Role.Team",
+            [player.GetRoleTeamName().ToColor(player.GetTeamHexColor())]));
+        sbTasks.Append('\n');
+
+        // Role hint and addons
+        sbTasks.Append($"{Translator.GetString(StringNames.RoleHint)}:\n");
+        sbTasks.Append($"<color={player.Role().RoleColorHex}>");
+        sbTasks.Append(player.GetRoleInfo());
+
+        var addonsList = roleInfo.Addons;
+        if (addonsList != null && addonsList.Count > 0)
+        {
+            sbTasks.Append('\n');
+            sbTasks.Append(player.GetAddonInfo());
+        }
+        sbTasks.Append("</color>\n\n");
+
+        // Tasks header
+        var playerRole = player.Role();
+        bool hasRealTasks = playerRole.HasTask || playerRole.HasSelfTask;
+        sbTasks.Append(hasRealTasks
+            ? Translator.GetString(StringNames.Tasks) + "\n"
+            : $"<color={playerRole.RoleColorHex}>" + Translator.GetString(StringNames.FakeTasks) + "</color>\n");
+
+        // Handle tasks
+        var myTasks = player.myTasks;
+        if (myTasks == null || myTasks.Count == 0)
+        {
+            sbTasks.Append(Translator.GetString(StringNames.None));
+        }
+        else
+        {
+            bool flag = player.Data?.Role()?.IsImpostor ?? false;
+            int taskCount = myTasks.Count;
+
+            for (int i = 0; i < taskCount; i++)
+            {
+                var playerTask = myTasks[i];
+                if (playerTask == null) continue;
+
+                if (playerTask.TaskType == TaskTypes.FixComms && !flag)
+                {
+                    // Special case for comms
+                    sbTasks.Clear();
+                    sbTasks.Append("<size=75%>");
+                    playerTask.AppendTaskText(sbUnused);
+                    playerTask.AppendTaskText(sbTasks);
+                    break;
+                }
+
+                playerTask.AppendTaskText(sbUnused);
+                playerTask.AppendTaskText(sbTasks);
+            }
+
+            sbUnused.Clear();
+        }
+
+        sbTasks.Append("</size>");
+        sbTasks.TrimEnd();
+
+        __instance.taskText.SetText(sbTasks);
         return false;
     }
 }

@@ -805,11 +805,51 @@ internal static class Utils
 
             if (isPlus)
             {
-                parts = text.Split(new[] { "+++" }, StringSplitOptions.None);
+                parts = text.Split(["+++"], StringSplitOptions.None);
             }
             else
             {
-                parts = text.Split(new[] { "---" }, StringSplitOptions.None);
+                parts = text.Split(["---"], StringSplitOptions.None);
+            }
+
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(parts[i]))
+                {
+                    sb.Append(parts[i]);
+
+                    if (i != parts.Length - 2)
+                    {
+                        sb.Append(isPlus ? " + " : " - ");
+                    }
+                }
+            }
+        }
+
+        return sb;
+    }
+
+    /// <summary>
+    /// Formats a StringBuilder by inserting " + " or " - " between parts, based on the input string content.
+    /// </summary>
+    /// <param name="source">The source StringBuilder to format.</param>
+    /// <returns>A formatted StringBuilder.</returns>
+    internal static Il2CppSystem.Text.StringBuilder FormatStringBuilder(Il2CppSystem.Text.StringBuilder source)
+    {
+        var sb = new Il2CppSystem.Text.StringBuilder();
+        if (source.Length > 0)
+        {
+            string text = source.ToString();
+            bool isPlus = text.Contains("+++");
+            string[] parts;
+
+            if (isPlus)
+            {
+                parts = text.Split(["+++"], StringSplitOptions.None);
+            }
+            else
+            {
+                parts = text.Split(["---"], StringSplitOptions.None);
             }
 
             for (int i = 0; i < parts.Length; i++)
