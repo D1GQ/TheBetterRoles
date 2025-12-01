@@ -11,7 +11,6 @@ internal sealed class GlowAddon : AddonClass, IRoleMurderAction
 {
     internal sealed override int RoleId => 35;
     internal sealed override string RoleColorHex => "#ffff3e";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Glow;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.GeneralAddon;

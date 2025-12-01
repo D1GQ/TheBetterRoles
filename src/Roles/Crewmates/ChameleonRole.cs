@@ -10,7 +10,6 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using TMPro;
 using UnityEngine;
@@ -21,7 +20,6 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
 {
     internal sealed override int RoleId => 38;
     internal sealed override string RoleColorHex => "#64AD1C";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Chameleon;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Information;

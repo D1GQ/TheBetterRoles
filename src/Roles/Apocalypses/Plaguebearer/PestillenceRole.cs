@@ -14,7 +14,6 @@ internal sealed class PestillenceRole : RoleClass, IRoleMurderAction, IRoleMeeti
     internal sealed override int RoleId => 18;
     internal sealed override bool CanBeAssigned => false;
     internal sealed override string RoleColorHex => "#4F631E";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Pestillence;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Apocalypse;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

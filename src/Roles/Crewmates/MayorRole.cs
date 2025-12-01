@@ -4,7 +4,6 @@ using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -14,7 +13,6 @@ internal sealed class MayorRole : CrewmateRoleTBR, IRoleMeetingAction
 {
     internal sealed override int RoleId => 10;
     internal sealed override string RoleColorHex => "#004f1e";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Mayor;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

@@ -20,7 +20,6 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
 {
     internal sealed override int RoleId => 21;
     internal sealed override string RoleColorHex => "#862500";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Mole;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

@@ -12,7 +12,6 @@ internal sealed class OpportunistRole : RoleClass, IRoleGameplayAction
 {
     internal sealed override int RoleId => 22;
     internal sealed override string RoleColorHex => "#00CA28";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Opportunist;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Benign;

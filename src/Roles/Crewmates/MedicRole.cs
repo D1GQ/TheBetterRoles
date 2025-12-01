@@ -5,7 +5,6 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Network;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 using static TheBetterRoles.Modules.Translator;
@@ -16,7 +15,6 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
 {
     internal sealed override int RoleId => 11;
     internal sealed override string RoleColorHex => "#00FF2A";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Medic;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

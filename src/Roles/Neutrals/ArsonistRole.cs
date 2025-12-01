@@ -22,7 +22,6 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
     internal sealed override bool IsKillingRole => true;
     internal sealed override int RoleId => 32;
     internal sealed override string RoleColorHex => "#ff8900";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Arsonist;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

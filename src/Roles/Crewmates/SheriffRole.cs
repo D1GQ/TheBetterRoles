@@ -5,7 +5,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Crewmates;
@@ -14,7 +13,6 @@ internal sealed class SheriffRole : CrewmateRoleTBR, IRoleAbilityAction<PlayerCo
 {
     internal sealed override int RoleId => 12;
     internal sealed override string RoleColorHex => "#feab00";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Sheriff;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

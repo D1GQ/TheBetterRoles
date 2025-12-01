@@ -100,7 +100,7 @@ internal class RoleButtons
         {
             if (SabotageButton.ActionButton.canInteract)
             {
-                if (role.Role.CanSabotage)
+                if (role.CanSabotage)
                 {
                     HudManager.Instance.ToggleMapVisible(new MapOptions
                     {

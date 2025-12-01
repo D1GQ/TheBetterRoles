@@ -9,7 +9,6 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -19,7 +18,6 @@ internal sealed class AltruistRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAb
 {
     internal sealed override int RoleId => 8;
     internal sealed override string RoleColorHex => "#BA0400";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Altruist;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

@@ -5,7 +5,6 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Crewmates;
@@ -15,7 +14,6 @@ internal sealed class SnitchRole : CrewmateRoleTBR, IRoleTaskAction, IRoleGuessA
     internal sealed override int RoleId => 13;
     internal sealed override bool TaskReliantRole => true;
     internal sealed override string RoleColorHex => "#F3CE35";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Snitch;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Information;

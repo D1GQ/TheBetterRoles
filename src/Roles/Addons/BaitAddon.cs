@@ -16,7 +16,6 @@ internal sealed class BaitAddon : AddonClass, IRoleMurderAction
 {
     internal sealed override int RoleId => 23;
     internal sealed override string RoleColorHex => "#00BDA4";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Bait;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.GeneralAddon;

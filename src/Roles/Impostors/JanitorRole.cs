@@ -8,7 +8,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -17,7 +16,6 @@ namespace TheBetterRoles.Roles.Impostors;
 internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody>
 {
     internal sealed override int RoleId => 3;
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Janitor;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

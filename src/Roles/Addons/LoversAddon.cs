@@ -20,7 +20,6 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
 {
     internal sealed override int RoleId => 45;
     internal sealed override string RoleColorHex => "#F846D0";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Lovers;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.GeneralAddon;

@@ -14,7 +14,6 @@ internal sealed class AmnesiacRole : RoleClass, IRoleAbilityAction<DeadBody>, IR
 {
     internal sealed override int RoleId => 31;
     internal sealed override string RoleColorHex => "#96E5FF";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Amnesiac;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Benign;

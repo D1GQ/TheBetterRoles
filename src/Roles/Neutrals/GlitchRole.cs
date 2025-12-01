@@ -20,7 +20,6 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
     internal sealed override bool VentReliantRole => true;
     internal sealed override bool CanVent => false;
     internal sealed override string RoleColorHex => "#32ff00";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Glitch;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

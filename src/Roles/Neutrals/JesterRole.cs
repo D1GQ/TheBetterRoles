@@ -12,7 +12,6 @@ internal sealed class JesterRole : RoleClass, IRoleMeetingAction, IRoleGameplayA
 {
     internal sealed override int RoleId => 20;
     internal sealed override string RoleColorHex => "#FF82F8";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Jester;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Evil;

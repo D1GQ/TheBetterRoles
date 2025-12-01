@@ -13,7 +13,6 @@ internal sealed class TrackerAddon : AddonClass, IRoleUpdateAction
 {
     internal sealed override int RoleId => 29;
     internal sealed override string RoleColorHex => "#80FF00";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Tracker;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HelpfulAddon;

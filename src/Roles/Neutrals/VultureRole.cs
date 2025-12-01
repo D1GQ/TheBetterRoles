@@ -15,7 +15,6 @@ internal sealed class VultureRole : RoleClass, IRoleAbilityAction<DeadBody>, IRo
 {
     internal sealed override int RoleId => 48;
     internal sealed override string RoleColorHex => "#5F6F50";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Vulture;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Evil;

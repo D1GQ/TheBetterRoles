@@ -14,7 +14,6 @@ internal sealed class LanternAddon : AddonClass, IRoleUpdateAction, IRoleAbility
 {
     internal sealed override int RoleId => 26;
     internal sealed override string RoleColorHex => "#c7c71d";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Lantern;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HarmfulAddon;

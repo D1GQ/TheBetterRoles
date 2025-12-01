@@ -5,7 +5,6 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -14,7 +13,6 @@ namespace TheBetterRoles.Roles.Impostors;
 internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
 {
     internal sealed override int RoleId => 4;
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Miner;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

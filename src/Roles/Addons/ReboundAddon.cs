@@ -12,7 +12,6 @@ internal sealed class ReboundAddon : AddonClass, IRoleGuessAction
 {
     internal sealed override int RoleId => 39;
     internal sealed override string RoleColorHex => "#3298FF";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Rebound;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HelpfulAddon;

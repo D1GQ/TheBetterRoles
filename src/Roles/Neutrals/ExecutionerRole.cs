@@ -15,7 +15,6 @@ internal sealed class ExecutionerRole : RoleClass, IRoleMeetingAction, IRoleDeat
 {
     internal sealed override int RoleId => 41;
     internal sealed override string RoleColorHex => "#919191";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Executioner;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Evil;

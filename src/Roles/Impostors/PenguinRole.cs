@@ -6,7 +6,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -15,7 +14,6 @@ namespace TheBetterRoles.Roles.Impostors;
 internal sealed class PenguinRole : ImpostorRoleTBR, IRoleAbilityAction<PlayerControl>, IRoleUpdateAction
 {
     internal sealed override int RoleId => 49;
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Penguin;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

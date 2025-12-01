@@ -7,7 +7,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Crewmates;
@@ -16,7 +15,6 @@ internal sealed class TransporterRole : CrewmateRoleTBR, IRoleAbilityAction, IRo
 {
     internal sealed override int RoleId => 15;
     internal sealed override string RoleColorHex => "#68b2bf";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Transporter;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

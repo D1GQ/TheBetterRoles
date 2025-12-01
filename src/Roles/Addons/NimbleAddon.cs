@@ -13,7 +13,6 @@ internal sealed class NimbleAddon : AddonClass, IRoleOtherAction
     internal sealed override Func<RoleClass, bool> AssignmentConditionWithRole => (RoleClass role) => { return !role.CanVent; };
     internal sealed override int RoleId => 42;
     internal sealed override string RoleColorHex => "#F4DC89";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Nimble;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.GoodAddon;

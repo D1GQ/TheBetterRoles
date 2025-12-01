@@ -14,7 +14,6 @@ internal sealed class ButtonBerryAddon : AddonClass, IRoleAbilityAction
 {
     internal sealed override int RoleId => 24;
     internal sealed override string RoleColorHex => "#FF00EE";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.ButtonBerry;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.AbilityAddon;

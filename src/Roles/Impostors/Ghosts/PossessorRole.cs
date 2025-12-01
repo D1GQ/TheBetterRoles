@@ -15,7 +15,6 @@ namespace TheBetterRoles.Roles.Ghosts;
 internal sealed class PossessorRole : GhostRoleClass, IRoleUpdateAction, IRoleAbilityAction<PlayerControl>, IRoleMurderAction, IRoleReportAction, IRoleDeathAction, IRoleDisconnectAction
 {
     internal sealed override int RoleId => 47;
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Possessor;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Ghost;

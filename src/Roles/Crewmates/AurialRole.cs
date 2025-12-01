@@ -18,7 +18,6 @@ internal sealed class AurialRole : CrewmateRoleTBR, IRoleAbilityAction
 {
     internal sealed override int RoleId => 50;
     internal sealed override string RoleColorHex => "#A14589";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Aurial;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Information;

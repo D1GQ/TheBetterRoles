@@ -8,7 +8,6 @@ namespace TheBetterRoles.Roles;
 internal sealed class LobbyBehaviorRole : RoleClass
 {
     internal override int RoleId => -1;
-    internal override RoleClass Role => this;
     internal override string RoleColorHex => "#FFFFFF";
     internal override RoleClassTypes RoleType => RoleClassTypes.LobbyBehavior;
     internal override RoleClassTeam RoleTeam => RoleClassTeam.None;

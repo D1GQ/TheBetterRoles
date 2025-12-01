@@ -170,11 +170,6 @@ internal abstract class RoleClass : NetworkClass
     internal bool IsGhostRole => this is GhostRoleClass;
 
     /// <summary>
-    /// Get the role class. This is an abstract method that will return the custom behavior associated with this role.
-    /// </summary>
-    internal abstract RoleClass Role { get; }
-
-    /// <summary>
     /// Get the type of the role. This is an abstract method that returns the enum representing the role type.
     /// </summary>
     internal abstract RoleClassTypes RoleType { get; }

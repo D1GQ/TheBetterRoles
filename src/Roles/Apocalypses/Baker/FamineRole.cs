@@ -15,7 +15,6 @@ internal sealed class FamineRole : RoleClass, IRoleAbilityAction<PlayerControl>,
 {
     internal sealed override int RoleId => 52;
     internal sealed override string RoleColorHex => "#83461C";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Famine;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Apocalypse;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Evil;

@@ -8,7 +8,6 @@ namespace TheBetterRoles.Roles.Impostors;
 internal class ImpostorRoleTBR : RoleClass
 {
     internal override int RoleId => 2;
-    internal override RoleClass Role => this;
     internal override RoleClassTypes RoleType => RoleClassTypes.Impostor;
     internal override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal override RoleClassCategory RoleCategory => RoleClassCategory.Vanilla;

@@ -19,7 +19,6 @@ internal sealed class PhantomRoleTBR : GhostRoleClass, IRoleUpdateAction, IRoleM
 {
     internal sealed override int RoleId => 30;
     internal sealed override string RoleColorHex => "#A04D8A";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Phantom;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Ghost;

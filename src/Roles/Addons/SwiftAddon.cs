@@ -10,7 +10,6 @@ internal sealed class SwiftAddon : AddonClass, IRoleDisguiseAction
 {
     internal sealed override int RoleId => 28;
     internal sealed override string RoleColorHex => "#8DECFF";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Swift;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HelpfulAddon;

@@ -7,7 +7,6 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using TMPro;
 
@@ -16,7 +15,6 @@ namespace TheBetterRoles.Roles.Impostors;
 internal sealed class SwooperRole : ImpostorRoleTBR, IRoleAbilityAction, IRoleMurderAction, IRoleDeathAction
 {
     internal sealed override int RoleId => 6;
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Swooper;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Impostor;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Killing;

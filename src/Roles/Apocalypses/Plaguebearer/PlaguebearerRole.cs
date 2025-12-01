@@ -18,7 +18,6 @@ internal class PlaguebearerRole : RoleClass, IRoleMurderAction, IRoleAbilityActi
 {
     internal sealed override int RoleId => 17;
     internal sealed override string RoleColorHex => "#97BD3D";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Plaguebearer;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Apocalypse;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Benign;

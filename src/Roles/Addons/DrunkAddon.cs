@@ -11,7 +11,6 @@ internal sealed class DrunkAddon : AddonClass
 {
     internal sealed override int RoleId => 34;
     internal sealed override string RoleColorHex => "#3e2e1d";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Drunk;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HarmfulAddon;

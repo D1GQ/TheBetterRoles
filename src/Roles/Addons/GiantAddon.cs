@@ -11,7 +11,6 @@ internal sealed class GiantAddon : AddonClass, IRoleDisguiseAction, IRoleMurderA
 {
     internal sealed override int RoleId => 25;
     internal sealed override string RoleColorHex => "#745354";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Giant;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HarmfulAddon;

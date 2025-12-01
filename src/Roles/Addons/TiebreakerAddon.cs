@@ -17,7 +17,6 @@ internal sealed class TiebreakerAddon : AddonClass, IRoleMeetingAction
 {
     internal sealed override int RoleId => 46;
     internal sealed override string RoleColorHex => "#56A450";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Tiebreaker;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.None;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.HelpfulAddon;

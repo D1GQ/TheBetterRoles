@@ -7,7 +7,6 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Core;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -17,7 +16,6 @@ internal sealed class SwapperRole : CrewmateRoleTBR, IRoleUpdateAction, IRoleMee
 {
     internal sealed override int RoleId => 14;
     internal sealed override string RoleColorHex => "#52c345";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Swapper;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Crewmate;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Support;

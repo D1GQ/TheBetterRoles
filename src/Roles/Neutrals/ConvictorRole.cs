@@ -16,7 +16,6 @@ internal sealed class ConvictorRole : RoleClass, IRoleAbilityAction<PlayerContro
 {
     internal sealed override int RoleId => 53;
     internal sealed override string RoleColorHex => "#007DFF";
-    internal sealed override RoleClass Role => this;
     internal sealed override RoleClassTypes RoleType => RoleClassTypes.Convictor;
     internal sealed override RoleClassTeam RoleTeam => RoleClassTeam.Neutral;
     internal sealed override RoleClassCategory RoleCategory => RoleClassCategory.Evil;
