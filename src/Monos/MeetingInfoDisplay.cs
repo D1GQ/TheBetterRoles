@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
@@ -36,8 +37,7 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
     {
         _player = player;
         _pva = pva;
-        _playerData = GameData.Instance?.GetPlayerById(_pva.TargetPlayerId);
-        _extendedPlayerData = _playerData.ExtendedData();
+        this.StartCoroutine(CoGetData());
 
         _nameText = pva.NameText;
         _infoText = InstantiatePlayerInfoText("InfoText_Info_TMP", new Vector3(0f, 0.28f), pva.transform);

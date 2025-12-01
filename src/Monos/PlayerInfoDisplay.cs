@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using BepInEx.Unity.IL2CPP.Utils;
+using System.Collections;
+using System.Text;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
@@ -33,8 +35,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
     internal void Init(PlayerControl player)
     {
         _player = player;
-        _playerData = _player.Data;
-        _extendedPlayerData = _playerData.ExtendedData();
+        this.StartCoroutine(CoGetData());
 
         var nameTextTransform = player.gameObject.transform.Find("Names/NameText_TMP");
         _nameText = nameTextTransform?.GetComponent<TextMeshPro>();
@@ -48,6 +49,17 @@ internal class PlayerInfoDisplay : MonoBehaviour
         _infoText.fontSize = 1.3f;
         _topText.fontSize = 1.3f;
         _bottomText.fontSize = 1.3f;
+    }
+
+    protected IEnumerator CoGetData()
+    {
+        while (_player?.Data == null)
+        {
+            yield return null;
+        }
+
+        _playerData = _player.Data;
+        _extendedPlayerData = _playerData.ExtendedData();
     }
 
     protected TextMeshPro InstantiatePlayerInfoText(string name, Vector3 positionOffset, Transform parent)

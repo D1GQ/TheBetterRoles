@@ -109,7 +109,7 @@ internal class Main : BasePlugin
 
     internal static List<string> SupportedAmongUsVersions =
     [
-        "2025.9.9",
+        "2025.11.18",
     ];
 
     internal static IGameOptions? CurrentOptions => GameOptionsManager.Instance?.CurrentGameOptions;
