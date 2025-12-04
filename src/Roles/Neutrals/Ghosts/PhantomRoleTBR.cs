@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Hazel;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.Enums;
@@ -10,6 +9,7 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -153,7 +153,7 @@ internal sealed class PhantomRoleTBR : GhostRoleClass, IRoleUpdateAction, IRoleM
         {
             if (player.IsLocalPlayer() && player.IsAlive())
             {
-                SendRoleSync(0);
+                Networked.SendRoleSync(0);
                 OnClick();
             }
         }
@@ -169,9 +169,9 @@ internal sealed class PhantomRoleTBR : GhostRoleClass, IRoleUpdateAction, IRoleM
         return isWin;
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {

@@ -1,6 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
-using Hazel;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
@@ -10,6 +9,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using TMPro;
 using UnityEngine;
@@ -72,7 +72,7 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
         {
             case 5:
                 FadeOut();
-                SendRoleSync(0);
+                Networked.SendRoleSync(0);
                 InvisibilityButton?.SetDuration();
                 break;
         }
@@ -122,7 +122,7 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
     void IRoleAbilityAction.OnResetAbilityState(bool IsTimeOut)
     {
         FadeIn();
-        SendRoleSync(1);
+        Networked.SendRoleSync(1);
     }
 
     private void FadeOut()
@@ -206,9 +206,9 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
         _player.cosmetics.colorBlindText.color = _player.cosmetics.colorBlindText.color.ToAlpha(alpha);
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 FadeOut();

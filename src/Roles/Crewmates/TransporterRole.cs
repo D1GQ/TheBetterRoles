@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -7,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Crewmates;
@@ -87,7 +87,7 @@ internal sealed class TransporterRole : CrewmateRoleTBR, IRoleAbilityAction, IRo
                     else
                     {
                         TryToTransport(firstTarget, target);
-                        SendRoleSync(firstTarget, target);
+                        Networked.SendRoleSync(firstTarget, target);
                         firstTarget = null;
                         menu?.PlayerMinigame?.Close();
                     }
@@ -138,8 +138,8 @@ internal sealed class TransporterRole : CrewmateRoleTBR, IRoleAbilityAction, IRo
         }
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        TryToTransport(reader.ReadFast<PlayerControl>(), reader.ReadFast<PlayerControl>());
+        TryToTransport(data.MessageReader.ReadFast<PlayerControl>(), data.MessageReader.ReadFast<PlayerControl>());
     }
 }

@@ -1,10 +1,10 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -49,7 +49,7 @@ internal sealed class EngineerRoleTBR : CrewmateRoleTBR, IRoleAbilityAction
         {
             case 5:
                 {
-                    SendRoleSync(0);
+                    Networked.SendRoleSync(0);
                 }
                 break;
         }
@@ -57,9 +57,9 @@ internal sealed class EngineerRoleTBR : CrewmateRoleTBR, IRoleAbilityAction
 
     private static void FixActiveSabotages() => Utils.ClearAllSabotages();
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        if (GameState.IsHost && sender == _player)
+        if (GameState.IsHost && data.Sender == _player)
         {
             FixActiveSabotages();
         }

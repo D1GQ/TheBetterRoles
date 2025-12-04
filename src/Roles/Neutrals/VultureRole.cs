@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -7,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Neutrals;
@@ -66,7 +66,7 @@ internal sealed class VultureRole : RoleClass, IRoleAbilityAction<DeadBody>, IRo
         {
             case 5:
                 EatBody(target);
-                SendRoleSync(target);
+                Networked.SendRoleSync(target);
                 break;
         }
     }
@@ -107,8 +107,8 @@ internal sealed class VultureRole : RoleClass, IRoleAbilityAction<DeadBody>, IRo
 
     bool IRoleGameplayAction.WinCondition() => EatenBodies >= BodiesToEat;
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        EatBody(reader.ReadFast<DeadBody>());
+        EatBody(data.MessageReader.ReadFast<DeadBody>());
     }
 }

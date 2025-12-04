@@ -1,10 +1,10 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Network;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 using static TheBetterRoles.Modules.Translator;
@@ -65,7 +65,7 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
             case 5:
                 {
                     AddShield(target);
-                    SendRoleSync(0, target);
+                    Networked.SendRoleSync(0, target);
                 }
                 break;
         }
@@ -127,8 +127,8 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
         return string.Empty;
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        AddShield(reader.ReadFast<PlayerControl>());
+        AddShield(data.MessageReader.ReadFast<PlayerControl>());
     }
 }

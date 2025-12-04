@@ -7,6 +7,7 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -137,7 +138,7 @@ internal sealed class SwapperRole : CrewmateRoleTBR, IRoleUpdateAction, IRoleMee
     // Only ran by host!
     void IRoleMeetingAction.EndVoting(MeetingHud meetingHud, ref Dictionary<byte, int> calculatedVotes)
     {
-        SendRoleSync(0);
+        Networked.SendRoleSync(0);
         SwapVotes(meetingHud);
     }
 
@@ -222,9 +223,9 @@ internal sealed class SwapperRole : CrewmateRoleTBR, IRoleUpdateAction, IRoleMee
         currentAmount = swaps;
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {

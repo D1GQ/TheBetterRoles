@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Data;
+﻿using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -8,6 +7,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Neutrals;
@@ -52,7 +52,7 @@ internal sealed class ConvictorRole : RoleClass, IRoleAbilityAction<PlayerContro
             case 5:
                 {
                     ConvictPlayer(target);
-                    SendRoleSync(target);
+                    Networked.SendRoleSync(target);
                 }
                 break;
         }
@@ -114,8 +114,8 @@ internal sealed class ConvictorRole : RoleClass, IRoleAbilityAction<PlayerContro
 
     bool IRoleGameplayAction.WinCondition() => wasExiled;
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        ConvictPlayer(reader.ReadFast<PlayerControl>());
+        ConvictPlayer(data.MessageReader.ReadFast<PlayerControl>());
     }
 }

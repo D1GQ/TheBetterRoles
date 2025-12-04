@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -8,6 +7,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -66,7 +66,7 @@ internal class BakerRole : RoleClass, IRoleAbilityAction<PlayerControl>, IRoleMe
             case 5:
                 {
                     FeedPlayer(target);
-                    SendRoleSync(target);
+                    Networked.SendRoleSync(target);
                 }
                 break;
         }
@@ -113,8 +113,8 @@ internal class BakerRole : RoleClass, IRoleAbilityAction<PlayerControl>, IRoleMe
         return string.Empty;
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        FeedPlayer(reader.ReadFast<PlayerControl>());
+        FeedPlayer(data.MessageReader.ReadFast<PlayerControl>());
     }
 }

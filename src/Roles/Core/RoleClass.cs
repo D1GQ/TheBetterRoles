@@ -1,6 +1,4 @@
 ﻿using AmongUs.GameOptions;
-using Hazel;
-using Reactor.Networking.Rpc;
 using TheBetterRoles.CustomGameModes;
 using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
@@ -195,6 +193,8 @@ internal abstract class RoleClass : NetworkClass
 
     internal RoleButtons RoleButtons { get; } = new();
 
+    internal RoleNetworked Networked { get; } = new();
+
     /// <summary>
     /// The role's amount option interval in the game settings.
     /// </summary>
@@ -356,6 +356,8 @@ internal abstract class RoleClass : NetworkClass
         if (player != null)
         {
             RoleNameAndAbilityAmountText = new(this);
+            Networked.Initialize(this);
+            Networked.OnReceiveRoleSync += OnReceiveRoleSync;
             _player = player;
             _data = player.Data;
             _roleMono = roleMono;
@@ -732,46 +734,9 @@ internal abstract class RoleClass : NetworkClass
     }
 
     /// <summary>
-    /// Sends a synchronization message for role abilities.
+    /// Called upon receiving role synchronization data.
     /// </summary>
-    /// <param name="syncId">The synchronization identifier for the ability.</param>
-    /// <param name="additionalParams">Optional additional parameters for the ability.</param>
-    internal void SendRoleSync(int syncId = 0, params object[] additionalParams)
-    {
-        Rpc<RpcSyncRole>.Instance.Send(_player, new(syncId, RoleHash, additionalParams));
-    }
-
-    /// <summary>
-    /// Sends a synchronization message for role abilities.
-    /// </summary>
-    /// <param name="syncId">The synchronization identifier for the ability.</param>
-    /// <param name="additionalParams">Optional additional parameters for the ability.</param>
-    internal void SendRoleSync(params object[] additionalParams)
-    {
-        SendRoleSync(0, additionalParams);
-    }
-
-    /// <summary>
-    /// Called when sending role ability synchronization data.
-    /// </summary>
-    /// <param name="syncId">The synchronization identifier for the ability.</param>
-    /// <param name="writer">The message writer used to send data.</param>
-    /// <param name="additionalParams">Optional additional parameters for the ability.</param>
-    internal void OnSendRoleSync(int syncId, MessageWriter writer, params object[] additionalParams)
-    {
-        foreach (var value in additionalParams)
-        {
-            writer.WriteFast(value);
-        }
-    }
-
-    /// <summary>
-    /// Called upon receiving role ability synchronization data.
-    /// </summary>
-    /// <param name="syncId">The synchronization identifier for the ability.</param>
-    /// <param name="reader">The message reader containing the received data.</param>
-    /// <param name="sender">The player who sent the synchronization message.</param>
-    internal virtual void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender) { }
+    internal virtual void OnReceiveRoleSync(RoleNetworked.Data data) { }
 
     internal void TryOverrideTasks(bool overideOldTask = false)
     {

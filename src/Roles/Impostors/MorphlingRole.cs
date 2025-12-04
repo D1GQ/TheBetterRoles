@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Data;
+﻿using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -7,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Impostors;
@@ -63,7 +63,7 @@ internal sealed class MorphlingRole : ImpostorRoleTBR, IRoleAbilityAction<Player
                 DisguisedTargetId = target.Data.PlayerId;
                 sampleData = CopyOutfit(target.Data);
                 TransformButton?.SetCooldown();
-                SendRoleSync(0, target);
+                Networked.SendRoleSync(0, target);
                 break;
         }
     }
@@ -174,13 +174,13 @@ internal sealed class MorphlingRole : ImpostorRoleTBR, IRoleAbilityAction<Player
         SampleButton?.SetCooldown();
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {
-                    var target = reader.ReadFast<PlayerControl>();
+                    var target = data.MessageReader.ReadFast<PlayerControl>();
                     DisguisedTargetId = target.Data.PlayerId;
                     sampleData = CopyOutfit(target.Data);
                 }

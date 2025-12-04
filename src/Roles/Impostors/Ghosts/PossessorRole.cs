@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Data;
+﻿using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -7,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -162,7 +162,7 @@ internal sealed class PossessorRole : GhostRoleClass, IRoleUpdateAction, IRoleAb
         }
         Possessing = true;
 
-        SendRoleSync(0, target);
+        Networked.SendRoleSync(0, target);
     }
 
     private void UnPossessPlayer()
@@ -197,7 +197,7 @@ internal sealed class PossessorRole : GhostRoleClass, IRoleUpdateAction, IRoleAb
         PossessedOwnerId = -1;
         Possessing = false;
 
-        SendRoleSync(1);
+        Networked.SendRoleSync(1);
     }
 
     private void SetNetTransform(CustomNetworkTransform transform)
@@ -256,12 +256,12 @@ internal sealed class PossessorRole : GhostRoleClass, IRoleUpdateAction, IRoleAb
         PossessButton?.SetCooldown(durationState: 0);
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
-                PossessPlayer(reader.ReadFast<PlayerControl>());
+                PossessPlayer(data.MessageReader.ReadFast<PlayerControl>());
                 break;
             case 1:
                 UnPossessPlayer();

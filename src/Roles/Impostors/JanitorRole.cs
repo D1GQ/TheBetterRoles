@@ -1,5 +1,4 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using Hazel;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
@@ -8,6 +7,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -60,7 +60,7 @@ internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody
                         {
                             RoleButtons.KillButton?.SetCooldown(SetKillCooldown.GetFloat());
                         }
-                        SendRoleSync(target);
+                        Networked.SendRoleSync(target);
                     }
                 }
                 break;
@@ -99,9 +99,9 @@ internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody
         body.Remove();
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        CoroutineManager.Instance.StartCoroutine(CoFadeBodyOut(reader.ReadFast<DeadBody>()));
+        CoroutineManager.Instance.StartCoroutine(CoFadeBodyOut(data.MessageReader.ReadFast<DeadBody>()));
         if (KillCooldownClean.GetBool())
         {
             RoleButtons.KillButton?.SetCooldown(SetKillCooldown.GetFloat());

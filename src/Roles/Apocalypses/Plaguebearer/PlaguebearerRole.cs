@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -9,6 +8,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -61,7 +61,7 @@ internal class PlaguebearerRole : RoleClass, IRoleMurderAction, IRoleAbilityActi
             case 5:
                 {
                     InfectPlayer(target);
-                    SendRoleSync(0, target);
+                    Networked.SendRoleSync(0, target);
                 }
                 break;
         }
@@ -133,7 +133,7 @@ internal class PlaguebearerRole : RoleClass, IRoleMurderAction, IRoleAbilityActi
         {
             if (_player.IsLocalPlayer()) CustomSoundsManager.Instance.Play(Sounds.Transform);
             SetPestillence();
-            SendRoleSync(1);
+            Networked.SendRoleSync(1);
         }
     }
 
@@ -146,15 +146,15 @@ internal class PlaguebearerRole : RoleClass, IRoleMurderAction, IRoleAbilityActi
         }
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
-                InfectPlayer(reader.ReadFast<PlayerControl>());
+                InfectPlayer(data.MessageReader.ReadFast<PlayerControl>());
                 break;
             case 1:
-                if (sender == _player)
+                if (data.Sender == _player)
                 {
                     SetPestillence();
                 }

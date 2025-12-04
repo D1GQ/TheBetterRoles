@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Data;
+﻿using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
@@ -9,6 +8,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -70,7 +70,7 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
             case 5:
                 {
                     AddHack(target);
-                    SendRoleSync(1, target);
+                    Networked.SendRoleSync(1, target);
                 }
                 break;
         }
@@ -165,7 +165,7 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
                     {
                         menu?.PlayerMinigame.Close();
                         SetMimic(targetData);
-                        SendRoleSync(0, targetData);
+                        Networked.SendRoleSync(0, targetData);
                         MimicButton?.SetDuration();
                     }
                 }
@@ -272,22 +272,22 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
         originalData = null;
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {
-                    var data = reader.ReadPlayerData();
-                    if (data != null)
+                    var playerData = data.MessageReader.ReadPlayerData();
+                    if (playerData != null)
                     {
-                        SetMimic(data);
+                        SetMimic(playerData);
                     }
                 }
                 break;
             case 1:
                 {
-                    AddHack(reader.ReadFast<PlayerControl>());
+                    AddHack(data.MessageReader.ReadFast<PlayerControl>());
                 }
                 break;
         }

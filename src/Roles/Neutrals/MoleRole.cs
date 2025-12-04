@@ -1,6 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using Cpp2IL.Core.Extensions;
-using Hazel;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
@@ -11,6 +10,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -176,7 +176,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
 
         if (!isSync)
         {
-            SendRoleSync(0, position, vent.Id);
+            Networked.SendRoleSync(0, position, vent.Id);
         }
     }
 
@@ -225,14 +225,14 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         vent.Remove();
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {
-                    var pos = reader.ReadVector2();
-                    var ventId = reader.ReadPackedInt32();
+                    var pos = data.MessageReader.ReadVector2();
+                    var ventId = data.MessageReader.ReadPackedInt32();
                     SpawnVent(pos, ventId, true);
                 }
                 break;

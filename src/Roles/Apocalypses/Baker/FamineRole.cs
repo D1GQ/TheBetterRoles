@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
@@ -7,6 +6,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Apocalypses;
@@ -58,7 +58,7 @@ internal sealed class FamineRole : RoleClass, IRoleAbilityAction<PlayerControl>,
             case 5:
                 {
                     StarvePlayer(target);
-                    SendRoleSync(target);
+                    Networked.SendRoleSync(target);
                 }
                 break;
         }
@@ -115,8 +115,8 @@ internal sealed class FamineRole : RoleClass, IRoleAbilityAction<PlayerControl>,
         return string.Empty;
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        StarvePlayer(reader.ReadFast<PlayerControl>());
+        StarvePlayer(data.MessageReader.ReadFast<PlayerControl>());
     }
 }

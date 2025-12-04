@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Hazel;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -7,6 +6,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using TMPro;
 
@@ -54,7 +54,7 @@ internal sealed class SwooperRole : ImpostorRoleTBR, IRoleAbilityAction, IRoleMu
             case 5:
                 isVisible = false;
                 SetInvisibility(true);
-                SendRoleSync();
+                Networked.SendRoleSync();
                 InvisibilityButton?.SetDuration();
                 break;
         }
@@ -124,7 +124,7 @@ internal sealed class SwooperRole : ImpostorRoleTBR, IRoleAbilityAction, IRoleMu
         _player.cosmetics.colorBlindText.color = _player.cosmetics.colorBlindText.color.ToAlpha(alpha);
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
         isVisible = false;
         SetInvisibility(true);

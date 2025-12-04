@@ -1,5 +1,4 @@
-﻿using Hazel;
-using TheBetterRoles.Data;
+﻿using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
@@ -9,6 +8,7 @@ using TheBetterRoles.Monos;
 using TheBetterRoles.Network;
 using TheBetterRoles.Patches.Manager;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -130,7 +130,7 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
             case 5:
                 {
                     InfectedPlayer(target);
-                    SendRoleSync(0, target);
+                    Networked.SendRoleSync(0, target);
                 }
                 break;
         }
@@ -143,7 +143,7 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
             case 6:
                 {
                     KillInfectedPlayer();
-                    SendRoleSync(1);
+                    Networked.SendRoleSync(1);
                 }
                 break;
         }
@@ -252,12 +252,12 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
         camObject?.DestroyObj();
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
-                InfectedPlayer(reader.ReadFast<PlayerControl>());
+                InfectedPlayer(data.MessageReader.ReadFast<PlayerControl>());
                 break;
             case 1:
                 KillInfectedPlayer();

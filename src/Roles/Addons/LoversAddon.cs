@@ -1,5 +1,4 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using Hazel;
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Enums;
@@ -11,6 +10,7 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -76,7 +76,7 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
         if (target != null)
         {
             SetPartner(target);
-            SendRoleSync(1, target);
+            Networked.SendRoleSync(1, target);
         }
         else
         {
@@ -201,13 +201,13 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
         }
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 1:
                 {
-                    var partner = reader.ReadPlayer();
+                    var partner = data.MessageReader.ReadPlayer();
                     if (partner != null)
                     {
                         SetPartner(partner);

@@ -1,10 +1,10 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Impostors;
@@ -53,7 +53,7 @@ internal sealed class CamouflagerRole : ImpostorRoleTBR, IRoleAbilityAction
                     if (!camouflageActive)
                     {
                         Camouflage(true);
-                        SendRoleSync(true);
+                        Networked.SendRoleSync(true);
                         CamouflageButton?.SetDuration();
                     }
                 }
@@ -89,12 +89,12 @@ internal sealed class CamouflagerRole : ImpostorRoleTBR, IRoleAbilityAction
         if (camouflageActive)
         {
             Camouflage(false);
-            SendRoleSync(false);
+            Networked.SendRoleSync(false);
         }
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        Camouflage(reader.ReadBoolean());
+        Camouflage(data.MessageReader.ReadBoolean());
     }
 }

@@ -7,6 +7,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -92,7 +93,7 @@ internal sealed class GrenadierRole : ImpostorRoleTBR, IRoleAbilityAction, IRole
             {
                 target.SetTrueVisorColor(Color.gray);
                 flashed.Add(target.PlayerId);
-                SendRoleSync(target);
+                Networked.SendRoleSync(target);
             }
         }
 
@@ -139,9 +140,9 @@ internal sealed class GrenadierRole : ImpostorRoleTBR, IRoleAbilityAction, IRole
         }
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        FlashPlayer(reader.ReadFast<PlayerControl>());
+        FlashPlayer(data.MessageReader.ReadFast<PlayerControl>());
     }
 
     public override void Serialize(MessageWriter writer)

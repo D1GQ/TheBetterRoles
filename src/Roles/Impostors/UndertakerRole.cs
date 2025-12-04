@@ -1,11 +1,11 @@
-﻿using Hazel;
-using PowerTools;
+﻿using PowerTools;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -65,7 +65,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             case 5:
                 {
                     DragBody(target);
-                    SendRoleSync(0, target);
+                    Networked.SendRoleSync(0, target);
                 }
                 break;
         }
@@ -78,7 +78,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             case 6:
                 {
                     ((IRoleAbilityAction)this).OnResetAbilityState(false);
-                    SendRoleSync(1);
+                    Networked.SendRoleSync(1);
                 }
                 break;
         }
@@ -141,7 +141,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             if (IsDragging)
             {
                 ((IRoleAbilityAction)this).OnResetAbilityState(false);
-                SendRoleSync(2);
+                Networked.SendRoleSync(2);
             }
             return;
         }
@@ -156,7 +156,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             if (_player.IsLocalPlayer())
             {
                 HideBody();
-                SendRoleSync(3);
+                Networked.SendRoleSync(3);
             }
             return;
         }
@@ -177,7 +177,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             {
                 bool isRigidbodyOnRight = rigidbody.position.x > _player.GetTruePosition().x;
                 ((IRoleAbilityAction)this).OnResetAbilityState(false);
-                SendRoleSync(2, isRigidbodyOnRight);
+                Networked.SendRoleSync(2, isRigidbodyOnRight);
             }
             else
             {
@@ -229,13 +229,13 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
         }
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 0:
                 {
-                    DragBody(reader.ReadFast<DeadBody>());
+                    DragBody(data.MessageReader.ReadFast<DeadBody>());
                 }
                 break;
             case 1:
@@ -245,8 +245,8 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
                 break;
             case 2:
                 {
-                    var isRigidbodyOnRight = reader.ReadBoolean();
-                    Vector2 pos = reader.ReadVector2();
+                    var isRigidbodyOnRight = data.MessageReader.ReadBoolean();
+                    Vector2 pos = data.MessageReader.ReadVector2();
                     Dragging.bodyRenderers.ToList().ForEach(body => body.flipX = isRigidbodyOnRight);
                     Dragging.transform.position = pos;
                     ((IRoleAbilityAction)this).OnResetAbilityState(false);

@@ -1,11 +1,11 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -54,7 +54,7 @@ internal sealed class PenguinRole : ImpostorRoleTBR, IRoleAbilityAction<PlayerCo
             case 5:
                 {
                     DragTarget(target);
-                    SendRoleSync(target);
+                    Networked.SendRoleSync(target);
                     DragButton?.SetDuration();
                 }
                 break;
@@ -174,8 +174,8 @@ internal sealed class PenguinRole : ImpostorRoleTBR, IRoleAbilityAction<PlayerCo
         }
     }
 
-    internal override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        DragTarget(reader.ReadFast<PlayerControl>());
+        DragTarget(data.MessageReader.ReadFast<PlayerControl>());
     }
 }

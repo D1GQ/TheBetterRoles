@@ -1,6 +1,7 @@
 ﻿using Hazel;
 using Reactor.Networking.Attributes;
 using Reactor.Networking.Rpc;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Managers;
 
@@ -23,11 +24,14 @@ internal class RpcSyncRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcSync
 
     public override void Write(MessageWriter writer, Data data)
     {
-        writer.WritePacked(data.SyncId);
-        writer.Write(data.RoleHash);
         try
         {
-            CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == data.RoleHash)?.OnSendRoleSync(data.SyncId, writer, data.WriterParams);
+            writer.WritePacked(data.SyncId);
+            writer.Write(data.RoleHash);
+            foreach (var value in data.WriterParams)
+            {
+                writer.WriteFast(value);
+            }
         }
         catch (Exception ex)
         {
@@ -47,7 +51,8 @@ internal class RpcSyncRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcSync
     {
         try
         {
-            CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == data.RoleHash)?.OnReceiveRoleSync(data.SyncId, data.Reader, player);
+            var role = CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == data.RoleHash);
+            role?.Networked?.OnReceiveRoleSync?.Invoke(new(data.SyncId, data.Reader, player));
         }
         catch (Exception ex)
         {

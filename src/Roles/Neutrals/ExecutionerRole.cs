@@ -7,6 +7,7 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Neutrals;
@@ -157,7 +158,7 @@ internal sealed class ExecutionerRole : RoleClass, IRoleMeetingAction, IRoleDeat
         }
         else
         {
-            SendRoleSync(1);
+            Networked.SendRoleSync(1);
         }
     }
 
@@ -198,9 +199,9 @@ internal sealed class ExecutionerRole : RoleClass, IRoleMeetingAction, IRoleDeat
 
     bool IRoleGameplayAction.WinCondition() => HasVotedOutTarget;
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (syncId)
+        switch (data.SyncId)
         {
             case 1:
                 SetRoleOnTargetDeath();

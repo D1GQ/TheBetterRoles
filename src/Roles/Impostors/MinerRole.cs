@@ -1,10 +1,10 @@
-﻿using Hazel;
-using TheBetterRoles.Helpers;
+﻿using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
@@ -96,14 +96,14 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
 
         if (!isSync)
         {
-            SendRoleSync(position, vent.Id);
+            Networked.SendRoleSync(position, vent.Id);
         }
     }
 
-    internal sealed override void OnReceiveRoleSync(int syncId, MessageReader reader, PlayerControl sender)
+    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        var pos = reader.ReadFast<Vector2>();
-        var ventId = reader.ReadFast<int>();
+        var pos = data.MessageReader.ReadFast<Vector2>();
+        var ventId = data.MessageReader.ReadFast<int>();
         SpawnVent(pos, ventId, true);
     }
 }
