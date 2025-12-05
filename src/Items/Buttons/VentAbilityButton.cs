@@ -186,7 +186,7 @@ internal class VentAbilityButton : BaseButton
         {
             List<Vent> validVents = GetObjectsInAbilityRange(
                 Main.AllEnabledVents
-                    .Where(vent => VentCondition(vent) && (vent.Id != 9 || _player.inVent))
+                    .Where(vent => VentCondition(vent) && _player.inVent)
                     .ToList(),
                 HighlightDistance,
                 _player.inVent,
