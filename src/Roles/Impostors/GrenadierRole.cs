@@ -44,7 +44,7 @@ internal sealed class GrenadierRole : ImpostorRoleTBR, IRoleAbilityAction, IRole
     {
         if (_player.IsLocalPlayer())
         {
-            FlashGrenadeButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Grenadier.Ability.1"), FlashGrenadeCooldown.GetFloat(), 0, 0, null, this, true));
+            FlashGrenadeButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Grenadier.Ability.1"), FlashGrenadeCooldown.GetFloat(), 0, 0, null, this, true));
         }
     }
 

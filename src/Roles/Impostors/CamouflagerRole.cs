@@ -38,7 +38,7 @@ internal sealed class CamouflagerRole : ImpostorRoleTBR, IRoleAbilityAction
     {
         if (_player.IsLocalPlayer())
         {
-            CamouflageButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Camouflager.Ability.1"), CamouflageCooldown.GetFloat(), CamouflageDuration.GetFloat(), 0, null, this, true));
+            CamouflageButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Camouflager.Ability.1"), CamouflageCooldown.GetFloat(), CamouflageDuration.GetFloat(), 0, null, this, true));
             CamouflageButton.CanCancelDuration = true;
             CamouflageButton.InteractCondition = () => { return !GameState.CamouflageCommsIsActive || CamouflageButton.IsDuration; };
         }

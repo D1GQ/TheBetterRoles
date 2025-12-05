@@ -48,7 +48,7 @@ internal sealed class VultureRole : RoleClass, IRoleAbilityAction<DeadBody>, IRo
         BodiesToEat = AmountToEat.GetInt();
         if (_player.IsLocalPlayer())
         {
-            EatButton = RoleButtons.AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Vulture.Ability.1"), EatCooldown.GetFloat(), 0, MaximaUses, null, this, true, 0));
+            EatButton = RoleButtons.AddButton(DeadBodyAbilityButton.Create(5, Translator.GetString("Role.Vulture.Ability.1"), EatCooldown.GetFloat(), 0, MaximaUses, null, this, true, 0));
         }
     }
 

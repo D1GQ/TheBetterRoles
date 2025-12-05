@@ -43,7 +43,7 @@ internal sealed class TransporterRole : CrewmateRoleTBR, IRoleAbilityAction, IRo
     {
         if (_player.IsLocalPlayer())
         {
-            TransportButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Transporter.Ability.1"), TransportCooldown.GetFloat(), 0, 1, null, this, true));
+            TransportButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Transporter.Ability.1"), TransportCooldown.GetFloat(), 0, 1, null, this, true));
         }
     }
 

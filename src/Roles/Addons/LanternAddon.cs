@@ -37,7 +37,7 @@ internal sealed class LanternAddon : AddonClass, IRoleUpdateAction, IRoleAbility
     {
         if (_player.IsLocalPlayer())
         {
-            LanternButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Lantern.Ability.1"), 3f, 0, 0, null, this, false));
+            LanternButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Lantern.Ability.1"), 3f, 0, 0, null, this, false));
             CreateLantern();
             LanternButton.SetCooldown();
         }

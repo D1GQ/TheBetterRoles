@@ -46,7 +46,7 @@ internal sealed class AltruistRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAb
     {
         if (_player.IsLocalPlayer())
         {
-            ReviveButton = RoleButtons.AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 0f));
+            ReviveButton = RoleButtons.AddButton(DeadBodyAbilityButton.Create(5, Translator.GetString("Role.Altruist.Ability.1"), ReviveCooldown.GetFloat(), ReviveDuration.GetFloat(), 0, null, this, true, 0f));
             ReviveButton.CanCancelDuration = true;
             ReviveButton.DeadBodyCondition = (body) =>
             {

@@ -52,7 +52,7 @@ internal sealed class SwapperRole : CrewmateRoleTBR, IRoleUpdateAction, IRoleMee
         isSwapping = false;
         if (_player.IsLocalPlayer())
         {
-            swapperButton = new PlayerVoteAreaButton().Create("Swap", this, LoadAbilitySprite("Swap", 80));
+            swapperButton = PlayerVoteAreaButton.Create("Swap", this, LoadAbilitySprite("Swap", 80));
             swapperButton.ShowCondition = (pva, targetData) => { return (!targetData.IsDead && !targetData.Disconnected && !hasSwapped || targetData == firstTargetData || targetData == secondTargetData) && !isSwapping && swaps > 0; };
             swapperButton.ClickAction = OnSwap;
         }

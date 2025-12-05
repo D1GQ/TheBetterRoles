@@ -70,7 +70,7 @@ internal class RoleButtons
 
     internal void SetUpReportButton(RoleClass role)
     {
-        ReportButton = AddButton(new DeadBodyAbilityButton().Create(0, Translator.GetString(StringNames.ReportButton), 0f, 0f, 0, HudManager.Instance.ReportButton.graphic.sprite, null, true, TBRGameSettings.ReportDistance.GetValue() * 2));
+        ReportButton = AddButton(DeadBodyAbilityButton.Create(0, Translator.GetString(StringNames.ReportButton), 0f, 0f, 0, HudManager.Instance.ReportButton.graphic.sprite, null, true, TBRGameSettings.ReportDistance.GetValue() * 2));
         ReportButton.Text.SetOutlineColor(Color.black);
         ReportButton.ShowHighLight = false;
         ReportButton.VisibleCondition = () => { return !GameState.IsLobby; };
@@ -113,7 +113,7 @@ internal class RoleButtons
 
     internal void SetUpKillButton(RoleClass role)
     {
-        KillButton = AddButton(new PlayerAbilityButton().Create(2, Translator.GetString(StringNames.KillLabel), VanillaGameSettings.KillCooldown.GetFloat(), 0, 0, HudManager.Instance.KillButton.graphic.sprite, role, true, VanillaGameSettings.KillDistance.GetValue()));
+        KillButton = AddButton(PlayerAbilityButton.Create(2, Translator.GetString(StringNames.KillLabel), VanillaGameSettings.KillCooldown.GetFloat(), 0, 0, HudManager.Instance.KillButton.graphic.sprite, role, true, VanillaGameSettings.KillDistance.GetValue()));
         KillButton.VisibleCondition = () => { return KillButton.Role.CanKill; };
         KillButton.TargetCondition = (target) =>
         {
@@ -131,7 +131,7 @@ internal class RoleButtons
 
     internal void SetUpVentButton(RoleClass role)
     {
-        VentButton = AddButton(new VentAbilityButton().Create(3, Translator.GetString(StringNames.VentLabel), role.RoleOptions.VentCooldownOptionItem?.GetFloat() ?? 0, role.RoleOptions.VentDurationOptionItem?.GetFloat() ?? 0, 0, role, null, false, true));
+        VentButton = AddButton(VentAbilityButton.Create(3, Translator.GetString(StringNames.VentLabel), role.RoleOptions.VentCooldownOptionItem?.GetFloat() ?? 0, role.RoleOptions.VentDurationOptionItem?.GetFloat() ?? 0, 0, role, null, false, true));
         VentButton.VisibleCondition = () => { return RoleListener.CheckAnyRoles(role => role.CanVent, player: role._player); };
         VentButton.CanCancelDuration = true;
     }

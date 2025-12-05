@@ -24,22 +24,22 @@ internal class BaseAbilityButton : BaseButton
     /// <param name="Right">Determines if the ability button should be on the left or right of the screen.</param>
     /// <param name="index">Determines the index and position order of the ability button.</param>
     [HideFromIl2Cpp]
-    internal BaseAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, RoleClass role, bool Right = true, int index = -1)
+    internal static BaseAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, RoleClass role, bool Right = true, int index = -1)
     {
-        if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
+        if (role != null && role._player?.IsLocalPlayer() is false or null) return null;
 
         var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
-        buttonObj.name = $"CustomAbility({Name.ToUpper()})";
+        buttonObj.name = $"CustomAbility({name.ToUpper()})";
 
         if (index > -1)
         {
             buttonObj.transform.SetSiblingIndex(index);
         }
 
-        var AbilityButton = HudManager.Instance.gameObject.AddComponent<BaseAbilityButton>();
-        AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, buttonObj);
+        var abilityButton = HudManager.Instance.gameObject.AddComponent<BaseAbilityButton>();
+        abilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, buttonObj);
 
-        return AbilityButton;
+        return abilityButton;
     }
 
     [HideFromIl2Cpp]

@@ -57,8 +57,8 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
     {
         if (_player.IsLocalPlayer())
         {
-            HackButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, 0, null, this, true, HackDistance.GetStringValue()));
-            MimicButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
+            HackButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Glitch.Ability.1"), HackCooldown.GetFloat(), 0, 0, null, this, true, HackDistance.GetStringValue()));
+            MimicButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Glitch.Ability.2"), MimicCooldown.GetFloat(), MimicDuration.GetFloat(), 0, null, this, false));
             MimicButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.ExtendedPC().CamouflagedQueue; };
         }
     }

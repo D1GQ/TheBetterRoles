@@ -45,7 +45,7 @@ internal sealed class VeteranRole : CrewmateRoleTBR, IRoleAbilityAction, IRoleMu
     {
         if (_player.IsLocalPlayer())
         {
-            AlertButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Veteran.Ability.1"), AlertCooldown.GetFloat(), AlertDuration.GetFloat(), 1, null, this, true));
+            AlertButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Veteran.Ability.1"), AlertCooldown.GetFloat(), AlertDuration.GetFloat(), 1, null, this, true));
         }
     }
 

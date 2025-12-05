@@ -72,7 +72,7 @@ internal class MeetingHudPatch
             TBRGameSettings.KillingNeutralsCanGuess.GetBool() && role.IsNeutral && !role.IsKillingRole ||
             role.GuessReliantRole)
         {
-            var Guess = new PlayerVoteAreaButton().Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
+            var Guess = PlayerVoteAreaButton.Create("Guess", sprite: Utils.LoadSprite($"TheBetterRoles.Resources.Images.Icons.TargetIcon.png", 100));
             Guess.ClickAction = (button, pva, targetData) =>
             {
                 CustomSoundsManager.Instance.Play(Sounds.Gunload, 2f);

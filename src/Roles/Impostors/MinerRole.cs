@@ -40,7 +40,7 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
     {
         if (_player.IsLocalPlayer())
         {
-            DigButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
+            DigButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Miner.Ability.1"), DigCooldown.GetFloat(), 0, DigAmount.GetInt(), null, this, true));
             DigButton.InteractCondition = () => RoleButtons.VentButton.ClosestObjDistance > 1f && !RoleButtons.VentButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
             && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
         }

@@ -49,11 +49,11 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
             RoleButtons.KillButton?.AddTargetCondition((PlayerControl target) => { return !IsDragging; });
             RoleButtons.VentButton?.AddVentCondition((Vent vent) => { return !IsDragging || CanHideBodyInVent.GetBool(); });
 
-            DragButton = RoleButtons.AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
+            DragButton = RoleButtons.AddButton(DeadBodyAbilityButton.Create(5, Translator.GetString("Role.Undertaker.Ability.1"), 0, 0, 0, null, this, true, 0f));
             DragButton.VisibleCondition = () => Dragging == null;
             DragButton.DeadBodyCondition = (DeadBody body) => body.GetComponentInChildren<SpriteAnim>().FrameTime >= 32 && body.GetComponent<Rigidbody2D>() == null;
 
-            DropButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
+            DropButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Undertaker.Ability.2"), 0, 0, 0, null, this, true));
             DropButton.VisibleCondition = () => Dragging != null;
         }
     }

@@ -48,7 +48,7 @@ internal sealed class MayorRole : CrewmateRoleTBR, IRoleMeetingAction
         voted.Clear();
         if (_player.IsLocalPlayer())
         {
-            voteButton = new PlayerVoteAreaButton().Create("Vote", this, LoadAbilitySprite("MayorVote", 100));
+            voteButton = PlayerVoteAreaButton.Create("Vote", this, LoadAbilitySprite("MayorVote", 100));
             voteButton.ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && additionalVotes > 0; };
             voteButton.ClickAction = OnVoteButton;
         }

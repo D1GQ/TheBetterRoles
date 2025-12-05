@@ -42,7 +42,7 @@ internal sealed class SwooperRole : ImpostorRoleTBR, IRoleAbilityAction, IRoleMu
 
         if (_player.IsLocalPlayer())
         {
-            InvisibilityButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true));
+            InvisibilityButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Swooper.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, LoadAbilitySprite("Swoop", 135), this, true));
             InvisibilityButton.CanCancelDuration = true;
         }
     }

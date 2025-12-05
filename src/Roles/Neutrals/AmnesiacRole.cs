@@ -36,7 +36,7 @@ internal sealed class AmnesiacRole : RoleClass, IRoleAbilityAction<DeadBody>, IR
     {
         if (_player.IsLocalPlayer())
         {
-            RememberButton = RoleButtons.AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 0f));
+            RememberButton = RoleButtons.AddButton(DeadBodyAbilityButton.Create(5, Translator.GetString("Role.Amnesiac.Ability.1"), RememberCooldown.GetFloat(), 0, 1, null, this, true, 0f));
         }
     }
 

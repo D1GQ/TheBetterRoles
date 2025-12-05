@@ -46,7 +46,7 @@ internal class PlaguebearerRole : RoleClass, IRoleMurderAction, IRoleAbilityActi
     {
         if (_player.IsLocalPlayer())
         {
-            InfectButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, 0, null, this, true, InfectDistance.GetStringValue()));
+            InfectButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Plaguebearer.Ability.1"), InfectCooldown.GetFloat(), 0, 0, null, this, true, InfectDistance.GetStringValue()));
             InfectButton.TargetCondition = (target) =>
             {
                 return !infected.Contains(target.Data);

@@ -41,7 +41,7 @@ internal sealed class ConvictorRole : RoleClass, IRoleAbilityAction<PlayerContro
     {
         if (_player.IsLocalPlayer())
         {
-            ConvictButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Convictor.Ability.1"), ConvictCooldown.GetFloat(), 0, 1, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
+            ConvictButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Convictor.Ability.1"), ConvictCooldown.GetFloat(), 0, 1, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
         }
     }
 

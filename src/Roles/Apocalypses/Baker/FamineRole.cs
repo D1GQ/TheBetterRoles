@@ -43,7 +43,7 @@ internal sealed class FamineRole : RoleClass, IRoleAbilityAction<PlayerControl>,
     {
         if (_player.IsLocalPlayer())
         {
-            StarveButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Famine.Ability.1"), FamineStarveCooldown.GetFloat(), 0, 0, null, this, true, AbilityDistance.GetStringValue()));
+            StarveButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Famine.Ability.1"), FamineStarveCooldown.GetFloat(), 0, 0, null, this, true, AbilityDistance.GetStringValue()));
             StarveButton.TargetCondition = (target) =>
             {
                 return !StarvePlayers.Contains(target.Data);

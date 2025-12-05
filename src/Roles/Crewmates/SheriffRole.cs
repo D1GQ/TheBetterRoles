@@ -49,7 +49,7 @@ internal sealed class SheriffRole : CrewmateRoleTBR, IRoleAbilityAction<PlayerCo
     {
         if (_player.IsLocalPlayer())
         {
-            ShootButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), 0, ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetStringValue()));
+            ShootButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Sheriff.Ability.1"), ShootCooldown.GetFloat(), 0, ShotsAmount.GetInt(), LoadAbilitySprite("Shoot"), this, true, ShootDistance.GetStringValue()));
             RoleButtons.RemoveButton(RoleButtons.KillButton);
             RoleButtons.KillButton = ShootButton;
         }

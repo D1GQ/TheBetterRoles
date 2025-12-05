@@ -64,15 +64,11 @@ internal class BaseButton : MonoBehaviour
     /// Add condition for the button to be visible.
     /// </summary>
     /// <param name="additionalCondition"></param>
-
     [HideFromIl2Cpp]
     internal void AddVisibleCondition(Func<bool> additionalCondition)
     {
         var originalCondition = VisibleCondition;
-        VisibleCondition = () =>
-        {
-            return originalCondition() && additionalCondition();
-        };
+        VisibleCondition = () => originalCondition() && additionalCondition();
     }
 
     // Core interaction logic
@@ -85,24 +81,27 @@ internal class BaseButton : MonoBehaviour
     /// </summary>
     /// <returns>bool</returns>
     internal virtual bool CanInteractOnPress() =>
-        (ActionButton.canInteract && !ActionButton.isCoolingDown ||
-        CanCancelDuration && IsDuration) && BaseInteractable() && !Hacked && Visible;
+        (ActionButton?.canInteract == true && !ActionButton.isCoolingDown ||
+         CanCancelDuration && IsDuration) && BaseInteractable() && !Hacked && Visible;
 
     /// <summary>
     /// Determines if button is interactable.
     /// </summary>
     /// <returns>bool</returns>
     internal virtual bool BaseInteractable() =>
-        _player?.IsInVent() == false && _player?.inMovingPlat == false && _player?.IsOnLadder() == false &&
+        _player?.IsInVent() == false &&
+        _player?.inMovingPlat == false &&
+        _player?.IsOnLadder() == false &&
         InteractCondition() &&
-        (!ActionButton.isCoolingDown || IsDuration && CanCancelDuration);
+        (!ActionButton?.isCoolingDown == true || IsDuration && CanCancelDuration);
 
     /// <summary>
     /// Determines if the cooldown should be actively going down.
     /// </summary>
     /// <returns>bool</returns>
     internal virtual bool BaseCooldown() =>
-        !(IsDuration && (_player?.inMovingPlat == true || _player?.IsOnLadder() == true) && TempTimer <= 3f) && GameManager.Instance?.GameHasStarted == true;
+        !(IsDuration && (_player?.inMovingPlat == true || _player?.IsOnLadder() == true) && TempTimer <= 3f) &&
+        GameManager.Instance?.GameHasStarted == true;
 
     /// <summary>
     /// Dynamically check if objects are in range of the player.
@@ -117,33 +116,34 @@ internal class BaseButton : MonoBehaviour
     [HideFromIl2Cpp]
     internal List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
-        if (_player == null || !checkVent && !_player.CanMove && !_player.IsInVent() ||
-            checkVent && _player.IsInVent() || Uses <= 0 && !InfiniteUses || IsDuration && !CanCancelDuration
-            || !BaseInteractable())
+        if (_player == null ||
+            (!checkVent && !_player.CanMove && !_player.IsInVent()) ||
+            (checkVent && _player.IsInVent()) ||
+            (Uses <= 0 && !InfiniteUses) ||
+            (IsDuration && !CanCancelDuration) ||
+            !BaseInteractable())
         {
             return [];
         }
 
-        List<T> allObjects = List;
-        List<T> outputList = [];
+        var outputList = new List<T>();
         float closeDistanceThreshold = maxDistance;
         Vector2 myPos = _player.GetTruePosition();
 
-        for (int i = 0; i < allObjects.Count; i++)
+        for (int i = 0; i < List.Count; i++)
         {
-            T obj = allObjects[i];
-            if (obj != null)
-            {
-                Vector3 objPos3D = posSelector(obj);
-                Vector2 objPos = new(objPos3D.x, objPos3D.y);
-                Vector2 vectorToObj = objPos - myPos;
-                float magnitude = vectorToObj.magnitude;
+            T obj = List[i];
+            if (obj == null) continue;
 
-                if (magnitude <= closeDistanceThreshold && (ignoreColliders ||
-                    !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToObj.normalized, magnitude, Constants.ShipAndObjectsMask)))
-                {
-                    outputList.Add(obj);
-                }
+            Vector3 objPos3D = posSelector(obj);
+            Vector2 objPos = new(objPos3D.x, objPos3D.y);
+            Vector2 vectorToObj = objPos - myPos;
+            float magnitude = vectorToObj.magnitude;
+
+            if (magnitude <= closeDistanceThreshold &&
+                (ignoreColliders || !PhysicsHelpers.AnyNonTriggersBetween(myPos, vectorToObj.normalized, magnitude, Constants.ShipAndObjectsMask)))
+            {
+                outputList.Add(obj);
             }
         }
 
@@ -173,7 +173,7 @@ internal class BaseButton : MonoBehaviour
 
     internal void OnSetUp()
     {
-        ActionButton.transform.position.Set(ActionButton.transform.position.x, ActionButton.transform.position.y, -5);
+        ActionButton?.transform.position.Set(ActionButton.transform.position.x, ActionButton.transform.position.y, -5);
     }
 
     /// <summary>
@@ -183,31 +183,30 @@ internal class BaseButton : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!Hacked)
-        {
-            if (TempTimer > 0)
-            {
-                if (BaseCooldown()) TempTimer -= Time.deltaTime;
+        if (Hacked) return;
 
-                if (!IsDuration)
-                {
-                    ActionButton.SetCoolDown(TempTimer, Cooldown);
-                    IsCooldown = true;
-                }
-                else if (IsDuration)
-                {
-                    ActionButton.SetFillUp(TempTimer, Duration);
-                }
-            }
-            else if (IsDuration && (Duration > 0 || !CanCancelDuration))
+        if (TempTimer > 0)
+        {
+            if (BaseCooldown()) TempTimer -= Time.deltaTime;
+
+            if (!IsDuration)
             {
-                ResetState(true);
+                ActionButton?.SetCoolDown(TempTimer, Cooldown);
+                IsCooldown = true;
             }
-            else
+            else if (IsDuration)
             {
-                ActionButton.SetCoolDown(-1, 0);
-                IsCooldown = false;
+                ActionButton?.SetFillUp(TempTimer, Duration);
             }
+        }
+        else if (IsDuration && (Duration > 0 || !CanCancelDuration))
+        {
+            ResetState(true);
+        }
+        else
+        {
+            ActionButton?.SetCoolDown(-1, 0);
+            IsCooldown = false;
         }
 
         ButtonUpdate();
@@ -224,7 +223,7 @@ internal class BaseButton : MonoBehaviour
     internal void RemoveButton()
     {
         allButtons.Remove(this);
-        if (_player.IsLocalPlayer())
+        if (_player?.IsLocalPlayer() == true)
         {
             Button?.DestroyObj();
         }
@@ -244,14 +243,11 @@ internal class BaseButton : MonoBehaviour
     /// <param name="isTimeOut">If state was force reset by duration timer.</param>
     protected void ResetState(bool isTimeOut = false)
     {
-        if (IsDuration)
-        {
-            if (!_player.IsLocalPlayer()) return;
+        if (!IsDuration || !_player?.IsLocalPlayer() == true) return;
 
-            IsDuration = false;
-            Text?.SetText(Name);
-            if (Role != null) RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
-        }
+        IsDuration = false;
+        Text?.SetText(Name);
+        if (Role != null) RPC.SendRpcResetAbilityState(_player, Id, isTimeOut, Role.RoleHash);
 
         SetCooldown();
     }
@@ -267,14 +263,7 @@ internal class BaseButton : MonoBehaviour
         if (!IsDuration) ActionButton?.OverrideText(Name);
         if (IsDuration) return;
 
-        if (amount <= -1)
-        {
-            TempTimer = Cooldown;
-        }
-        else
-        {
-            TempTimer = amount;
-        }
+        TempTimer = amount <= -1 ? Cooldown : amount;
     }
 
     /// <summary>
@@ -283,18 +272,11 @@ internal class BaseButton : MonoBehaviour
     /// <param name="amount">Set duration amount.</param>
     internal void SetDuration(float amount = -1)
     {
-        if (!_player.IsLocalPlayer()) return;
+        if (!_player?.IsLocalPlayer() == true) return;
 
-        if (amount <= -1)
-        {
-            TempTimer = Duration;
-        }
-        else
-        {
-            TempTimer = amount;
-        }
+        TempTimer = amount <= -1 ? Duration : amount;
 
-        if (DurationName != "") ActionButton?.OverrideText(DurationName);
+        if (!string.IsNullOrEmpty(DurationName)) ActionButton?.OverrideText(DurationName);
         IsDuration = true;
     }
 
@@ -321,6 +303,7 @@ internal class BaseButton : MonoBehaviour
     }
 
     private float gainedUses = 0f;
+
     /// <summary>
     /// Give use to ability button, number can be decimal.
     /// </summary>
@@ -328,14 +311,10 @@ internal class BaseButton : MonoBehaviour
     /// <param name="max">Maximum uses for ability</param>
     internal void GainUse(float amount, int max)
     {
-        int currentUses = Uses;
         gainedUses += amount;
-        if (gainedUses % 1 != 0)
-        {
-            return;
-        }
-        int maxAlerts = max;
-        int newUses = Math.Clamp(currentUses + (int)gainedUses, 0, maxAlerts);
+        if (gainedUses % 1 != 0) return;
+
+        int newUses = Math.Clamp(Uses + (int)gainedUses, 0, max);
         SetUses(newUses);
         gainedUses = 0f;
     }
@@ -346,13 +325,12 @@ internal class BaseButton : MonoBehaviour
     /// <param name="amount">Amount of uses.</param>
     internal void AddUse(int amount = 1)
     {
-        if (!InfiniteUses)
+        if (InfiniteUses) return;
+
+        if (Uses + amount <= Range.max)
         {
-            if (Uses + amount <= Range.max)
-            {
-                Uses += amount;
-                ActionButton?.SetUsesRemaining(Uses);
-            }
+            Uses += amount;
+            ActionButton?.SetUsesRemaining(Uses);
         }
     }
 
@@ -362,13 +340,12 @@ internal class BaseButton : MonoBehaviour
     /// <param name="amount">Amount of uses.</param>
     internal void RemoveUse(int amount = 1)
     {
-        if (!InfiniteUses)
+        if (InfiniteUses) return;
+
+        if (Uses - amount >= Range.min)
         {
-            if (Uses - amount >= Range.min)
-            {
-                Uses -= amount;
-                ActionButton?.SetUsesRemaining(Uses);
-            }
+            Uses -= amount;
+            ActionButton?.SetUsesRemaining(Uses);
         }
     }
 }

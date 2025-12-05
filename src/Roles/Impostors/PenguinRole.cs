@@ -41,7 +41,7 @@ internal sealed class PenguinRole : ImpostorRoleTBR, IRoleAbilityAction<PlayerCo
     {
         if (_player.IsLocalPlayer())
         {
-            DragButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Penguin.Ability.1"), DragCooldown.GetFloat(), DragDuration.GetFloat(), 0, null, this, true, 0f));
+            DragButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Penguin.Ability.1"), DragCooldown.GetFloat(), DragDuration.GetFloat(), 0, null, this, true, 0f));
             DragButton.CanCancelDuration = true;
             DragButton.InteractCondition = () => { return !GameState.CamouflageCommsIsActive || DragButton.IsDuration; };
         }

@@ -44,9 +44,9 @@ internal class VentAbilityButton : BaseButton
     /// <param name="isAbility">Determines if this is a normal vent button or used for a ability, this probably shouldn't be hard coded ¯\_(ツ)_/¯</param>
     /// <param name="index">Determines the index and position order of the ability button.</param>
     [HideFromIl2Cpp]
-    internal VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, RoleClass role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
+    internal static VentAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, RoleClass role, Sprite? sprite, bool isAbility = false, bool Right = true, int index = -1)
     {
-        if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
+        if (role != null && role._player?.IsLocalPlayer() is false or null) return null;
 
         var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomVent({name})";

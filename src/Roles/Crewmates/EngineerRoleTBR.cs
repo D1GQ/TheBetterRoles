@@ -38,7 +38,7 @@ internal sealed class EngineerRoleTBR : CrewmateRoleTBR, IRoleAbilityAction
     {
         if (_player.IsLocalPlayer())
         {
-            FixButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Engineer.Ability.1"), 5f, 0, AmountOfFixes.GetInt(), null, this, true));
+            FixButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Engineer.Ability.1"), 5f, 0, AmountOfFixes.GetInt(), null, this, true));
             FixButton.InteractCondition = () => { return GameState.IsAnySabotageActive; };
         }
     }

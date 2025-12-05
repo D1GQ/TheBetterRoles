@@ -48,9 +48,9 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
 
         if (_player.IsLocalPlayer())
         {
-            InfectButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Parasite.Ability.1"), InfectCooldown.GetFloat(), 0, 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
+            InfectButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Parasite.Ability.1"), InfectCooldown.GetFloat(), 0, 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
             InfectButton.VisibleCondition = () => { return InfectButton.Role is ParasiteRole parasite && parasite.HasInfected == false; };
-            KillTargetButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString(StringNames.KillLabel), 0, 0, 0, RoleButtons.KillButton.ActionButton.graphic.sprite, this, true));
+            KillTargetButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString(StringNames.KillLabel), 0, 0, 0, RoleButtons.KillButton.ActionButton.graphic.sprite, this, true));
             KillTargetButton.VisibleCondition = () => { return InfectButton.Role is ParasiteRole parasite && parasite.HasInfected == true; };
 
             PreloadCamera();

@@ -39,7 +39,7 @@ internal sealed class BlackmailerRole : ImpostorRoleTBR, IRoleAbilityAction<Play
     {
         if (_player.IsLocalPlayer())
         {
-            BlackmailButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Blackmailer.Ability.1"), BlackmailCooldown.GetFloat(), 0, 1, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
+            BlackmailButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Blackmailer.Ability.1"), BlackmailCooldown.GetFloat(), 0, 1, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
         }
     }
 

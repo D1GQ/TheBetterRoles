@@ -46,7 +46,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
     {
         if (_player.IsLocalPlayer())
         {
-            BurrowButton = RoleButtons.AddButton(new VentAbilityButton().Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
+            BurrowButton = RoleButtons.AddButton(VentAbilityButton.Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
             BurrowButton.VentCondition = (Vent vent) =>
             {
                 return RoleOptions.CanVentOptionItem.GetBool() || vents.Select(vents => vents.Id).Contains(vent.Id);
@@ -54,7 +54,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             RoleButtons.RemoveButton(RoleButtons.VentButton);
             RoleButtons.VentButton = BurrowButton;
 
-            DigButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
+            DigButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
             DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
             && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
         }

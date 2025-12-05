@@ -34,7 +34,7 @@ internal sealed class ButtonBerryAddon : AddonClass, IRoleAbilityAction
     {
         if (_player.IsLocalPlayer())
         {
-            MeetingButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false));
+            MeetingButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.ButtonBerry.Ability.1"), 0, 0, 1, null, this, false));
         }
     }
 

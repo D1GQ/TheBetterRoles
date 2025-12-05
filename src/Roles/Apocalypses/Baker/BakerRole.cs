@@ -50,7 +50,7 @@ internal class BakerRole : RoleClass, IRoleAbilityAction<PlayerControl>, IRoleMe
     {
         if (_player.IsLocalPlayer())
         {
-            BreadButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Baker.Ability.1"), BreadCooldown.GetFloat(), 0, 1, null, this, true, AbilityDistance.GetStringValue()));
+            BreadButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Baker.Ability.1"), BreadCooldown.GetFloat(), 0, 1, null, this, true, AbilityDistance.GetStringValue()));
             BreadButton.TargetCondition = (target) =>
             {
                 return !fedPlayers.Contains(target.Data);

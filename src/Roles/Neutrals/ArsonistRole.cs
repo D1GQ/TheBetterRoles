@@ -90,7 +90,7 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
     {
         if (_player.IsLocalPlayer())
         {
-            DouseButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Arsonist.Ability.1"), DouseCooldown.GetFloat(), DousingDuration.GetFloat(), 0, null, this, true, DouseDistance.GetStringValue()));
+            DouseButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Arsonist.Ability.1"), DouseCooldown.GetFloat(), DousingDuration.GetFloat(), 0, null, this, true, DouseDistance.GetStringValue()));
             DouseButton.CanCancelDuration = true;
             DouseButton.VisibleCondition = ShowDouseButton;
             DouseButton.TargetCondition = (PlayerControl target) =>
@@ -98,7 +98,7 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
                 return !doused.Contains(target.Data);
             };
 
-            IgniteButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Arsonist.Ability.2"), DouseCooldown.GetFloat(), 0, IsOriginal ? 1 : 0, null, this, true));
+            IgniteButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Arsonist.Ability.2"), DouseCooldown.GetFloat(), 0, IsOriginal ? 1 : 0, null, this, true));
             IgniteButton.VisibleCondition = ShowIgniteButton;
         }
     }

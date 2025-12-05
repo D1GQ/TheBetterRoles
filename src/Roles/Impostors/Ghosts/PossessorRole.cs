@@ -43,7 +43,7 @@ internal sealed class PossessorRole : GhostRoleClass, IRoleUpdateAction, IRoleAb
     {
         if (_player.IsLocalPlayer())
         {
-            PossessButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Possessor.Ability.1"), PossessCooldown.GetFloat(), PossessDuration.GetFloat(), 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
+            PossessButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Possessor.Ability.1"), PossessCooldown.GetFloat(), PossessDuration.GetFloat(), 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
             PossessButton.AddTargetCondition((target) =>
             {
                 return !target.IsImpostorTeammate() && !_possessed.Contains(target);

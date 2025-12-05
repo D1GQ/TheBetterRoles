@@ -50,7 +50,7 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
     {
         if (_player.IsLocalPlayer())
         {
-            InvisibilityButton = RoleButtons.AddButton(new BaseAbilityButton().Create(5, Translator.GetString("Role.Chameleon.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, null, this, true));
+            InvisibilityButton = RoleButtons.AddButton(BaseAbilityButton.Create(5, Translator.GetString("Role.Chameleon.Ability.1"), InvisibilityCooldown.GetFloat(), InvisibilityDuration.GetFloat(), 0, null, this, true));
             InvisibilityButton.DurationName = Translator.GetString("Role.Chameleon.Ability.2");
             InvisibilityButton.CanCancelDuration = true;
         }

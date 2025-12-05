@@ -39,9 +39,9 @@ internal class DeadBodyAbilityButton : BaseButton
     /// <param name="range">Determines the range of the ability.</param>
     /// <param name="index">Determines the index and position order of the ability button.</param>
     [HideFromIl2Cpp]
-    internal DeadBodyAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, RoleClass role, bool Right = true, float range = 1f, int index = -1)
+    internal static DeadBodyAbilityButton Create(int id, string name, float cooldown, float duration, int abilityUses, Sprite? sprite, RoleClass role, bool Right = true, float range = 1f, int index = -1)
     {
-        if (role != null && role._player?.IsLocalPlayer() is false or null) return this;
+        if (role != null && role._player?.IsLocalPlayer() is false or null) return null;
 
         var buttonObj = Instantiate(HudManager.Instance.AbilityButton.gameObject, Right ? HudManagerPatch.ButtonsRight.transform : HudManagerPatch.ButtonsLeft.transform);
         buttonObj.name = $"CustomAbility({name})";
@@ -51,9 +51,9 @@ internal class DeadBodyAbilityButton : BaseButton
             buttonObj.transform.SetSiblingIndex(index);
         }
 
-        var AbilityButton = HudManager.Instance.gameObject.AddComponent<DeadBodyAbilityButton>();
-        AbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, range, buttonObj);
-        return AbilityButton;
+        var deadBodyAbilityButton = HudManager.Instance.gameObject.AddComponent<DeadBodyAbilityButton>();
+        deadBodyAbilityButton.SetUp(id, name, cooldown, duration, abilityUses, sprite, role, range, buttonObj);
+        return deadBodyAbilityButton;
     }
 
     [HideFromIl2Cpp]

@@ -49,7 +49,7 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
     {
         if (_player.IsLocalPlayer())
         {
-            ShieldButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, "Shield", 0, 0, 1, null, this, true, 1));
+            ShieldButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, "Shield", 0, 0, 1, null, this, true, 1));
         }
     }
 

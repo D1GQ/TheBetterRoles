@@ -7,12 +7,16 @@ using UnityEngine;
 
 namespace TheBetterRoles.Items.Buttons;
 
+/// <summary>
+/// Represents a button associated with a player's vote area during a meeting.
+/// </summary>
 internal class PlayerVoteAreaButton : MonoBehaviour
 {
     internal static List<PlayerVoteAreaButton> AllButtons = [];
     internal List<(PassiveButton, PlayerVoteArea)> Buttons = [];
     internal Action<PassiveButton?, PlayerVoteArea?, NetworkedPlayerInfo?> ClickAction = (button, pva, targetData) => { };
-    internal Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) => { return !targetData.IsDead && !targetData.Disconnected && !targetData.IsLocalData(); };
+    internal Func<PlayerVoteArea, NetworkedPlayerInfo?, bool> ShowCondition = (pva, targetData) =>
+        !targetData.IsDead && !targetData.Disconnected && !targetData.IsLocalData();
     internal RoleClass? Role;
     internal Sprite? Icon;
     internal bool CanUseAsDead { get; set; } = false;
@@ -25,8 +29,7 @@ internal class PlayerVoteAreaButton : MonoBehaviour
     {
         foreach (var button in AllButtons)
         {
-            if (button == null) continue;
-            button.UpdateButtonStates();
+            button?.UpdateButtonStates();
         }
     }
 
@@ -38,36 +41,40 @@ internal class PlayerVoteAreaButton : MonoBehaviour
     /// <param name="sprite">Sprite for ability.</param>
     /// <returns></returns>
     [HideFromIl2Cpp]
-    internal PlayerVoteAreaButton? Create(string name, RoleClass? role = null, Sprite? sprite = null)
+    internal static PlayerVoteAreaButton? Create(string name, RoleClass? role = null, Sprite? sprite = null)
     {
         if (!GameState.IsMeeting) return null;
-        PlayerVoteAreaButton button = MeetingHud.Instance.gameObject.AddComponent<PlayerVoteAreaButton>();
 
+        var button = MeetingHud.Instance.gameObject.AddComponent<PlayerVoteAreaButton>();
         button.Role = role;
         button.Icon = sprite;
-        Color color = button.Role != null ? button.Role.RoleColor : Color.white;
+        var color = button.Role?.RoleColor ?? Color.white;
 
         foreach (var pva in MeetingHud.Instance.playerStates)
         {
-            var Template = pva.ConfirmButton;
-            var Button = Instantiate(Template, pva.transform).GetComponent<PassiveButton>();
-            button.Buttons.Add((Button, pva));
-            Button.transform.position -= new Vector3(1.8f, 0.1f, 2f);
-            Button.transform.position += new Vector3(0.35f * AllButtons.Count, 0f, 0f);
-            Button.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
-            Button.name = $"Button({name})";
+            var template = pva.ConfirmButton;
+            var buttonInstance = Instantiate(template, pva.transform).GetComponent<PassiveButton>();
+            button.Buttons.Add((buttonInstance, pva));
+
+            buttonInstance.transform.position -= new Vector3(1.8f, 0.1f, 2f);
+            buttonInstance.transform.position += new Vector3(0.35f * AllButtons.Count, 0f, 0f);
+            buttonInstance.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
+            buttonInstance.name = $"Button({name})";
+
             var target = Utils.PlayerDataFromPlayerId(pva.TargetPlayerId);
-            Button.OnClick = new();
-            Button.OnClick.AddListener((Action)(() =>
+            buttonInstance.OnClick = new();
+            buttonInstance.OnClick.AddListener((Action)(() =>
             {
-                if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted or MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.Results)
+                if (MeetingHud.Instance.state is MeetingHud.VoteStates.NotVoted
+                    or MeetingHud.VoteStates.Voted
+                    or MeetingHud.VoteStates.Results)
                 {
-                    button.ClickAction.Invoke(Button, pva, target);
+                    button.ClickAction.Invoke(buttonInstance, pva, target);
                 }
             }));
 
-            Button.GetComponent<SpriteRenderer>().sprite = button.Icon ?? HudManagerPatch.catchedUseSprite;
-            var highlight = Button.transform.Find("ControllerHighlight").GetComponent<SpriteRenderer>();
+            buttonInstance.GetComponent<SpriteRenderer>().sprite = button.Icon ?? HudManagerPatch.catchedUseSprite;
+            var highlight = buttonInstance.transform.Find("ControllerHighlight")?.GetComponent<SpriteRenderer>();
             if (highlight != null)
             {
                 highlight.sprite = button.Icon ?? HudManagerPatch.catchedUseSprite;
@@ -75,20 +82,22 @@ internal class PlayerVoteAreaButton : MonoBehaviour
             }
         }
 
-        UpdateButtonStates();
+        button.UpdateButtonStates();
         AllButtons.Add(button);
         return button;
     }
 
     internal void UpdateButtonStates()
     {
-        foreach (var items in Buttons)
+        foreach (var (button, playerVoteArea) in Buttons)
         {
-            if (items.Item2 == null || items.Item1 == null || items.Item1.gameObject == null)
-                continue;
+            if (playerVoteArea == null || button == null || button.gameObject == null) continue;
 
-            var target = Utils.PlayerDataFromPlayerId(items.Item2.TargetPlayerId);
-            items.Item1.gameObject.SetActive(ShowCondition(items.Item2, target) && (PlayerControl.LocalPlayer.IsAlive() || CanUseAsDead) && Enabled);
+            var target = Utils.PlayerDataFromPlayerId(playerVoteArea.TargetPlayerId);
+            button.gameObject.SetActive(
+                ShowCondition(playerVoteArea, target) &&
+                (PlayerControl.LocalPlayer.IsAlive() || CanUseAsDead) &&
+                Enabled);
         }
     }
 
@@ -98,9 +107,9 @@ internal class PlayerVoteAreaButton : MonoBehaviour
     internal void Remove()
     {
         AllButtons.Remove(this);
-        foreach (var button in Buttons)
+        foreach (var (button, _) in Buttons)
         {
-            button.Item1.DestroyObj();
+            button?.DestroyObj();
         }
         Destroy(this);
     }

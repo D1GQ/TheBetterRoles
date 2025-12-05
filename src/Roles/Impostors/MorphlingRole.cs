@@ -44,10 +44,10 @@ internal sealed class MorphlingRole : ImpostorRoleTBR, IRoleAbilityAction<Player
     {
         if (_player.IsLocalPlayer())
         {
-            SampleButton = RoleButtons.AddButton(new PlayerAbilityButton().Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
+            SampleButton = RoleButtons.AddButton(PlayerAbilityButton.Create(5, Translator.GetString("Role.Morphling.Ability.1"), SampleCooldown.GetFloat(), 0, 0, null, this, true, VanillaGameSettings.KillDistance.GetValue()));
             SampleButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData == null; };
 
-            TransformButton = RoleButtons.AddButton(new BaseAbilityButton().Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
+            TransformButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Morphling.Ability.2"), TransformCooldown.GetFloat(), TransformDuration.GetFloat(), 0, null, this, true));
             TransformButton.VisibleCondition = () => { return SampleButton.Role is MorphlingRole role && role.sampleData != null; };
             TransformButton.InteractCondition = () => { return !GameState.IsSystemActive(SystemTypes.MushroomMixupSabotage) && _player.ExtendedPC().CamouflagedQueue; };
             TransformButton.DurationName = Translator.GetString("Role.Morphling.Ability.3");

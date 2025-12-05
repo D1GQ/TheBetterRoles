@@ -43,7 +43,7 @@ internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody
     {
         if (_player.IsLocalPlayer())
         {
-            CleanButton = RoleButtons.AddButton(new DeadBodyAbilityButton().Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0));
+            CleanButton = RoleButtons.AddButton(DeadBodyAbilityButton.Create(5, Translator.GetString("Role.Janitor.Ability.1"), CleanCooldown.GetFloat(), 0, 0, null, this, true, 0));
         }
     }
 
