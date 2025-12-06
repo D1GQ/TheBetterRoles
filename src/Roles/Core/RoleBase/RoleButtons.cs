@@ -43,7 +43,7 @@ internal class RoleButtons
 
     internal void SetUpHauntButton(RoleClass role)
     {
-        HauntButton = AddButton(new BaseAbilityButton().Create(0, Translator.GetString(StringNames.HauntAbilityName), 0f, 0f, 0, Prefab.GetCachedPrefab<CrewmateGhostRole>().Ability.Image, role, true));
+        HauntButton = AddButton(BaseAbilityButton.Create(0, Translator.GetString(StringNames.HauntAbilityName), 0f, 0f, 0, Prefab.GetCachedPrefab<CrewmateGhostRole>().Ability.Image, role, true));
         HauntButton.ActionButton.graphic.material.shader = AssetBundles.GrayscaleShader;
         HauntButton.ActionButton.graphic.material.SetColor("_Color", Utils.GetCustomRoleTeamColor(role.RoleTeam) * 1.2f);
         HauntButton.UseAsDead = true;
@@ -93,7 +93,7 @@ internal class RoleButtons
 
     internal void SetUpSabotageButton(RoleClass role)
     {
-        SabotageButton = AddButton(new BaseAbilityButton().Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, role, true));
+        SabotageButton = AddButton(BaseAbilityButton.Create(1, Translator.GetString(StringNames.SabotageLabel), 0f, 0f, 0, HudManager._instance.SabotageButton.graphic.sprite, role, true));
         SabotageButton.UseAsDead = true;
         SabotageButton.VisibleCondition = () => { return SabotageButton.Role.CanSabotage; };
         SabotageButton.OnClick = () =>
