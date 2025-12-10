@@ -1,4 +1,5 @@
 ﻿using TheBetterRoles.Items;
+using TheBetterRoles.Modules.CustomSystems;
 using UnityEngine;
 
 namespace TheBetterRoles.Modules;
@@ -11,6 +12,7 @@ internal abstract class BaseSystem : MonoBehaviour
 {
     public static void AddSystems()
     {
+        VentFactorySystem.AddSystem();
         BlackoutSabotageSystem.AddSystem();
     }
 
@@ -23,7 +25,7 @@ internal abstract class BaseSystem : MonoBehaviour
     {
         foreach (var kvp in ShipStatus.Instance.Systems)
         {
-            if ((byte)kvp.Key >= (byte)CustomSystemTypes.Blackout)
+            if ((byte)kvp.Key > (byte)CustomSystemTypes.START_OF_SYSTEMS)
             {
                 kvp.Value.Cast<BaseSystem>().OnMeetingStart();
             }

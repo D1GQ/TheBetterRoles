@@ -119,8 +119,8 @@ internal class Main : BasePlugin
     internal static List<PlayerControl> AllRealPlayerControls => AllPlayerControls.Where(pc => !pc.ExtendedPC().IsFake).ToList();
     internal static List<PlayerControl> AllAlivePlayerControls => AllPlayerControls.Where(pc => pc.IsAlive()).ToList();
     internal static DeadBody[] AllDeadBodys => UnityEngine.Object.FindObjectsOfType<DeadBody>().ToArray();
-    internal static Vent[] AllVents => UnityEngine.Object.FindObjectsOfType<Vent>();
-    internal static Vent[] AllEnabledVents => UnityEngine.Object.FindObjectsOfType<Vent>().Where(vent => vent.IsEnabled()).ToArray();
+    internal static Vent[] AllVents => ShipStatus.Instance != null ? ShipStatus.Instance.AllVents : [];
+    internal static Vent[] AllEnabledVents => AllVents.Where(vent => vent.IsEnabled()).ToArray();
     internal static Console[] AllConsoles => UnityEngine.Object.FindObjectsOfType<Console>();
 
     internal static ManualLogSource? Logger { get; private set; }

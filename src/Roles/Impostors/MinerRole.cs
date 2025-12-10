@@ -1,8 +1,10 @@
-﻿using TheBetterRoles.Helpers;
+﻿using Hazel;
+using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
@@ -51,59 +53,74 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
         switch (id)
         {
             case 5:
-                if (_player.IsLocalPlayer())
-                {
-                    Vector2 pos = _player.GetTruePosition();
-                    SpawnVent(pos);
-                }
+                Vector2 pos = _player.GetTruePosition();
+                SpawnVent(pos);
                 break;
         }
     }
 
-    private void SpawnVent(Vector2 position, int? syncVentId = null, bool isSync = false)
+    private void SpawnVent(Vector2 position)
     {
-        var vent = ShipStatus.Instance.AllVents.First().Copy("Vent(Miner)", syncVentId);
-        vent.transform.position = new Vector3(position.x, position.y, _player.gameObject.transform.position.z + 0.0005f);
-
-        if (Vents.Count > 0)
+        VentFactorySystem.SendAddVentToHost(new(position), vent =>
         {
-            var lastVent = Vents[^1];
-            lastVent.Right = vent;
-            vent.Left = lastVent;
-
-            if (Vents.Count > 1)
+            if (Vents.Count > 0)
             {
-                var firstVent = Vents.First();
-                firstVent.Left = vent;
-                vent.Right = firstVent;
+                var lastVent = Vents[^1];
+                lastVent.Right = vent;
+                vent.Left = lastVent;
+
+                if (Vents.Count > 1)
+                {
+                    var firstVent = Vents.First();
+                    firstVent.Left = vent;
+                    vent.Right = firstVent;
+                }
+                else
+                {
+                    vent.Right = null;
+                }
             }
             else
             {
+                vent.Left = null;
                 vent.Right = null;
             }
-        }
-        else
-        {
-            vent.Left = null;
-            vent.Right = null;
-        }
 
-        vent.Center = null;
+            vent.Center = null;
 
-        vent.myAnim?.Play(vent.ExitVentAnim, 1);
+            vent.myAnim?.Play(vent.ExitVentAnim, 1);
 
-        Vents.Add(vent);
+            Vents.Add(vent);
 
-        if (!isSync)
-        {
-            Networked.SendRoleSync(position, vent.Id);
-        }
+            VentFactorySystem.SendSyncVents();
+
+            MarkDirty();
+        });
     }
 
-    internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
+    public override void Serialize(MessageWriter writer)
     {
-        var pos = data.MessageReader.ReadFast<Vector2>();
-        var ventId = data.MessageReader.ReadFast<int>();
-        SpawnVent(pos, ventId, true);
+        writer.Write(Vents.Count);
+        foreach (var vent in Vents)
+        {
+            writer.Write(vent.Id);
+        }
+
+        ClearDirtyBits();
+    }
+
+    public override void Deserialize(MessageReader reader)
+    {
+        var ventCount = reader.ReadInt32();
+        Vents.Clear();
+        for (int i = 0; i < ventCount; i++)
+        {
+            var ventId = reader.ReadInt32();
+            var vent = Main.AllVents.FirstOrDefault(v => v.Id == ventId);
+            if (vent != null)
+            {
+                Vents.Add(vent);
+            }
+        }
     }
 }

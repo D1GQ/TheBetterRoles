@@ -85,7 +85,7 @@ internal static class VentHelper
     /// <summary>
     /// Unsets the vent connections to a specified target vent.
     /// </summary>
-    internal static void UnsetVents(this Vent vent, Vent target)
+    internal static void UnsetVent(this Vent vent, Vent target)
     {
         if (target == null) return;
         if (vent.Left == target) vent.Left = null;

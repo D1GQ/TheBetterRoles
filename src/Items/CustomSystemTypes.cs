@@ -28,7 +28,11 @@ internal readonly struct CustomSystemTypes
 
     public static explicit operator byte(CustomSystemTypes self) => (byte)self.systemType;
 
-    internal static readonly CustomSystemTypes Blackout = new(180);
+    internal static readonly CustomSystemTypes START_OF_SYSTEMS = new(180);
 
-    internal static readonly CustomSystemTypes ReverseMap = new(181);
+    internal static readonly CustomSystemTypes Blackout = new(181);
+
+    internal static readonly CustomSystemTypes ReverseMap = new(182);
+
+    internal static readonly CustomSystemTypes VentFactory = new(183);
 }
