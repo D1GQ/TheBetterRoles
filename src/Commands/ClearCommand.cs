@@ -1,4 +1,5 @@
 ﻿using TheBetterRoles.Items.Attributes;
+using TheBetterRoles.Patches.UI.Chat;
 
 namespace TheBetterRoles.Commands;
 
@@ -11,10 +12,6 @@ internal sealed class ClearCommand : BaseCommand
 
     internal override void Run()
     {
-        var list = HudManager.Instance.Chat.chatBubblePool.GetComponentsInChildren<ChatBubble>();
-        foreach (var item in list)
-        {
-            item.gameObject.SetActive(false);
-        };
+        ChatControllerPatch.ClearChat();
     }
 }

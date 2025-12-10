@@ -11,6 +11,13 @@ internal class ChatControllerPatch
     internal static List<string> ChatHistory = [];
     internal static int CurrentHistorySelection = -1;
 
+    internal static void ClearChat()
+    {
+        if (!HudManager.InstanceExists) return;
+
+        HudManager.Instance.Chat.chatBubblePool.ReclaimAll();
+    }
+
     [HarmonyPatch(nameof(ChatController.Toggle))]
     [HarmonyPostfix]
     private static void Toggle_Postfix(/*ChatController __instance*/)
