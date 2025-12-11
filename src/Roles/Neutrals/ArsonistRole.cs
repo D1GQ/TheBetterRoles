@@ -203,7 +203,7 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
             target.ExtendedData().NameColor = "#59360d";
         }
 
-        target.DirtyName();
+        target.UpdateName();
         MarkDirty();
     }
 

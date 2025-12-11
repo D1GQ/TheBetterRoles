@@ -29,8 +29,6 @@ internal class PlayerInfoDisplay : MonoBehaviour
     private readonly StringBuilder _sbTagTop = new(256);
     private readonly StringBuilder _sbTagBottom = new(256);
     private string _lastTopText = "", _lastBottomText = "", _lastInfoText = "";
-    private int _lastUpdateFrame;
-    private const int UPDATE_COOLDOWN = 10;
 
     internal void Init(PlayerControl player)
     {
@@ -85,8 +83,9 @@ internal class PlayerInfoDisplay : MonoBehaviour
 
     protected virtual void LateUpdate()
     {
-        if (Time.frameCount - _lastUpdateFrame < UPDATE_COOLDOWN)
-            return;
+        if (GameState.IsMeeting) return;
+        if (_playerData.ExtendedData().UpdateNameCount == 0) return;
+        _playerData.ExtendedData().UpdateNameCount--;
 
         _sbTag.Clear();
         _sbTagTop.Clear();
@@ -111,8 +110,6 @@ internal class PlayerInfoDisplay : MonoBehaviour
 
         UpdateColorBlindTextPosition();
         _nameText.transform.parent.localPosition = new Vector3(0f, 0.8f, -0.5f);
-
-        _lastUpdateFrame = Time.frameCount;
     }
 
     protected virtual void UpdateTextPositions()

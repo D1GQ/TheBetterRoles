@@ -245,7 +245,7 @@ internal static class Utils
             var extendedData = player.ExtendedData();
             if (extendedData != null)
             {
-                extendedData.DirtyName += (byte)Main.AllPlayerControls.Where(pc => player.ExtendedData() == extendedData).Count();
+                extendedData.UpdateNameCount += (byte)Main.AllPlayerControls.Where(pc => player.ExtendedData() == extendedData).Count();
             }
         }
     }

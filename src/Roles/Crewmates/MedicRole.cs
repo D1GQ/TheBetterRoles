@@ -74,14 +74,14 @@ internal sealed class MedicRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAbili
     private void AddShield(PlayerControl player)
     {
         Shielded = player.Data;
-        player.DirtyName();
+        player.UpdateName();
     }
 
     private void RemoveShield()
     {
         var player = Shielded.Object;
         Shielded = null;
-        player?.DirtyName();
+        player?.UpdateName();
     }
 
     void IRoleDeathAction.OnDeath(PlayerControl player, DeathReasons reason)

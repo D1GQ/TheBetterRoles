@@ -142,6 +142,6 @@ internal class SetTasksPatch
     [HarmonyPostfix]
     internal static void SetTasks_Postfix(NetworkedPlayerInfo __instance)
     {
-        __instance.DirtyName();
+        __instance.UpdateName();
     }
 }

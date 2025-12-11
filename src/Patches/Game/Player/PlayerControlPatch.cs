@@ -95,7 +95,7 @@ internal class PlayerControlPatch
         {
             if (__instance.IsLocalPlayer()) RoleListener.InvokeRoles<IRoleTaskAction>(role => role.TaskComplete(__instance, idx), player: __instance);
             RoleListener.InvokeRoles<IRoleTaskAction>(role => role.TaskCompleteOther(__instance, idx));
-            __instance?.DirtyName();
+            __instance?.UpdateName();
         }
     }
 
@@ -124,6 +124,6 @@ internal class PlayerControlPatch
         {
             PlayerVoteAreaButton.UpdateAllButtonStates();
         }
-        __instance.DirtyName();
+        __instance.UpdateName();
     }
 }

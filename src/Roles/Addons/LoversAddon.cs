@@ -76,7 +76,7 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
         if (target != null)
         {
             SetPartner(target);
-            Networked.SendRoleSync(1, target);
+            Networked.SendRoleSync(target);
         }
         else
         {
@@ -101,8 +101,8 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
                 addon.SetPartner(_player);
             }
         }
-        _player.DirtyName();
-        partner.DirtyName();
+        _player.UpdateName();
+        partner.UpdateName();
     }
 
     internal sealed override void OnDeinitialize()
@@ -203,17 +203,10 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
 
     internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        switch (data.SyncId)
+        var partner = data.MessageReader.ReadFast<PlayerControl>();
+        if (partner != null)
         {
-            case 1:
-                {
-                    var partner = data.MessageReader.ReadFast<PlayerControl>();
-                    if (partner != null)
-                    {
-                        SetPartner(partner);
-                    }
-                }
-                break;
+            SetPartner(partner);
         }
     }
 }

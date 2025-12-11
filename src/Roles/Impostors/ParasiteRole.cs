@@ -71,7 +71,7 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
         PlayerControl.AllPlayerControls.Remove(InfectedBase);
         InfectedBase.GetComponent<ExtendedPlayerControl>().IsFake = true;
         InfectedBase.CachedPlayerData = _data;
-        InfectedBase.DirtyName();
+        InfectedBase.UpdateName();
         InfectedBase.OwnerId = -1;
         InfectedBase.PlayerId = (byte)(100 + _player.PlayerId);
         InfectedBase.RawSetOutfit(_player.Data.DefaultOutfit, PlayerOutfitType.Default);
@@ -197,7 +197,7 @@ internal sealed class ParasiteRole : ImpostorRoleTBR, IRoleUpdateAction, IRoleAb
         PlayerControl.AllPlayerControls.Add(InfectedBase);
         InfectedBase.gameObject.SetActive(true);
         InfectedData = target.Data;
-        InfectedBase.DirtyName();
+        InfectedBase.UpdateName();
         InfectedBase.PlayerId = (byte)(100 + target.PlayerId);
         InfectedBase.MyPhysics.FlipX = target.MyPhysics.FlipX;
         InfectedBase.RawSetOutfit(_player.Data.DefaultOutfit, PlayerOutfitType.Default);

@@ -55,7 +55,8 @@ internal sealed class BlackmailerRole : ImpostorRoleTBR, IRoleAbilityAction<Play
             case 5:
                 {
                     blackmailed = target.Data;
-                    target.DirtyName();
+                    target.UpdateName();
+                    MarkDirty();
                 }
                 break;
         }
@@ -131,5 +132,6 @@ internal sealed class BlackmailerRole : ImpostorRoleTBR, IRoleAbilityAction<Play
     public override void Deserialize(MessageReader reader)
     {
         blackmailed = reader.ReadFast<NetworkedPlayerInfo>();
+        blackmailed?.UpdateName();
     }
 }

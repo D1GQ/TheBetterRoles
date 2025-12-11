@@ -69,7 +69,7 @@ internal abstract class AddonClass : RoleClass
         OnSetUpRole();
         Logger.LogPrivate($"Finished setting up Role({RoleName})!");
 
-        _player.DirtyName();
+        _player.UpdateName();
     }
 
 

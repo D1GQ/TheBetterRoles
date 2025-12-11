@@ -554,7 +554,7 @@ internal abstract class RoleClass : NetworkClass
 
         Logger.LogPrivate($"Finished setting up Role({RoleName})!");
 
-        _player.DirtyName();
+        _player.UpdateName();
     }
 
     internal void LoadSettings()

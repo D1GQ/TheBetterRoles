@@ -23,7 +23,7 @@ internal class ExtendedPlayerInfo : NetworkClassMono, IMonoExtension<NetworkedPl
 
     [HideFromIl2Cpp]
     internal UserData? MyUserData { get; set; } = ReadOnlyManager.AllUsers.First();
-    internal byte DirtyName { get; set; }
+    internal byte UpdateNameCount { get; set; }
     internal bool HasMod { get; set; }
     internal string Version { get; set; } = "";
 
@@ -76,7 +76,7 @@ internal class ExtendedPlayerInfo : NetworkClassMono, IMonoExtension<NetworkedPl
                     IsLocalData = true;
                     SetDirtyBit(2);
                 }
-                DirtyName++;
+                UpdateNameCount++;
                 break;
             }
 
@@ -116,7 +116,7 @@ internal class ExtendedPlayerInfo : NetworkClassMono, IMonoExtension<NetworkedPl
             Version = reader.ReadString();
             HasMod = true;
 
-            DirtyName++;
+            UpdateNameCount++;
 
             if (SyncedBits.IsDirtyBitSet(3)) return;
 
@@ -223,16 +223,13 @@ internal static class PlayerDataExtension
     /// Player names are not constantly updated to optimize performance and reduce FPS drops.
     /// </summary>
     /// <param name="player">The player whose name should be marked as dirty.</param>
-    internal static void DirtyName(this PlayerControl player)
+    internal static void UpdateName(this PlayerControl player)
     {
         if (player?.Data != null)
         {
             byte count = (byte)UnityEngine.Object.FindObjectsOfType<PlayerControl>().Count;
             var edata = player.ExtendedData();
-            if (edata != null)
-            {
-                edata.DirtyName = count;
-            }
+            edata?.UpdateNameCount = count;
         }
     }
 
@@ -241,16 +238,13 @@ internal static class PlayerDataExtension
     /// Player names are not constantly updated to optimize performance and reduce FPS drops.
     /// </summary>
     /// <param name="data">The networked player info associated with the player.</param>
-    internal static void DirtyName(this NetworkedPlayerInfo data)
+    internal static void UpdateName(this NetworkedPlayerInfo data)
     {
         if (data != null)
         {
             byte count = (byte)Main.AllPlayerControls.Where(pc => pc.Data == data).Count();
             var edata = data.ExtendedData();
-            if (edata != null)
-            {
-                edata.DirtyName = count;
-            }
+            edata?.UpdateNameCount = count;
         }
     }
 

@@ -19,9 +19,6 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
     private readonly StringBuilder _sbTag = new(256);
     private readonly StringBuilder _sbInfo = new(256);
     private string _lastInfoText = "", _lastTopText = "";
-    private int _lastUpdateFrame;
-    private const int UPDATE_COOLDOWN = 5;
-
     private CachedTranslations _cachedTranslations = new();
 
     // Cached translations
@@ -66,8 +63,8 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
 
     protected override void LateUpdate()
     {
-        if (Time.frameCount - _lastUpdateFrame < UPDATE_COOLDOWN)
-            return;
+        if (_playerData.ExtendedData().UpdateNameCount == 0) return;
+        _playerData.ExtendedData().UpdateNameCount--;
 
         if (_pva == null) return;
 
@@ -85,8 +82,6 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
 
         UpdateTextPositions();
         _pva.ColorBlindName.transform.localPosition = new Vector3(-0.91f, -0.19f, -0.05f);
-
-        _lastUpdateFrame = Time.frameCount;
     }
 
     private void UpdateInfo()
