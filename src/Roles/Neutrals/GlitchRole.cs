@@ -278,7 +278,7 @@ internal sealed class GlitchRole : RoleClass, IRoleAbilityAction<PlayerControl>,
         {
             case 0:
                 {
-                    var playerData = data.MessageReader.ReadPlayerData();
+                    var playerData = data.MessageReader.ReadFast<NetworkedPlayerInfo>();
                     if (playerData != null)
                     {
                         SetMimic(playerData);

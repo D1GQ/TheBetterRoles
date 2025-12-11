@@ -53,10 +53,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
         var con = newVent.GetComponent<VentCleaningConsole>();
         con?.ConsoleId = newVent.Id;
         newVent.gameObject.SetActive(true);
-
-        var allVents = ShipStatus.Instance.AllVents.ToList();
-        allVents.Add(newVent);
-        ShipStatus.Instance.AllVents = allVents.ToArray();
+        newVent.AddToShipStatus();
 
         return newVent;
     }
@@ -128,10 +125,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     private static void RemoveVent(Vent vent)
     {
-        var allVents = ShipStatus.Instance.AllVents.ToList();
-        allVents.Remove(vent);
-        ShipStatus.Instance.AllVents = allVents.ToArray();
-
+        vent.RemoveFromShipStatus();
         Destroy(vent.gameObject);
     }
 

@@ -735,6 +735,7 @@ internal abstract class RoleClass : NetworkClass
 
     /// <summary>
     /// Called upon receiving role synchronization data.
+    /// BE SURE TO USE ReadFast!!!
     /// </summary>
     internal virtual void OnReceiveRoleSync(RoleNetworked.Data data) { }
 

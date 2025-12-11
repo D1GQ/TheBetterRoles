@@ -21,6 +21,9 @@ internal class VentAbilityButton : BaseButton
     internal Func<Vent, bool> VentCondition { get; set; } = (target) => true;
 
     [HideFromIl2Cpp]
+    internal Func<Vent[]> GetVents { get; set; } = () => { return Main.AllEnabledVents; };
+
+    [HideFromIl2Cpp]
     internal void AddVentCondition(Func<Vent, bool> additionalCondition)
     {
         var originalCondition = VentCondition;
@@ -185,7 +188,7 @@ internal class VentAbilityButton : BaseButton
         if (Visible && (!IsDuration || !IsAbility))
         {
             List<Vent> validVents = GetObjectsInAbilityRange(
-                Main.AllEnabledVents
+                GetVents()
                     .Where(vent => VentCondition(vent))
                     .ToList(),
                 HighlightDistance,

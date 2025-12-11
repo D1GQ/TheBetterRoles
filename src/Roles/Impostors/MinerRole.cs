@@ -108,7 +108,7 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
     {
         if (!GameState.IsHost) return;
 
-        var pos = data.MessageReader.ReadVector2();
+        var pos = data.MessageReader.ReadFast<Vector2>();
         SpawnVent(pos);
     }
 

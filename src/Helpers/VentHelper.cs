@@ -57,23 +57,33 @@ internal static class VentHelper
             newVent.Id = (int)overrideVentId;
         }
         var con = newVent.GetComponent<VentCleaningConsole>();
-        if (con != null)
-        {
-            con.ConsoleId = newVent.Id;
-        }
-        var allVents = ShipStatus.Instance.AllVents.ToList();
-        allVents.Add(newVent);
-        ShipStatus.Instance.AllVents = allVents.ToArray();
-        if (!string.IsNullOrEmpty(name))
-            newVent.name = name;
+        con?.ConsoleId = newVent.Id;
+        newVent.AddToShipStatus();
         return newVent;
     }
 
-    // Remove a vent from the game
     /// <summary>
-    /// Removes the vent from the list of all vents and destroys the vent object.
+    /// Adds the specified <see cref="Vent"/> to the collection of vents in the current <see cref="ShipStatus"/>
+    /// instance.
     /// </summary>
-    internal static void Remove(this Vent vent)
+    /// <param name="vent">The <see cref="Vent"/> to add to the ship's vent collection.</param>
+    /// <param name="name">An optional name to assign to the vent. If not specified or empty, the vent's name remains unchanged.</param>
+    internal static void AddToShipStatus(this Vent vent, string name = "")
+    {
+        var allVents = ShipStatus.Instance.AllVents.ToList();
+        allVents.Add(vent);
+        ShipStatus.Instance.AllVents = allVents.ToArray();
+        if (!string.IsNullOrEmpty(name))
+            vent.name = name;
+    }
+
+    /// <summary>
+    /// Removes the specified <see cref="Vent"/> from the ship's vent status collection.
+    /// </summary>
+    /// <remarks>After removal, the vent is destroyed and will no longer be tracked by <see
+    /// cref="ShipStatus.Instance.AllVents"/>.</remarks>
+    /// <param name="vent">The <see cref="Vent"/> instance to remove from the ship status. Must not be <c>null</c>.</param>
+    internal static void RemoveFromShipStatus(this Vent vent)
     {
         var allVents = ShipStatus.Instance.AllVents.ToList();
         allVents.Remove(allVents.FirstOrDefault(v => v.Id == vent.Id));
@@ -102,6 +112,55 @@ internal static class VentHelper
         vent.Left = null;
         vent.Right = null;
         vent.Center = null;
+    }
+
+    /// <summary>
+    /// Enables or disables arrow indicators for the specified <see cref="Vent"/> and its connected vents.
+    /// </summary>
+    /// <param name="vent">The <see cref="Vent"/> for which to set arrow indicators.</param>
+    /// <param name="active"><see langword="true"/> to enable arrow indicators; <see langword="false"/> to disable them.</param>
+    internal static void SetArrows(this Vent vent, bool active)
+    {
+        Vent[] nearbyVents = vent.NearbyVents;
+        Vector2 vector;
+        if (vent.Right && vent.Left)
+        {
+            vector = (vent.Right.transform.position + vent.Left.transform.position) / 2f - vent.transform.position;
+        }
+        else
+        {
+            vector = Vector2.zero;
+        }
+        for (int i = 0; i < vent.Buttons.Length; i++)
+        {
+            ButtonBehavior buttonBehavior = vent.Buttons[i];
+            if (active)
+            {
+                Vent v = nearbyVents[i];
+                if (v)
+                {
+                    buttonBehavior.gameObject.SetActive(true);
+                    Vector3 vector2 = v.transform.position - vent.transform.position;
+                    Vector3 vector3 = vector2.normalized * (0.7f + v.spreadShift);
+                    vector3.x *= Mathf.Sign(ShipStatus.Instance.transform.localScale.x);
+                    vector3.y -= 0.08f;
+                    vector3.z = -10f;
+                    buttonBehavior.transform.localPosition = vector3;
+                    buttonBehavior.transform.LookAt2d(v.transform);
+                    vector3 = vector3.RotateZ((vector.AngleSigned(vector2) > 0f) ? v.spreadAmount : (-v.spreadAmount));
+                    buttonBehavior.transform.localPosition = vector3;
+                    buttonBehavior.transform.Rotate(0f, 0f, (vector.AngleSigned(vector2) > 0f) ? v.spreadAmount : (-v.spreadAmount));
+                }
+                else
+                {
+                    buttonBehavior.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                buttonBehavior.gameObject.SetActive(false);
+            }
+        }
     }
 
     // Check if the vent is enabled

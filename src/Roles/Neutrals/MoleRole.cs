@@ -39,6 +39,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         }
     }
 
+    private Vent ventPrefab;
     private readonly List<Vent> vents = [];
     internal BaseAbilityButton? DigButton = new();
     internal VentAbilityButton? BurrowButton = new();
@@ -47,9 +48,21 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         if (_player.IsLocalPlayer())
         {
             BurrowButton = RoleButtons.AddButton(VentAbilityButton.Create(5, Translator.GetString("Role.Mole.Ability.1"), 0, 0, 0, this, null, true, true));
+            bool canVent = RoleOptions.CanVentOptionItem.GetBool();
             BurrowButton.VentCondition = (Vent vent) =>
             {
-                return RoleOptions.CanVentOptionItem.GetBool() || vents.Select(vents => vents.Id).Contains(vent.Id);
+                return canVent || vents.Select(vents => vents.Id).Contains(vent.Id);
+            };
+            BurrowButton.GetVents = () =>
+            {
+                if (canVent)
+                {
+                    return [.. ShipStatus.Instance.AllVents, .. vents];
+                }
+                else
+                {
+                    return [.. vents];
+                }
             };
             RoleButtons.RemoveButton(RoleButtons.VentButton);
             RoleButtons.VentButton = BurrowButton;
@@ -57,6 +70,31 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             DigButton = RoleButtons.AddButton(BaseAbilityButton.Create(6, Translator.GetString("Role.Mole.Ability.2"), 0, 0, MaximumVents.GetInt() + 1, null, this, true));
             DigButton.InteractCondition = () => BurrowButton.ClosestObjDistance > 1f && !BurrowButton.ActionButton.canInteract && _player.CanMove && !_player.IsInVent()
             && !PhysicsHelpers.AnythingBetween(_player.GetTruePosition(), _player.GetTruePosition() - new Vector2(0.25f, 0.25f), Constants.ShipAndAllObjectsMask, false);
+
+            ventPrefab = UnityEngine.Object.Instantiate(ShipStatus.Instance.AllVents.First());
+            ventPrefab.gameObject.name = "VentPrefab(Mole)";
+            ventPrefab.gameObject.SetActive(false);
+
+            ventPrefab.myRend.color = new Color(1f, 0.4f, 0.4f);
+
+            ventPrefab.EnterVentAnim = null;
+            ventPrefab.ExitVentAnim = null;
+            ventPrefab.myAnim?.DestroyMono();
+
+            var animator = ventPrefab.GetComponentInChildren<Animator>();
+            if (animator != null)
+            {
+                UnityEngine.Object.Destroy(animator);
+            }
+
+            var spriteObj = ventPrefab.transform.Find("Sprite");
+            if (spriteObj != null)
+            {
+                spriteObj.transform.localPosition = Vector3.zero;
+                spriteObj.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
+            }
+
+            ventPrefab.myRend.sprite = LoadAbilitySprite("Mole_Vent");
         }
     }
 
@@ -66,13 +104,27 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         {
             case 5:
                 {
-                    if (!_player.inVent)
+                    if (!vents.Contains(target))
                     {
-                        _player.SendRpcVent(target.Id, false);
+                        if (!_player.inVent)
+                        {
+                            _player.SendRpcVent(target.Id, false);
+                        }
+                        else
+                        {
+                            _player.SendRpcVent(target.Id, true);
+                        }
                     }
                     else
                     {
-                        _player.SendRpcVent(target.Id, true);
+                        if (!_player.inVent)
+                        {
+                            EnterHole(target);
+                        }
+                        else
+                        {
+                            ExitHole(target);
+                        }
                     }
                 }
                 break;
@@ -85,7 +137,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         {
             case 6:
                 Vector2 pos = _player.GetTruePosition();
-                SpawnVent(pos);
+                SpawnHole(pos);
                 break;
         }
     }
@@ -109,7 +161,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         }
     }
 
-    private void SpawnVent(Vector2 position, int? syncVentId = null, bool isSync = false)
+    private void SpawnHole(Vector2 position, int? syncVentId = null, bool isSync = false)
     {
         if (vents.Count >= MaximumVents.GetInt())
         {
@@ -118,36 +170,14 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             RemoveVent(firstVent);
         }
 
-        var vent = ShipStatus.Instance.AllVents.First().Copy("Vent(Mole)", syncVentId);
+        var vent = UnityEngine.Object.Instantiate(ventPrefab, ShipStatus.Instance.transform);
+        vent.gameObject.name = "Vent(Mole)";
+        vent.UnsetVents();
+        vent.SetUnusedVentId();
+        float zPos = _player.gameObject.transform.position.z + 0.0005f;
+        vent.transform.position = new(position.x, position.y, zPos);
 
-        bool isLocalPlayer = _player.IsLocalPlayer();
-        /// vent.SetEnabled(isLocalPlayer);
-        vent.myRend.color = new Color(1f, 0.4f, 0.4f, isLocalPlayer ? 1f : 0f);
-
-        vent.EnterVentAnim = null;
-        vent.ExitVentAnim = null;
-        vent.myAnim?.DestroyMono();
-
-        var animator = vent.GetComponentInChildren<Animator>();
-        if (animator != null)
-        {
-            UnityEngine.Object.Destroy(animator);
-        }
-
-        var spriteObj = vent.transform.Find("Sprite");
-        if (spriteObj != null)
-        {
-            spriteObj.transform.localPosition = Vector3.zero;
-            spriteObj.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
-        }
-
-        _ = new LateTask(() =>
-        {
-            vent.myRend.sprite = LoadAbilitySprite("Mole_Vent");
-            float zPosition = _player.gameObject.transform.position.z + 0.0005f;
-            vent.transform.position = new Vector3(position.x, position.y, zPosition);
-        }, 0.00005f, shouldLog: false);
-
+        // Set up vent connections
         if (vents.Count > 0)
         {
             var lastVent = vents[^1];
@@ -172,12 +202,27 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         }
         vent.Center = null;
 
+        // Set up button actions
+        for (int i = 0; i < vent.Buttons.Length; i++)
+        {
+            var index = i;
+            var button = vent.Buttons[i];
+            button.OnClick = new();
+            button.OnClick.AddListener((Action)(() =>
+            {
+                var narbyVent = vent.NearbyVents[index];
+                if (narbyVent != null)
+                {
+                    vent.SetArrows(false);
+                    _player.NetTransform.RpcSnapTo(narbyVent.transform.position + narbyVent.Offset);
+                    narbyVent.SetArrows(true);
+                }
+            }));
+        }
+
         vents.Add(vent);
 
-        if (!isSync)
-        {
-            Networked.SendRoleSync(0, position, vent.Id);
-        }
+        vent.gameObject.SetActive(true);
     }
 
     private void RemoveVent(Vent vent, bool shrink = true)
@@ -192,7 +237,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         }
         else
         {
-            vent.Remove();
+            vent.DestroyObj();
         }
     }
 
@@ -222,7 +267,119 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             DigButton.AddUse();
         }
 
-        vent.Remove();
+        vent.DestroyObj();
+    }
+
+    private void EnterHole(Vent vent)
+    {
+        Networked.SendRoleSync(0, (Vector2)(vent.transform.position + vent.Offset), vent.NumFramesUntilPlayerDisappears);
+        _roleMono.StopAllCoroutines();
+        _roleMono.StartCoroutine(CoEnterHole(vent));
+    }
+
+    private IEnumerator CoEnterHole(Vent vent)
+    {
+        if (MeetingHud.Instance)
+        {
+            yield break;
+        }
+        _player.NetTransform.SetPaused(true);
+        _player.MyPhysics.inputHandler.enabled = true;
+        _player.walkingToVent = true;
+        _player.moveable = false;
+        yield return _player.MyPhysics.WalkPlayerTo(vent.transform.position + vent.Offset, 0.01f, 1f, false);
+        _player.inVent = true;
+        DebugAnalytics.Instance.Analytics.VentUsed(_player.Data);
+        vent.EnterVent(_player);
+        _player.cosmetics.AnimateSkinEnterVent();
+        yield return _player.MyPhysics.Animations.CoPlayEnterVentAnimation(vent.NumFramesUntilPlayerDisappears);
+        _player.cosmetics.AnimateSkinIdle();
+        _player.MyPhysics.Animations.PlayIdleAnimation();
+        _player.Visible = false;
+        _player.walkingToVent = false;
+        _player.currentRoleAnimations.ForEach((Action<RoleEffectAnimation>)(an =>
+        {
+            an.ToggleRenderer(false);
+        }));
+        _player.MyPhysics.inputHandler.enabled = false;
+        vent.SetArrows(true);
+        yield break;
+    }
+
+    private IEnumerator CoEnterHoleNetworked(Vector2 pos, int numFramesUntilPlayerDisappears)
+    {
+        if (MeetingHud.Instance)
+        {
+            yield break;
+        }
+        _player.NetTransform.SetPaused(true);
+        _player.walkingToVent = true;
+        _player.moveable = false;
+        yield return _player.MyPhysics.WalkPlayerTo(pos, 0.01f, 1f, false);
+        _player.inVent = true;
+        DebugAnalytics.Instance.Analytics.VentUsed(_player.Data);
+        _player.cosmetics.AnimateSkinEnterVent();
+        yield return _player.MyPhysics.Animations.CoPlayEnterVentAnimation(numFramesUntilPlayerDisappears);
+        _player.cosmetics.AnimateSkinIdle();
+        _player.MyPhysics.Animations.PlayIdleAnimation();
+        _player.Visible = false;
+        _player.walkingToVent = false;
+        _player.currentRoleAnimations.ForEach((Action<RoleEffectAnimation>)(an =>
+        {
+            an.ToggleRenderer(false);
+        }));
+        yield break;
+    }
+
+    private void ExitHole(Vent vent)
+    {
+        Networked.SendRoleSync(1, (Vector2)vent.transform.position);
+        _roleMono.StopAllCoroutines();
+        _roleMono.StartCoroutine(CoExitHole(vent));
+    }
+
+    private IEnumerator CoExitHole(Vent vent)
+    {
+        vent.SetArrows(false);
+        Vector2 vector = vent.transform.position;
+        vector -= _player.Collider.offset;
+        _player.NetTransform.SnapTo(vector);
+        _player.MyPhysics.inputHandler.enabled = true;
+        yield return vent.ExitVent(_player);
+        _player.Visible = true;
+        _player.inVent = false;
+        _player.cosmetics.AnimateSkinExitVent();
+        yield return _player.MyPhysics.Animations.CoPlayExitVentAnimation();
+        _player.cosmetics.AnimateSkinIdle();
+        _player.MyPhysics.Animations.PlayIdleAnimation();
+        _player.moveable = true;
+        _player.currentRoleAnimations.ForEach((Action<RoleEffectAnimation>)(an =>
+        {
+            an.ToggleRenderer(true);
+        }));
+        _player.MyPhysics.inputHandler.enabled = false;
+        _player.NetTransform.SetPaused(false);
+        yield break;
+    }
+
+    private IEnumerator CoExitHoleNetworked(Vector2 pos)
+    {
+        Vector2 vector = pos;
+        vector -= _player.Collider.offset;
+        _player.NetTransform.SnapTo(vector);
+        _player.Visible = true;
+        _player.inVent = false;
+        _player.cosmetics.AnimateSkinExitVent();
+        yield return _player.MyPhysics.Animations.CoPlayExitVentAnimation();
+        _player.cosmetics.AnimateSkinIdle();
+        _player.MyPhysics.Animations.PlayIdleAnimation();
+        _player.moveable = true;
+        _player.currentRoleAnimations.ForEach((Action<RoleEffectAnimation>)(an =>
+        {
+            an.ToggleRenderer(true);
+        }));
+        _player.NetTransform.SetPaused(false);
+        yield break;
     }
 
     internal sealed override void OnReceiveRoleSync(RoleNetworked.Data data)
@@ -231,9 +388,17 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         {
             case 0:
                 {
-                    var pos = data.MessageReader.ReadVector2();
-                    var ventId = data.MessageReader.ReadPackedInt32();
-                    SpawnVent(pos, ventId, true);
+                    Vector2 pos = data.MessageReader.ReadFast<Vector2>();
+                    int numFramesUntilPlayerDisappears = data.MessageReader.ReadFast<int>();
+                    _roleMono.StopAllCoroutines();
+                    _roleMono.StartCoroutine(CoEnterHoleNetworked(pos, numFramesUntilPlayerDisappears));
+                }
+                break;
+            case 1:
+                {
+                    Vector2 pos = data.MessageReader.ReadFast<Vector2>();
+                    _roleMono.StopAllCoroutines();
+                    _roleMono.StartCoroutine(CoExitHoleNetworked(pos));
                 }
                 break;
         }

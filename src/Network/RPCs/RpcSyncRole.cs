@@ -44,7 +44,7 @@ internal class RpcSyncRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcSync
         var SyncId = reader.ReadPackedInt32();
         var RoleHash = reader.ReadUInt16();
 
-        return new Data(SyncId, RoleHash, null, reader);
+        return new Data(SyncId, RoleHash, null, MessageReader.Get(reader));
     }
 
     public override void Handle(PlayerControl player, Data data)
@@ -53,9 +53,11 @@ internal class RpcSyncRole(Main plugin, uint id) : PlayerCustomRpc<Main, RpcSync
         {
             var role = CustomRoleManager.GetActiveRoleFromPlayers(role => role.RoleHash == data.RoleHash);
             role?.Networked?.OnReceiveRoleSync?.Invoke(new(data.SyncId, data.Reader, player));
+            data.Reader.Recycle();
         }
         catch (Exception ex)
         {
+            data.Reader.Recycle();
             Logger.Error("OnReceiveRoleSync: " + ex);
         }
     }

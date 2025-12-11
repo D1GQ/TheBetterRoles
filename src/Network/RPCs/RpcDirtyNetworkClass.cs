@@ -55,7 +55,7 @@ internal class RpcDirtyNetworkClass(Main plugin, uint id) : PlayerCustomRpc<Main
         var isSyncVar = reader.ReadBoolean();
         var netId = reader.ReadPackedUInt32();
         var syncedBits = !isSyncVar ? reader.ReadPackedUInt32() : 0;
-        return new Data(null, netId, syncedBits, isSyncVar, reader);
+        return new Data(null, netId, syncedBits, isSyncVar, MessageReader.Get(reader));
     }
 
     public override void Handle(PlayerControl player, Data data)
@@ -87,10 +87,12 @@ internal class RpcDirtyNetworkClass(Main plugin, uint id) : PlayerCustomRpc<Main
                 {
                     netClass.SyncedBits.SyncedDirtyBits = data.SyncedBits;
                     netClass.Deserialize(data.Reader);
+                    data.Reader.Recycle();
                 }
                 else
                 {
                     SyncVarAttribute.DeserializeAll(data.Reader, netClass);
+                    data.Reader.Recycle();
                 }
                 NetworkLogger.LogReceive($"Found and deserialize NetClass({data.NetId}), SyncVars: {data.IsSyncVar}");
                 yield break;
@@ -100,6 +102,7 @@ internal class RpcDirtyNetworkClass(Main plugin, uint id) : PlayerCustomRpc<Main
             yield return new WaitForSeconds(RetryInterval);
         }
 
+        data.Reader.Recycle();
         Logger.Warning($"Unable to find and deserialize NetClass - {data.NetId}");
         NetworkLogger.Warning($"Unable to find and deserialize NetClass - {data.NetId}");
     }

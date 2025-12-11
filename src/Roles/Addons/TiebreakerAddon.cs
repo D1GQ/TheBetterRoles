@@ -78,7 +78,7 @@ internal sealed class TiebreakerAddon : AddonClass, IRoleMeetingAction
         {
             case 0:
                 {
-                    var myVote = data.MessageReader.ReadByte();
+                    var myVote = data.MessageReader.ReadFast<byte>();
                     var myVotePva = MeetingHud.Instance.playerStates.FirstOrDefault(pva => pva.TargetPlayerId == myVote);
                     CoroutineManager.Instance.StartCoroutine(CoTiebreakAnimation(myVotePva));
                 }

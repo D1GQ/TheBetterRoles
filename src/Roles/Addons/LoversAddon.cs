@@ -207,7 +207,7 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
         {
             case 1:
                 {
-                    var partner = data.MessageReader.ReadPlayer();
+                    var partner = data.MessageReader.ReadFast<PlayerControl>();
                     if (partner != null)
                     {
                         SetPartner(partner);

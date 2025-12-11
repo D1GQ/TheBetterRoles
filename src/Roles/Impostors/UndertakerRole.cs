@@ -245,8 +245,8 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
                 break;
             case 2:
                 {
-                    var isRigidbodyOnRight = data.MessageReader.ReadBoolean();
-                    Vector2 pos = data.MessageReader.ReadVector2();
+                    var isRigidbodyOnRight = data.MessageReader.ReadFast<bool>();
+                    Vector2 pos = data.MessageReader.ReadFast<Vector2>();
                     Dragging.bodyRenderers.ToList().ForEach(body => body.flipX = isRigidbodyOnRight);
                     Dragging.transform.position = pos;
                     ((IRoleAbilityAction)this).OnResetAbilityState(false);

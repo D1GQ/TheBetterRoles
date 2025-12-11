@@ -95,6 +95,6 @@ internal sealed class CamouflagerRole : ImpostorRoleTBR, IRoleAbilityAction
 
     internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        Camouflage(data.MessageReader.ReadBoolean());
+        Camouflage(data.MessageReader.ReadFast<bool>());
     }
 }
