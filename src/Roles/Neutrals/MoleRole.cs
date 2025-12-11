@@ -7,6 +7,7 @@ using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
@@ -74,9 +75,11 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             ventPrefab = UnityEngine.Object.Instantiate(ShipStatus.Instance.AllVents.First());
             ventPrefab.gameObject.name = "VentPrefab(Mole)";
             ventPrefab.gameObject.SetActive(false);
+            ventPrefab.transform.SetParent(VentFactorySystem.Instance.CustomVentsObj.transform);
 
             ventPrefab.myRend.color = new Color(1f, 0.4f, 0.4f);
 
+            ventPrefab.UnsetVents();
             ventPrefab.EnterVentAnim = null;
             ventPrefab.ExitVentAnim = null;
             ventPrefab.myAnim?.DestroyMono();
@@ -104,8 +107,10 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         {
             case 5:
                 {
+                    // Check if the target vent is one of the mole's vents
                     if (!vents.Contains(target))
                     {
+                        // Use normal venting
                         if (!_player.inVent)
                         {
                             _player.SendRpcVent(target.Id, false);
@@ -117,6 +122,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
                     }
                     else
                     {
+                        // Use mole venting
                         if (!_player.inVent)
                         {
                             EnterHole(target);
@@ -170,10 +176,9 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             RemoveVent(firstVent);
         }
 
-        var vent = UnityEngine.Object.Instantiate(ventPrefab, ShipStatus.Instance.transform);
+        var vent = UnityEngine.Object.Instantiate(ventPrefab, VentFactorySystem.Instance.CustomVentsObj.transform);
         vent.gameObject.name = "Vent(Mole)";
-        vent.UnsetVents();
-        vent.SetUnusedVentId();
+        vent.Id = -1;
         float zPos = _player.gameObject.transform.position.z + 0.0005f;
         vent.transform.position = new(position.x, position.y, zPos);
 

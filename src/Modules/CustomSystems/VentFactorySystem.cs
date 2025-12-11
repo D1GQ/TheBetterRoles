@@ -16,6 +16,20 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
     public bool IsDirty { get; private set; }
     public bool IsActive { get; private set; }
 
+    private GameObject? vents;
+    internal GameObject CustomVentsObj
+    {
+        get
+        {
+            if (vents == null)
+            {
+                vents = new GameObject("Vents");
+                vents.transform.SetParent(ShipStatus.Instance.transform);
+            }
+            return vents;
+        }
+    }
+
     internal static VentFactorySystem? Instance { get; private set; }
 
     /// <summary>
@@ -36,6 +50,8 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
         VentPrefab = Instantiate(ShipStatus.Instance.AllVents.First());
         VentPrefab.gameObject.name = "VentPrefab";
         VentPrefab.gameObject.SetActive(false);
+        VentPrefab.transform.SetParent(CustomVentsObj.transform);
+        VentPrefab.UnsetVents();
     }
 
     internal override void Destroy()
@@ -45,9 +61,8 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     private static Vent AddVent(Vector2 pos, int ventId)
     {
-        var newVent = Instantiate(VentPrefab, ShipStatus.Instance.transform);
+        var newVent = Instantiate(VentPrefab, Instance.CustomVentsObj.transform);
         newVent.gameObject.name = "Vent";
-        newVent.UnsetVents();
         newVent.transform.position = new(pos.x, pos.y, newVent.transform.position.z);
         newVent.Id = ventId;
         var con = newVent.GetComponent<VentCleaningConsole>();
