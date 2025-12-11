@@ -61,41 +61,55 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
 
     private void SpawnVent(Vector2 position)
     {
-        VentFactorySystem.SendAddVentToHost(new(position), vent =>
+        if (GameState.IsHost)
         {
-            if (Vents.Count > 0)
+            VentFactorySystem.SendAddVentToHost(new(position), vent =>
             {
-                var lastVent = Vents[^1];
-                lastVent.Right = vent;
-                vent.Left = lastVent;
-
-                if (Vents.Count > 1)
+                if (Vents.Count > 0)
                 {
-                    var firstVent = Vents.First();
-                    firstVent.Left = vent;
-                    vent.Right = firstVent;
+                    var lastVent = Vents[^1];
+                    lastVent.Right = vent;
+                    vent.Left = lastVent;
+
+                    if (Vents.Count > 1)
+                    {
+                        var firstVent = Vents.First();
+                        firstVent.Left = vent;
+                        vent.Right = firstVent;
+                    }
+                    else
+                    {
+                        vent.Right = null;
+                    }
                 }
                 else
                 {
+                    vent.Left = null;
                     vent.Right = null;
                 }
-            }
-            else
-            {
-                vent.Left = null;
-                vent.Right = null;
-            }
 
-            vent.Center = null;
+                vent.Center = null;
 
-            vent.myAnim?.Play(vent.ExitVentAnim, 1);
+                vent.myAnim?.Play(vent.ExitVentAnim, 1);
 
-            Vents.Add(vent);
+                Vents.Add(vent);
 
-            VentFactorySystem.SendSyncVents();
+                VentFactorySystem.Instance.MarkDirty();
+                MarkDirty();
+            });
+        }
+        else
+        {
+            Networked.SendRoleSync(position);
+        }
+    }
 
-            MarkDirty();
-        });
+    internal override void OnReceiveRoleSync(RoleNetworked.Data data)
+    {
+        if (!GameState.IsHost) return;
+
+        var pos = data.MessageReader.ReadVector2();
+        SpawnVent(pos);
     }
 
     public override void Serialize(MessageWriter writer)
