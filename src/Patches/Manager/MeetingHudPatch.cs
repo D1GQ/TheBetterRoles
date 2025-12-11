@@ -52,6 +52,14 @@ internal class MeetingHudPatch
         }
     }
 
+    internal static void UpdateHostIcon()
+    {
+        if (MeetingHud.Instance == null) return;
+
+        PlayerMaterial.SetColors(GameData.Instance.GetHost().Color, MeetingHud.Instance.HostIcon);
+        MeetingHud.Instance.ProceedButton.gameObject.GetComponentInChildren<TextMeshPro>().text = Translator.GetString("HostInMeeting", [GameData.Instance.GetHost().PlayerName]);
+    }
+
     [HarmonyPatch(nameof(MeetingHud.Awake))]
     [HarmonyPrefix]
     private static void Start_Prefix(MeetingHud __instance)
@@ -63,6 +71,16 @@ internal class MeetingHudPatch
     [HarmonyPostfix]
     private static void Start_Postfix(MeetingHud __instance)
     {
+        // Add host icon to meeting hud
+        __instance.ProceedButton.gameObject.transform.localPosition = new(-2.5f, 2.2f, 0);
+        __instance.ProceedButton.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        __instance.ProceedButton.GetComponent<PassiveButton>().enabled = false;
+        __instance.HostIcon.enabled = true;
+        __instance.HostIcon.gameObject.SetActive(true);
+        __instance.ProceedButton.gameObject.SetActive(true);
+        MeetingHud.Instance.ProceedButton.DestroyTextTranslators();
+        UpdateHostIcon();
+
         PlayerVoteAreaButton.AllButtons.Clear();
 
         var role = PlayerControl.LocalPlayer.Role();

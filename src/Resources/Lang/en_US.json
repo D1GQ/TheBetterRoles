@@ -15,6 +15,7 @@
   "All": "All",
   "SystemMessage": "System Message",
   "SystemNotification": "System Notification",
+  "HostInMeeting": "Host: {0}",
 
   "Team": "Team",
   "Neutral": "Neutral",
