@@ -63,9 +63,6 @@ internal class OptionTab
         var SettingsButton = UnityEngine.Object.Instantiate(GameSettingMenu.Instance.GameSettingsButton, GameSettingMenu.Instance.GameSettingsButton.transform.parent);
         TabButton = SettingsButton;
 
-        var aspectPosition = SettingsButton.gameObject.AddComponent<AspectPosition>();
-        aspectPosition.Alignment = AspectPosition.EdgeAlignments.Left;
-
         SettingsButton.gameObject.SetActive(true);
         SettingsButton.name = Name;
         SettingsButton.OnClick.RemoveAllListeners();
@@ -95,7 +92,7 @@ internal class OptionTab
     {
         int buttonCount = AllTabs.Count;
         float buttonHeight = 0.4f; // The height offset between buttons
-        Vector3 startingPosition = new Vector3(2.2f, -0.8f, 0f); // Starting position from GameSettingsButton
+        Vector3 startingPosition = new(-3.2f, -0.8f, -2f); // Starting position from GameSettingsButton
         float xOffset = 0.75f; // Horizontal offset for columns
 
         // Loop through each button and calculate its position
@@ -116,8 +113,7 @@ internal class OptionTab
             float yPosition = startingPosition.y - rowIndex * buttonHeight; // Adjust y based on row
 
             // Set the position
-            tab.TabButton.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(xPosition, yPosition, startingPosition.z);
-            tab.TabButton.GetComponent<AspectPosition>().AdjustPosition();
+            tab.TabButton.transform.localPosition = new(xPosition, yPosition, startingPosition.z);
 
             // Set button scale
             tab.TabButton.transform.localScale = new Vector3(0.55f, 0.55f, 1f);

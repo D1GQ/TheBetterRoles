@@ -50,13 +50,14 @@ internal class GameSettingMenuPatch
     {
         bool mapFlag = GameState.IsLobby && GameState.IsHost && !GameState.IsFreePlay;
 
-        TBRTabs.GameSettings = OptionTab.Create(1, "Setting.Tab.GameSettings", "Setting.Description.GameSettings", Color.green, mapFlag);
+        TBRTabs.GameSettings = OptionTab.Create(1, "Setting.Tab.GameSettings", "Setting.Description.GameSettings", Color.green * 0.8f, mapFlag);
         TBRTabs.SystemSettings = OptionTab.Create(2, "Setting.Tab.SystemSettings", "Setting.Description.SystemSettings", Color.yellow);
         TBRTabs.CrewmateRoles = OptionTab.Create(3, "Setting.Tab.CrewmateRoles", "Setting.Description.CrewmateRoles", Color.cyan);
         TBRTabs.ImpostorRoles = OptionTab.Create(4, "Setting.Tab.ImpostorRoles", "Setting.Description.ImpostorRoles", Color.red);
         TBRTabs.NeutralRoles = OptionTab.Create(5, "Setting.Tab.NeutralRoles", "Setting.Description.NeutralRoles", Color.gray);
         TBRTabs.ApocalypseRoles = OptionTab.Create(6, "Setting.Tab.ApocalypseRoles", "Setting.Description.ApocalypseRoles", Color.gray - new Color(0.25f, 0.25f, 0.25f, 0f));
         TBRTabs.Addons = OptionTab.Create(7, "Setting.Tab.Addons", "Setting.Description.Addons", Color.magenta);
+        OptionTab.AlignButtons();
 
         // Next setting Id to use: 42
 

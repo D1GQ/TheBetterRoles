@@ -25,6 +25,10 @@ internal class GameStartManagerPatch
     {
         CatchedGameData.lobbyTimer = 600f;
         __instance.UpdateStreamerModeUI();
+
+        // Fix aspect ratio issues
+        __instance.StartButton.transform.SetParent(__instance.HostInfoPanel.transform);
+        __instance.StartButtonClient.transform.SetParent(__instance.HostInfoPanel.transform);
     }
 
     [HarmonyPatch(nameof(GameStartManager.Update))]

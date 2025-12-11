@@ -20,12 +20,10 @@ internal class MainMenuManagerPatch
         {
             GameObject.Find("Ambience/PlayerParticles").SetActive(false);
             logo = new GameObject("TheBetterRoles_Logo");
+            logo.transform.SetParent(__instance.rightPanelMask.transform.parent.Find("CreditsSizer"));
+            logo.transform.localPosition = new(-0.2f, 0f, 0f);
             var sprite = logo.AddComponent<SpriteRenderer>();
-            var aspect = logo.AddComponent<AspectPosition>();
             sprite.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.TheBetterRoles.png", 150);
-            aspect.Alignment = AspectPosition.EdgeAlignments.Right;
-            aspect.DistanceFromEdge = new Vector3(3.25f, -0.25f, 0f);
-            aspect.AdjustPosition();
         }
     }
 
