@@ -51,7 +51,7 @@ internal sealed class LoversAddon : AddonClass, IRoleGameplayAction, IRoleDiscon
     internal sealed override void SetUpRoleAsHost()
     {
         if (!GameState.IsHost) return;
-        CoroutineManager.Instance.StartCoroutine(CoSetPartners());
+        _roleMono.StartCoroutine(CoSetPartners());
     }
 
     internal IEnumerator CoSetPartners()

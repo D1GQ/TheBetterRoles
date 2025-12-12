@@ -1,9 +1,9 @@
-﻿using BepInEx.Unity.IL2CPP.Utils;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using System.Collections;
 using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
-using UnityEngine;
+using TheBetterRoles.Modules.CustomSystems;
 
 namespace TheBetterRoles.Patches.Game.Player;
 
@@ -41,42 +41,62 @@ internal class PlayerPhysicsPatch
 
     [HarmonyPatch(nameof(PlayerPhysics.CoEnterVent))]
     [HarmonyPostfix]
-    private static void CoEnterVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
+    private static void CoEnterVent_Postfix(PlayerPhysics __instance, int id, ref Il2CppSystem.Collections.IEnumerator __result)
     {
-        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {ventId}", "EventLog");
-        __instance.StartCoroutine(CoEnterVentFixCollision(__instance));
+        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has entered vent: {id}", "EventLog");
+        __result = Effects.Sequence(CoWaitForVent(id).WrapToIl2Cpp(), Effects.All(__result, CoEnterVentFixCollision(__instance).WrapToIl2Cpp()));
     }
 
+    /// <summary>
+    /// Fixes the issue of colliding with objects when entering vents.
+    /// </summary>
     private static IEnumerator CoEnterVentFixCollision(PlayerPhysics __instance)
     {
-        yield return new WaitForSeconds(1f);
-
         var player = __instance?.myPlayer;
         if (player == null) yield break;
 
-        Vector2 lastPos = player.GetCustomPosition();
+        bool didSet = false;
+        if (player.Collider.enabled)
+        {
+            player.Collider.enabled = false;
+            didSet = true;
+        }
+
         while (player?.inVent == false)
         {
-            if (lastPos == player.GetCustomPosition())
+            if (player == null)
             {
-                player.Collider.enabled = false;
+                yield break;
             }
-
-            lastPos = player.GetCustomPosition();
 
             yield return null;
         }
 
-        if (player == null) yield break;
+        if (didSet)
+        {
+            player.Collider.enabled = true;
+        }
 
-        player.Collider.enabled = true;
+        yield break;
     }
 
     [HarmonyPatch(nameof(PlayerPhysics.CoExitVent))]
     [HarmonyPostfix]
-    private static void CoExitVent_Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int ventId)
+    private static void CoExitVent_Postfix(PlayerPhysics __instance, int id, ref Il2CppSystem.Collections.IEnumerator __result)
     {
+        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {id}", "EventLog");
 
-        Logger.LogPrivate($"{__instance.myPlayer.Data.PlayerName} Has exit vent: {ventId}", "EventLog");
+        __result = Effects.Sequence(CoWaitForVent(id).WrapToIl2Cpp(), __result);
+    }
+
+    /// <summary>
+    /// Waits until the vent with the given ID exists in the VentFactorySystem.
+    /// </summary>
+    private static IEnumerator CoWaitForVent(int ventId)
+    {
+        while (VentFactorySystem.Instance?.AllVents?.FirstOrDefault(v => v.Id == ventId) == null)
+        {
+            yield return null;
+        }
     }
 }

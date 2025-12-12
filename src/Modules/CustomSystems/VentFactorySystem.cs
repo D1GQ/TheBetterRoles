@@ -80,7 +80,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
     {
         if (Instance != null)
         {
-            ventData.Id = ((10000 * (PlayerControl.LocalPlayer.PlayerId + 1)) + Instance.NextVentId);
+            ventData.Id = (10000 * (PlayerControl.LocalPlayer.PlayerId + 1)) + Instance.NextVentId;
             Instance.NextVentId++;
             MessageWriter messageWriter = MessageWriter.Get(SendOption.Reliable);
             messageWriter.Write((byte)1);

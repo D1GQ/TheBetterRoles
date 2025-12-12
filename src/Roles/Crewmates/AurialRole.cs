@@ -5,7 +5,6 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
@@ -55,7 +54,7 @@ internal sealed class AurialRole : CrewmateRoleTBR, IRoleAbilityAction
         {
             if (coroutine != null)
             {
-                CoroutineManager.Instance.StopCoroutine(coroutine);
+                _roleMono.StopCoroutine(coroutine);
             }
         }
     }
@@ -69,7 +68,7 @@ internal sealed class AurialRole : CrewmateRoleTBR, IRoleAbilityAction
             {
                 bool useColor = Vector2.Distance(user.GetTruePosition(), _player.GetTruePosition()) <= RadiateColourRange.GetFloat();
 
-                var coroutine = CoroutineManager.Instance.StartCoroutine(CreateArrow(user, useColor));
+                var coroutine = _roleMono.StartCoroutine(CreateArrow(user, useColor));
                 coroutineList.Add(coroutine);
             }
         }

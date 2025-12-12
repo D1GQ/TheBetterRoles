@@ -5,7 +5,6 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
@@ -58,7 +57,7 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
 
     internal sealed override void OnDeinitialize()
     {
-        if (fadeInCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeInCoroutine);
+        if (fadeInCoroutine != null) _roleMono.StopCoroutine(fadeInCoroutine);
         _player.invisibilityAlpha = 1f;
         _player.cosmetics.SetPhantomRoleAlpha(_player.invisibilityAlpha);
         SetNameTextAlpha(_player.invisibilityAlpha);
@@ -90,9 +89,9 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
 
     void IRoleDeathAction.OnDeath(PlayerControl player, DeathReasons reason)
     {
-        if (fadeOutCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeOutCoroutine);
+        if (fadeOutCoroutine != null) _roleMono.StopCoroutine(fadeOutCoroutine);
         fadeOutCoroutine = null;
-        if (fadeInCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeOutCoroutine);
+        if (fadeInCoroutine != null) _roleMono.StopCoroutine(fadeOutCoroutine);
         fadeInCoroutine = null;
         InvisibilityButton?.SetCooldown();
         _player.invisibilityAlpha = 1f;
@@ -127,9 +126,9 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
 
     private void FadeOut()
     {
-        if (fadeInCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeOutCoroutine);
+        if (fadeInCoroutine != null) _roleMono.StopCoroutine(fadeOutCoroutine);
         fadeInCoroutine = null;
-        fadeOutCoroutine = CoroutineManager.Instance.StartCoroutine(CoFadeOut());
+        fadeOutCoroutine = _roleMono.StartCoroutine(CoFadeOut());
     }
 
     private IEnumerator CoFadeOut()
@@ -161,9 +160,9 @@ internal sealed class ChameleonRole : CrewmateRoleTBR, IRoleMurderAction, IRoleA
 
     private void FadeIn()
     {
-        if (fadeOutCoroutine != null) CoroutineManager.Instance.StopCoroutine(fadeOutCoroutine);
+        if (fadeOutCoroutine != null) _roleMono.StopCoroutine(fadeOutCoroutine);
         fadeOutCoroutine = null;
-        fadeInCoroutine = CoroutineManager.Instance.StartCoroutine(CoFadeIn());
+        fadeInCoroutine = _roleMono.StartCoroutine(CoFadeIn());
     }
 
     private IEnumerator CoFadeIn()

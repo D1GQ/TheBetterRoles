@@ -84,7 +84,7 @@ internal class PlayerInfoDisplay : MonoBehaviour
     protected virtual void LateUpdate()
     {
         if (GameState.IsMeeting) return;
-        if (_playerData.ExtendedData().UpdateNameCount == 0) return;
+        if (_playerData.ExtendedData().UpdateNameCount <= 0) return;
         _playerData.ExtendedData().UpdateNameCount--;
 
         _sbTag.Clear();

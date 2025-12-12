@@ -3,7 +3,6 @@ using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
@@ -40,7 +39,7 @@ internal sealed class TiebreakerAddon : AddonClass, IRoleMeetingAction
         if (tie)
         {
             calculatedVotes[myVote] = 100;
-            CoroutineManager.Instance.StartCoroutine(CoTiebreakAnimation(myVotePva));
+            _roleMono.StartCoroutine(CoTiebreakAnimation(myVotePva));
             Networked.SendRoleSync(0, myVote);
         }
     }
@@ -80,7 +79,7 @@ internal sealed class TiebreakerAddon : AddonClass, IRoleMeetingAction
                 {
                     var myVote = data.MessageReader.ReadFast<byte>();
                     var myVotePva = MeetingHud.Instance.playerStates.FirstOrDefault(pva => pva.TargetPlayerId == myVote);
-                    CoroutineManager.Instance.StartCoroutine(CoTiebreakAnimation(myVotePva));
+                    _roleMono.StartCoroutine(CoTiebreakAnimation(myVotePva));
                 }
                 break;
         }

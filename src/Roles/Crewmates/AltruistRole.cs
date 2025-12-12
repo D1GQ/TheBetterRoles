@@ -5,7 +5,6 @@ using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
-using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
@@ -121,7 +120,7 @@ internal sealed class AltruistRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAb
             _player.MyPhysics.Animations.PlayScanner(false, false, _player.MyPhysics.FlipX);
             _player.MyPhysics.Animations.scannersImages.ToList().ForEach(sr => sr.color = Color.white);
             SetMovement(_player, true);
-            CoroutineManager.Instance.StopCoroutine(reviveCoroutine);
+            _roleMono.StopCoroutine(reviveCoroutine);
             reviveCoroutine = null;
             isReviving = false;
         }
@@ -134,7 +133,7 @@ internal sealed class AltruistRole : CrewmateRoleTBR, IRoleMurderAction, IRoleAb
         if (body != null && !target.IsGhostRole() && !target.IsAlive())
         {
             isReviving = true;
-            reviveCoroutine = CoroutineManager.Instance.StartCoroutine(CoStartRevive(target, body));
+            reviveCoroutine = _roleMono.StartCoroutine(CoStartRevive(target, body));
             return true;
         }
 

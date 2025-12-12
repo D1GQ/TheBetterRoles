@@ -63,7 +63,7 @@ internal class MeetingInfoDisplay : PlayerInfoDisplay
 
     protected override void LateUpdate()
     {
-        if (_playerData.ExtendedData().UpdateNameCount == 0) return;
+        if (_playerData.ExtendedData().UpdateNameCount <= 0) return;
         _playerData.ExtendedData().UpdateNameCount--;
 
         if (_pva == null) return;

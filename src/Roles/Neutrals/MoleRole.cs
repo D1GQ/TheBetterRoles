@@ -237,7 +237,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
 
         if (shrink)
         {
-            CoroutineManager.Instance.StartCoroutine(CoShrinkVentOut(vent));
+            CoroutineManager.Instance.StartCoroutine(CoShrinkHoleOut(vent));
         }
         else
         {
@@ -245,7 +245,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
         }
     }
 
-    private IEnumerator CoShrinkVentOut(Vent vent)
+    private IEnumerator CoShrinkHoleOut(Vent vent)
     {
         float shrinkDuration = 1f;
         Vector3 startScale = vent.transform.localScale;
