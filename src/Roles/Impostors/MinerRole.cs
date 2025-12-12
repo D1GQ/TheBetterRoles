@@ -130,7 +130,7 @@ internal sealed class MinerRole : ImpostorRoleTBR, IRoleAbilityAction
         for (int i = 0; i < ventCount; i++)
         {
             var ventId = reader.ReadInt32();
-            var vent = Main.AllVents.FirstOrDefault(v => v.Id == ventId);
+            var vent = VentFactorySystem.Instance.AllVents.FirstOrDefault(v => v.Id == ventId);
             if (vent != null)
             {
                 Vents.Add(vent);

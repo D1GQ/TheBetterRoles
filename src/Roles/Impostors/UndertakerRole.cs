@@ -4,6 +4,7 @@ using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core.RoleBase;
 using TheBetterRoles.Roles.Interfaces;
@@ -149,7 +150,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
         bool snapToPlayer = _player.inMovingPlat || _player.MyPhysics.Animations.IsPlayingAnyLadderAnimation();
         boxCollider.enabled = !snapToPlayer;
 
-        Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
+        Vent? vent = VentFactorySystem.Instance.AllVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
         if (_player.inVent && !_player.MyPhysics.Animations.IsPlayingEnterVentAnimation() && rigidbody.velocity.magnitude < 0.1f
             && !snapToPlayer && Vector2.Distance(vent.transform.position, rigidbody.position) < 0.5f)
         {
@@ -220,7 +221,7 @@ internal sealed class UndertakerRole : ImpostorRoleTBR, IRoleUpdateAction, IRole
         Dragging = null;
         IsDragging = false;
 
-        Vent? vent = Main.AllEnabledVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
+        Vent? vent = VentFactorySystem.Instance.AllVents.FirstOrDefault(v => v.Id == _player.GetPlayerVentId());
         vent?.myAnim?.Play(vent.EnterVentAnim, 1);
 
         if (_player.IsLocalPlayer())

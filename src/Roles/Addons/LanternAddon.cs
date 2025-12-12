@@ -97,7 +97,8 @@ internal sealed class LanternAddon : AddonClass, IRoleUpdateAction, IRoleAbility
                 Lantern.DestroyObj();
             }
             Lantern = new GameObject("Lantern");
-            Lantern.transform.position = _player.transform.position + new Vector3(0f, 0f, 0.005f) - new Vector3(0f, 0.05f, 0f);
+            var pos = _player.transform.position - new Vector3(0f, 0.05f, 0f);
+            Lantern.transform.position = new(pos.x, pos.y, Utils.GetPlayerZPosAtVector2(pos) + 0.0002f);
             var spriteRenderer = Lantern.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = LoadAbilitySprite("Lantern", 325);
         }

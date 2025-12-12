@@ -2,6 +2,7 @@
 using InnerNet;
 using System.Globalization;
 using TheBetterRoles.Items;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Network;
 using UnityEngine;
 
@@ -540,7 +541,7 @@ internal static class HazelHelper
     /// Reads a Vent object's ID from a MessageReader and returns the corresponding vent.
     /// Returns null if the ID is -1.
     /// </summary>
-    internal static Vent? ReadVent(this MessageReader reader) => Main.AllVents.FirstOrDefault(vent => vent.Id == reader.ReadPackedInt32());
+    internal static Vent? ReadVent(this MessageReader reader) => VentFactorySystem.Instance?.AllVents?.FirstOrDefault(vent => vent.Id == reader.ReadPackedInt32());
 
     /// <summary>
     /// Converts a MessageWriter to a MessageReader, allowing the written data to be read.

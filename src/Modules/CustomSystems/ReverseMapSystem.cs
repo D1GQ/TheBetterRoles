@@ -66,7 +66,7 @@ internal class ReverseMapSystem : BaseSystem, IISystemType, IIActivatable
                 player.MyPhysics.ResetAnimState();
             }
 
-            foreach (var vent in Main.AllVents)
+            foreach (var vent in ShipStatus.Instance.AllVents)
             {
                 vent.myRend.flipX = true;
             }

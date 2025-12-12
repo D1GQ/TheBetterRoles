@@ -145,8 +145,7 @@ internal class PlayerAbilityButton : BaseButton
             var targets = GetObjectsInAbilityRange(
                 Main.AllPlayerControls
                     .Where(target => target.IsAlive() && target != _player && TargetCondition(target) && target.ExtendedPC().InteractableTarget
-                    && !target.ExtendedPC().InteractableTargetQueue && (!CheckCanBeInteracted || target.CanBeInteracted()))
-                    .ToList(),
+                    && !target.ExtendedPC().InteractableTargetQueue && (!CheckCanBeInteracted || target.BaseGameCanBeInteracted())),
                 Distance,
                 false,
                 target => target.GetTruePosition());

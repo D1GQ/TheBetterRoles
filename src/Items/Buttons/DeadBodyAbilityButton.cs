@@ -140,9 +140,7 @@ internal class DeadBodyAbilityButton : BaseButton
         if (Visible && !IsDuration)
         {
             var bodies = GetObjectsInAbilityRange(
-                Main.AllDeadBodys
-                    .Where(b => DeadBodyCondition(b))
-                    .ToList(),
+                Main.AllDeadBodys.Where(b => DeadBodyCondition(b)),
                 Distance,
                 false,
                 b => b.transform.position);

@@ -12,21 +12,23 @@ namespace TheBetterRoles.Modules.CustomSystems;
 [RegisterInIl2Cpp(typeof(ISystemType), typeof(IActivatable))]
 internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 {
+    internal readonly List<Vent> AllVents = [];
     internal static CustomSystemTypes Type => CustomSystemTypes.VentFactory;
     public bool IsDirty { get; private set; }
     public bool IsActive { get; private set; }
 
-    private GameObject? vents;
+    private GameObject? _customVentsObj;
     internal GameObject CustomVentsObj
     {
         get
         {
-            if (vents == null)
+            if (_customVentsObj == null)
             {
-                vents = new GameObject("Vents");
-                vents.transform.SetParent(ShipStatus.Instance.transform);
+                _customVentsObj = new GameObject("Vents");
+                _customVentsObj.transform.SetParent(ShipStatus.Instance.transform, false);
+
             }
-            return vents;
+            return _customVentsObj;
         }
     }
 
@@ -47,30 +49,21 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     internal override void SetUp()
     {
+        foreach (var vent in ShipStatus.Instance.AllVents)
+        {
+            AllVents.Add(vent);
+        }
+
         VentPrefab = Instantiate(ShipStatus.Instance.AllVents.First());
         VentPrefab.gameObject.name = "VentPrefab";
         VentPrefab.gameObject.SetActive(false);
-        VentPrefab.transform.SetParent(CustomVentsObj.transform);
+        VentPrefab.transform.SetParent(CustomVentsObj.transform, false);
         VentPrefab.UnsetVents();
     }
 
     internal override void Destroy()
     {
         Instance = null;
-    }
-
-    private static Vent AddVent(Vector2 pos, int ventId)
-    {
-        var newVent = Instantiate(VentPrefab, Instance.CustomVentsObj.transform);
-        newVent.gameObject.name = "Vent";
-        newVent.transform.position = new(pos.x, pos.y, newVent.transform.position.z);
-        newVent.Id = ventId;
-        var con = newVent.GetComponent<VentCleaningConsole>();
-        con?.ConsoleId = newVent.Id;
-        newVent.gameObject.SetActive(true);
-        newVent.AddToShipStatus();
-
-        return newVent;
     }
 
     internal static void SendSyncVents()
@@ -103,12 +96,27 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     private static IEnumerator CoWaitSendAddVentToHost(VentData ventData, Action<Vent> callback)
     {
-        while (!Main.AllVents.Any(v => v.Id == ventData.Id))
+        while (!Instance.AllVents.Any(v => v.Id == ventData.Id))
         {
             yield return null;
         }
 
-        callback?.Invoke(Main.AllVents.First(v => v.Id == ventData.Id));
+        callback?.Invoke(Instance.AllVents.First(v => v.Id == ventData.Id));
+    }
+
+    private static Vent AddVent(Vector2 pos, int ventId)
+    {
+        var newVent = Instantiate(VentPrefab, Instance.CustomVentsObj.transform, false);
+        newVent.gameObject.name = "Vent";
+        newVent.transform.position = new(pos.x, pos.y, Utils.GetPlayerZPosAtVector2(pos) + 0.05f);
+        newVent.Id = ventId;
+        var con = newVent.GetComponent<VentCleaningConsole>();
+        con?.ConsoleId = newVent.Id;
+        newVent.gameObject.SetActive(true);
+        newVent.AddToShipStatus();
+        Instance.AllVents.Add(newVent);
+
+        return newVent;
     }
 
     internal static void SendRemoveVentToHost(Vent vent, Action callback = null)
@@ -130,7 +138,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     private static IEnumerator CoWaitSendRemoveVentToHost(int ventId, Action callback)
     {
-        while (Main.AllVents.Any(v => v.Id == ventId))
+        while (Instance.AllVents.Any(v => v.Id == ventId))
         {
             yield return null;
         }
@@ -140,6 +148,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
 
     private static void RemoveVent(Vent vent)
     {
+        Instance.AllVents.Remove(vent);
         vent.RemoveFromShipStatus();
         Destroy(vent.gameObject);
     }
@@ -178,7 +187,7 @@ internal class VentFactorySystem : BaseSystem, IISystemType, IIActivatable
                 break;
             case 2:
                 int ventId = msgReader.ReadInt32();
-                var vent = Main.AllVents.FirstOrDefault(v => v.Id == ventId);
+                var vent = Instance.AllVents.FirstOrDefault(v => v.Id == ventId);
                 RemoveVent(vent);
                 IsDirty = true;
                 break;

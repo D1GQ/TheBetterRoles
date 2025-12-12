@@ -12,11 +12,4 @@ internal class EOSManagerPatch
     {
         UserDataExtensions.TrySetLocalData();
     }
-
-    [HarmonyPatch(nameof(EOSManager.StartInitialLoginFlow))]
-    [HarmonyPostfix]
-    internal static void StartInitialLoginFlow_Postfix(EOSManager __instance)
-    {
-        // __instance.StartCoroutine(DataBaseConnect.Init());
-    }
 }

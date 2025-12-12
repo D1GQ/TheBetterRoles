@@ -61,8 +61,8 @@ internal class PolusStatusExtension : ShipStatusExtension
             TempcoldCollider2.size = new Vector2(0.3305f, 0.1811f);
         }
 
-        Vent ElectricalVent = Main.AllVents.FirstOrDefault(vent => vent.Id == 0);
-        Vent ElectricBuildingVent = Main.AllVents.FirstOrDefault(vent => vent.Id == 10);
+        Vent ElectricalVent = ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == 0);
+        Vent ElectricBuildingVent = ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == 10);
         if (ElectricalVent != null && ElectricBuildingVent != null)
         {
             ElectricBuildingVent.Right = null;
@@ -70,9 +70,9 @@ internal class PolusStatusExtension : ShipStatusExtension
             ElectricalVent.Center = ElectricBuildingVent;
         }
 
-        Vent OutsideBathroomVent = Main.AllVents.FirstOrDefault(vent => vent.Id == 7);
-        Vent StorageVent = Main.AllVents.FirstOrDefault(vent => vent.Id == 8);
-        Vent ScienceBuildingVent = Main.AllVents.FirstOrDefault(vent => vent.Id == 9);
+        Vent OutsideBathroomVent = ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == 7);
+        Vent StorageVent = ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == 8);
+        Vent ScienceBuildingVent = ShipStatus.Instance.AllVents.FirstOrDefault(vent => vent.Id == 9);
         if (StorageVent != null && ScienceBuildingVent != null && OutsideBathroomVent != null)
         {
             Vent SpecimenVent = StorageVent.Copy("SpecimenVent");

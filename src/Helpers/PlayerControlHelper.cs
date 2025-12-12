@@ -477,7 +477,7 @@ internal static class PlayerControlHelper
     /// <summary>
     /// Checks if the player can be interacted with based on various game states and conditions.
     /// </summary>
-    internal static bool CanBeInteracted(this PlayerControl player)
+    internal static bool BaseGameCanBeInteracted(this PlayerControl player)
     {
         if (player.Data == null
             || GameState.IsMeeting

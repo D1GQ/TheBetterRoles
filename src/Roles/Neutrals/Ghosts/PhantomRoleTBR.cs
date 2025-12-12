@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
 using TheBetterRoles.Helpers;
-using TheBetterRoles.Helpers.Random;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Managers;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
@@ -104,7 +104,8 @@ internal sealed class PhantomRoleTBR : GhostRoleClass, IRoleUpdateAction, IRoleM
     private void SpawnInRandomVent()
     {
         if (HasBeenClicked) return;
-        var vent = _player.IsLocalPlayer() ? Main.AllEnabledVents[IRandom.Instance.Next(0, Main.AllEnabledVents.Length)] : Main.AllEnabledVents.First();
+        var vents = VentFactorySystem.Instance.AllVents;
+        var vent = _player.IsLocalPlayer() ? vents.Random() : vents.First();
 
         if (vent != null)
         {

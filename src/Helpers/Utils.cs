@@ -111,6 +111,17 @@ internal static class Utils
     internal static PlayerControl? PlayerFromNetId(uint netId)
         => Main.AllPlayerControls.FirstOrDefault(player => player.NetId == netId);
 
+    /// <summary>
+    /// Get the Z position of a player based on a given 2D vector position.
+    /// </summary>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    internal static float GetPlayerZPosAtVector2(Vector2 position)
+    {
+        var zPos = position.y / 1000f;
+        return zPos;
+    }
+
 
     // Attempt to fix a sabotage in the system based on the sabotage type
     /// <summary>

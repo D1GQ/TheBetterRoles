@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TheBetterRoles.Modules.CustomSystems;
+using UnityEngine;
 
 namespace TheBetterRoles.Helpers;
 
@@ -25,7 +26,7 @@ internal static class VentHelper
     /// </summary>
     internal static void SetUnusedVentId(this Vent vent)
     {
-        var usedIds = Main.AllVents
+        var usedIds = VentFactorySystem.Instance.AllVents
             .Where(v => v != vent)
             .Select(v => v.Id)
             .OrderBy(id => id)

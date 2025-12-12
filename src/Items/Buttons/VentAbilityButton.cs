@@ -2,6 +2,7 @@
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items.Enums;
 using TheBetterRoles.Modules;
+using TheBetterRoles.Modules.CustomSystems;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.Manager;
 using TheBetterRoles.Roles.Core;
@@ -21,7 +22,7 @@ internal class VentAbilityButton : BaseButton
     internal Func<Vent, bool> VentCondition { get; set; } = (target) => true;
 
     [HideFromIl2Cpp]
-    internal Func<Vent[]> GetVents { get; set; } = () => { return Main.AllEnabledVents; };
+    internal Func<Vent[]> GetVents { get; set; } = () => { return [.. VentFactorySystem.Instance.AllVents]; };
 
     [HideFromIl2Cpp]
     internal void AddVentCondition(Func<Vent, bool> additionalCondition)
@@ -188,9 +189,7 @@ internal class VentAbilityButton : BaseButton
         if (Visible && (!IsDuration || !IsAbility))
         {
             List<Vent> validVents = GetObjectsInAbilityRange(
-                GetVents()
-                    .Where(vent => VentCondition(vent))
-                    .ToList(),
+                GetVents().Where(vent => VentCondition(vent) && (vent.IsEnabled() || _player.inVent)),
                 HighlightDistance,
                 _player.inVent,
                 vent => vent.transform.position,

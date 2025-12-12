@@ -107,14 +107,14 @@ internal class BaseButton : MonoBehaviour
     /// Dynamically check if objects are in range of the player.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="List">List of objects</param>
+    /// <param name="enumerable">Enumerable of objects</param>
     /// <param name="maxDistance">Minimum distance for object to be checked.</param>
     /// <param name="ignoreColliders">Determines if collision is checked.</param>
     /// <param name="posSelector">Function to extract position of object.</param>
     /// <param name="checkVent">Determines if objects should be looked for while the player is inside a vent.</param>
     /// <returns></returns>
     [HideFromIl2Cpp]
-    internal List<T> GetObjectsInAbilityRange<T>(List<T> List, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
+    internal List<T> GetObjectsInAbilityRange<T>(IEnumerable<T> enumerable, float maxDistance, bool ignoreColliders, Func<T, Vector3> posSelector, bool checkVent = true)
     {
         if (_player == null ||
             (!checkVent && !_player.CanMove && !_player.IsInVent()) ||
@@ -130,9 +130,9 @@ internal class BaseButton : MonoBehaviour
         float closeDistanceThreshold = maxDistance;
         Vector2 myPos = _player.GetTruePosition();
 
-        for (int i = 0; i < List.Count; i++)
+        for (int i = 0; i < enumerable.Count(); i++)
         {
-            T obj = List[i];
+            T obj = enumerable.ElementAt(i);
             if (obj == null) continue;
 
             Vector3 objPos3D = posSelector(obj);

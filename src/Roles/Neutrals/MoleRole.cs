@@ -75,7 +75,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             ventPrefab = UnityEngine.Object.Instantiate(ShipStatus.Instance.AllVents.First());
             ventPrefab.gameObject.name = "VentPrefab(Mole)";
             ventPrefab.gameObject.SetActive(false);
-            ventPrefab.transform.SetParent(VentFactorySystem.Instance.CustomVentsObj.transform);
+            ventPrefab.transform.SetParent(VentFactorySystem.Instance.CustomVentsObj.transform, false);
 
             ventPrefab.myRend.color = new Color(1f, 0.4f, 0.4f);
 
@@ -176,11 +176,10 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
             RemoveVent(firstVent);
         }
 
-        var vent = UnityEngine.Object.Instantiate(ventPrefab, VentFactorySystem.Instance.CustomVentsObj.transform);
+        var vent = UnityEngine.Object.Instantiate(ventPrefab, VentFactorySystem.Instance.CustomVentsObj.transform, false);
         vent.gameObject.name = "Vent(Mole)";
         vent.Id = -1;
-        float zPos = _player.gameObject.transform.position.z + 0.0005f;
-        vent.transform.position = new(position.x, position.y, zPos);
+        vent.transform.position = new(position.x, position.y, Utils.GetPlayerZPosAtVector2(position) + 0.03f);
 
         // Set up vent connections
         if (vents.Count > 0)

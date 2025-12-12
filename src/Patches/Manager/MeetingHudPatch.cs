@@ -21,9 +21,7 @@ internal class MeetingHudPatch
 {
     internal static void AdjustVotesOnGuess(PlayerControl pc)
     {
-        PlayerVoteArea voteArea = MeetingHud.Instance.playerStates.First(
-            x => x.TargetPlayerId == pc.PlayerId
-        );
+        PlayerVoteArea voteArea = MeetingHud.Instance.playerStates.First(x => x.TargetPlayerId == pc.PlayerId);
         if (voteArea == null) return;
         if (voteArea.DidVote) voteArea.UnsetVote();
         voteArea.Buttons.SetActive(false);
