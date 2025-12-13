@@ -27,7 +27,7 @@ internal class ScreenFlash
         FullScreen = UnityEngine.Object.Instantiate(hud.FullScreen, hud.transform);
         FullScreen.name = $"{name}_FullScreen";
         ScreenFlashs.Add(this);
-        AnimateCoroutine = CoroutineManager.Instance.StartCoroutine(CoAnimate(color, fadeInDuration, fadeOutDuration, effectDuration, fullColor));
+        AnimateCoroutine = CoroutineManager.Scene.StartCoroutine(CoAnimate(color, fadeInDuration, fadeOutDuration, effectDuration, fullColor));
     }
 
     internal Coroutine AnimateCoroutine { get; set; }
@@ -76,7 +76,7 @@ internal class ScreenFlash
     {
         if (AnimateCoroutine != null)
         {
-            CoroutineManager.Instance.StopCoroutine(AnimateCoroutine);
+            CoroutineManager.Scene.StopCoroutine(AnimateCoroutine);
         }
         UnityEngine.Object.Destroy(FullScreen);
         ScreenFlashs.Remove(this);

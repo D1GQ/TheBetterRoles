@@ -148,7 +148,6 @@ internal class Main : BasePlugin
             {
                 RegisterAllMonoBehavioursInAssembly();
                 AddComponent<ModUpdateManager>();
-                AddComponent<CoroutineManager>();
             }
 
             InstanceAttribute.RegisterAll();

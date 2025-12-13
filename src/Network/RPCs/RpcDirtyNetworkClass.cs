@@ -60,7 +60,7 @@ internal class RpcDirtyNetworkClass(Main plugin, uint id) : PlayerCustomRpc<Main
 
     public override void Handle(PlayerControl player, Data data)
     {
-        CoroutineManager.Instance.StartCoroutine(CoSyncNetClass(player, data));
+        CoroutineManager.Scene.StartCoroutine(CoSyncNetClass(player, data));
     }
 
     private static IEnumerator CoSyncNetClass(PlayerControl sender, Data data)

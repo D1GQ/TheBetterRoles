@@ -130,7 +130,7 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
                     if (DousingDuration.GetFloat() > 0f)
                     {
                         DouseButton?.SetDuration();
-                        douseCoroutine = CoroutineManager.Instance.StartCoroutine(CoDousePlayer(target));
+                        douseCoroutine = CoroutineManager.Scene.StartCoroutine(CoDousePlayer(target));
                     }
                     else
                     {

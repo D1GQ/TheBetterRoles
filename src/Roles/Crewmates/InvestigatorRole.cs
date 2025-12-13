@@ -115,7 +115,7 @@ internal sealed class InvestigatorRole : CrewmateRoleTBR, IRoleUpdateAction
         var color = spriteRenderer.color;
         spriteRenderer.color = new Color(color.r, color.g, color.b, 0.75f);
 
-        CoroutineManager.Instance.StartCoroutine(CoFadeFootprintOut(footprint, spriteRenderer));
+        CoroutineManager.Scene.StartCoroutine(CoFadeFootprintOut(footprint, spriteRenderer));
     }
 
     private void CreateBodyprint(DeadBody body)

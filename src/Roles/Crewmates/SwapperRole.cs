@@ -169,7 +169,7 @@ internal sealed class SwapperRole : CrewmateRoleTBR, IRoleUpdateAction, IRoleMee
 
             PlayerVoteArea? pva1 = meetingHud.playerStates.FirstOrDefault(p => p.TargetPlayerId == firstTargetData.PlayerId);
             PlayerVoteArea? pva2 = meetingHud.playerStates.FirstOrDefault(p => p.TargetPlayerId == secondTargetData.PlayerId);
-            CoroutineManager.Instance.StartCoroutine(CoSwapAnimation(pva1, pva2));
+            CoroutineManager.Scene.StartCoroutine(CoSwapAnimation(pva1, pva2));
         }
 
         UnsetTargets();

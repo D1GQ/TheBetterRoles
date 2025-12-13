@@ -55,7 +55,7 @@ internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody
                 {
                     if (target != null && target != Cleaning)
                     {
-                        CoroutineManager.Instance.StartCoroutine(CoFadeBodyOut(target));
+                        CoroutineManager.Scene.StartCoroutine(CoFadeBodyOut(target));
                         if (KillCooldownClean.GetBool())
                         {
                             RoleButtons.KillButton?.SetCooldown(SetKillCooldown.GetFloat());
@@ -101,7 +101,7 @@ internal sealed class JanitorRole : ImpostorRoleTBR, IRoleAbilityAction<DeadBody
 
     internal override void OnReceiveRoleSync(RoleNetworked.Data data)
     {
-        CoroutineManager.Instance.StartCoroutine(CoFadeBodyOut(data.MessageReader.ReadFast<DeadBody>()));
+        CoroutineManager.Scene.StartCoroutine(CoFadeBodyOut(data.MessageReader.ReadFast<DeadBody>()));
         if (KillCooldownClean.GetBool())
         {
             RoleButtons.KillButton?.SetCooldown(SetKillCooldown.GetFloat());

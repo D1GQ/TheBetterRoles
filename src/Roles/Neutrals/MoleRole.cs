@@ -237,7 +237,7 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
 
         if (shrink)
         {
-            CoroutineManager.Instance.StartCoroutine(CoShrinkHoleOut(vent));
+            CoroutineManager.Scene.StartCoroutine(CoShrinkHoleOut(vent));
         }
         else
         {
@@ -277,8 +277,8 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
     private void EnterHole(Vent vent)
     {
         Networked.SendRoleSync(0, (Vector2)(vent.transform.position + vent.Offset), vent.NumFramesUntilPlayerDisappears);
-        _roleMono.StopAllCoroutines();
-        _roleMono.StartCoroutine(CoEnterHole(vent));
+        _player.MyPhysics.StopAllCoroutines();
+        _player.MyPhysics.StartCoroutine(CoEnterHole(vent));
     }
 
     private IEnumerator CoEnterHole(Vent vent)
@@ -338,8 +338,8 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
     private void ExitHole(Vent vent)
     {
         Networked.SendRoleSync(1, (Vector2)vent.transform.position);
-        _roleMono.StopAllCoroutines();
-        _roleMono.StartCoroutine(CoExitHole(vent));
+        _player.MyPhysics.StopAllCoroutines();
+        _player.MyPhysics.StartCoroutine(CoExitHole(vent));
     }
 
     private IEnumerator CoExitHole(Vent vent)
@@ -394,15 +394,15 @@ internal sealed class MoleRole : RoleClass, IRoleAbilityAction<Vent>, IRoleMeeti
                 {
                     Vector2 pos = data.MessageReader.ReadFast<Vector2>();
                     int numFramesUntilPlayerDisappears = data.MessageReader.ReadFast<int>();
-                    _roleMono.StopAllCoroutines();
-                    _roleMono.StartCoroutine(CoEnterHoleNetworked(pos, numFramesUntilPlayerDisappears));
+                    _player.MyPhysics.StopAllCoroutines();
+                    _player.MyPhysics.StartCoroutine(CoEnterHoleNetworked(pos, numFramesUntilPlayerDisappears));
                 }
                 break;
             case 1:
                 {
                     Vector2 pos = data.MessageReader.ReadFast<Vector2>();
-                    _roleMono.StopAllCoroutines();
-                    _roleMono.StartCoroutine(CoExitHoleNetworked(pos));
+                    _player.MyPhysics.StopAllCoroutines();
+                    _player.MyPhysics.StartCoroutine(CoExitHoleNetworked(pos));
                 }
                 break;
         }

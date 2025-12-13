@@ -157,9 +157,11 @@ internal class ExtendedRoleInfo
         {
             if (!_isCacheValid)
             {
-                _allRolesCache = (Role != null ? new[] { Role } : Enumerable.Empty<RoleClass>())
-                                .Concat(Addons?.Cast<RoleClass>() ?? Enumerable.Empty<RoleClass>())
-                                .ToList();
+                _allRolesCache =
+                [
+                    .. Role != null ? new[] { Role } : Enumerable.Empty<RoleClass>(),
+                    .. Addons?.Cast<RoleClass>() ?? [],
+                ];
                 _isCacheValid = true;
             }
             return _allRolesCache;
