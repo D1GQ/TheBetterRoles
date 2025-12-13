@@ -1,7 +1,5 @@
-using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using System.Collections;
 using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Items;
@@ -105,124 +103,10 @@ internal class MeetingHudPatch
             pva.gameObject.AddComponent<MeetingInfoDisplay>().Init(target, pva);
         }
 
-        var textTemplate = UnityEngine.Object.Instantiate(__instance.TitleText, __instance.transform);
-        textTemplate.name = "TextTemplate";
-        var pos = textTemplate.gameObject.AddComponent<AspectPosition>();
-        pos.Alignment = AspectPosition.EdgeAlignments.Center;
-        pos.DistanceFromEdge = new Vector3(0f, -2f, -10f);
-        textTemplate.DestroyTextTranslators();
-        textTemplate.enableAutoSizing = false;
-        textTemplate.fontSize = 2f;
-        textTemplate.text = "Text Here";
-        textTemplate.gameObject.SetActive(false);
-
-        Dictionary<string, CustomClip?> texts = [];
-
-        List<(string text, CustomClip? clip, uint priority)> roleTexts = new();
-
-        RoleListener.InvokeRoles<IRoleMeetingAction>(role =>
-        {
-            CustomClip? clip = null;
-            string text = role.AddMeetingText(ref clip, out uint priority);
-            if (!string.IsNullOrEmpty(text))
-            {
-                roleTexts.Add((text, clip, priority));
-            }
-        });
-
-        roleTexts.Sort((a, b) => b.priority.CompareTo(a.priority));
-
-        foreach (var (sortedText, sortedClip, _) in roleTexts)
-        {
-            texts[sortedText] = sortedClip;
-        }
-
-        List<TextMeshPro> textPros = [];
-
-        __instance.StartCoroutine(CoDisplayTextsQueue(texts, textPros, __instance, textTemplate));
+        MeetingPopUpManager.Start(__instance);
 
         Logger.LogHeader("Meeting Has Started");
     }
-
-    private static IEnumerator CoDisplayTextsQueue(Dictionary<string, CustomClip?> texts, List<TextMeshPro> textPros, MonoBehaviour instance, TextMeshPro textTemplate)
-    {
-        while (true)
-        {
-            if (MeetingHud.Instance == null || MeetingHud.Instance.state != MeetingHud.VoteStates.Animating)
-            {
-                break;
-            }
-
-            yield return new WaitForSeconds(0.5f);
-        }
-
-        foreach (var kvp in texts)
-        {
-            var textPro = UnityEngine.Object.Instantiate(textTemplate, instance.transform);
-            textPro.name = $"Text({textPros.Count})";
-            textPro.gameObject.SetActive(true);
-            textPro.text = kvp.Key;
-
-            textPros.Add(textPro);
-
-            var clip = kvp.Value;
-            if (clip != null)
-            {
-                if (!string.IsNullOrEmpty(clip.ClipName))
-                {
-                    CustomSoundsManager.Instance.Play(clip.ClipName, clip.Volume);
-                }
-                else if (clip.Clip != null)
-                {
-                    SoundManager.Instance.PlaySound(clip.Clip, false, clip.Volume);
-                }
-            }
-
-            yield return instance.StartCoroutine(CoFadeText(textPro));
-
-            textPros.Remove(textPro);
-            UnityEngine.Object.Destroy(textPro.gameObject);
-        }
-    }
-
-    private static IEnumerator CoFadeText(TextMeshPro text)
-    {
-        float displayDuration = 6f;
-        float fadeDuration = 1.5f;
-        float animationDuration = 0.15f;
-        Vector3 originalScale = text.transform.localScale;
-        Vector3 enlargedScale = originalScale * 10f;
-        Color originalColor = text.color;
-
-        // "Fly-in" animation to enlarge then scale back down
-        text.transform.localScale = enlargedScale;
-
-        float elapsed = 0f;
-        while (elapsed < animationDuration)
-        {
-            text.transform.localScale = Vector3.Lerp(enlargedScale, originalScale, elapsed / animationDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        text.transform.localScale = originalScale;
-
-        // Wait for display duration before fading out
-        yield return new WaitForSeconds(displayDuration);
-
-        // Fade-out effect on text color
-        elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(1, 0, elapsed / fadeDuration);
-            text.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        text.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0);
-    }
-
     [HarmonyPatch(nameof(MeetingHud.Update))]
     [HarmonyPrefix]
     private static bool UpdatePrefix(MeetingHud __instance)
