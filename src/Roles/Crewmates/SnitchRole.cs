@@ -61,7 +61,7 @@ internal sealed class SnitchRole : CrewmateRoleTBR, IRoleTaskAction, IRoleGuessA
                 if (target.Is(RoleClassTeam.Crewmate)) continue;
                 if (target.Is(RoleClassTeam.Neutral) && !SnitchSeesNeutralRoles.GetBool()) continue;
 
-                var arrow = new ArrowLocator().Create(color: target.GetTeamColor());
+                var arrow = ArrowLocator.Create(color: target.GetTeamColor());
                 arrow.SetTarget(target.gameObject);
                 arrow.RemoveListener = () => { return target == null || !target.IsAlive(); };
                 arrows.Add(arrow);
@@ -89,7 +89,7 @@ internal sealed class SnitchRole : CrewmateRoleTBR, IRoleTaskAction, IRoleGuessA
         if (localPlayer.Is(RoleClassTeam.Neutral) && !SnitchSeesNeutralRoles.GetBool()) return;
 
         Utils.FlashScreen("snitch", RoleColorHex);
-        var arrow = new ArrowLocator().Create(color: RoleColor);
+        var arrow = ArrowLocator.Create(color: RoleColor);
         arrow.SetTarget(_player.gameObject);
         arrow.RemoveListener = () => { return _player == null || !_player.IsAlive(); };
         arrows.Add(arrow);

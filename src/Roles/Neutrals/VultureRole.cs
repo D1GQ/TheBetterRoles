@@ -75,7 +75,7 @@ internal sealed class VultureRole : RoleClass, IRoleAbilityAction<DeadBody>, IRo
     {
         if (ShowArrowsToBodies.GetBool() && _player.IsLocalPlayer() && _player.IsAlive())
         {
-            var arrow = new ArrowLocator().Create(color: RoleColor, maxScale: 0.7f, minDistance: 0f);
+            var arrow = ArrowLocator.Create(color: RoleColor, maxScale: 0.7f, minDistance: 0f);
             arrow.SetTarget(body.gameObject);
             arrow.RemoveListener = () => { return body == null || body.TruePosition.y > 500 || _player?.IsAlive() != true; };
         }

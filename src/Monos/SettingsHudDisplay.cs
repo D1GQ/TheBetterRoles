@@ -163,7 +163,7 @@ internal class SettingsHudDisplay : MonoBehaviour
                     currentLineCount = 0;
                 }
 
-                currentPage.Append("\n");
+                currentPage.Append('\n');
                 currentLineCount++;
 
                 currentPage.Append(roleOptions);
@@ -199,13 +199,13 @@ internal class SettingsHudDisplay : MonoBehaviour
     {
         if (Categories.Count == 0 || SettingsText == null) return;
 
-        var category = Categories[currentCategory];
-        string pageContent = category.Pages.Count > 0
-            ? category.Pages[currentPage]
+        var (Name, Pages) = Categories[currentCategory];
+        string pageContent = Pages.Count > 0
+            ? Pages[currentPage]
             : "No settings available";
 
-        SettingsText.SetText($"Tab ({currentCategory + 1}/{Categories.Count}): <b>{category.Name}</b>\n" +
-                       $"Page ({currentPage + 1}/{category.Pages.Count})\n" +
+        SettingsText.SetText($"Tab ({currentCategory + 1}/{Categories.Count}): <b>{Name}</b>\n" +
+                       $"Page ({currentPage + 1}/{Pages.Count})\n" +
                        $"{pageContent}\n" +
                        "<size=75%>Press [Tab] to view Next...</size>\n" +
                        "<size=75%>Press [Shift]+[Tab] to view Prev...</size>");

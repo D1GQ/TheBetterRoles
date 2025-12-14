@@ -59,8 +59,9 @@ class ArrowLocator
     /// <param name="maxScale">The maximum scale of the arrow (defaults to 1).</param>
     /// <param name="minDistance">The minimum distance at which the arrow will disappear (defaults to 0.5).</param>
     /// <returns>The current instance of the `ArrowLocator` class.</returns>
-    internal ArrowLocator Create(Vector3 pos = default, Sprite? sprite = null, Color color = default, float maxScale = 1f, float minDistance = 0.5f)
+    internal static ArrowLocator Create(Vector3 pos = default, Sprite? sprite = null, Color color = default, float maxScale = 1f, float minDistance = 0.5f)
     {
+        var arrowLocator = new ArrowLocator();
         pos = pos == default ? new Vector3(0, 0, 0) : pos;
         color = color == default ? Color.white : color;
 
@@ -71,23 +72,23 @@ class ArrowLocator
         obj.transform.SetParent(HudManager.Instance.transform);
         obj.AddComponent<SpriteRenderer>();
         ArrowBehaviour arrow = obj.AddComponent<ArrowBehaviour>();
-        Arrow = arrow;
-        Arrow.MaxScale = maxScale;
-        Arrow.minDistanceToShowArrow = minDistance;
-        SpriteRenderer = arrow.image;
+        arrowLocator.Arrow = arrow;
+        arrowLocator.Arrow.MaxScale = maxScale;
+        arrowLocator.Arrow.minDistanceToShowArrow = minDistance;
+        arrowLocator.SpriteRenderer = arrow.image;
         if (sprite == null)
         {
-            Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.Arrow.png", 100f);
+            arrowLocator.Arrow.image.sprite = Utils.LoadSprite("TheBetterRoles.Resources.Images.Icons.Arrow.png", 100f);
         }
         else
         {
-            Arrow.image.sprite = sprite;
+            arrowLocator.Arrow.image.sprite = sprite;
         }
-        Arrow.image.color = color;
-        Arrow.target = pos;
+        arrowLocator.Arrow.image.color = color;
+        arrowLocator.Arrow.target = pos;
 
-        allArrows.Add(this);
-        return this;
+        allArrows.Add(arrowLocator);
+        return arrowLocator;
     }
 
     /// <summary>

@@ -33,7 +33,7 @@ internal sealed class TrackerAddon : AddonClass, IRoleUpdateAction
     {
         if (_player.IsLocalPlayer())
         {
-            TrackerArrowLocator = new ArrowLocator().Create(color: RoleColor, maxScale: 0.5f, minDistance: 0f);
+            TrackerArrowLocator = ArrowLocator.Create(color: RoleColor, maxScale: 0.5f, minDistance: 0f);
         }
     }
     internal sealed override void OnDeinitialize()

@@ -79,7 +79,7 @@ internal sealed class AurialRole : CrewmateRoleTBR, IRoleAbilityAction
         var colorId = target.Data.DefaultOutfit.ColorId;
         Color32 color = useColor ? Palette.PlayerColors[colorId] : Color.white;
 
-        var arrow = new ArrowLocator().Create(color: color, maxScale: 0.5f, minDistance: 0f);
+        var arrow = ArrowLocator.Create(color: color, maxScale: 0.5f, minDistance: 0f);
         var bodyColor = CustomColors.GetPlayerColorById(colorId);
         if (bodyColor.Animated)
         {

@@ -30,7 +30,7 @@ internal static class CustomHatManager
     internal static List<CustomNamePlateData> UnregisteredNamePlates { get; private set; } = [];
     internal static List<CustomNamePlateData> CustomNamePlatesCache { get; set; } = [];
 
-    private static List<string> loaded = [];
+    private static readonly List<string> loaded = [];
 
     internal static void RegisterSkins()
     {
