@@ -8,7 +8,7 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Crewmates;

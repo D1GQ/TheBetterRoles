@@ -1,6 +1,6 @@
 ﻿using TheBetterRoles.Managers;
 
-namespace TheBetterRoles.Roles.Interfaces;
+namespace TheBetterRoles.Roles.Core.Interfaces;
 
 internal interface IRoleMeetingAction : IRoleAction
 {

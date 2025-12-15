@@ -8,7 +8,7 @@ using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
 using TheBetterRoles.Roles;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Patches.Game;

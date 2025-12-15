@@ -1,6 +1,4 @@
-﻿using TheBetterRoles.Roles.Core;
-
-namespace TheBetterRoles.Roles.Interfaces;
+﻿namespace TheBetterRoles.Roles.Core.Interfaces;
 
 internal interface IRoleOtherAction : IRoleAction
 {

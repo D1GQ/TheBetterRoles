@@ -8,7 +8,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 
 namespace TheBetterRoles.Roles.Addons;
 

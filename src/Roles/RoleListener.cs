@@ -1,7 +1,7 @@
 ﻿using Il2CppSystem.IO;
 using TheBetterRoles.Managers;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 
 namespace TheBetterRoles.Roles;
 

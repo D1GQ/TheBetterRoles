@@ -1,8 +1,7 @@
 ﻿using TheBetterRoles.Items.Enums;
-using TheBetterRoles.Roles.Core;
 using UnityEngine;
 
-namespace TheBetterRoles.Roles.Interfaces;
+namespace TheBetterRoles.Roles.Core.Interfaces;
 
 internal interface IRoleAbilityAction<T> : IRoleAbilityAction where T : MonoBehaviour
 {

@@ -4,7 +4,7 @@ using TheBetterRoles.Items;
 using TheBetterRoles.Items.Buttons;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Network.RPCs;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Core.RoleBase;

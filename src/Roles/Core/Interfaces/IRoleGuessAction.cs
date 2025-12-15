@@ -1,6 +1,6 @@
 ﻿using TheBetterRoles.Items.Enums;
 
-namespace TheBetterRoles.Roles.Interfaces;
+namespace TheBetterRoles.Roles.Core.Interfaces;
 
 internal interface IRoleGuessAction : IRoleAction
 {

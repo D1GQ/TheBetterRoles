@@ -11,7 +11,7 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.Configs;
 using TheBetterRoles.Roles;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TMPro;
 using UnityEngine;
 

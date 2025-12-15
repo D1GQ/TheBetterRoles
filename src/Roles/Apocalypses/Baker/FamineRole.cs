@@ -6,8 +6,8 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TheBetterRoles.Roles.Core.RoleBase;
-using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Apocalypses;
 

@@ -12,7 +12,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Roles;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 
 namespace TheBetterRoles.Managers;
 

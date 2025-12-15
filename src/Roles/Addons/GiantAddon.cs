@@ -2,7 +2,7 @@
 using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Addons;

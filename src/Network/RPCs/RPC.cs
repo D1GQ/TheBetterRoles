@@ -11,7 +11,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Patches.Manager;
 using TheBetterRoles.Roles;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 
 namespace TheBetterRoles.Network.RPCs;
 

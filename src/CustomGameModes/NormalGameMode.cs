@@ -9,7 +9,7 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TMPro;
 using UnityEngine;
 

@@ -8,8 +8,8 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TheBetterRoles.Roles.Core.RoleBase;
-using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Neutrals;

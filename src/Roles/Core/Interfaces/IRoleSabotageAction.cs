@@ -1,4 +1,4 @@
-﻿namespace TheBetterRoles.Roles.Interfaces;
+﻿namespace TheBetterRoles.Roles.Core.Interfaces;
 
 internal interface IRoleSabotageAction : IRoleAction
 {

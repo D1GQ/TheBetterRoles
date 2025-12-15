@@ -2,7 +2,7 @@
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Roles;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Items

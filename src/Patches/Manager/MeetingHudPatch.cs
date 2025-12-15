@@ -8,7 +8,7 @@ using TheBetterRoles.Managers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Roles;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TMPro;
 using UnityEngine;
 

@@ -12,7 +12,7 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Neutrals;
@@ -53,18 +53,18 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
         }
     }
 
-    protected override void SetSettingsData()
+    protected override void SetupOptionItems()
     {
         MinimumDousesToIgnite.ShowCondition = () => ArsonistType.Is(1);
         MaximumDouses.ShowCondition = () => ArsonistType.Is(1);
     }
 
-    private bool IsOriginal => ArsonistType.GetStringValue() == 0;
+    private bool IsOriginal => ArsonistType.Is(0);
     private bool ShowDouseButton()
     {
         if (IsOriginal)
         {
-            return !Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); ;
+            return !Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains);
         }
         else
         {
@@ -76,7 +76,7 @@ internal sealed class ArsonistRole : RoleClass, IRoleAbilityAction<PlayerControl
     {
         if (IsOriginal)
         {
-            return Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains); ;
+            return Main.AllAlivePlayerControls.Where(pc => pc != _player).Select(pc => pc.Data).All(doused.Contains);
         }
         else
         {

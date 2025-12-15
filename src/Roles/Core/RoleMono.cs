@@ -1,5 +1,5 @@
 ﻿using Il2CppInterop.Runtime.Attributes;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Core;

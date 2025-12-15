@@ -3,7 +3,7 @@ using TheBetterRoles.Data;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Roles;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 
 namespace TheBetterRoles.Patches.Game.Ship;
 

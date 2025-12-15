@@ -2,7 +2,7 @@
 using System.Collections;
 using TheBetterRoles.Helpers;
 using TheBetterRoles.Roles;
-using TheBetterRoles.Roles.Interfaces;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TMPro;
 using UnityEngine;
 

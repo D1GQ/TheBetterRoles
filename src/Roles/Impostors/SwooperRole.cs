@@ -6,8 +6,8 @@ using TheBetterRoles.Items.OptionItems;
 using TheBetterRoles.Modules;
 using TheBetterRoles.Monos;
 using TheBetterRoles.Patches.UI.GameSettings;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TheBetterRoles.Roles.Core.RoleBase;
-using TheBetterRoles.Roles.Interfaces;
 using TMPro;
 
 namespace TheBetterRoles.Roles.Impostors;

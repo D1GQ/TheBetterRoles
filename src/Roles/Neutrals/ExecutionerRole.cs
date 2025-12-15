@@ -7,8 +7,8 @@ using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.UI.GameSettings;
 using TheBetterRoles.Roles.Core;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TheBetterRoles.Roles.Core.RoleBase;
-using TheBetterRoles.Roles.Interfaces;
 
 namespace TheBetterRoles.Roles.Neutrals;
 

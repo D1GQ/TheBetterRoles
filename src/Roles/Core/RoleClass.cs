@@ -9,8 +9,8 @@ using TheBetterRoles.Modules;
 using TheBetterRoles.Network;
 using TheBetterRoles.Network.RPCs;
 using TheBetterRoles.Patches.Game.Ship;
+using TheBetterRoles.Roles.Core.Interfaces;
 using TheBetterRoles.Roles.Core.RoleBase;
-using TheBetterRoles.Roles.Interfaces;
 using UnityEngine;
 
 namespace TheBetterRoles.Roles.Core;
@@ -575,7 +575,7 @@ internal abstract class RoleClass : NetworkClass
         }
 
         OptionItems.Initialize();
-        SetSettingsData();
+        SetupOptionItems();
 
         if (MeetingReliantRole)
         {
@@ -604,7 +604,7 @@ internal abstract class RoleClass : NetworkClass
         }
     }
 
-    protected virtual void SetSettingsData() { }
+    protected virtual void SetupOptionItems() { }
 
     /// <summary>
     /// Checks custom objective win condition for NormalGameMode.
